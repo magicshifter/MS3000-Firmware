@@ -48,17 +48,12 @@ void loadString(char * str, int len)
   for (int i = 0; i < len; i++)
   {
     str[i] = EEPROM.read(i);
-    Serial.print("read byte: ");
-    Serial.println((byte)str[i]);
   }
   str[len-1] = '\0';
 }
 
 void saveString(char * str, int len)
 {
-  Serial.print("saving string: ");
-  Serial.println(str);
-
   for (int i = 0; i < len; i++)
   {
     EEPROM.write(i, str[i]);
@@ -349,16 +344,15 @@ void handleFileUpload(){
   }
 }
 
-void StartWebServer ( void ) {
+void StartWebServer ( void )
+{
 
+// TODO: refactor into settings, add mode :)
   EEPROM.begin(512);
   loadString(uploadname, FILENAME_LENGTH);
-  Serial.print(" current POV file: ");
-  Serial.println(uploadname);
-
   if (!FS.exists(uploadname))
   {
-    strcpy(uploadname, "shroom_png.magicBitmap");
+    strcpy(uploadname, "default.magicBitmap");
   }
   Serial.print("using POV file: ");
   Serial.println(uploadname);
