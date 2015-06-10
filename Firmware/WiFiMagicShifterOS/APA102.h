@@ -33,13 +33,12 @@ void InitSPI()
 {
   #ifdef USE_HW_SPI
     SPI.begin();
-    Serial.println("HW1");
   #else
     pinMode(PIN_LED_DATA, OUTPUT);
     pinMode(PIN_LED_CLOCK, OUTPUT);
   #endif
 
-  SPI.setFrequency(10000000);
+  SPI.setFrequency(40000000);
 }
 
 void setPixel(int index, byte r, byte g, byte b, byte gs = 0x1F)

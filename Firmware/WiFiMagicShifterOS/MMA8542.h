@@ -43,13 +43,13 @@ void readRegisters(byte addressToRead, int bytesToRead, byte * dest)
 
   while(Wire.available() < bytesToRead)
   {
-    //delay(0);
+    Serial.println("I2C not available. This should NEVER happen!");
+    delay(100);
   }; //Hang out until we get the # of bytes we expect
 
   for(int x = 0 ; x < bytesToRead ; x++)
   {
     dest[x] = Wire.read();
-    //delay(0);
   }
 }
 
@@ -58,16 +58,12 @@ byte readRegister(byte addressToRead)
 {
   Wire.beginTransmission(MMA8452_ADDRESS);
   Wire.write(addressToRead);
-  int ret = Wire.endTransmission(false); //endTransmission but keep the connection active
-  Serial.print("ret was: ");
-  Serial.println(ret);
+  Wire.endTransmission(false); //endTransmission but keep the connection active
 
-  int ret2 = Wire.requestFrom(MMA8452_ADDRESS, 1); //Ask for 1 byte, once done, bus is released by default
-  Serial.print("ret2 was: ");
-  Serial.println(ret2);
+  Wire.requestFrom(MMA8452_ADDRESS, 1); //Ask for 1 byte, once done, bus is released by default
 
   while(!Wire.available()){
-    Serial.println("awitin...");
+    Serial.println("I2C not available. This should NEVER happen!");
     delay(100);
   } ; //Wait for the data to come back
   return Wire.read(); //Return this one byte
