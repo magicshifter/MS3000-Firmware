@@ -11,7 +11,9 @@
 #endif
 
 #define RGB_BUFFER_SIZE (4*LEDS)
-byte RGB_COLORS[RGB_BUFFER_SIZE ];
+byte ledBuffer[RGB_BUFFER_SIZE + 8];
+byte *RGB_COLORS = ledBuffer + 4;;
+
 
 void saveBuffer(byte *buffer)
 {
@@ -33,12 +35,24 @@ void InitSPI()
 {
   #ifdef USE_HW_SPI
     SPI.begin();
+    SPI.setFrequency(40000000);
   #else
     pinMode(PIN_LED_DATA, OUTPUT);
     pinMode(PIN_LED_CLOCK, OUTPUT);
   #endif
+}
 
-  SPI.setFrequency(40000000);
+void InitAPA102() {
+  ledBuffer[0] = 0;
+  ledBuffer[1] = 0;
+  ledBuffer[2] = 0;
+  ledBuffer[3] = 0;
+
+
+  ledBuffer[RGB_BUFFER_SIZE + 0] = 0;
+  ledBuffer[RGB_BUFFER_SIZE + 1] = 0;
+  ledBuffer[RGB_BUFFER_SIZE + 2] = 0;
+  ledBuffer[RGB_BUFFER_SIZE + 4] = 0;
 }
 
 void setPixel(int index, byte r, byte g, byte b, byte gs = 0x1F)
@@ -60,20 +74,16 @@ void fillPixels(byte r, byte g, byte b, byte gs = 0x1F)
 
 void updatePixels()
 {
+  SPI.writeBytes(ledBuffer, RGB_BUFFER_SIZE + 8);
+/*
   SPI.write32(0);
 
-  for (int idx = 0; idx < LEDS*4; idx++)
+  for (int idx = 0; idx < RGB_BUFFER_SIZE; idx++)
   {
     SPI.write(RGB_COLORS[idx]);
   }
 
-/*
-  for (int idx = 0; idx < LEDS; idx++)
-  {
-    SPI.write32(((long*)RGB_COLORS)[idx]);
-  }
-
-//  */
   SPI.write32(0);
+*/
 }
 #endif

@@ -54,6 +54,8 @@
 
 #include "CircleBall.h"
 
+#include "PerformanceTests.h"
+
 
 int shifterMode = 2;
 int accelCount[3];  // Stores the 12-bit signed value
@@ -196,6 +198,8 @@ void setup()
 
 //*/
 
+//TestLedTiming();
+
 
 
 
@@ -208,8 +212,8 @@ void setup()
   // accel
   InitI2C();
 
-
   // init components
+  InitAPA102();
   InitMMA8452(); //Test and intialize the MMA8452
   StartWebServer();
 }
@@ -224,7 +228,8 @@ bool getNextPOVData(byte *buffer, int size)
   {
     povFile = FS.open(uploadname, FSFILE_READ);
     loadFile = false;
-    Serial.println("opened");
+    Serial.print("opened: ");
+    Serial.println(uploadname);
     delay(2);
   }
 
@@ -237,7 +242,8 @@ bool getNextPOVData(byte *buffer, int size)
       {
         povFile.close();
         loadFile = true;
-        Serial.println("closed");
+        Serial.print("closed: ");
+        Serial.println(uploadname);
         delay(2);
       }
   }
@@ -245,8 +251,8 @@ bool getNextPOVData(byte *buffer, int size)
   {
     povFile.close();
     loadFile = true;
-    Serial.println("closeerror");
-    delay(2);
+    Serial.println("close error!");
+    delay(20);
   }
 }
 
