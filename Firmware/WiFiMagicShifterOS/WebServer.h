@@ -37,8 +37,34 @@ ESP8266WebServer server ( 80 );
 byte web_rgb_buffer[RGB_BUFFER_SIZE + 4];
 
 
-const char *uploadname = "shroom_png.magicBitmap";
+#define FILENAME_LENGTH 100
+
+char uploadname[FILENAME_LENGTH];
 FSFile uploadFile;
+
+
+void loadString(char * str, int len)
+{
+  for (int i = 0; i < len; i++)
+  {
+    str[i] = EEPROM.read(i);
+    Serial.print("read byte: ");
+    Serial.println((byte)str[i]);
+  }
+  str[len-1] = '\0';
+}
+
+void saveString(char * str, int len)
+{
+  Serial.print("saving string: ");
+  Serial.println(str);
+
+  for (int i = 0; i < len; i++)
+  {
+    EEPROM.write(i, str[i]);
+  }
+  EEPROM.commit();
+}
 
 void handleNotFound() {
   if (server.uri() != "/upload")
@@ -282,7 +308,7 @@ void handleFileUpload(){
   HTTPUpload& upload = server.upload();
   if(upload.status == UPLOAD_FILE_START)
   {
-    uploadname = upload.filename.c_str();
+    strcpy(uploadname, upload.filename.c_str());//.c_str();
     Serial.print("upload started: ");
     Serial.println(upload.filename.c_str());
     uploadFile = FS.open(upload.filename.c_str(), FSFILE_OVERWRITE);
@@ -309,6 +335,8 @@ void handleFileUpload(){
   }
   else if(upload.status == UPLOAD_FILE_END)
   {
+    saveString(uploadname, FILENAME_LENGTH);
+
     if(uploadFile)
     {
       //bool result;
@@ -322,6 +350,19 @@ void handleFileUpload(){
 }
 
 void StartWebServer ( void ) {
+
+  EEPROM.begin(512);
+  loadString(uploadname, FILENAME_LENGTH);
+  Serial.print(" current POV file: ");
+  Serial.println(uploadname);
+
+  if (!FS.exists(uploadname))
+  {
+    strcpy(uploadname, "shroom_png.magicBitmap");
+  }
+  Serial.print("using POV file: ");
+  Serial.println(uploadname);
+
   Serial.print("connecting to AP: ");
   Serial.println(ssid);
   WiFi.begin ( ssid, password );

@@ -34,6 +34,9 @@
 #include <time.h>
 #include <math.h>	/* for HUGE_VAL */
 
+
+#include <EEPROM.h>
+
 #define LEDS 48
 //#define LEDS 16
 
@@ -69,7 +72,7 @@ byte bright = 0x03;
 byte gs = 0x1;
 int loops = 0;
 
-extern const char *uploadname;
+extern char uploadname[];
 
 
 
@@ -228,8 +231,8 @@ bool getNextPOVData(byte *buffer, int size)
   {
     povFile = FS.open(uploadname, FSFILE_READ);
     loadFile = false;
-    Serial.print("opened: ");
-    Serial.println(uploadname);
+    //Serial.print("opened: ");
+    //Serial.println(uploadname);
     delay(2);
   }
 
@@ -242,8 +245,8 @@ bool getNextPOVData(byte *buffer, int size)
       {
         povFile.close();
         loadFile = true;
-        Serial.print("closed: ");
-        Serial.println(uploadname);
+        //Serial.print("closed: ");
+        //Serial.println(uploadname);
         delay(2);
       }
   }
@@ -306,6 +309,8 @@ void loop()
       getNextPOVData(povData, RGB_BUFFER_SIZE);
       loadBuffer(povData);
       updatePixels();
+
+
     }
   }
 
