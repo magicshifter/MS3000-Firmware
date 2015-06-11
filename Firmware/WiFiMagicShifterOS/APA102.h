@@ -12,6 +12,8 @@
 
 #define RGB_BUFFER_SIZE (4*LEDS)
 byte ledBuffer[RGB_BUFFER_SIZE + 8];
+byte clearBuffer[RGB_BUFFER_SIZE + 8];
+
 byte *RGB_COLORS = ledBuffer + 4;;
 
 
@@ -53,6 +55,16 @@ void InitAPA102() {
   ledBuffer[RGB_BUFFER_SIZE + 1] = 0;
   ledBuffer[RGB_BUFFER_SIZE + 2] = 0;
   ledBuffer[RGB_BUFFER_SIZE + 4] = 0;
+
+
+
+  for (int i = 0; i < RGB_BUFFER_SIZE + 8; i+=4)
+  {
+    clearBuffer[i] = (i < 4 || i >= RGB_BUFFER_SIZE + 4) ? 0 : 0xFF;
+    clearBuffer[i+1] = 0;
+    clearBuffer[i+2] = 0;
+    clearBuffer[i+3] = 0;
+  }
 }
 
 void setPixel(int index, byte r, byte g, byte b, byte gs = 0x1F)
@@ -85,5 +97,10 @@ void updatePixels()
 
   SPI.write32(0);
 */
+}
+
+void fastClear()
+{
+  SPI.writeBytes(clearBuffer, RGB_BUFFER_SIZE + 8);
 }
 #endif

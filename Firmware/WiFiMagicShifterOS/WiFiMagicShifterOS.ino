@@ -302,11 +302,12 @@ void loop()
       byte povData[RGB_BUFFER_SIZE];
       getNextPOVData(povData, RGB_BUFFER_SIZE);
       loadBuffer(povData);
+      updatePixels();
 
-      updatePixels();
+      fastClear();
       // manual blank, could be faster...
-      fillPixels(0,0,0);
-      updatePixels();
+      //fillPixels(0,0,0);
+      //updatePixels();
     }
   }
 
