@@ -22,12 +22,12 @@ const char *ssid = "metalab";
 const char *password = "";
 */
 
-const char *ssid = "wizard23";
+//const char *ssid = "wizard23";
 //const char *ssid = "wizme";
-const char *password = "lolinternets";
+//const char *password = "lolinternets";
 
-// const char* ssid = "MyPlace";
-// const char* password = "gieb8nua4uns";
+const char* ssid = "MyPlace";
+const char* password = "gieb8nua4uns";
 
 
 MDNSResponder mdns;

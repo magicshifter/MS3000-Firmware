@@ -65,7 +65,7 @@ int accelCount[3];  // Stores the 12-bit signed value
 int oldButton1State = 0;
 CircleBall ball(600.);
 int currentMicros = 0, lastMicros = 0;
-int speedMicros = 1000;
+int speedMicros = 3000;
 long lastFrameMicros = 0;
 int frame = 0;
 byte bright = 0x03;
@@ -73,11 +73,6 @@ byte gs = 0x1;
 int loops = 0;
 
 extern char uploadname[];
-
-
-
-
-uint32 spi_flash_get_id(void);
 
 /*
 SpiFlashOpResult spi_flash_erase_sector(uint16 sec);
@@ -149,16 +144,15 @@ void setup()
 
 
 
-  char *filename = "bitmap1.magicbitmap";
   Serial.print("FS mount: ");
   Serial.println(FS.mount());
 /*
-
     //void unmount();
     //bool format();
     //Serial.print("FS check: ");
     //Serial.println(FS.check());
 
+    char *filename = "bitmap1.magicbitmap";
 
 
     Serial.print("FS exists: ");
