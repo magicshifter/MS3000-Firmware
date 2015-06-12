@@ -5,7 +5,7 @@
 #include <ESP8266mDNS.h>
 #include <Base64.h>
 
-//#include <ArduinoJson.h>
+#include "Config.h"
 #include "APA102.h"
 
 #define USE_MDNS
@@ -13,21 +13,7 @@
 
 #define BASE64_ENC_LEN(n) (((n) + 2 - (((n) + 2) % 3)) / 3 * 4);
 
-/*
-const char *ssid = "fnord";
-const char *password = "fnord235";
-*/
-/*
-const char *ssid = "metalab";
-const char *password = "";
-*/
 
-const char *ssid = "wizard23";
-//const char *ssid = "wizme";
-const char *password = "lolinternets";
-
-//const char* ssid = "MyPlace";
-//const char* password = "gieb8nua4uns";
 
 
 MDNSResponder mdns;

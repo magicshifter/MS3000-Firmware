@@ -1,4 +1,3 @@
-#!bash
 
 dumpname=firmware-0x0000.bin
 buildname=./build/WiFiMagicShifterOS.cpp.bin

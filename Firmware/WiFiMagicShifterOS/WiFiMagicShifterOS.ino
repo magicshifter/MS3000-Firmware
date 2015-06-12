@@ -1,23 +1,14 @@
-// 2M / 1MB SPIFFS
 #include "SPI.h"
 #include <Ticker.h>
 #include <math.h>
 #include <Wire.h> // Used for I2C
 #include <Arduino.h>
 #include <FileSystem.h>
-
-//#include <flashmem.h>
-//#include "spi_flash.h"
-//#include <spi_flash.h>
-
-
 #include <Esp.h>
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
-//#include <ArduinoJson.h>
-
 #include <Base64.h>
 
 #include <stdbool.h>
@@ -51,6 +42,7 @@
 //#define MMA8452_ADDRESS 0x1D  // 0x1D if SA0 is high, 0x1C if low
 #define MMA8452_ADDRESS 0x1C
 
+#include "Config.h"
 #include "APA102.h"
 #include "MMA8542.h"
 #include "WebServer.h"
@@ -304,6 +296,7 @@ void loop()
       loadBuffer(povData);
       updatePixels();
 
+      delayMicroseconds(200);
       fastClear();
       // manual blank, could be faster...
       //fillPixels(0,0,0);
