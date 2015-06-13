@@ -13,6 +13,7 @@ const char *password = "";
 const char *ssid = "wizard23";
 //const char *ssid = "wizme";
 const char *password = "lolinternets";
+const bool saveSSID = true;
 
 //const char* ssid = "MyPlace";
 //const char* password = "gieb8nua4uns";
