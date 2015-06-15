@@ -25,6 +25,12 @@
 #include <time.h>
 #include <math.h>	/* for HUGE_VAL */
 
+//compiler.c.elf.libs=-lm -lgcc -lhal -lphy -lnet80211 -llwip -lwpa -lmain -lpp -lsmartconfig -lc -ljson
+extern "C" {
+#include "json/json.h"
+#include <json/jsonparse.h>
+#include <json/jsontree.h>
+}
 
 #include <EEPROM.h>
 
@@ -77,6 +83,52 @@ void setup()
   Serial.begin(115200);
   Serial.println("\r\nMagicShifter 3000 OS V0.24");
 
+
+/*
+  struct jsonparse_state jsonState;
+  const char *jsonLastAP = "{\"last\":{\"ssid\":\"wizard23\", \"pwd\":\"lolinternets\"}";
+  const char *jsonAPList =  "{\"list\": [{\"ssid\":\"wizard23\", \"pwd\":\"lolinternets\"}, {\"ssid\":\"PACIFIC\", \"pwd\":\"AllesR0ger\"}]}";
+
+  jsonparse_setup(&jsonState, jsonAPList, strlen(jsonAPList));
+  Serial.print("jsonparse_setup state:");
+  Serial.println(jsonAPList);
+  Serial.println(jsonState.pos);
+  Serial.println(jsonState.len);
+  Serial.println(jsonState.error);
+
+
+  char copyBuffer[100];
+  int copyResult, lenResult, typeResult, nextResult;
+
+
+  for (int i = 0; i < 30; i++)
+  {
+    lenResult = jsonparse_get_len(&jsonState);
+    Serial.print("len: ");
+    Serial.println(lenResult);
+
+    typeResult = jsonparse_get_type(&jsonState);
+    Serial.print("type: ");
+    Serial.print((char)typeResult);
+    Serial.println(typeResult);
+
+    copyResult = jsonparse_copy_value(&jsonState, copyBuffer, 100);
+    Serial.print("copy: ");
+    Serial.println(copyResult);
+    Serial.println(copyBuffer);
+
+    nextResult = jsonparse_next(&jsonState);
+    Serial.print("next: ");
+    Serial.print((char)nextResult);
+    Serial.println(nextResult);
+  }
+
+
+while (1)
+  delay(100);
+
+
+*/
 
   // DUMP sysinfo
   Serial.print("Vcc: ");

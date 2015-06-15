@@ -32,6 +32,7 @@ void saveString(char * str, int len)
   EEPROM.commit();
 }
 
+#include "WebServerSettings.h"
 #include "WebServerRoutes.h"
 
 String getContentType(String filename){
@@ -84,6 +85,7 @@ void StartWebServer(void)
   Serial.print("using POV file: ");
   Serial.println(uploadname);
 
+/*
   Serial.print("connecting to AP: ");
   Serial.println(ssid);
   WiFi.begin ( ssid, password );
@@ -109,7 +111,12 @@ void StartWebServer(void)
   Serial.println ( ssid );
   Serial.print ( "IP address: " );
   Serial.println ( WiFi.localIP() );
-
+*/
+while (!AutoConnect())
+{
+  Serial.println("ARGL: WHY U no WLAN!? :( retrying...");
+  delay(100);
+}
 #ifdef USE_MDNS
   if ( mdns.begin ( "magicshifter", WiFi.localIP() ) ) {
     Serial.println ( "MDNS responder started" );
