@@ -1,5 +1,3 @@
-
-
 #define JSON_TYPE_ARRAY_END ']'
 #define JSON_TYPE_OBJECT_END '}'
 #define JSON_TYPE_SEPERATOR ','
@@ -8,16 +6,26 @@ const char *jsonLastAP =
 //"{\"ssid\":\"PACIFIC\", \"pwd\":\"AllesR0ger\"}";
 "{\"ssid\":\"wizard23\", \"pwd\":\"lolinternets\"}";
 
-const char *jsonAPList =  "{\"list\": [{\"ssid\":\"wizard23\", \"pwd\":\"lolinternets\"}, {\"ssid\":\"PACIFIC\", \"pwd\":\"AllesR0ger\"}]}";
-
+const char *jsonAPList =
+"{\"list\": [\
+{\"ssid\":\"wizard23\", \"pwd\":\"lolinternets\"},\
+{\"ssid\":\"PACIFIC\", \"pwd\":\"AllesR0ger\"} \
+]}";
 
 #define MAX_AP_LEN 48
-
 struct APInfo
 {
     char ssid[MAX_AP_LEN];
     char password[MAX_AP_LEN];
 };
+
+void ReportJsonLocation(struct jsonparse_state *jsonStatePtr)
+{
+  Serial.print("at position: ");
+  Serial.print(jsonStatePtr->pos);
+  Serial.print(" of text: ");
+  Serial.println(jsonStatePtr->json);
+}
 
 bool AssertParseNext(struct jsonparse_state *jsonStatePtr, byte expectedType)
 {
@@ -28,11 +36,8 @@ bool AssertParseNext(struct jsonparse_state *jsonStatePtr, byte expectedType)
     Serial.print("AssertParseNext failed! Expected: ");
     Serial.print(expectedType);
     Serial.print(" but found: ");
-    Serial.print(type);
-    Serial.print(" at position: ");
-    Serial.println(jsonStatePtr->pos);
-    Serial.print("in: ");
-    Serial.println(jsonStatePtr->json);
+    Serial.println(type);
+    ReportJsonLocation(jsonStatePtr);
     return false;
   }
   return true;
@@ -52,12 +57,23 @@ int AssertParseNextMultiple(struct jsonparse_state *jsonStatePtr, byte typeA, by
   Serial.print(typeB);
 
   Serial.print(" but found: ");
-  Serial.print(type);
-  Serial.print(" at position: ");
-  Serial.println(jsonStatePtr->pos);
-  Serial.print("in: ");
-  Serial.println(jsonStatePtr->json);
+  Serial.println(type);
+  ReportJsonLocation(jsonStatePtr);
   return -1;
+}
+
+int TryParseKeyValue(struct jsonparse_state *jsonStatePtr, const char *key, char *data, int size)
+{
+  if (jsonparse_strcmp_value(jsonStatePtr, key) == 0)
+  {
+    // 0 means syntax error
+    if (!AssertParseNext(jsonStatePtr, JSON_TYPE_PAIR)) return 0;
+    if (!AssertParseNext(jsonStatePtr, JSON_TYPE_STRING)) return 0;
+    jsonparse_copy_value(jsonStatePtr, data, size);
+
+    return 2; // 2 means correct syntax and key found
+  }
+  return 1; // 1 means correct syntax but not found
 }
 
 bool ParseAPInfo(struct APInfo *apInfo, struct jsonparse_state *jsonState)
@@ -66,41 +82,36 @@ bool ParseAPInfo(struct APInfo *apInfo, struct jsonparse_state *jsonState)
 
   if (!AssertParseNext(jsonState, JSON_TYPE_OBJECT)) return false;
 
-  while ((type = jsonparse_next(jsonState)) == JSON_TYPE_PAIR_NAME ||
-    type == JSON_TYPE_SEPERATOR)
+  while ((type = jsonparse_next(jsonState)) == JSON_TYPE_PAIR_NAME || type == JSON_TYPE_SEPERATOR)
   {
-    Serial.print((char)type); Serial.print(type); Serial.println("//parsed");
-
     if (type == JSON_TYPE_PAIR_NAME)
     {
-      if (jsonparse_strcmp_value(jsonState, "ssid") == 0)
-      {
-        if (jsonparse_next(jsonState) != JSON_TYPE_PAIR) { Serial.print(jsonparse_get_type(jsonState)); Serial.println("-xb"); return false; }
-        if (jsonparse_next(jsonState) != JSON_TYPE_STRING) { Serial.print(jsonparse_get_type(jsonState)); Serial.println("-xc"); return false; }
-        jsonparse_copy_value(jsonState, apInfo->ssid, MAX_AP_LEN);
-      }
-      else if (jsonparse_strcmp_value(jsonState, "pwd") == 0)
-      {
-        if (jsonparse_next(jsonState) != JSON_TYPE_PAIR) { Serial.print(jsonparse_get_type(jsonState)); Serial.println("-xd"); return false; }
-        if (jsonparse_next(jsonState) != JSON_TYPE_STRING) { Serial.print(jsonparse_get_type(jsonState)); Serial.println("-xe"); return false; }
-        jsonparse_copy_value(jsonState, apInfo->password, MAX_AP_LEN);
-      }
-      else
-      {
-        jsonparse_copy_value(jsonState, apInfo->ssid, MAX_AP_LEN);
-        Serial.println(apInfo->ssid);
-        Serial.print((char)type); Serial.print(type); Serial.println("//uknwn");
-      }
-    }
-    else
-    {
-      Serial.print((char)type); Serial.print(type); Serial.println("//ignored");
+      int parseResult;
+
+      if (!(parseResult = TryParseKeyValue(jsonState, "ssid", apInfo->ssid, MAX_AP_LEN))) return false;
+      if (parseResult == 2) continue;
+
+      if (!(parseResult = TryParseKeyValue(jsonState, "pwd", apInfo->password, MAX_AP_LEN))) return false;
+      if (parseResult == 2) continue;
+
+      // TODO: improve skipping of unnecessary fields
+      char key[20];
+      jsonparse_copy_value(jsonState, key, 20);
+      Serial.print("ignoring unknown key: ");
+      Serial.println(key);
+      ReportJsonLocation(jsonState);
+      if (!AssertParseNext(jsonState, JSON_TYPE_PAIR)) return false;
+      if (!AssertParseNext(jsonState, JSON_TYPE_STRING)) return false;
     }
   }
-  Serial.print((char)type); Serial.print(type); Serial.println("//exparsed");
 
-  if (type != JSON_TYPE_OBJECT_END) {
-    Serial.print(type); Serial.print("/"); Serial.print(jsonparse_get_type(jsonState)); Serial.println("-xxf"); return false; }
+  if (type != JSON_TYPE_OBJECT_END)
+  {
+    Serial.print("Expected end of object '}' but got: ");
+    Serial.println(type);
+    ReportJsonLocation(jsonState);
+    return false;
+  }
   return true;
 }
 
@@ -108,8 +119,6 @@ bool TryConnect(struct APInfo &apInfo, int timeoutMs)
 {
   Serial.print("trying to connect to AP: ");
   Serial.println(apInfo.ssid);
-  //Serial.print("pwd: ");
-  //Serial.println(apInfo.password);
   WiFi.begin (apInfo.ssid, apInfo.password );
 
   // Wait for connection
@@ -134,7 +143,7 @@ bool TryConnect(struct APInfo &apInfo, int timeoutMs)
       Serial.println ( ssid );
       return false; // :(
     }
-    delay(10);
+    delay(20);
   }
 
   Serial.println ( "" );
@@ -148,7 +157,7 @@ bool TryConnect(struct APInfo &apInfo, int timeoutMs)
 
 bool AutoConnect()
 {
-  #define CONNECTION_TIMEOUT 30000
+  #define CONNECTION_TIMEOUT 40000
   struct jsonparse_state jsonState;
   jsonparse_setup(&jsonState, jsonLastAP, strlen(jsonLastAP));
 
@@ -190,21 +199,16 @@ bool AutoConnect()
 
   jsonparse_setup(&jsonState, jsonAPList, strlen(jsonAPList));
 
-  if (jsonparse_next(&jsonState) != JSON_TYPE_OBJECT) { Serial.print(jsonparse_get_type(&jsonState)); Serial.println("-a"); return false; }
-  if (jsonparse_next(&jsonState) != JSON_TYPE_PAIR_NAME) { Serial.print(jsonparse_get_type(&jsonState)); Serial.println("-b"); return false; }
-  if (jsonparse_next(&jsonState) != JSON_TYPE_PAIR) { Serial.print(jsonparse_get_type(&jsonState)); Serial.println("-c"); return false; }
-  if (jsonparse_next(&jsonState) != JSON_TYPE_ARRAY) {Serial.print(jsonparse_get_type(&jsonState)); Serial.println("-dd"); return false; }
+  if (!AssertParseNext(&jsonState, JSON_TYPE_OBJECT)) return false;
+  if (!AssertParseNext(&jsonState, JSON_TYPE_PAIR_NAME)) return false;
+  if (!AssertParseNext(&jsonState, JSON_TYPE_PAIR)) return false;
+  if (!AssertParseNext(&jsonState, JSON_TYPE_ARRAY)) return false;
 
   bool result;
   while (ParseAPInfo(&apInfo, &jsonState))
   {
     for (int i = 0; i < n; i++)
     {
-      Serial.println("comparing: ");
-      Serial.println(WiFi.SSID(i));
-      Serial.println(apInfo.ssid);
-      Serial.println(strcmp(WiFi.SSID(i), apInfo.ssid));
-
       if (strcmp(WiFi.SSID(i), apInfo.ssid) == 0)
       {
         if (TryConnect(apInfo, CONNECTION_TIMEOUT))
@@ -217,7 +221,6 @@ bool AutoConnect()
 
     int nextTypeIndex;
     if ((nextTypeIndex = AssertParseNextMultiple(&jsonState, JSON_TYPE_ARRAY_END, JSON_TYPE_SEPERATOR)) < 0)
-    //if ((nextTypeIndex = AssertParseNextMultiple(&jsonState, [']', ','], 2)) < 0)
     {
       Serial.println("Invalid list of stored WiFi APs!");
       return false;
