@@ -90,17 +90,16 @@ void handleReadFile()
   if (server.args() >= 1)
   {
     String args = server.arg(0);
-    const char* filename = args.c_str();
 
-    message += "file: \"" + server.arg(0) /* String(filename)*/ + "\"\n";
-
-    message += "file cast: \"" +  String(filename) + "\"\n";
+    strcpy(uploadname, args.c_str());
 
     message += "file: \"" + args /* String(filename)*/ + "\"\n";
 
+    //message += "file name strcpied: \"" +  uploadname + "\"\n";
+
 
     byte buffer[105];
-    FSFile file = FS.open(filename, FSFILE_READ);
+    FSFile file = FS.open(uploadname, FSFILE_READ);
 
     if (file)
     {
@@ -251,8 +250,8 @@ void handleFileUpload(){
   {
     strcpy(uploadname, upload.filename.c_str());//.c_str();
     Serial.print("upload started: ");
-    Serial.println(upload.filename.c_str());
-    uploadFile = FS.open(upload.filename.c_str(), FSFILE_OVERWRITE);
+    Serial.println(uploadname);
+    uploadFile = FS.open(uploadname, FSFILE_OVERWRITE);
 
     if (!uploadFile)
       Serial.println("ERROR: COULD NOT open file!!!");

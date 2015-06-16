@@ -18,6 +18,8 @@ const bool saveSSID = true;
 //const char* ssid = "MyPlace";
 //const char* password = "gieb8nua4uns";
 
+#define POV_TIME_MICROSECONDS 10
+
 #define LEDS 48
 //#define LEDS 16
 

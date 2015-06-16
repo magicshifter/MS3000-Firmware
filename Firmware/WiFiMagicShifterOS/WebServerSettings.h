@@ -9,8 +9,13 @@ const char *jsonLastAP =
 const char *jsonAPList =
 "{\"list\": [\
 {\"ssid\":\"wizard23\", \"pwd\":\"lolinternets\"},\
+{\"ssid\":\"wizme\", \"pwd\":\"lolinternets\"},\
 {\"ssid\":\"PACIFIC\", \"pwd\":\"AllesR0ger\"} \
 ]}";
+
+const char *jsonSoftAP = "{\"ssid\":\"MagicShifter3000\", \"pwd\":\"lolinternets\"}";
+
+
 
 #define MAX_AP_LEN 48
 struct APInfo
@@ -139,8 +144,8 @@ bool TryConnect(struct APInfo &apInfo, int timeoutMs)
     if (WiFi.status() == WL_NO_SSID_AVAIL || WiFi.status() == WL_CONNECT_FAILED || millis() > startTime + timeoutMs)
     {
       Serial.println ( "" );
-      Serial.print ( "Could NOT connect to:" );
-      Serial.println ( ssid );
+      Serial.print ("Could NOT connect to:");
+      Serial.println(apInfo.ssid);
       return false; // :(
     }
     delay(20);
@@ -155,13 +160,75 @@ bool TryConnect(struct APInfo &apInfo, int timeoutMs)
   return true;
 }
 
+bool TrySoftAP(struct APInfo &apInfo, int timeoutMs)
+{
+  Serial.print("Configuring access point: ");
+  Serial.print(apInfo.ssid);
+  Serial.print(" password: ");
+  Serial.println(apInfo.password);
+
+  /* You can remove the password parameter if you want the AP to be open. */
+  if (strlen(apInfo.password) == 0)
+  {
+    WiFi.softAP(apInfo.ssid);
+  }
+  else
+  {
+    WiFi.softAP(apInfo.ssid, apInfo.password, 12);
+  }
+
+  // Wait for connection
+  int frame = 0;
+  long startTime = millis();
+
+  while (WiFi.status() != WL_CONNECTED) {
+    for (int i = 0; i < LEDS; i++)
+    {
+      if (i < frame % LEDS)
+        setPixel(i, 0, 0, 1, 0x5);
+      else
+        setPixel(i, 0, 0, 0, 0);
+    }
+    updatePixels();
+    frame++;
+    if (frame%50 == 0) Serial.print(".");
+/*
+    if (WiFi.status() == 6)
+    {
+      Serial.println("stat 6 return");
+      delay(6000);
+      break;
+    }
+    */
+    if (/*WiFi.status() == WL_NO_SSID_AVAIL || WiFi.status() == WL_CONNECT_FAILED || */millis() > startTime + timeoutMs)
+    {
+      Serial.println ( "" );
+      Serial.print ( "Could NOT set up access point:" );
+      Serial.println ( apInfo.ssid );
+      return false; // :(
+    }
+    Serial.print("status: ");
+    Serial.println(WiFi.status());
+    delay(400);
+  }
+
+  Serial.println ( "" );
+  Serial.print ( "Established acces point: " );
+  Serial.println ( apInfo.ssid );
+  Serial.print ( "IP address: " );
+  Serial.println ( WiFi.localIP() );
+
+  return true;
+}
+
 bool AutoConnect()
 {
   #define CONNECTION_TIMEOUT 40000
   struct jsonparse_state jsonState;
+  struct APInfo apInfo;
+
   jsonparse_setup(&jsonState, jsonLastAP, strlen(jsonLastAP));
 
-  struct APInfo apInfo;
   if (ParseAPInfo(&apInfo, &jsonState))
   {
     Serial.println("stored last ssid found!");
@@ -169,6 +236,10 @@ bool AutoConnect()
     {
       return true; // no need to change anything
     }
+  }
+  else
+  {
+    Serial.println("stored last ssid has syntax error or is missing!");
   }
 
   Serial.println("WiFi AP scan starting...");
@@ -195,7 +266,6 @@ bool AutoConnect()
     }
   }
   Serial.println("");
-
 
   jsonparse_setup(&jsonState, jsonAPList, strlen(jsonAPList));
 
@@ -231,6 +301,27 @@ bool AutoConnect()
       break;
     }
   }
+
+  // AP does not work as of 16.5.2015
+  // it never connects but it shows up as MagicShifter3000 wlan and i can connect with my laptop to it
+  // TODO: investigate further
+
+  Serial.println("fallback to standalone access point...");
+  jsonparse_setup(&jsonState, jsonSoftAP, strlen(jsonSoftAP));
+
+  if (ParseAPInfo(&apInfo, &jsonState))
+  {
+    Serial.println("stored AP config found!");
+    if (TrySoftAP(apInfo, CONNECTION_TIMEOUT))
+    {
+      return true;
+    }
+  }
+  else
+  {
+    Serial.println("stored AP config has syntax error or is missing!");
+  }
+
 
   Serial.println("ERROR: AutoConnect failed!");
   return false;

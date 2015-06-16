@@ -172,19 +172,13 @@ while (1)
   Serial.println(ESP.getFlashChipMode());
 
   Serial.print("Sketch size: ");
-  Serial.println(ESP.getSketchSize());
+  //Serial.println(ESP.getSketchSize());
 
   Serial.print("Free sketch space: ");
-  Serial.println(ESP.getFreeSketchSpace());
+  //Serial.println(ESP.getFreeSketchSpace());
 
   Serial.print("Reset info: ");
-  Serial.println(ESP.getResetInfo());
-
-
-
-  //delay(1000);
-
-  spi_flash_get_id();
+  //Serial.println(ESP.getResetInfo());
 
 
 
@@ -348,7 +342,7 @@ void loop()
       loadBuffer(povData);
       updatePixels();
 
-      delayMicroseconds(200);
+      delayMicroseconds(POV_TIME_MICROSECONDS);
       fastClear();
       // manual blank, could be faster...
       //fillPixels(0,0,0);
