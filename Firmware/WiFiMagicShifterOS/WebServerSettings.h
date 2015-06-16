@@ -168,14 +168,19 @@ bool TrySoftAP(struct APInfo &apInfo, int timeoutMs)
   Serial.println(apInfo.password);
 
   /* You can remove the password parameter if you want the AP to be open. */
+  //WiFi.mode(WIFI_AP);
+  WiFi.mode(WIFI_AP_STA);
+  WiFi.softAPConfig(IPAddress(10,20,30,40), IPAddress(10,1,1,1), IPAddress(255, 255, 255, 0));
   if (strlen(apInfo.password) == 0)
   {
     WiFi.softAP(apInfo.ssid);
   }
   else
   {
-    WiFi.softAP(apInfo.ssid, apInfo.password, 12);
+    WiFi.softAP(apInfo.ssid, apInfo.password);
   }
+
+  WiFi.softAPConfig(IPAddress(10,20,30,40), IPAddress(10,1,1,1), IPAddress(255, 255, 255, 0));
 
   // Wait for connection
   int frame = 0;
@@ -269,10 +274,11 @@ bool AutoConnect()
 
   jsonparse_setup(&jsonState, jsonAPList, strlen(jsonAPList));
 
-  if (!AssertParseNext(&jsonState, JSON_TYPE_OBJECT)) return false;
-  if (!AssertParseNext(&jsonState, JSON_TYPE_PAIR_NAME)) return false;
-  if (!AssertParseNext(&jsonState, JSON_TYPE_PAIR)) return false;
-  if (!AssertParseNext(&jsonState, JSON_TYPE_ARRAY)) return false;
+do {
+  if (!AssertParseNext(&jsonState, JSON_TYPE_OBJECT)) break;
+  if (!AssertParseNext(&jsonState, JSON_TYPE_PAIR_NAME)) break;
+  if (!AssertParseNext(&jsonState, JSON_TYPE_PAIR)) break;
+  if (!AssertParseNext(&jsonState, JSON_TYPE_ARRAY)) break;
 
   bool result;
   while (ParseAPInfo(&apInfo, &jsonState))
@@ -293,7 +299,7 @@ bool AutoConnect()
     if ((nextTypeIndex = AssertParseNextMultiple(&jsonState, JSON_TYPE_ARRAY_END, JSON_TYPE_SEPERATOR)) < 0)
     {
       Serial.println("Invalid list of stored WiFi APs!");
-      return false;
+      break;
     }
     if (nextTypeIndex == 0)
     {
@@ -301,6 +307,8 @@ bool AutoConnect()
       break;
     }
   }
+} while(0);
+
 
   // AP does not work as of 16.5.2015
   // it never connects but it shows up as MagicShifter3000 wlan and i can connect with my laptop to it

@@ -1,3 +1,9 @@
+/* NOTES
+
+prevent restarts: Make sure GPIO 2 is not connected, i.e. float.
+from https://github.com/esp8266/Arduino/issues/373
+*/
+
 #include "SPI.h"
 #include <Ticker.h>
 #include <math.h>
@@ -255,6 +261,7 @@ while (1)
 
 
 bool loadFile = true;
+bool closeErrorReported = false;
 FSFile povFile;
 
 bool getNextPOVData(byte *buffer, int size)
@@ -281,13 +288,21 @@ bool getNextPOVData(byte *buffer, int size)
         //Serial.println(uploadname);
         delay(2);
       }
+      else
+      {
+        closeErrorReported = false;
+      }
   }
   else
   {
     povFile.close();
     loadFile = true;
-    Serial.println("close error!");
-    delay(20);
+    if (!closeErrorReported)
+    {
+      Serial.println("close error!");
+      closeErrorReported = true;
+      delay(20);
+    }
   }
 }
 
