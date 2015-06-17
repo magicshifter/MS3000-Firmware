@@ -2,18 +2,18 @@
 #define JSON_TYPE_OBJECT_END '}'
 #define JSON_TYPE_SEPERATOR ','
 
+const bool forceAPMode = true;
+
 const char *jsonLastAP =
 //"{\"ssid\":\"PACIFIC\", \"pwd\":\"AllesR0ger\"}";
 "{\"ssid\":\"wizard23\", \"pwd\":\"lolinternets\"}";
 
-const char *jsonAPList =
-"{\"list\": [\
+const char *jsonAPList = "{\"list\": [\
 {\"ssid\":\"wizard23\", \"pwd\":\"lolinternets\"},\
-{\"ssid\":\"wizme\", \"pwd\":\"lolinternets\"},\
-{\"ssid\":\"PACIFIC\", \"pwd\":\"AllesR0ger\"} \
+{\"ssid\":\"wizme\", \"pwd\":\"lolinternets\"}\
 ]}";
 
-const char *jsonSoftAP = "{\"ssid\":\"MagicShifter3000\", \"pwd\":\"lolinternets\"}";
+const char *jsonSoftAP = "{\"ssid\":\"MagicShifter3000\", \"pwd\":\"\"}";
 
 
 
@@ -167,10 +167,13 @@ bool TrySoftAP(struct APInfo &apInfo, int timeoutMs)
   Serial.print(" password: ");
   Serial.println(apInfo.password);
 
+  Serial.print("SoftAP IP: ");
+  Serial.println(WiFi.softAPIP());
+
   /* You can remove the password parameter if you want the AP to be open. */
   //WiFi.mode(WIFI_AP);
-  WiFi.mode(WIFI_AP_STA);
-  WiFi.softAPConfig(IPAddress(10,20,30,40), IPAddress(10,1,1,1), IPAddress(255, 255, 255, 0));
+  //WiFi.mode(WIFI_AP_STA);
+//  WiFi.softAPConfig(IPAddress(10,20,30,40), IPAddress(10,1,1,1), IPAddress(255, 255, 255, 0));
   if (strlen(apInfo.password) == 0)
   {
     WiFi.softAP(apInfo.ssid);
@@ -180,7 +183,10 @@ bool TrySoftAP(struct APInfo &apInfo, int timeoutMs)
     WiFi.softAP(apInfo.ssid, apInfo.password);
   }
 
-  WiFi.softAPConfig(IPAddress(10,20,30,40), IPAddress(10,1,1,1), IPAddress(255, 255, 255, 0));
+  Serial.print("SoftAP IP: ");
+  Serial.println(WiFi.softAPIP());
+
+//  WiFi.softAPConfig(IPAddress(10,20,30,40), IPAddress(10,1,1,1), IPAddress(255, 255, 255, 0));
 
   // Wait for connection
   int frame = 0;
@@ -205,16 +211,22 @@ bool TrySoftAP(struct APInfo &apInfo, int timeoutMs)
       break;
     }
     */
-    if (/*WiFi.status() == WL_NO_SSID_AVAIL || WiFi.status() == WL_CONNECT_FAILED || */millis() > startTime + timeoutMs)
+    if (/*WiFi.status() == WL_NO_SSID_AVAIL || WiFi.status() == WL_CONNECT_FAILED || */millis() > startTime + 2000)//timeoutMs)
     {
       Serial.println ( "" );
       Serial.print ( "Could NOT set up access point:" );
       Serial.println ( apInfo.ssid );
-      return false; // :(
+      return true; // :(
     }
+    /*
     Serial.print("status: ");
     Serial.println(WiFi.status());
-    delay(400);
+    Serial.print("local IP: ");
+    Serial.println(WiFi.localIP());
+    Serial.print("SoftAP IP: ");
+    Serial.println(WiFi.softAPIP());
+    */
+    delay(20);
   }
 
   Serial.println ( "" );
@@ -232,83 +244,86 @@ bool AutoConnect()
   struct jsonparse_state jsonState;
   struct APInfo apInfo;
 
-  jsonparse_setup(&jsonState, jsonLastAP, strlen(jsonLastAP));
-
-  if (ParseAPInfo(&apInfo, &jsonState))
+  if (!forceAPMode)
   {
-    Serial.println("stored last ssid found!");
-    if (TryConnect(apInfo, CONNECTION_TIMEOUT))
+
+    jsonparse_setup(&jsonState, jsonLastAP, strlen(jsonLastAP));
+
+    if (ParseAPInfo(&apInfo, &jsonState))
     {
-      return true; // no need to change anything
-    }
-  }
-  else
-  {
-    Serial.println("stored last ssid has syntax error or is missing!");
-  }
-
-  Serial.println("WiFi AP scan starting...");
-  // WiFi.scanNetworks will return the number of networks found
-  int n = WiFi.scanNetworks();
-  Serial.println("scan done");
-  if (n == 0)
-    Serial.println("no networks found");
-  else
-  {
-    Serial.print(n);
-    Serial.println(" networks found");
-    for (int i = 0; i < n; ++i)
-    {
-      // Print SSID and RSSI for each network found
-      Serial.print(i + 1);
-      Serial.print(": ");
-      Serial.print(WiFi.SSID(i));
-      Serial.print(" (");
-      Serial.print(WiFi.RSSI(i));
-      Serial.print(")");
-      Serial.println((WiFi.encryptionType(i) == ENC_TYPE_NONE)?" ":"*");
-      delay(20);
-    }
-  }
-  Serial.println("");
-
-  jsonparse_setup(&jsonState, jsonAPList, strlen(jsonAPList));
-
-do {
-  if (!AssertParseNext(&jsonState, JSON_TYPE_OBJECT)) break;
-  if (!AssertParseNext(&jsonState, JSON_TYPE_PAIR_NAME)) break;
-  if (!AssertParseNext(&jsonState, JSON_TYPE_PAIR)) break;
-  if (!AssertParseNext(&jsonState, JSON_TYPE_ARRAY)) break;
-
-  bool result;
-  while (ParseAPInfo(&apInfo, &jsonState))
-  {
-    for (int i = 0; i < n; i++)
-    {
-      if (strcmp(WiFi.SSID(i), apInfo.ssid) == 0)
+      Serial.println("stored last ssid found!");
+      if (TryConnect(apInfo, CONNECTION_TIMEOUT))
       {
-        if (TryConnect(apInfo, CONNECTION_TIMEOUT))
-        {
-          // TODO: store it for netx
-          return true;
-        }
+        return true; // no need to change anything
       }
     }
+    else
+    {
+      Serial.println("stored last ssid has syntax error or is missing!");
+    }
 
-    int nextTypeIndex;
-    if ((nextTypeIndex = AssertParseNextMultiple(&jsonState, JSON_TYPE_ARRAY_END, JSON_TYPE_SEPERATOR)) < 0)
+    Serial.println("WiFi AP scan starting...");
+    // WiFi.scanNetworks will return the number of networks found
+    int n = WiFi.scanNetworks();
+    Serial.println("scan done");
+    if (n == 0)
+      Serial.println("no networks found");
+    else
     {
-      Serial.println("Invalid list of stored WiFi APs!");
-      break;
+      Serial.print(n);
+      Serial.println(" networks found");
+      for (int i = 0; i < n; ++i)
+      {
+        // Print SSID and RSSI for each network found
+        Serial.print(i + 1);
+        Serial.print(": ");
+        Serial.print(WiFi.SSID(i));
+        Serial.print(" (");
+        Serial.print(WiFi.RSSI(i));
+        Serial.print(")");
+        Serial.println((WiFi.encryptionType(i) == ENC_TYPE_NONE)?" ":"*");
+        delay(20);
+      }
     }
-    if (nextTypeIndex == 0)
-    {
-      Serial.println("None of the stored WiFi APs was found!");
-      break;
-    }
+    Serial.println("");
+
+    jsonparse_setup(&jsonState, jsonAPList, strlen(jsonAPList));
+
+    do {
+      if (!AssertParseNext(&jsonState, JSON_TYPE_OBJECT)) break;
+      if (!AssertParseNext(&jsonState, JSON_TYPE_PAIR_NAME)) break;
+      if (!AssertParseNext(&jsonState, JSON_TYPE_PAIR)) break;
+      if (!AssertParseNext(&jsonState, JSON_TYPE_ARRAY)) break;
+
+      bool result;
+      while (ParseAPInfo(&apInfo, &jsonState))
+      {
+        for (int i = 0; i < n; i++)
+        {
+          if (strcmp(WiFi.SSID(i), apInfo.ssid) == 0)
+          {
+            if (TryConnect(apInfo, CONNECTION_TIMEOUT))
+            {
+              // TODO: store it for netx
+              return true;
+            }
+          }
+        }
+
+        int nextTypeIndex;
+        if ((nextTypeIndex = AssertParseNextMultiple(&jsonState, JSON_TYPE_ARRAY_END, JSON_TYPE_SEPERATOR)) < 0)
+        {
+          Serial.println("Invalid list of stored WiFi APs!");
+          break;
+        }
+        if (nextTypeIndex == 0)
+        {
+          Serial.println("None of the stored WiFi APs was found!");
+          break;
+        }
+      }
+    } while(0);
   }
-} while(0);
-
 
   // AP does not work as of 16.5.2015
   // it never connects but it shows up as MagicShifter3000 wlan and i can connect with my laptop to it

@@ -64,7 +64,7 @@ extern "C" {
 #include "PerformanceTests.h"
 
 
-int shifterMode = 2;
+int shifterMode = 0;
 int accelCount[3];  // Stores the 12-bit signed value
 int oldButton1State = 0;
 CircleBall ball(600.);
@@ -244,6 +244,7 @@ while (1)
 
 
 
+
   // init pinmodes
   pinMode(PIN_BUTTON1, INPUT);
 
@@ -256,6 +257,67 @@ while (1)
   // init components
   InitAPA102();
   InitMMA8452(); //Test and intialize the MMA8452
+
+
+/*
+
+  byte r = 255, g, b;
+  byte gs = 0x04;
+  int pos = 0;
+
+  bright = 255;
+  gs = 0x1F;
+  float speed = 0.005;
+
+  frame = 1;
+  while (1)
+  {
+    lastMicros = currentMicros;
+    currentMicros = micros();
+
+    ball.applyForce((currentMicros - lastMicros)/1000.0, speed);
+    for (byte idx = 0; idx < LEDS; idx++)
+    {
+      float scale = ball.getLedBright(idx, LEDS);
+      scale *= 10;
+      setPixel(idx, (frame & 1) ? bright*scale : 0, (frame & 2) ? bright*scale : 0, (frame & 4) ? bright*scale : 0, gs);
+      //setPixel(idx, bright * scale, 0, bright * scale, gs);
+    }
+    updatePixels();
+    delay(1);
+
+    if (!digitalRead(PIN_BUTTON1))
+    {
+      oldButton1State++;
+    }
+    else
+    {
+      if (oldButton1State >= 500)
+      {
+        speed += 0.01;
+        if (speed > 0.1)
+        {
+          speed = 0.003;
+        }
+      }
+      else if (oldButton1State >= 200)
+      {
+        frame++;
+        frame %= 8;
+        if (frame == 0) frame++;
+      }
+      if (oldButton1State >= 5)
+      {
+        gs += 7;
+        gs %= 0x20;
+      }
+      oldButton1State = 0;
+    }
+  }
+*/
+
+
+
   StartWebServer();
 }
 
@@ -329,11 +391,12 @@ void loop()
     // pov ball mode
     if (shifterMode == 0)
     {
-      if (frame % 3 == 0)
+      /*if (frame % 3 == 0)
         fillPixels(bright, 0, 0, gs);
       else if (frame % 3 == 1)
         fillPixels(0, 0, bright, gs);
       else
+      */
       {
         for (byte idx = 0; idx < LEDS; idx++)
         {
