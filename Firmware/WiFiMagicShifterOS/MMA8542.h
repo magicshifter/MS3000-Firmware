@@ -13,7 +13,7 @@
 #define WHO_AM_I   0x0D
 #define CTRL_REG1  0x2A
 
-#define GSCALE 2 // Sets full-scale range to +/-2, 4, or 8g. Used to calc real g values.
+#define GSCALE 8 // Sets full-scale range to +/-2, 4, or 8g. Used to calc real g values.
 
 /*
  * void readRegisters(byte addressToRead, int bytesToRead, byte * dest);

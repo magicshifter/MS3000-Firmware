@@ -69,7 +69,7 @@ int accelCount[3];  // Stores the 12-bit signed value
 int oldButton1State = 0;
 CircleBall ball(600);
 int currentMicros = 0, lastMicros = 0;
-int speedMicros = 3000;
+int speedMicros = 1000;
 long lastFrameMicros = 0;
 int frame = 0;
 byte bright = 0x03;
