@@ -153,12 +153,6 @@ bool TrySoftAP(struct APInfo &apInfo, int timeoutMs)
   Serial.print(" password: ");
   Serial.println(apInfo.password);
 
-  Serial.print("SoftAP IP: ");
-  Serial.println(WiFi.softAPIP());
-
-  /* You can remove the password parameter if you want the AP to be open. */
-  //WiFi.mode(WIFI_AP);
-  //WiFi.mode(WIFI_AP_STA);
 //  WiFi.softAPConfig(IPAddress(10,20,30,40), IPAddress(10,1,1,1), IPAddress(255, 255, 255, 0));
   if (strlen(apInfo.password) == 0)
   {
@@ -171,54 +165,14 @@ bool TrySoftAP(struct APInfo &apInfo, int timeoutMs)
 
   Serial.print("SoftAP IP: ");
   Serial.println(WiFi.softAPIP());
-
-//  WiFi.softAPConfig(IPAddress(10,20,30,40), IPAddress(10,1,1,1), IPAddress(255, 255, 255, 0));
-
-  // Wait for connection
-  int frame = 0;
-  long startTime = millis();
-
-  while (WiFi.status() != WL_CONNECTED) {
-    for (int i = 0; i < LEDS; i++)
-    {
-      if (i < frame % LEDS)
-        setPixel(i, 0, 0, 1, 0x5);
-      else
-        setPixel(i, 0, 0, 0, 0);
-    }
-    updatePixels();
-    frame++;
-    if (frame%50 == 0) Serial.print(".");
-/*
-    if (WiFi.status() == 6)
-    {
-      Serial.println("stat 6 return");
-      delay(6000);
-      break;
-    }
-    */
-    if (/*WiFi.status() == WL_NO_SSID_AVAIL || WiFi.status() == WL_CONNECT_FAILED || */millis() > startTime + 2000)//timeoutMs)
-    {
-      Serial.println ( "" );
-      Serial.print ( "Could NOT set up access point:" );
-      Serial.println ( apInfo.ssid );
-      return true; // :(
-    }
-    /*
-    Serial.print("status: ");
-    Serial.println(WiFi.status());
     Serial.print("local IP: ");
     Serial.println(WiFi.localIP());
-    Serial.print("SoftAP IP: ");
-    Serial.println(WiFi.softAPIP());
-    */
-    delay(20);
-  }
 
-  Serial.println ( "" );
   Serial.print ( "Established acces point: " );
   Serial.println ( apInfo.ssid );
-  Serial.print ( "IP address: " );
+  Serial.print("SoftAP IP: ");
+  Serial.println(WiFi.softAPIP());
+  Serial.print ( "Local IP: " );
   Serial.println ( WiFi.localIP() );
 
   return true;

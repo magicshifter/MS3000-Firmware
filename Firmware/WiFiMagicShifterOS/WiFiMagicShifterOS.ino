@@ -64,10 +64,10 @@ extern "C" {
 #include "ShakeSync.h"
 
 
-int shifterMode = 3;
+int shifterMode = 2;
 int accelCount[3];  // Stores the 12-bit signed value
 int oldButton1State = 0;
-CircleBall ball(600.);
+CircleBall ball(600);
 int currentMicros = 0, lastMicros = 0;
 int speedMicros = 3000;
 long lastFrameMicros = 0;
@@ -256,7 +256,10 @@ while (1)
 
   // init components
   InitAPA102();
+
+#ifndef DISABLE_ACCEL
   InitMMA8452(); //Test and intialize the MMA8452
+#endif
 
 
 /*
@@ -448,12 +451,14 @@ void loop()
     }
   }
 
+#ifndef DISABLE_ACCEL
   readAccelData(accelCount);  // Read the x/y/z adc values
 
   for (int i = 0 ; i < 3 ; i++)
   {
     accelG[i] = (float) accelCount[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set
   }
+#endif
 
 
   float calX = 1;

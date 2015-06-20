@@ -32,6 +32,8 @@ class POVShakeSync {
   public:
     bool searchMin = false;
 
+    bool firedPredictedZero = false;
+
     // sensitivity is the min distance between min and max to start poving
     POVShakeSync(void)
     {
@@ -40,6 +42,9 @@ class POVShakeSync {
 
     void applyForce(int micros, float g)
     {
+      fillPixels(0, 0, 0);
+
+
       avgMax -= avgFalloff;
       avgMin += avgFalloff;
       if (g > avgMax) avgMax = g;
@@ -56,10 +61,19 @@ class POVShakeSync {
         {
             lastMin = activeMin;
             searchMin = false;
+			firedPredictedZero = false;
 
             // reset max
             activeMax.g = g;
             activeMax.micros = micros;
+        }
+
+        if (!firedPredictedZero && (micros > lastMax.micros + (lastMax.micros - lastMin.micros)/2))
+        {
+          firedPredictedZero = true;
+		  firedPredictedZero = false;
+
+          fillPixels(1, 0, 0);
         }
       }
       else {
@@ -74,11 +88,19 @@ class POVShakeSync {
             lastMax = activeMax;
             searchMin = true;
 
-
             // reset min
             activeMin.g = g;
             activeMin.micros = micros;
         }
+
+        if (!firedPredictedZero && (micros > lastMin.micros + (lastMin.micros - lastMax.micros)/2))
+        {
+          firedPredictedZero = true;
+
+          fillPixels(0, 1, 0);
+        }
       }
+
+      updatePixels();
     }
 };
