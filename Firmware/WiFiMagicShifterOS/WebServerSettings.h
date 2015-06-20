@@ -2,20 +2,6 @@
 #define JSON_TYPE_OBJECT_END '}'
 #define JSON_TYPE_SEPERATOR ','
 
-const bool forceAPMode = true;
-
-const char *jsonLastAP =
-//"{\"ssid\":\"PACIFIC\", \"pwd\":\"AllesR0ger\"}";
-"{\"ssid\":\"wizard23\", \"pwd\":\"lolinternets\"}";
-
-const char *jsonAPList = "{\"list\": [\
-{\"ssid\":\"wizard23\", \"pwd\":\"lolinternets\"},\
-{\"ssid\":\"wizme\", \"pwd\":\"lolinternets\"}\
-]}";
-
-const char *jsonSoftAP = "{\"ssid\":\"MagicShifter3000\", \"pwd\":\"\"}";
-
-
 
 #define MAX_AP_LEN 48
 struct APInfo

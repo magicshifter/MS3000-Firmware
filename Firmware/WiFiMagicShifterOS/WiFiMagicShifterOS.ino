@@ -61,10 +61,10 @@ extern "C" {
 
 #include "CircleBall.h"
 
-#include "PerformanceTests.h"
+#include "ShakeSync.h"
 
 
-int shifterMode = 0;
+int shifterMode = 3;
 int accelCount[3];  // Stores the 12-bit signed value
 int oldButton1State = 0;
 CircleBall ball(600.);
@@ -368,6 +368,10 @@ bool getNextPOVData(byte *buffer, int size)
   }
 }
 
+float accelG[3];  // Stores the real accel value in g's
+
+POVShakeSync shakeSync;
+
 void loop()
 {
   HandleWebServer();
@@ -426,10 +430,26 @@ void loop()
       //fillPixels(0,0,0);
       //updatePixels();
     }
+    else if (shifterMode == 3)
+    {
+      shakeSync.applyForce(speedMicros, accelG[2]);
+
+      if (shakeSync.searchMin)
+      {
+        fillPixels(1, 0, 0);
+      }
+      else
+      {
+        fillPixels(0, 1, 0);
+      }
+
+
+      updatePixels();
+    }
   }
 
   readAccelData(accelCount);  // Read the x/y/z adc values
-  float accelG[3];  // Stores the real accel value in g's
+
   for (int i = 0 ; i < 3 ; i++)
   {
     accelG[i] = (float) accelCount[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set

@@ -10,10 +10,28 @@ const char *ssid = "metalab";
 const char *password = "";
 */
 
+/*
 const char *ssid = "wizard23";
 //const char *ssid = "wizme";
 const char *password = "lolinternets";
 const bool saveSSID = true;
+*/
+
+const bool forceAPMode = true;
+
+const char *jsonLastAP =
+//"{\"ssid\":\"PACIFIC\", \"pwd\":\"AllesR0ger\"}";
+//"{\"ssid\":\"wizard23\", \"pwd\":\"lolinternets\"}";
+"{\"ssid\":\"wizme\", \"pwd\":\"lolinternets\"}";
+
+const char *jsonAPList = "{\"list\": [\
+{\"ssid\":\"metalab\", \"password\":\"\"},\
+{\"ssid\":\"wizard23\", \"pwd\":\"lolinternets\"},\
+{\"ssid\":\"wizme\", \"pwd\":\"lolinternets\"}\
+]}";
+
+const char *jsonSoftAP = "{\"ssid\":\"MagicShifter3000\", \"pwd\":\"\"}";
+
 
 //const char* ssid = "MyPlace";
 //const char* password = "gieb8nua4uns";
@@ -23,6 +41,7 @@ const bool saveSSID = true;
 #define LEDS 48
 //#define LEDS 16
 
+// PIN_LED_DATA an PIN_LED_CLOCK can not be changed since we use the hardware SPI
 #define PIN_LED_DATA  13
 #define PIN_LED_CLOCK 14
 // double features as bootloader button

@@ -25,20 +25,23 @@ class POVShakeSync {
       int micros; // absolute
     } ShakePoint;
 
-    const float hysteresis = 0.01;
+    const float hysteresis = 0.3, avgFalloff = 0.001, sensitivity = 0.4;
     float avgMin, avgMax;
     ShakePoint activeMin, activeMax;
-    bool searchMin;
+    ShakePoint lastMin, lastMax;
+  public:
+    bool searchMin = false;
 
     // sensitivity is the min distance between min and max to start poving
-    ShakeSync(float sensitivity)
+    POVShakeSync(void)
     {
-      activeMin = activeMax = avgMin = avgMax = 0;
+      avgMin = avgMax = 0;
     }
 
     void applyForce(int micros, float g)
     {
-
+      avgMax -= avgFalloff;
+      avgMin += avgFalloff;
       if (g > avgMax) avgMax = g;
       if (g < avgMin) avgMin = g;
 
@@ -49,8 +52,33 @@ class POVShakeSync {
           activeMin.g = g;
           activeMin.micros = micros;
         }
+        else if (g > activeMin.g + hysteresis)
+        {
+            lastMin = activeMin;
+            searchMin = false;
 
-        if ()
+            // reset max
+            activeMax.g = g;
+            activeMax.micros = micros;
+        }
+      }
+      else {
+        if (g > activeMax.g)
+        {
+          activeMax.g = g;
+          activeMax.micros = micros;
+        }
+
+        if (g < activeMax.g - hysteresis)
+        {
+            lastMax = activeMax;
+            searchMin = true;
+
+
+            // reset min
+            activeMin.g = g;
+            activeMin.micros = micros;
+        }
       }
     }
-}
+};
