@@ -64,7 +64,7 @@ extern "C" {
 #include "ShakeSync.h"
 
 
-int shifterMode = 2;
+int shifterMode = 3;
 int accelCount[3];  // Stores the 12-bit signed value
 int oldButton1State = 0;
 CircleBall ball(600);
@@ -435,19 +435,7 @@ void loop()
     }
     else if (shifterMode == 3)
     {
-      shakeSync.applyForce(speedMicros, accelG[2]);
-
-      if (shakeSync.searchMin)
-      {
-        fillPixels(1, 0, 0);
-      }
-      else
-      {
-        fillPixels(0, 1, 0);
-      }
-
-
-      updatePixels();
+      shakeSync.applyForce(accelG[2]);
     }
   }
 
@@ -477,6 +465,8 @@ void loop()
   ball.applyForce((currentMicros - lastMicros) / 1000.0, fX, fY);
 
   //ball.applyForce((m - lastM)/1000.0, 0.04);
+
+/*
 
   if (!digitalRead(PIN_BUTTON1))
   {
@@ -516,4 +506,5 @@ void loop()
     }
     oldButton1State = 0;
   }
+*/
 }

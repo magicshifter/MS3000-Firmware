@@ -25,10 +25,12 @@ class POVShakeSync {
       int micros; // absolute
     } ShakePoint;
 
-    const float hysteresis = 0.3, avgFalloff = 0.001, sensitivity = 0.4;
+    const float hysteresis = 0.5, avgFalloff = 0.001, sensitivity = 0.4;
     float avgMin, avgMax;
     ShakePoint activeMin, activeMax;
     ShakePoint lastMin, lastMax;
+	int press = 0;
+
   public:
     bool searchMin = false;
 
@@ -40,8 +42,9 @@ class POVShakeSync {
       avgMin = avgMax = 0;
     }
 
-    void applyForce(int micros, float g)
+    void applyForce(float g)
     {
+	  int currentMicros = micros();
       fillPixels(0, 0, 0);
 
 
@@ -55,49 +58,76 @@ class POVShakeSync {
         if (g < activeMin.g)
         {
           activeMin.g = g;
-          activeMin.micros = micros;
+          activeMin.micros = currentMicros;
         }
-        else if (g > activeMin.g + hysteresis)
+        
+		if (g > (activeMin.g + hysteresis))
         {
+			Serial.println("min");
+			Serial.println(lastMax.micros - lastMin.micros);
+			Serial.println(currentMicros - lastMax.micros);
+			Serial.println(activeMin.micros);
             lastMin = activeMin;
+			Serial.println(lastMin.micros);
             searchMin = false;
 			firedPredictedZero = false;
 
             // reset max
             activeMax.g = g;
-            activeMax.micros = micros;
-        }
+            activeMax.micros = currentMicros;
 
-        if (!firedPredictedZero && (micros > lastMax.micros + (lastMax.micros - lastMin.micros)/2))
+			fillPixels(3, 0, 3);
+        }
+        else if (!firedPredictedZero && (currentMicros > lastMax.micros + (lastMax.micros - lastMin.micros)/2))
         {
           firedPredictedZero = true;
-		  firedPredictedZero = false;
 
-          fillPixels(1, 0, 0);
+          fillPixels(5, 0, 0);
         }
+		
+		if (!digitalRead(PIN_BUTTON1))
+  		{
+			press++;
+		}
+		else {
+			if (press > 30)
+			{
+				Serial.println("x");
+				Serial.println(lastMax.micros - lastMin.micros);
+				Serial.println(currentMicros - lastMax.micros);
+				/*Serial.println(currentMicros);
+				Serial.println(lastMax.micros);
+				Serial.println(lastMin.micros);
+				Serial.println(lastMax.micros + (lastMax.micros - lastMin.micros)/2);
+*/
+			}
+			press = 0;
+		}
       }
       else {
         if (g > activeMax.g)
         {
           activeMax.g = g;
-          activeMax.micros = micros;
+          activeMax.micros = currentMicros;
         }
-
-        if (g < activeMax.g - hysteresis)
+        
+		if (g < (activeMax.g - hysteresis))
         {
             lastMax = activeMax;
             searchMin = true;
+			firedPredictedZero = false;
 
             // reset min
             activeMin.g = g;
-            activeMin.micros = micros;
-        }
+            activeMin.micros = currentMicros;
 
-        if (!firedPredictedZero && (micros > lastMin.micros + (lastMin.micros - lastMax.micros)/2))
+			fillPixels(0, 3, 3);
+        }
+        else if (!firedPredictedZero && (currentMicros > lastMin.micros + (lastMin.micros - lastMax.micros)/2))
         {
           firedPredictedZero = true;
 
-          fillPixels(0, 1, 0);
+          fillPixels(0, 5, 0);
         }
       }
 

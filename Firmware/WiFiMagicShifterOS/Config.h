@@ -18,7 +18,7 @@ const bool saveSSID = true;
 */
 
 // remove define to enable ;)
-#define DISABLE_ACCEL
+//#define DISABLE_ACCEL
 
 const bool forceAPMode = true;
 
