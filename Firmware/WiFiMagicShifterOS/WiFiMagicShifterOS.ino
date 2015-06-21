@@ -328,6 +328,10 @@ while (1)
 bool loadFile = true;
 bool closeErrorReported = false;
 FSFile povFile;
+int framesInFileActive = 0;
+int framesInFile = 0;
+
+
 
 bool getNextPOVData(byte *buffer, int size)
 {
@@ -337,12 +341,11 @@ bool getNextPOVData(byte *buffer, int size)
     loadFile = false;
     //Serial.print("opened: ");
     //Serial.println(uploadname);
-    delay(2);
+    framesInFileActive = 0;
   }
 
   if (povFile)
   {
-
       int result = povFile.read(buffer, size);
 
       if (result < size)
@@ -382,6 +385,8 @@ void loop()
   lastMicros = currentMicros;
   currentMicros = micros();
   loops++;
+
+  shakeSync.setFrames(32);
 
   if (loops % 500 == 0)
   {
@@ -435,7 +440,18 @@ void loop()
     }
     else if (shifterMode == 3)
     {
-      shakeSync.applyForce(accelG[2]);
+      if (shakeSync.update(accelG[2]))
+      {
+        int index = shakeSync.getFrameIndex();
+        if (index > 0)
+        {
+          int b = 255;
+          fillPixels(index & 1 ? b : 0, index & 2 ? b : 0, index & 4 ? b: 0, 0x1F);
+          updatePixels();
+          delayMicroseconds(POV_TIME_MICROSECONDS);
+          fastClear();
+        }
+      }
     }
   }
 
