@@ -64,7 +64,7 @@ extern "C" {
 #include "ShakeSync.h"
 
 
-int shifterMode = 3;
+int shifterMode = 2;
 int accelCount[3];  // Stores the 12-bit signed value
 int oldButton1State = 0;
 CircleBall ball(600);
@@ -78,63 +78,12 @@ int loops = 0;
 
 extern char uploadname[];
 
-/*
-SpiFlashOpResult spi_flash_erase_sector(uint16 sec);
-SpiFlashOpResult spi_flash_write(uint32 des_addr, uint32 *src_addr, uint32 size);
-SpiFlashOpResult spi_flash_read(uint32 src_addr, uint32 *des_addr, uint32 size);
-*/
+
 
 void setup()
 {
   Serial.begin(115200);
   Serial.println("\r\nMagicShifter 3000 OS V0.24");
-
-
-/*
-  struct jsonparse_state jsonState;
-  const char *jsonLastAP = "{\"last\":{\"ssid\":\"wizard23\", \"pwd\":\"lolinternets\"}";
-  const char *jsonAPList =  "{\"list\": [{\"ssid\":\"wizard23\", \"pwd\":\"lolinternets\"}, {\"ssid\":\"PACIFIC\", \"pwd\":\"AllesR0ger\"}]}";
-
-  jsonparse_setup(&jsonState, jsonAPList, strlen(jsonAPList));
-  Serial.print("jsonparse_setup state:");
-  Serial.println(jsonAPList);
-  Serial.println(jsonState.pos);
-  Serial.println(jsonState.len);
-  Serial.println(jsonState.error);
-
-
-  char copyBuffer[100];
-  int copyResult, lenResult, typeResult, nextResult;
-
-
-  for (int i = 0; i < 30; i++)
-  {
-    lenResult = jsonparse_get_len(&jsonState);
-    Serial.print("len: ");
-    Serial.println(lenResult);
-
-    typeResult = jsonparse_get_type(&jsonState);
-    Serial.print("type: ");
-    Serial.print((char)typeResult);
-    Serial.println(typeResult);
-
-    copyResult = jsonparse_copy_value(&jsonState, copyBuffer, 100);
-    Serial.print("copy: ");
-    Serial.println(copyResult);
-    Serial.println(copyBuffer);
-
-    nextResult = jsonparse_next(&jsonState);
-    Serial.print("next: ");
-    Serial.print((char)nextResult);
-    Serial.println(nextResult);
-  }
-
-
-while (1)
-  delay(100);
-
-
-*/
 
   // DUMP sysinfo
   Serial.print("Vcc: ");
@@ -260,66 +209,6 @@ while (1)
 #ifndef DISABLE_ACCEL
   InitMMA8452(); //Test and intialize the MMA8452
 #endif
-
-
-/*
-
-  byte r = 255, g, b;
-  byte gs = 0x04;
-  int pos = 0;
-
-  bright = 255;
-  gs = 0x1F;
-  float speed = 0.005;
-
-  frame = 1;
-  while (1)
-  {
-    lastMicros = currentMicros;
-    currentMicros = micros();
-
-    ball.applyForce((currentMicros - lastMicros)/1000.0, speed);
-    for (byte idx = 0; idx < LEDS; idx++)
-    {
-      float scale = ball.getLedBright(idx, LEDS);
-      scale *= 10;
-      setPixel(idx, (frame & 1) ? bright*scale : 0, (frame & 2) ? bright*scale : 0, (frame & 4) ? bright*scale : 0, gs);
-      //setPixel(idx, bright * scale, 0, bright * scale, gs);
-    }
-    updatePixels();
-    delay(1);
-
-    if (!digitalRead(PIN_BUTTON1))
-    {
-      oldButton1State++;
-    }
-    else
-    {
-      if (oldButton1State >= 500)
-      {
-        speed += 0.01;
-        if (speed > 0.1)
-        {
-          speed = 0.003;
-        }
-      }
-      else if (oldButton1State >= 200)
-      {
-        frame++;
-        frame %= 8;
-        if (frame == 0) frame++;
-      }
-      if (oldButton1State >= 5)
-      {
-        gs += 7;
-        gs %= 0x20;
-      }
-      oldButton1State = 0;
-    }
-  }
-*/
-
-
 
   StartWebServer();
 }

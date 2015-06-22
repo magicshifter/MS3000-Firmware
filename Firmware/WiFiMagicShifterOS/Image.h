@@ -1,6 +1,6 @@
 #define BYTESPERPIXEL 4
 
-class Image {
+class MSImage {
 
   int width, height;
   FSFile file;
@@ -43,7 +43,7 @@ public:
 
       if (height < maxHeight) maxHeight = height;
       int result = povFile.read(frameData, maxHeight * BYTESPERPIXEL);
-      
+
       if (result < size)
       {
         return false;

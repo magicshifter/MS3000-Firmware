@@ -1,3 +1,5 @@
+Firmware/build/*
+
 *~
 # Object files
 *.o

@@ -18,7 +18,12 @@ void loadString(char * str, int len)
 {
   for (int i = 0; i < len; i++)
   {
+
     str[i] = EEPROM.read(i);
+    Serial.print("readin: ");
+    Serial.print(str[i]);
+    Serial.print(" : ");
+    Serial.println((int)str[i]);
   }
   str[len-1] = '\0';
 }
@@ -75,11 +80,14 @@ void StartWebServer(void)
 {
 
 // TODO: refactor into settings, add mode :)
-  EEPROM.begin(64 + 32 * 2 * 100);
+  EEPROM.begin(512);
 
   loadString(uploadname, FILENAME_LENGTH);
+
   if (!FS.exists(uploadname))
   {
+    Serial.print("could not find: ");
+    Serial.println(uploadname);
     strcpy(uploadname, "default.magicBitmap");
   }
   Serial.print("using POV file: ");

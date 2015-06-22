@@ -20,7 +20,7 @@ const bool saveSSID = true;
 // remove define to enable ;)
 //#define DISABLE_ACCEL
 
-const bool forceAPMode = true;
+const bool forceAPMode = false;
 
 const char *jsonLastAP =
 //"{\"ssid\":\"PACIFIC\", \"pwd\":\"AllesR0ger\"}";
