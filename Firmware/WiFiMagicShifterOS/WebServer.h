@@ -33,8 +33,20 @@ void saveString(char * str, int len)
   for (int i = 0; i < len; i++)
   {
     EEPROM.write(i, str[i]);
+    Serial.print("writtin: ");
+    Serial.print(str[i]);
+    Serial.print(" back: ");
+    Serial.println((int)EEPROM.read(i));
   }
   EEPROM.commit();
+
+  for (int i = 0; i < len; i++)
+  {
+    Serial.print("wri: ");
+    Serial.print(str[i]);
+    Serial.print(" back: ");
+    Serial.println((int)EEPROM.read(i));
+  }
 }
 
 #include "WebServerSettings.h"
