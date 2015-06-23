@@ -38,18 +38,10 @@ void handleNotFound() {
       <body>\
         <h1>Upload of " + String(uploadname) + " done</h1><a href=\"/list?dir=\">list</a></body></html>";
 
-        server.send ( 200, "text/html", message );
+    server.send ( 200, "text/html", message );
 
   }
 }
-
-
-
-// http://192.168.43.251/leds?set=[[0,4,4],[0,0,4],[4],[4,4,0,31],[0,4,4,31],[0,4,4,31],[0,0,4,31],[4,4,4,31],[4,4,0,31],[0,4,4,31],[0,4,4,31],[0,0,4,31],[4,4,4,31],[4,4,0,31],[0,4,4,31],[0,4,4,31]]
-// http://192.168.43.251/leds?set=[[0,4,4],[0,0,4],[4]]
-
-//http://192.168.43.251/leds?set=[[0,4,4],[1,1,0],[4],[8,1,0],[1,1,0],[4],[8,1,0],[1,1,0],[4],[8,1,0],[1],[1],[1],[1],[1],[1]]
-
 
 void handleLedSet()
 {
@@ -92,6 +84,8 @@ void handleReadFile()
     String args = server.arg(0);
 
     strcpy(uploadname, args.c_str());
+    saveString(uploadname, FILENAME_LENGTH);
+
 
     message += "file name: \"" + args /* String(filename)*/ + "\"\n";
 
