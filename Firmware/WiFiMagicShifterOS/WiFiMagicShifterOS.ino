@@ -86,49 +86,6 @@ void setup()
   EEPROM.begin(512);
 
 
-/*
-  Serial.print(",mn,sector: ");
-  Serial.println(EEPROM._sector);
-
-
-  char text[100] = "";
-  while(1)
-  {
-    loadString(text, 50);
-
-    Serial.print("klljtext = \"");
-    Serial.print(text);
-    Serial.println("\"");
-
-    for (int i = 0; i <10; i++)
-      Serial.println(text[i]);
-
-    if (!digitalRead(PIN_BUTTON1))
-    {
-      Serial.print("savinfg...");
-
-      Serial.println(saveString("hello world, 12345k;lkdsf", 50));
-
-
-
-      delay(300);
-      while (!digitalRead(PIN_BUTTON1))
-      {
-        delay(20);
-      }
-    }
-
-    delay(1000);
-
-  }
-
-*/
-
-
-
-
-
-
   Serial.println("\r\nMagicShifter 3000 OS V0.24");
 
   // DUMP sysinfo
@@ -173,72 +130,21 @@ void setup()
   Serial.println(ESP.getFlashChipMode());
 
   Serial.print("Sketch size: ");
-  //Serial.println(ESP.getSketchSize());
+  Serial.println(ESP.getSketchSize());
 
   Serial.print("Free sketch space: ");
-  //Serial.println(ESP.getFreeSketchSpace());
+  Serial.println(ESP.getFreeSketchSpace());
 
   Serial.print("Reset info: ");
-  //Serial.println(ESP.getResetInfo());
-
-
+  Serial.println(ESP.getResetInfo());
 
   Serial.print("FS mount: ");
-  Serial.println(FS.mount());
+  Serial.println(FS.mount() ? "OK" : "ERROR!");
+
 /*
-    //void unmount();
-    //bool format();
-    //Serial.print("FS check: ");
-    //Serial.println(FS.check());
-
-    char *filename = "bitmap1.magicbitmap";
-
-
-    Serial.print("FS exists: ");
-    Serial.println(FS.exists(filename));
-
-    Serial.print("FS create: ");
-    Serial.println(FS.create(filename));
-
-    Serial.print("FS exists: ");
-    Serial.println(FS.exists(filename));
-
-    Serial.print("FS create: ");
-    Serial.println(FS.create(filename));
-
-
-  FSFile file = FS.open(filename, FSFILE_WRITE);
-  Serial.print("file write: ");
-  Serial.println(file.write(filename, 5));
-  file.close();
-
-
-  byte buffer[205];
-  file = FS.open(filename, FSFILE_READ);
-
-  int fileLen = file.available();
-  Serial.print("file available: ");
-  Serial.println(fileLen);
-
-  if (fileLen >= 200 ) fileLen = 200;
-  Serial.println("reading: ");
-  Serial.println(file.read(buffer, fileLen));
-
-  Serial.println("buffer: ");
-
-  for (int i = 0; i < fileLen; i++) {
-    Serial.println(buffer[i]);
-  }
-
-  file.close();
-
-//*/
-
-//TestLedTiming();
-
-
-
-
+  Serial.print("FS check: ");
+  Serial.println(FS.check() ? "OK" : "ERROR!");
+*/
 
   // init pinmodes
   pinMode(PIN_BUTTON1, INPUT);
@@ -338,12 +244,6 @@ void loop()
     // pov ball mode
     if (shifterMode == 0)
     {
-      /*if (frame % 3 == 0)
-        fillPixels(bright, 0, 0, gs);
-      else if (frame % 3 == 1)
-        fillPixels(0, 0, bright, gs);
-      else
-      */
       {
         for (byte idx = 0; idx < LEDS; idx++)
         {
@@ -391,7 +291,7 @@ void loop()
   }
 
 #ifndef DISABLE_ACCEL
-  readAccelData(accelCount);  // Read the x/y/z adc values
+  readAccelData(accelCount);
 
   for (int i = 0 ; i < 3 ; i++)
   {
@@ -414,8 +314,6 @@ void loop()
   fY = -fY;
 
   ball.applyForce((currentMicros - lastMicros) / 1000.0, fX, fY);
-
-  //ball.applyForce((m - lastM)/1000.0, 0.04);
 
 /*
 

@@ -93,7 +93,7 @@ void handleReadFile()
 
     strcpy(uploadname, args.c_str());
 
-    message += "file: \"" + args /* String(filename)*/ + "\"\n";
+    message += "file name: \"" + args /* String(filename)*/ + "\"\n";
 
     //message += "file name strcpied: \"" +  uploadname + "\"\n";
 
@@ -182,7 +182,10 @@ void handleFileList() {
       continue;
     }
 
-    output += "<p><a href=\"read?file=" + String(entry.name()) + "\">" + String(entry.name()) + " : " + (entry.isDirectory()?"dir":"file") + " : " + entry.size() + "</a></p>";
+    output += "<p><a href=\"download?file=" + String(entry.name()) + "\">" +
+      String(entry.name()) + "</a> " +
+      (entry.isDirectory()?"dir":"file") + " : " + entry.size() +
+      " <a href=\"read?file=" + String(entry.name()) + "\">show</a></p>";
     entry.close();
   }
   dir.close();

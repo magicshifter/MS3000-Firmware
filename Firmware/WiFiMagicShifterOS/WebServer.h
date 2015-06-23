@@ -148,6 +148,16 @@ while (!AutoConnect())
   server.on ("/leds", handleLedSet );
   server.on("/read", handleReadFile);
 
+  server.on("/download",  []() {
+    if(!server.hasArg("file")) {
+      server.send(500, "text/plain", "BAD ARGS, missing file=");
+      return;
+    }
+    String path = server.arg("file");
+
+    HandleServeStaticFile(path);
+  });
+
   server.on("/",  []() {
     HandleServeStaticFile("index.html");
   });

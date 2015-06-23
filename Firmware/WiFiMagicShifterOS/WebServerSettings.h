@@ -163,17 +163,10 @@ bool TrySoftAP(struct APInfo &apInfo, int timeoutMs)
     WiFi.softAP(apInfo.ssid, apInfo.password);
   }
 
-  Serial.print("SoftAP IP: ");
-  Serial.println(WiFi.softAPIP());
-    Serial.print("local IP: ");
-    Serial.println(WiFi.localIP());
-
   Serial.print ( "Established acces point: " );
   Serial.println ( apInfo.ssid );
   Serial.print("SoftAP IP: ");
   Serial.println(WiFi.softAPIP());
-  Serial.print ( "Local IP: " );
-  Serial.println ( WiFi.localIP() );
 
   return true;
 }
@@ -186,7 +179,6 @@ bool AutoConnect()
 
   if (!forceAPMode)
   {
-
     jsonparse_setup(&jsonState, jsonLastAP, strlen(jsonLastAP));
 
     if (ParseAPInfo(&apInfo, &jsonState))
@@ -264,10 +256,6 @@ bool AutoConnect()
       }
     } while(0);
   }
-
-  // AP does not work as of 16.5.2015
-  // it never connects but it shows up as MagicShifter3000 wlan and i can connect with my laptop to it
-  // TODO: investigate further
 
   Serial.println("fallback to standalone access point...");
   jsonparse_setup(&jsonState, jsonSoftAP, strlen(jsonSoftAP));
