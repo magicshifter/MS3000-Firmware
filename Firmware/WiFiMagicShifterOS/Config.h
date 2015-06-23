@@ -1,22 +1,6 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-/*
-const char *ssid = "fnord";
-const char *password = "fnord235";
-*/
-/*
-const char *ssid = "metalab";
-const char *password = "";
-*/
-
-/*
-const char *ssid = "wizard23";
-//const char *ssid = "wizme";
-const char *password = "lolinternets";
-const bool saveSSID = true;
-*/
-
 // remove define to enable ;)
 //#define DISABLE_ACCEL
 
@@ -35,9 +19,6 @@ const char *jsonAPList = "{\"list\": [\
 
 const char *jsonSoftAP = "{\"ssid\":\"MagicShifter3000\", \"pwd\":\"\"}";
 
-
-//const char* ssid = "MyPlace";
-//const char* password = "gieb8nua4uns";
 
 #define POV_TIME_MICROSECONDS 50
 

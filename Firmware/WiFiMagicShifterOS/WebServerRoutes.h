@@ -30,13 +30,13 @@ void handleNotFound() {
     String message = "<html>\
       <head>\
         <meta http-equiv='refresh' content='5'/>\
-        <title>ESP8266 Demo</title>\
+        <title><a href=\"/\">MagicShifter3000</a> upload done</title>\
         <style>\
           body { background-color: #cccccc; font-family: Arial, Helvetica, Sans-Serif; Color: #000088; }\
         </style>\
       </head>\
       <body>\
-        <h1>Upload of " + String(uploadname) + " done</h1><a href=\"/list?dir=\">go back</a></body></html>";
+        <h1>Upload of " + String(uploadname) + " done</h1><a href=\"/list?dir=\">list</a></body></html>";
 
         server.send ( 200, "text/html", message );
 
@@ -168,7 +168,7 @@ void handleFileList() {
       </style>\
     </head>\
     <body>\
-      <h1>Hello from ESP8266!</h1>";
+      <h1>Hello from <a href=\"/\">MagicShifter3000</a>!</h1>";
 
   while(true){
     entry = dir.openNextFile();

@@ -20,33 +20,36 @@ void loadString(char * str, int len)
   {
 
     str[i] = EEPROM.read(i);
-    Serial.print("readin: ");
-    Serial.print(str[i]);
-    Serial.print(" : ");
-    Serial.println((int)str[i]);
+    // Serial.print("readin: ");
+    // Serial.print(str[i]);
+    // Serial.print(" : ");
+    // Serial.println((int)str[i]);
   }
   str[len-1] = '\0';
 }
 
-void saveString(char * str, int len)
+bool saveString(char * str, int len)
 {
   for (int i = 0; i < len; i++)
   {
     EEPROM.write(i, str[i]);
-    Serial.print("writtin: ");
-    Serial.print(str[i]);
-    Serial.print(" back: ");
-    Serial.println((int)EEPROM.read(i));
+    // Serial.print("writtin: ");
+    // Serial.print(str[i]);
+    // Serial.print(" back: ");
+    // Serial.println((int)EEPROM.read(i));
   }
-  EEPROM.commit();
+  return EEPROM.commit();
 
-  for (int i = 0; i < len; i++)
-  {
-    Serial.print("wri: ");
-    Serial.print(str[i]);
-    Serial.print(" back: ");
-    Serial.println((int)EEPROM.read(i));
-  }
+  // EEPROM.end();
+  // EEPROM.begin(512);
+  //
+  // for (int i = 0; i < len; i++)
+  // {
+  //   Serial.print("wri: ");
+  //   Serial.print(str[i]);
+  //   Serial.print(" back: ");
+  //   Serial.println((int)EEPROM.read(i));
+  // }
 }
 
 #include "WebServerSettings.h"
@@ -90,10 +93,6 @@ void HandleServeStaticFile(String path)
 
 void StartWebServer(void)
 {
-
-// TODO: refactor into settings, add mode :)
-  EEPROM.begin(512);
-
   loadString(uploadname, FILENAME_LENGTH);
 
   if (!FS.exists(uploadname))

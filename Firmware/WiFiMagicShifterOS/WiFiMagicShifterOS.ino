@@ -83,6 +83,52 @@ extern char uploadname[];
 void setup()
 {
   Serial.begin(115200);
+  EEPROM.begin(512);
+
+
+/*
+  Serial.print(",mn,sector: ");
+  Serial.println(EEPROM._sector);
+
+
+  char text[100] = "";
+  while(1)
+  {
+    loadString(text, 50);
+
+    Serial.print("klljtext = \"");
+    Serial.print(text);
+    Serial.println("\"");
+
+    for (int i = 0; i <10; i++)
+      Serial.println(text[i]);
+
+    if (!digitalRead(PIN_BUTTON1))
+    {
+      Serial.print("savinfg...");
+
+      Serial.println(saveString("hello world, 12345k;lkdsf", 50));
+
+
+
+      delay(300);
+      while (!digitalRead(PIN_BUTTON1))
+      {
+        delay(20);
+      }
+    }
+
+    delay(1000);
+
+  }
+
+*/
+
+
+
+
+
+
   Serial.println("\r\nMagicShifter 3000 OS V0.24");
 
   // DUMP sysinfo
