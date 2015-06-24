@@ -55,16 +55,24 @@ extern "C" {
 #define MMA8452_ADDRESS 0x1C
 
 #include "Config.h"
+#include "tools.h"
 #include "APA102.h"
 #include "MMA8542.h"
-#include "WebServer.h"
-
-#include "CircleBall.h"
 
 #include "ShakeSync.h"
+#include "Image.h"
+#include "MagicMode.h"
+#include "CircleBall.h"
+
+#include "WebServer.h"
 
 
-int shifterMode = 2;
+// state
+MagicMode magicMode;
+float accelG[3];  // Stores the real accel value in g's
+POVShakeSync shakeSync;
+
+int shifterMode = 4;
 int accelCount[3];  // Stores the 12-bit signed value
 int oldButton1State = 0;
 CircleBall ball(600);
@@ -163,6 +171,19 @@ void setup()
 #endif
 
   StartWebServer();
+
+
+  loadString(uploadname, FILENAME_LENGTH);
+  if (!FS.exists(uploadname))
+  {
+    Serial.print("could not find: ");
+    Serial.println(uploadname);
+    strcpy(uploadname, "mario_48_png.magicBitmap");
+  }
+  Serial.print("using POV file: ");
+  Serial.println(uploadname);
+  magicMode.setActiveFile(uploadname);
+
 }
 
 
@@ -214,10 +235,6 @@ bool getNextPOVData(byte *buffer, int size)
     }
   }
 }
-
-float accelG[3];  // Stores the real accel value in g's
-
-POVShakeSync shakeSync;
 
 void loop()
 {
@@ -280,13 +297,19 @@ void loop()
         int index = shakeSync.getFrameIndex();
         if (index > 0)
         {
+          /*
           int b = 255;
           fillPixels(index & 1 ? b : 0, index & 2 ? b : 0, index & 4 ? b: 0, 0x1F);
           updatePixels();
           delayMicroseconds(POV_TIME_MICROSECONDS);
           fastClear();
+          */
         }
       }
+    }
+    else if (shifterMode == 4)
+    {
+      magicMode.loop();
     }
   }
 

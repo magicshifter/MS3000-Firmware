@@ -4,12 +4,14 @@
 // remove define to enable ;)
 //#define DISABLE_ACCEL
 
-const bool forceAPMode = false;
+#define USE_MDNS
+
+const bool forceAPMode = true;
 
 const char *jsonLastAP =
 //"{\"ssid\":\"PACIFIC\", \"pwd\":\"AllesR0ger\"}";
-//"{\"ssid\":\"wizard23\", \"pwd\":\"lolinternets\"}";
-"{\"ssid\":\"wizme\", \"pwd\":\"lolinternets\"}";
+"{\"ssid\":\"wizard23\", \"pwd\":\"lolinternets\"}";
+//"{\"ssid\":\"wizme\", \"pwd\":\"lolinternets\"}";
 
 const char *jsonAPList = "{\"list\": [\
 {\"ssid\":\"metalab\", \"password\":\"\"},\
@@ -20,7 +22,7 @@ const char *jsonAPList = "{\"list\": [\
 const char *jsonSoftAP = "{\"ssid\":\"MagicShifter3000\", \"pwd\":\"\"}";
 
 
-#define POV_TIME_MICROSECONDS 50
+#define POV_TIME_MICROSECONDS 1
 
 #define LEDS 48
 //#define LEDS 16
@@ -36,5 +38,7 @@ const char *jsonSoftAP = "{\"ssid\":\"MagicShifter3000\", \"pwd\":\"\"}";
 
 //#define MMA8452_ADDRESS 0x1D  // 0x1D if SA0 is high, 0x1C if low
 #define MMA8452_ADDRESS 0x1C
+
+#define FILENAME_SIZE 40
 
 #endif

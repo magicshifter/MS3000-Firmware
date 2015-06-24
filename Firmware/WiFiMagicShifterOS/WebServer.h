@@ -8,49 +8,8 @@
 #include "Config.h"
 #include "APA102.h"
 
-#define USE_MDNS
-
 MDNSResponder mdns;
 ESP8266WebServer server (80);
-
-
-void loadString(char * str, int len)
-{
-  for (int i = 0; i < len; i++)
-  {
-
-    str[i] = EEPROM.read(i);
-    // Serial.print("readin: ");
-    // Serial.print(str[i]);
-    // Serial.print(" : ");
-    // Serial.println((int)str[i]);
-  }
-  str[len-1] = '\0';
-}
-
-bool saveString(char * str, int len)
-{
-  for (int i = 0; i < len; i++)
-  {
-    EEPROM.write(i, str[i]);
-    // Serial.print("writtin: ");
-    // Serial.print(str[i]);
-    // Serial.print(" back: ");
-    // Serial.println((int)EEPROM.read(i));
-  }
-  return EEPROM.commit();
-
-  // EEPROM.end();
-  // EEPROM.begin(512);
-  //
-  // for (int i = 0; i < len; i++)
-  // {
-  //   Serial.print("wri: ");
-  //   Serial.print(str[i]);
-  //   Serial.print(" back: ");
-  //   Serial.println((int)EEPROM.read(i));
-  // }
-}
 
 #include "WebServerSettings.h"
 #include "WebServerRoutes.h"
@@ -93,57 +52,17 @@ void HandleServeStaticFile(String path)
 
 void StartWebServer(void)
 {
-  loadString(uploadname, FILENAME_LENGTH);
-
-  if (!FS.exists(uploadname))
+  while (!AutoConnect())
   {
-    Serial.print("could not find: ");
-    Serial.println(uploadname);
-    strcpy(uploadname, "default.magicBitmap");
+    Serial.println("ARGL: WHY U no WLAN!? :( retrying...");
+    delay(100);
   }
-  Serial.print("using POV file: ");
-  Serial.println(uploadname);
-
-/*
-  Serial.print("connecting to AP: ");
-  Serial.println(ssid);
-  WiFi.begin ( ssid, password );
-
-
-  // Wait for connection
-  int frame = 0;
-  while ( WiFi.status() != WL_CONNECTED ) {
-    for (int i = 0; i < LEDS; i++)
-    {
-      if (i < frame)
-        setPixel(i, 1, 1, 1, 0x1);
-      else
-        setPixel(i, 0, 0, 0, 0);
-    }
-    updatePixels();
-    frame = (frame + 1) % LEDS;
-    if (frame%24 == 0) Serial.print(".");
-    delay ( 20 );
-  }
-  Serial.println ( "" );
-  Serial.print ( "Connected to " );
-  Serial.println ( ssid );
-  Serial.print ( "IP address: " );
-  Serial.println ( WiFi.localIP() );
-*/
-while (!AutoConnect())
-{
-  Serial.println("ARGL: WHY U no WLAN!? :( retrying...");
-  delay(100);
-}
 #ifdef USE_MDNS
   if ( mdns.begin ( "magicshifter", WiFi.localIP() ) ) {
     Serial.println ( "MDNS responder started" );
   }
 #endif
 
-  //server.on ( "/", handleRoot );
-  //server.on ( "/ex", handleRootEx );
   server.on("/list", HTTP_GET, handleFileList);
   server.on ("/leds", handleLedSet );
   server.on("/read", handleReadFile);
@@ -161,7 +80,6 @@ while (!AutoConnect())
   server.on("/",  []() {
     HandleServeStaticFile("index.html");
   });
-
   //server.on("favicon.gif", HandleServeStaticFile("favicon.gif"));
   //server.on("manifest.appcache", HandleServeStaticFile("manifest.appcache"));
 

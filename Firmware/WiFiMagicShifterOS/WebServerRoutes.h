@@ -3,6 +3,9 @@
 // make it larger to be on the save side when base64 decoding
 byte web_rgb_buffer[RGB_BUFFER_SIZE + 4];
 #define FILENAME_LENGTH 100
+
+
+extern MagicMode magicMode;
 char uploadname[FILENAME_LENGTH];
 FSFile uploadFile;
 
@@ -272,8 +275,9 @@ void handleFileUpload(){
   }
   else if(upload.status == UPLOAD_FILE_END)
   {
+    magicMode.setActiveFile(uploadname);
+    
     saveString(uploadname, FILENAME_LENGTH);
-
     if(uploadFile)
     {
       //bool result;

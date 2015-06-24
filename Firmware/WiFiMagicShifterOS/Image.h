@@ -6,7 +6,12 @@ class MSImage {
   FSFile file;
 
 public:
-  Image(char *fileName)
+  MSImage(void)
+  {
+    height = width = 0;
+  }
+  
+  MSImage(char *fileName)
   {
       file = FS.open(fileName, FSFILE_READ);
       if (file)
@@ -42,9 +47,9 @@ public:
       file.seek(frameIdx * height * BYTESPERPIXEL);
 
       if (height < maxHeight) maxHeight = height;
-      int result = povFile.read(frameData, maxHeight * BYTESPERPIXEL);
+      int result = file.read(frameData, maxHeight * BYTESPERPIXEL);
 
-      if (result < size)
+      if (result < maxHeight * BYTESPERPIXEL)
       {
         return false;
       }
@@ -52,4 +57,9 @@ public:
     }
     return false;
   }
-}
+
+  void close()
+  {
+    file.close();
+  }
+};
