@@ -37,7 +37,7 @@ void InitSPI()
 {
   #ifdef USE_HW_SPI
     SPI.begin();
-    SPI.setFrequency(40000000);
+    SPI.setFrequency(SPI_FREQUENCY);
   #else
     pinMode(PIN_LED_DATA, OUTPUT);
     pinMode(PIN_LED_CLOCK, OUTPUT);

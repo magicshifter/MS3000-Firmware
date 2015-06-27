@@ -86,8 +86,6 @@ int loops = 0;
 
 extern char uploadname[];
 
-
-
 void setup()
 {
   Serial.begin(115200);
@@ -99,60 +97,44 @@ void setup()
   // DUMP sysinfo
   Serial.print("Vcc: ");
   Serial.println(ESP.getVcc());
-
   Serial.print("Free heap: ");
   Serial.println(ESP.getFreeHeap());
-
   Serial.print("Chip ID: ");
   Serial.println(ESP.getChipId());
-
   Serial.print("SDK version: ");
   Serial.println(ESP.getSdkVersion());
-
   Serial.print("Boot version: ");
   Serial.println(ESP.getBootVersion());
   Serial.print("Boot mode: ");
   Serial.println(ESP.getBootMode());
-
   Serial.print("CPU freq.: ");
   Serial.println(ESP.getCpuFreqMHz());
-
   Serial.print("Flash chip ID: ");
   Serial.println(ESP.getFlashChipId(), HEX);
-
   //gets the actual chip size based on the flash id
   Serial.print("Flash real size: ");
   Serial.println(ESP.getFlashChipRealSize());
-
   Serial.print("Flash real size (method b): ");
   Serial.println(ESP.getFlashChipSizeByChipId());
-
   //gets the size of the flash as set by the compiler
   Serial.print("flash configured size: ");
   Serial.println(ESP.getFlashChipSize());
-
   Serial.print("flash speed: ");
   Serial.println(ESP.getFlashChipSpeed());
-
   Serial.print("flash mode: ");
   Serial.println(ESP.getFlashChipMode());
-
   Serial.print("Sketch size: ");
   Serial.println(ESP.getSketchSize());
-
   Serial.print("Free sketch space: ");
   Serial.println(ESP.getFreeSketchSpace());
-
   Serial.print("Reset info: ");
   Serial.println(ESP.getResetInfo());
 
   Serial.print("FS mount: ");
   Serial.println(FS.mount() ? "OK" : "ERROR!");
-
-/*
-  Serial.print("FS check: ");
-  Serial.println(FS.check() ? "OK" : "ERROR!");
-*/
+  // chercking crashes the ESP so its disabled atm
+  //Serial.print("FS check: ");
+  //Serial.println(FS.check() ? "OK" : "ERROR!");
 
   // init pinmodes
   pinMode(PIN_BUTTON1, INPUT);
@@ -172,7 +154,6 @@ void setup()
 
   StartWebServer();
 
-
   loadString(uploadname, FILENAME_LENGTH);
   if (!FS.exists(uploadname))
   {
@@ -184,56 +165,6 @@ void setup()
   Serial.println(uploadname);
   magicMode.setActiveFile(uploadname);
 
-}
-
-
-bool loadFile = true;
-bool closeErrorReported = false;
-FSFile povFile;
-int framesInFileActive = 0;
-int framesInFile = 0;
-
-
-
-bool getNextPOVData(byte *buffer, int size)
-{
-  if (loadFile)
-  {
-    povFile = FS.open(uploadname, FSFILE_READ);
-    loadFile = false;
-    //Serial.print("opened: ");
-    //Serial.println(uploadname);
-    framesInFileActive = 0;
-  }
-
-  if (povFile)
-  {
-      int result = povFile.read(buffer, size);
-
-      if (result < size)
-      {
-        povFile.close();
-        loadFile = true;
-        //Serial.print("closed: ");
-        //Serial.println(uploadname);
-        delay(2);
-      }
-      else
-      {
-        closeErrorReported = false;
-      }
-  }
-  else
-  {
-    povFile.close();
-    loadFile = true;
-    if (!closeErrorReported)
-    {
-      Serial.println("close error!");
-      closeErrorReported = true;
-      delay(20);
-    }
-  }
 }
 
 void loop()
@@ -276,36 +207,6 @@ void loop()
     {
       loadBuffer(web_rgb_buffer);
       updatePixels();
-    }
-    else if (shifterMode == 2)
-    {
-      byte povData[RGB_BUFFER_SIZE];
-      getNextPOVData(povData, RGB_BUFFER_SIZE);
-      loadBuffer(povData);
-      updatePixels();
-
-      delayMicroseconds(POV_TIME_MICROSECONDS);
-      fastClear();
-      // manual blank, could be faster...
-      //fillPixels(0,0,0);
-      //updatePixels();
-    }
-    else if (shifterMode == 3)
-    {
-      if (shakeSync.update(accelG[2]))
-      {
-        int index = shakeSync.getFrameIndex();
-        if (index > 0)
-        {
-          /*
-          int b = 255;
-          fillPixels(index & 1 ? b : 0, index & 2 ? b : 0, index & 4 ? b: 0, 0x1F);
-          updatePixels();
-          delayMicroseconds(POV_TIME_MICROSECONDS);
-          fastClear();
-          */
-        }
-      }
     }
     else if (shifterMode == 4)
     {
