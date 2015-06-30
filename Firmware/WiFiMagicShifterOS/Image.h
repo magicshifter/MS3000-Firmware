@@ -10,7 +10,7 @@ public:
   {
     height = width = 0;
   }
-  
+
   MSImage(char *fileName)
   {
       file = FS.open(fileName, FSFILE_READ);
@@ -35,6 +35,11 @@ public:
         width = 0;
         height = LEDS;
       }
+  }
+
+  ~MSImage()
+  {
+    close();
   }
 
   int getWidth() { return width; }

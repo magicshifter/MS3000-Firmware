@@ -2,10 +2,10 @@
 #define CONFIG_H
 
 // remove define to enable ;)
-//#define DISABLE_ACCEL
-
+// #define DISABLE_ACCEL
 #define USE_MDNS
 
+// 192.168.4.1 is the IP it always has in softAP mode
 const bool forceAPMode = true;
 
 const char *jsonLastAP =

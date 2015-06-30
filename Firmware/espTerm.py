@@ -2,9 +2,25 @@ import serial
 import curses
 import time
 
+portName = "/dev/ttyUSB0"
+baudRate = 115200
+
+def tryOpenSerial():
+    try:
+        port = serial.Serial(portName, baudRate , timeout=0)
+        port.setDTR(False)
+        port.setRTS(True)
+        time.sleep(0.05)
+        port.setRTS(False)
+        return port
+    except:
+        return False
+
 
 def main(stdscr):
+    port = tryOpenSerial()
 
+    canChangeColor = curses.can_change_color()
     #curses.noecho()
     #curses.cbreak()
 
@@ -17,31 +33,42 @@ def main(stdscr):
     height = 40; width = 80
     keyboardWin = curses.newwin(height, width, begin_y, begin_x)
     keyboardWin.clear()
+    curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
+    curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
+    curses.init_pair(3, curses.COLOR_RED, curses.COLOR_BLACK)
+    keyboardWin.bkgd(' ', curses.color_pair(1))
 
-    port = serial.Serial("/dev/ttyUSB0", 115200, timeout=0)
-    port.setDTR(False)
-    port.setRTS(True)
-    time.sleep(0.05)
-    port.setRTS(False)
+
 
     xx = 0
     refresh = False
     while True:
-        s = port.read(1)
-        if (len(s) > 0):
-            if (xx == 0):
-                stdscr.clear()
-            xx = (xx + 1) % 2550
-            if ord(s) >= 32 and ord(s) <= 127:
-                stdscr.addstr(s)
-            else:
-                stdscr.addstr('?')
-            stdscr.refresh()
+        if port:
+            s = port.read(1)
+            if (len(s) > 0):
+                code = ord(s)
+                if (xx == 0):
+                    stdscr.clear()
+                xx = (xx + 1) % 1000
+                if code > 13 and code <= 255:
+                    stdscr.addstr(s)
+                elif code == 13:
+                    stdscr.addstr("\n\r")
+                else:
+                    stdscr.addstr('?')
+                stdscr.refresh()
 
         # get keyboard input, returns -1 if none available
         c = stdscr.getch()
         if c != -1:
             keyboardWin.addstr(chr(c))
+            if c == 65:
+                keyboardWin.addstr("\ntry open serial: ")
+                port = tryOpenSerial()
+                if port:
+                    keyboardWin.addstr("success\n", curses.color_pair(2))
+                else:
+                    keyboardWin.addstr("failed\n", curses.color_pair(3))
             if c == 114: # r
                 keyboardWin.addstr("RTS <- True")
                 port.setRTS(True)

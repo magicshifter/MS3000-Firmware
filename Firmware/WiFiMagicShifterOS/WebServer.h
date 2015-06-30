@@ -13,6 +13,7 @@ ESP8266WebServer server (80);
 
 #include "WebServerSettings.h"
 #include "WebServerRoutes.h"
+#include "WebServerAPI.h"
 
 String getContentType(String filename){
   if(server.hasArg("download")) return "application/octet-stream";
@@ -62,6 +63,9 @@ void StartWebServer(void)
     Serial.println ( "MDNS responder started" );
   }
 #endif
+
+  //server.on("/settings", HTTP_GET, handleGETSettings);
+  server.on ("/settings", HTTP_POST, handlePOSTSettings);
 
   server.on("/list", HTTP_GET, handleFileList);
   server.on ("/leds", handleLedSet );
