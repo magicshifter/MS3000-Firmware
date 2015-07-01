@@ -64,8 +64,18 @@ void StartWebServer(void)
   }
 #endif
 
-  //server.on("/settings", HTTP_GET, handleGETSettings);
-  server.on ("/settings", HTTP_POST, handlePOSTAPSettings);
+  //server.on("/info/hardware", HTTP_GET, handleGETAPSettings);
+
+  server.on("/settings/ap", HTTP_GET, handleGETAPSettings);
+  server.on("/settings/ap", HTTP_POST, handlePOSTAPSettings);
+
+  server.on("/settings/server", HTTP_GET, handleGETServerSettings);
+  server.on("/settings/server", HTTP_POST, handlePOSTAPSettings);
+
+  //server.on("/settings/wifi", HTTP_GET, handleGETAPList);
+  //server.on("/settings/wifi/add", HTTP_POST, handlePOSTAPListAdd);
+  //server.on("/settings/wifi/delete", HTTP_POST, handlePOSTAPSListDelete);
+
 
   server.on("/list", HTTP_GET, handleFileList);
   server.on ("/leds", handleLedSet );

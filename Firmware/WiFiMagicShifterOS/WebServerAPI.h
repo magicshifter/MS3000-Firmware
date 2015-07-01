@@ -1,12 +1,6 @@
-struct APSettings
+struct ServerConfig
 {
-  char apSSID[32];
-  char apPassword[32];
-};
-
-struct ServerSettings
-{
-  char hostname[];
+  char hostname[48];
   int port;
 };
 
@@ -16,30 +10,89 @@ struct HWInfo
   char colorFormat[5]; // ABGR
 };
 
+
+#define JSONPARSE_START(input) \
+            struct jsonparse_state jsonState;\
+            jsonparse_setup(&jsonState, input, strlen(input));\
+            byte type;\
+            bool error = false;\
+            while (type = jsonparse_next(&jsonState))\
+            {\
+              if (type == JSON_TYPE_PAIR_NAME)\
+              {\
+                char key[50], data[50];\
+                jsonparse_copy_value(&jsonState, key, sizeof(key));\
+                Serial.print("found key: ");\
+                Serial.println(key);\
+                if (!AssertParseNext(&jsonState, JSON_TYPE_PAIR))\
+                {\
+                  error=true;\
+                  break;\
+                }\
+                if (!AssertParseNext(&jsonState, JSON_TYPE_STRING)) break;\
+                jsonparse_copy_value(&jsonState, data, sizeof(data));
+
+#define JSONPARSE_END()   } }
+
+
+
 class SettingsManager
 {
 private:
   const String apConfigPath = "settings/ap.bin";
   const String apServerConfigPath = "settings/server.bin";
-  const String apListConfigPath = "settings/apList.bin";
+  const String apListConfigPath = "settings/aplist.bin";
+  const String lastAPConfigPath = "settings/lastap.bin";
 
   int apListIndex = -1;
   FSFile apListFile;
 
 public:
-  void getServerConfig(struct ServerSettings *serverSettings)
+  bool getServerConfig(struct ServerConfig *config)
   {
-
+    String path = apServerConfigPath;
+    if(FS.exists((char *)path.c_str()))
+    {
+      FSFile file = FS.open((char *)path.c_str());
+      file.read(config, sizeof(*config));
+      file.close();
+      return true;
+    }
+    return false;
   }
 
-  void setServerConfig(struct ServerSettings *serverSettings)
+  void setServerConfig(struct ServerConfig *config)
   {
-
+    String path = apServerConfigPath;
+    FSFile file = FS.open((char *)path.c_str(), FSFILE_OVERWRITE);
+    file.write((uint8_t *)config, sizeof(*config));
+    file.close();
   }
 
-  bool getAPConfig(struct APInfo *apInfo)
+  bool getAPConfig(struct APInfo *config)
   {
     String path = apConfigPath;
+    if(FS.exists((char *)path.c_str()))
+    {
+      FSFile file = FS.open((char *)path.c_str());
+      file.read(config, sizeof(*config));
+      file.close();
+      return true;
+    }
+    return false;
+  }
+
+  void setAPConfig(struct APInfo *config)
+  {
+    String path = apConfigPath;
+    FSFile file = FS.open((char *)path.c_str(), FSFILE_OVERWRITE);
+    file.write((uint8_t *)config, sizeof(*config));
+    file.close();
+  }
+
+  bool getLastAP(struct APInfo *apInfo)
+  {
+    String path = lastAPConfigPath;
     if(FS.exists((char *)path.c_str()))
     {
       FSFile file = FS.open((char *)path.c_str());
@@ -50,22 +103,12 @@ public:
     return false;
   }
 
-  void setAPConfig(struct APInfo *apInfo)
+  void setLastAP(struct APInfo *apInfo)
   {
-    String path = apConfigPath;
+    String path = lastAPConfigPath;
     FSFile file = FS.open((char *)path.c_str(), FSFILE_OVERWRITE);
     file.write((uint8_t *)apInfo, sizeof(*apInfo));
     file.close();
-  }
-
-  void getLastAP(struct APInfo *apInfo)
-  {
-
-  }
-
-  void setLastAP(struct APInfo *apInfo)
-  {
-
   }
 
   void deleteAP(char *ssid)
@@ -153,6 +196,96 @@ public:
 
 SettingsManager Settings;
 
+void handleGETServerSettings(void)
+{
+  ServerConfig config;
+  Settings.getServerConfig(&config);
+  String response = "{";
+  response += "\"host\":";
+  response += "\"";
+  response += config.hostname;
+  response += "\"";
+  response += ",";
+  response += "\"port\":";
+  response += config.port;
+  response += "}";
+  server.send(200, "text/plain", response);
+}
+
+#define POSTHANDLER_START() \
+          if (server.args() >= 1)\
+          {\
+            const char* input = server.arg(0).c_str();
+
+#define POSTHANDLER_END() \
+            if (!error)\
+            {\
+              Settings.setServerConfig(&config);\
+              server.send ( 200, "text/plain", "OK" );\
+            }\
+            else\
+            {\
+              server.send ( 500, "text/plain", "argument invalid!");\
+            }\
+          }\
+          else\
+          {\
+            server.send ( 500, "text/plain", "argument missing!");\
+          }
+
+void handlePOSTServerSettings(void)
+{
+  if (server.args() >= 1)
+  {
+    const char* input = server.arg(0).c_str();
+
+    // call load old settings
+    ServerConfig config;
+    Settings.getServerConfig(&config);
+
+    JSONPARSE_START(input)
+      if (strcmp(key, "host") == 0)
+      {
+        safeStrncpy(config.hostname, data, sizeof(config.hostname));
+      }
+      else if (strcmp(key, "port") == 0)
+      {
+        config.port = atoi(data);
+      }
+    JSONPARSE_END()
+
+    if (!error)
+    {
+      Settings.setServerConfig(&config);
+      server.send ( 200, "text/plain", "OK" );
+    }
+    else
+    {
+      server.send ( 500, "text/plain", "argument invalid!");
+    }
+  }
+  else
+  {
+    server.send ( 500, "text/plain", "argument missing!");
+  }
+}
+
+void handleGETAPSettings(void)
+{
+  APInfo apInfo;
+  Settings.getAPConfig(&apInfo);
+  String response = "{";
+  response += "\"ssid\":";
+  response += "\"";
+  response += apInfo.ssid;
+  response += "\"";
+  //response += ",";
+  //response += "\"pwd\":";
+  //response += "\"" + apInfo.pwd + "\"";
+  response += "}";
+  server.send ( 200, "text/plain", response );
+}
+
 void handlePOSTAPSettings(void)
 {
   fillPixels(0, 1, 0, 0x1F);
@@ -204,7 +337,7 @@ void handlePOSTAPSettings(void)
     }
     else
     {
-      server.send ( 500, "text/plain", "argument iunvalid!");
+      server.send ( 500, "text/plain", "argument invalid!");
     }
   }
   else
