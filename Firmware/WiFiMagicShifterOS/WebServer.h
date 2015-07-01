@@ -65,7 +65,7 @@ void StartWebServer(void)
 #endif
 
   //server.on("/settings", HTTP_GET, handleGETSettings);
-  server.on ("/settings", HTTP_POST, handlePOSTSettings);
+  server.on ("/settings", HTTP_POST, handlePOSTAPSettings);
 
   server.on("/list", HTTP_GET, handleFileList);
   server.on ("/leds", handleLedSet );
