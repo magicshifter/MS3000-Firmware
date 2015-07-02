@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import serial
 import curses
 import time
@@ -7,18 +9,21 @@ baudRate = 115200
 
 def tryOpenSerial():
     try:
-        port = serial.Serial(portName, baudRate , timeout=0)
-        port.setDTR(False)
-        port.setRTS(True)
-        time.sleep(0.05)
+        port = serial.Serial(portName, baudRate, timeout=0)
         port.setRTS(False)
         return port
     except:
         return False
 
+def resetESP(port):
+    port.setDTR(False)
+    port.setRTS(True)
+    time.sleep(0.05)
+    port.setRTS(False)
 
 def main(stdscr):
     port = tryOpenSerial()
+    # resetESP(port)
 
     canChangeColor = curses.can_change_color()
     #curses.noecho()
@@ -65,6 +70,7 @@ def main(stdscr):
             if c == 65:
                 keyboardWin.addstr("\ntry open serial: ")
                 port = tryOpenSerial()
+                resetESP(port)
                 if port:
                     keyboardWin.addstr("success\n", curses.color_pair(2))
                 else:

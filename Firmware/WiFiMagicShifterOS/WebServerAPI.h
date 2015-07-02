@@ -79,6 +79,8 @@ public:
       file.close();
       return true;
     }
+    safeStrncpy(config->ssid, "MS3000", sizeof(config->ssid));
+    safeStrncpy(config->password, "", sizeof(config->password));
     return false;
   }
 
@@ -199,7 +201,12 @@ SettingsManager Settings;
 void handleGETServerSettings(void)
 {
   ServerConfig config;
-  Settings.getServerConfig(&config);
+  if (!Settings.getServerConfig(&config))
+  {
+    //safeStrncpy(config.ssid, "MS3000", sizeof(config.ssid));
+    //safeStrncpy(config.ssid, "", sizeof(config.ssid));
+  }
+
   String response = "{";
   response += "\"host\":";
   response += "\"";
@@ -291,6 +298,8 @@ void handlePOSTAPSettings(void)
   fillPixels(0, 1, 0, 0x1F);
   updatePixels();
 
+  String response = "AP set: ";
+
   if (server.args() >= 1)
   {
     // call load old settings
@@ -299,8 +308,19 @@ void handlePOSTAPSettings(void)
 
 
     const char* input = server.arg(0).c_str();
+    char json[100];
+    url_decode(json, input, sizeof(json));
     struct jsonparse_state jsonState;
-    jsonparse_setup(&jsonState, input, strlen(input));
+    Serial.println("decoding jason:");
+    //response += input;
+    //response += "  :  ";
+    //response + json;
+
+    Serial.println(input);
+    Serial.println("parsing jason:");
+    Serial.println(json);
+
+    jsonparse_setup(&jsonState, json, strlen(json));
     byte type;
     bool error = false;
     while (type = jsonparse_next(&jsonState))
@@ -333,7 +353,7 @@ void handlePOSTAPSettings(void)
     if (!error)
     {
       Settings.setAPConfig(&apInfo);
-      server.send ( 200, "text/plain", "OK" );
+      server.send(200, "text/plain", "OK");
     }
     else
     {

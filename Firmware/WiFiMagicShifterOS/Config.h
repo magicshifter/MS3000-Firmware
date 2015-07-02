@@ -6,7 +6,7 @@
 #define USE_MDNS
 
 // 192.168.4.1 is the IP it always has in softAP mode
-const bool forceAPMode = true;
+const bool forceAPMode = false;
 
 const char *jsonLastAP =
 //"{\"ssid\":\"PACIFIC\", \"pwd\":\"AllesR0ger\"}";

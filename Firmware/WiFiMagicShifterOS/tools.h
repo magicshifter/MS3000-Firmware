@@ -35,4 +35,48 @@ bool saveString(char * str, int len)
   return EEPROM.commit();
 }
 
+int hex_decode(char hex)
+{
+  if (hex >= '0' && hex <= '9')
+    return hex - '0';
+  if (hex >= 'a' && hex <= 'z')
+    return 10 + hex - 'a';
+  if (hex >= 'A' && hex <= 'Z')
+    return 10 + hex - 'A';
+
+  return 0;
+}
+
+int url_decode(char * output, const char * input, int maxLen)
+{
+  int l = 0;
+  char c;
+
+	while (*input != 0 && l < maxLen) {
+    if (*input == '+')
+    {
+      c = ' ';
+      input++;
+    }
+		else if(*input == '%') {
+      input++;
+			c = 16 * hex_decode(*input);
+      input++;
+      c += hex_decode(*input);
+      input++;
+		}
+    else
+    {
+      c = *input;
+      input++;
+    }
+    *output = c;
+
+    l++;
+    output++;
+	}
+	*output = '\0';
+	return l;
+}
+
 #endif
