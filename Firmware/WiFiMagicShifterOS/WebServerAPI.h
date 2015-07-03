@@ -11,19 +11,26 @@ struct HWInfo
 };
 
 
-#define JSONPARSE_START(input) \
+#define POSTHANDLER_START() \
+          if (server.args() >= 1)\
+          {\
+            const char* input = server.arg(0).c_str();\
+            char json[100];\
+            url_decode(json, input, sizeof(json));
+
+#define JSONPARSE_START(json) \
             struct jsonparse_state jsonState;\
-            jsonparse_setup(&jsonState, input, strlen(input));\
+            jsonparse_setup(&jsonState, json, strlen(json));\
             byte type;\
             bool error = false;\
             while (type = jsonparse_next(&jsonState))\
             {\
               if (type == JSON_TYPE_PAIR_NAME)\
               {\
-                char key[50], data[50];\
+                char key[30], data[50];\
                 jsonparse_copy_value(&jsonState, key, sizeof(key));\
-                Serial.print("found key: ");\
-                Serial.println(key);\
+                //Serial.print("found key: ");\
+                //Serial.println(key);\
                 if (!AssertParseNext(&jsonState, JSON_TYPE_PAIR))\
                 {\
                   error=true;\
@@ -32,7 +39,27 @@ struct HWInfo
                 if (!AssertParseNext(&jsonState, JSON_TYPE_STRING)) break;\
                 jsonparse_copy_value(&jsonState, data, sizeof(data));
 
+
 #define JSONPARSE_END()   } }
+
+
+
+#define POSTHANDLER_END() \
+            if (!error)\
+            {\
+              server.send ( 200, "text/plain", "OK" );\
+            }\
+            else\
+            {\
+              server.send ( 500, "text/plain", "argument invalid!");\
+            }\
+          }\
+          else\
+          {\
+            server.send ( 500, "text/plain", "argument missing!");\
+          }
+
+
 
 
 
@@ -58,6 +85,8 @@ public:
       file.close();
       return true;
     }
+    safeStrncpy(config->hostname, "magicshifter", sizeof(config->hostname));
+    config->port = 80;
     return false;
   }
 
@@ -201,11 +230,7 @@ SettingsManager Settings;
 void handleGETServerSettings(void)
 {
   ServerConfig config;
-  if (!Settings.getServerConfig(&config))
-  {
-    //safeStrncpy(config.ssid, "MS3000", sizeof(config.ssid));
-    //safeStrncpy(config.ssid, "", sizeof(config.ssid));
-  }
+  Settings.getServerConfig(&config);
 
   String response = "{";
   response += "\"host\":";
@@ -219,34 +244,10 @@ void handleGETServerSettings(void)
   server.send(200, "text/plain", response);
 }
 
-#define POSTHANDLER_START() \
-          if (server.args() >= 1)\
-          {\
-            const char* input = server.arg(0).c_str();
-
-#define POSTHANDLER_END() \
-            if (!error)\
-            {\
-              Settings.setServerConfig(&config);\
-              server.send ( 200, "text/plain", "OK" );\
-            }\
-            else\
-            {\
-              server.send ( 500, "text/plain", "argument invalid!");\
-            }\
-          }\
-          else\
-          {\
-            server.send ( 500, "text/plain", "argument missing!");\
-          }
-
 void handlePOSTServerSettings(void)
 {
-  if (server.args() >= 1)
-  {
-    const char* input = server.arg(0).c_str();
-
-    // call load old settings
+  POSTHANDLER_START()
+    // load old settings
     ServerConfig config;
     Settings.getServerConfig(&config);
 
@@ -263,18 +264,10 @@ void handlePOSTServerSettings(void)
 
     if (!error)
     {
+      // save modified settings
       Settings.setServerConfig(&config);
-      server.send ( 200, "text/plain", "OK" );
     }
-    else
-    {
-      server.send ( 500, "text/plain", "argument invalid!");
-    }
-  }
-  else
-  {
-    server.send ( 500, "text/plain", "argument missing!");
-  }
+  POSTHANDLER_END()
 }
 
 void handleGETAPSettings(void)
@@ -298,8 +291,6 @@ void handlePOSTAPSettings(void)
   fillPixels(0, 1, 0, 0x1F);
   updatePixels();
 
-  String response = "AP set: ";
-
   if (server.args() >= 1)
   {
     // call load old settings
@@ -308,17 +299,14 @@ void handlePOSTAPSettings(void)
 
 
     const char* input = server.arg(0).c_str();
-    char json[100];
+    char json[80];
     url_decode(json, input, sizeof(json));
     struct jsonparse_state jsonState;
-    Serial.println("decoding jason:");
-    //response += input;
-    //response += "  :  ";
-    //response + json;
 
-    Serial.println(input);
-    Serial.println("parsing jason:");
-    Serial.println(json);
+    //Serial.println("decoding jason:");
+    //Serial.println(input);
+    //Serial.println("parsing jason:");
+    //Serial.println(json);
 
     jsonparse_setup(&jsonState, json, strlen(json));
     byte type;
@@ -327,10 +315,10 @@ void handlePOSTAPSettings(void)
     {
       if (type == JSON_TYPE_PAIR_NAME)
       {
-        char key[50], data[50];
+        char key[10], data[32];
         jsonparse_copy_value(&jsonState, key, sizeof(key));
-        Serial.print("found key: ");
-        Serial.println(key);
+        //Serial.print("found key: ");
+        //Serial.println(key);
         if (!AssertParseNext(&jsonState, JSON_TYPE_PAIR))
         {
           error=true;
