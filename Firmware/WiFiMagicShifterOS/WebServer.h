@@ -59,26 +59,27 @@ void StartWebServer(void)
     delay(100);
   }
 #ifdef USE_MDNS
-  if ( mdns.begin ( "magicshifter", WiFi.localIP() ) ) {
-    Serial.println ( "MDNS responder started" );
+  if (mdns.begin("magicshifter", WiFi.localIP()))
+  {
+    Serial.println( "MDNS responder started" );
   }
 #endif
-
-  //server.on("/info/hardware", HTTP_GET, handleGETAPSettings);
 
   server.on("/settings/ap", HTTP_GET, handleGETAPSettings);
   server.on("/settings/ap", HTTP_POST, handlePOSTAPSettings);
 
   server.on("/settings/server", HTTP_GET, handleGETServerSettings);
-  server.on("/settings/server", HTTP_POST, handlePOSTAPSettings);
+  server.on("/settings/server", HTTP_POST, handlePOSTServerSettings);
 
-  //server.on("/settings/wifi", HTTP_GET, handleGETAPList);
-  //server.on("/settings/wifi/add", HTTP_POST, handlePOSTAPListAdd);
-  //server.on("/settings/wifi/delete", HTTP_POST, handlePOSTAPSListDelete);
+  server.on("/settings/wifi/prefered", HTTP_GET, handleGETPreferdAPSettings);
+  server.on("/settings/wifi/prefered", HTTP_POST, handlePOSTPreferedAPSettings);
 
+  server.on("/settings/wifi/list", HTTP_GET, handleGETAPList);
+  server.on("/settings/wifi/add", HTTP_POST, handlePOSTAPListAdd);
+  server.on("/settings/wifi/delete", HTTP_POST, handlePOSTAPSListDelete);
 
   server.on("/list", HTTP_GET, handleFileList);
-  server.on ("/leds", handleLedSet );
+  server.on("/leds", handleLedSet);
   server.on("/read", handleReadFile);
 
   server.on("/download",  []() {
