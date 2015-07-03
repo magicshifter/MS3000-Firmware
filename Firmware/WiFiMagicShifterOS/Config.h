@@ -8,13 +8,15 @@
 // 192.168.4.1 is the IP it always has in softAP mode
 const bool forceAPMode = false;
 
+int DEBUG_LEVEL = INFO;
+
 const char *jsonLastAP =
 //"{\"ssid\":\"PACIFIC\", \"pwd\":\"AllesR0ger\"}";
-"{\"ssid\":\"wizard23\", \"pwd\":\"lolinternets\"}";
-//"{\"ssid\":\"wizme\", \"pwd\":\"lolinternets\"}";
+//"{\"ssid\":\"wizard23\", \"pwd\":\"lolinternets\"}";
+"{\"ssid\":\"wizme\", \"pwd\":\"lolinternets\"}";
 
 const char *jsonAPList = "{\"list\": [\
-{\"ssid\":\"metalab\", \"password\":\"\"},\
+{\"ssid\":\"metalab\", \"pwd\":\"\"},\
 {\"ssid\":\"wizard23\", \"pwd\":\"lolinternets\"},\
 {\"ssid\":\"wizme\", \"pwd\":\"lolinternets\"}\
 ]}";

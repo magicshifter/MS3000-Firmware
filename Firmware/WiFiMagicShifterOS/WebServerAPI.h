@@ -15,7 +15,10 @@ struct HWInfo
           {\
             const char* input = server.arg(0).c_str();\
             char json[100];\
-            url_decode(json, input, sizeof(json));
+            url_decode(json, input, sizeof(json));\
+            logln(server.arg(0));\
+            logln("decoded:");\
+            logln(json);
 
 #define JSONPARSE_START(json) \
             struct jsonparse_state jsonState;\
@@ -24,20 +27,26 @@ struct HWInfo
             bool error = false;\
             while (type = jsonparse_next(&jsonState))\
             {\
+              logln(String(type));\
               if (type == JSON_TYPE_PAIR_NAME)\
               {\
                 char key[30], data[50];\
                 jsonparse_copy_value(&jsonState, key, sizeof(key));\
-                //Serial.print("found key: ");\
-                //Serial.println(key);\
+                logln("found key: ");\
+                logln(key);\
                 if (!AssertParseNext(&jsonState, JSON_TYPE_PAIR))\
                 {\
                   error=true;\
                   break;\
                 }\
-                jsonparse_next(&jsonState); \ //dummy parse data of pair TODO: check for int, bool, or string)
-                //if (!AssertParseNext(&jsonState, JSON_TYPE_STRING)) break;\
+                if (!AssertParseNext(&jsonState, JSON_TYPE_STRING)) break;\
                 jsonparse_copy_value(&jsonState, data, sizeof(data));
+
+
+
+// jsonparse_next(&jsonState); \ //dummy parse data of pair TODO: check for int, bool, or string)
+
+
 
 #define JSONPARSE_END()   } }
 
@@ -113,6 +122,9 @@ public:
     FSFile file = FS.open((char *)path.c_str(), FSFILE_OVERWRITE);
     file.write((uint8_t *)config, sizeof(*config));
     file.close();
+
+    logln("saved:");
+    logln(config->ssid);
   }
 
   bool getPreferedAP(struct APInfo *config)
@@ -235,6 +247,8 @@ SettingsManager Settings;
 
 void handleGETServerSettings(void)
 {
+  logln("handleGETServerSettings");
+
   ServerConfig config;
   Settings.getServerConfig(&config);
 
@@ -252,6 +266,8 @@ void handleGETServerSettings(void)
 
 void handlePOSTServerSettings(void)
 {
+  logln("handlePOSTServerSettings");
+
   POSTHANDLER_START()
     // load old settings
     ServerConfig config;
@@ -278,6 +294,8 @@ void handlePOSTServerSettings(void)
 
 void handleGETAPSettings(void)
 {
+  logln("handleGETAPSettings");
+
   APInfo apInfo;
   Settings.getAPConfig(&apInfo);
 
@@ -295,27 +313,52 @@ void handleGETAPSettings(void)
 
 void handlePOSTAPSettings(void)
 {
-  POSTHANDLER_START()
+  logln("handlePOSTAPSettings", INFO);
+
+  if (server.args() >= 2)
+  {
+    bool error = false;
     // load old settings
     APInfo apInfo;
     Settings.getAPConfig(&apInfo);
 
-    JSONPARSE_START(input)
-      if (strcmp(key, "ssid") == 0)
+    for (int i = 0; i < server.args(); i++)
+    {
+      logln("argName: ", VERBOSE);
+      logln(server.argName(i), VERBOSE);
+
+      logln("arg: ", VERBOSE);
+      logln(server.arg(i), VERBOSE);
+
+      if (strcmp(server.argName(i).c_str(), "ssid") == 0)
       {
-        safeStrncpy(apInfo.ssid, data, sizeof(apInfo.ssid));
+        safeStrncpy(apInfo.ssid, server.arg(i).c_str(), sizeof(apInfo.ssid));
       }
-      else if (strcmp(key, "pwd") == 0)
+      else if (strcmp(server.argName(i).c_str(), "pwd") == 0)
       {
-        safeStrncpy(apInfo.password, data, sizeof(apInfo.password));
+        safeStrncpy(apInfo.password, server.arg(i).c_str(), sizeof(apInfo.password));
       }
-    JSONPARSE_END()
+      else
+      {
+        error = true;
+      }
+    }
 
     if (!error)
     {
+      logln("saving setAPConfig");
       Settings.setAPConfig(&apInfo);
+      server.send (200, "text/plain", "OK");
     }
-  POSTHANDLER_END()
+    else
+    {
+      server.send ( 500, "text/plain", "unknown args!");\
+    }
+  }
+  else
+  {
+    server.send ( 500, "text/plain", "argument missing!");\
+  }
 }
 
 

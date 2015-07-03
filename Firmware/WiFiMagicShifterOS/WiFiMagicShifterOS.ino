@@ -54,8 +54,8 @@ extern "C" {
 //#define MMA8452_ADDRESS 0x1D  // 0x1D if SA0 is high, 0x1C if low
 #define MMA8452_ADDRESS 0x1C
 
-#include "Config.h"
 #include "tools.h"
+#include "Config.h"
 #include "APA102.h"
 #include "MMA8542.h"
 

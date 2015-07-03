@@ -1,6 +1,24 @@
 #ifndef __TOOLS_H
 #define __TOOLS_H
 
+extern int DEBUG_LEVEL;
+
+const int VERBOSE = 0;
+const int INFO = 5;
+const int WARNING = 10;
+const int ERROR = 15;
+
+void log(String msg, int level = ERROR)
+{
+  if (DEBUG_LEVEL <= level)
+    Serial.print(msg);
+}
+
+void logln(String msg, int level = ERROR)
+{
+  if (DEBUG_LEVEL <= level)
+    Serial.println(msg);
+}
 
 bool memcmpByte(const byte *data, byte referenceValue, int len)
 {
@@ -11,7 +29,7 @@ bool memcmpByte(const byte *data, byte referenceValue, int len)
   return true;
 }
 // makes sure dest is \0 terminated
-void safeStrncpy(char * dest, char *source, int n)
+void safeStrncpy(char * dest, const char *source, int n)
 {
   strncpy(dest, source, n);
   dest[n-1] = '\0';
