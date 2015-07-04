@@ -213,7 +213,7 @@ void handleGETAbout(void)
 
 bool parseAPInfoFromServerArgs(APInfo &apInfo)
 {
-  bool error = false;
+  bool success = true;
   for (int i = 0; i < server.args(); i++)
   {
     logln("argName: ", VERBOSE);
@@ -232,10 +232,11 @@ bool parseAPInfoFromServerArgs(APInfo &apInfo)
     }
     else
     {
-      error = true;
+      logln("arg is not known!", VERBOSE);
+      success = false;
     }
   }
-  return error;
+  return success;
 }
 
 void handleGETServerSettings(void)
@@ -265,7 +266,7 @@ void handlePOSTServerSettings(void)
     ServerConfig config;
     Settings.getServerConfig(&config);
 
-    bool error = false;
+    bool success = true;
     for (int i = 0; i < server.args(); i++)
     {
       logln("argName: ", VERBOSE);
@@ -284,11 +285,11 @@ void handlePOSTServerSettings(void)
       }
       else
       {
-        error = true;
+        success = false;
       }
     }
 
-    if (!error)
+    if (success)
     {
       Settings.setServerConfig(&config);
       server.send (200, "text/plain", "OK");
@@ -333,30 +334,7 @@ void handlePOSTAPSettings(void)
     APInfo apInfo;
     Settings.getAPConfig(&apInfo);
 
-    bool error = false;
-    for (int i = 0; i < server.args(); i++)
-    {
-      logln("argName: ", VERBOSE);
-      logln(server.argName(i), VERBOSE);
-
-      logln("arg: ", VERBOSE);
-      logln(server.arg(i), VERBOSE);
-
-      if (strcmp(server.argName(i).c_str(), "ssid") == 0)
-      {
-        safeStrncpy(apInfo.ssid, server.arg(i).c_str(), sizeof(apInfo.ssid));
-      }
-      else if (strcmp(server.argName(i).c_str(), "pwd") == 0)
-      {
-        safeStrncpy(apInfo.password, server.arg(i).c_str(), sizeof(apInfo.password));
-      }
-      else
-      {
-        error = true;
-      }
-    }
-
-    if (!error)
+    if (parseAPInfoFromServerArgs(apInfo))
     {
       logln("saving setAPConfig");
       Settings.setAPConfig(&apInfo);
@@ -402,30 +380,7 @@ void handlePOSTPreferedAPSettings(void)
     APInfo apInfo;
     Settings.getPreferedAP(&apInfo);
 
-    bool error = false;
-    for (int i = 0; i < server.args(); i++)
-    {
-      logln("argName: ", VERBOSE);
-      logln(server.argName(i), VERBOSE);
-
-      logln("arg: ", VERBOSE);
-      logln(server.arg(i), VERBOSE);
-
-      if (strcmp(server.argName(i).c_str(), "ssid") == 0)
-      {
-        safeStrncpy(apInfo.ssid, server.arg(i).c_str(), sizeof(apInfo.ssid));
-      }
-      else if (strcmp(server.argName(i).c_str(), "pwd") == 0)
-      {
-        safeStrncpy(apInfo.password, server.arg(i).c_str(), sizeof(apInfo.password));
-      }
-      else
-      {
-        error = true;
-      }
-    }
-
-    if (!error)
+    if (parseAPInfoFromServerArgs(apInfo))
     {
       logln("saving setAPConfig");
       Settings.setPreferedAP(&apInfo);
@@ -475,8 +430,6 @@ void handleGETAPList(void)
     response += "}";
   }
   response += "]";
-
-
   Settings.resetAPList();
 
   server.send(200, "text/plain", response);
@@ -492,7 +445,7 @@ void handlePOSTAPListAdd(void)
     memset(apInfo.ssid, 0, sizeof(apInfo.ssid));
     memset(apInfo.password, 0, sizeof(apInfo.password));
 
-    if (!parseAPInfoFromServerArgs(apInfo))
+    if (parseAPInfoFromServerArgs(apInfo))
     {
       if (!strcmp(apInfo.ssid, "") == 0)
       {
@@ -522,7 +475,7 @@ void handlePOSTAPListDelete(void)
     strcpy(apInfo.ssid, "");
     strcpy(apInfo.password, "");
 
-    if (!parseAPInfoFromServerArgs(apInfo))
+    if (parseAPInfoFromServerArgs(apInfo))
     {
       if (!strcmp(apInfo.ssid, "") == 0)
       {

@@ -64,7 +64,7 @@ void StartWebServer(void)
     Serial.println( "MDNS responder started" );
   }
 #endif
-  server.on("/about", HTTP_GET, handleGETAbout);
+  server.on("/info/hardware", HTTP_GET, handleGETAbout);
 
   server.on("/settings/ap", HTTP_GET, handleGETAPSettings);
   server.on("/settings/ap", HTTP_POST, handlePOSTAPSettings);
