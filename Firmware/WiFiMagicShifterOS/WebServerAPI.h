@@ -69,7 +69,7 @@ class SettingsManager
 {
 private:
   const String apConfigPath = "settings/ap.bin";
-  const String apServerConfigPath = "settings/server.bin";
+  const String apServerConfigPath = "settings/server1.bin";
   const String apListConfigPath = "settings/aplist.bin";
   const String preferedAPConfigPath = "settings/preferedap.bin";
 
@@ -242,12 +242,38 @@ public:
     }
   }
 };
-
 SettingsManager Settings;
+
+bool parseAPInfoFromServerArgs(APInfo &apInfo)
+{
+  bool error = false;
+  for (int i = 0; i < server.args(); i++)
+  {
+    logln("argName: ", VERBOSE);
+    logln(server.argName(i), VERBOSE);
+
+    logln("arg: ", VERBOSE);
+    logln(server.arg(i), VERBOSE);
+
+    if (strcmp(server.argName(i).c_str(), "ssid") == 0)
+    {
+      safeStrncpy(apInfo.ssid, server.arg(i).c_str(), sizeof(apInfo.ssid));
+    }
+    else if (strcmp(server.argName(i).c_str(), "pwd") == 0)
+    {
+      safeStrncpy(apInfo.password, server.arg(i).c_str(), sizeof(apInfo.password));
+    }
+    else
+    {
+      error = true;
+    }
+  }
+  return error;
+}
 
 void handleGETServerSettings(void)
 {
-  logln("handleGETServerSettings");
+  logln("handleGETServerSettings", INFO);
 
   ServerConfig config;
   Settings.getServerConfig(&config);
@@ -266,30 +292,49 @@ void handleGETServerSettings(void)
 
 void handlePOSTServerSettings(void)
 {
-  logln("handlePOSTServerSettings");
-
-  POSTHANDLER_START()
-    // load old settings
+  logln("handlePOSTServerSettings", INFO);
+  if (server.args() >= 2)
+  {
     ServerConfig config;
     Settings.getServerConfig(&config);
 
-    JSONPARSE_START(input)
-      if (strcmp(key, "host") == 0)
+    bool error = false;
+    for (int i = 0; i < server.args(); i++)
+    {
+      logln("argName: ", VERBOSE);
+      logln(server.argName(i), VERBOSE);
+
+      logln("arg: ", VERBOSE);
+      logln(server.arg(i), VERBOSE);
+
+      if (strcmp(server.argName(i).c_str(), "host") == 0)
       {
-        safeStrncpy(config.hostname, data, sizeof(config.hostname));
+        safeStrncpy(config.hostname, server.arg(i).c_str(), sizeof(config.hostname));
       }
-      else if (strcmp(key, "port") == 0)
+      else if (strcmp(server.argName(i).c_str(), "port") == 0)
       {
-        config.port = atoi(data);
+        config.port = atoi(server.arg(i).c_str());
       }
-    JSONPARSE_END()
+      else
+      {
+        error = true;
+      }
+    }
 
     if (!error)
     {
-      // save modified settings
       Settings.setServerConfig(&config);
+      server.send (200, "text/plain", "OK");
     }
-  POSTHANDLER_END()
+    else
+    {
+      server.send(500, "text/plain", "invalid args!");
+    }
+  }
+  else
+  {
+    server.send ( 500, "text/plain", "argument missing!");
+  }
 }
 
 void handleGETAPSettings(void)
@@ -317,11 +362,11 @@ void handlePOSTAPSettings(void)
 
   if (server.args() >= 2)
   {
-    bool error = false;
     // load old settings
     APInfo apInfo;
     Settings.getAPConfig(&apInfo);
 
+    bool error = false;
     for (int i = 0; i < server.args(); i++)
     {
       logln("argName: ", VERBOSE);
@@ -352,18 +397,20 @@ void handlePOSTAPSettings(void)
     }
     else
     {
-      server.send ( 500, "text/plain", "unknown args!");\
+      server.send(500, "text/plain", "unknown args!");
     }
   }
   else
   {
-    server.send ( 500, "text/plain", "argument missing!");\
+    server.send ( 500, "text/plain", "argument missing!");
   }
 }
 
 
 void handleGETPreferdAPSettings(void)
 {
+  logln("handleGETPreferdAPSettings", INFO);
+
   APInfo apInfo;
   Settings.getPreferedAP(&apInfo);
 
@@ -381,27 +428,51 @@ void handleGETPreferdAPSettings(void)
 
 void handlePOSTPreferedAPSettings(void)
 {
-  POSTHANDLER_START()
-    // load old settings
+  logln("handlePOSTPreferedAPSettings", INFO);
+
+  if (server.args() >= 2)
+  {
     APInfo apInfo;
     Settings.getPreferedAP(&apInfo);
 
-    JSONPARSE_START(input)
-      if (strcmp(key, "ssid") == 0)
+    bool error = false;
+    for (int i = 0; i < server.args(); i++)
+    {
+      logln("argName: ", VERBOSE);
+      logln(server.argName(i), VERBOSE);
+
+      logln("arg: ", VERBOSE);
+      logln(server.arg(i), VERBOSE);
+
+      if (strcmp(server.argName(i).c_str(), "ssid") == 0)
       {
-        safeStrncpy(apInfo.ssid, data, sizeof(apInfo.ssid));
+        safeStrncpy(apInfo.ssid, server.arg(i).c_str(), sizeof(apInfo.ssid));
       }
-      else if (strcmp(key, "pwd") == 0)
+      else if (strcmp(server.argName(i).c_str(), "pwd") == 0)
       {
-        safeStrncpy(apInfo.password, data, sizeof(apInfo.password));
+        safeStrncpy(apInfo.password, server.arg(i).c_str(), sizeof(apInfo.password));
       }
-    JSONPARSE_END()
+      else
+      {
+        error = true;
+      }
+    }
 
     if (!error)
     {
+      logln("saving setAPConfig");
       Settings.setPreferedAP(&apInfo);
+      server.send (200, "text/plain", "OK");
     }
-  POSTHANDLER_END()
+    else
+    {
+      server.send(500, "text/plain", "unknown args!");
+    }
+  }
+  else
+  {
+    server.send ( 500, "text/plain", "argument missing!");
+  }
 }
 
 
@@ -410,6 +481,8 @@ void handlePOSTPreferedAPSettings(void)
 
 void handleGETAPList(void)
 {
+  logln("handleGETAPList", INFO);
+
   APInfo apInfo;
   Settings.getPreferedAP(&apInfo);
 
@@ -441,55 +514,63 @@ void handleGETAPList(void)
 
   server.send(200, "text/plain", response);
 }
+
 void handlePOSTAPListAdd(void)
 {
-  POSTHANDLER_START()
-    // load old settings
+  logln("handlePOSTAPListAdd", INFO);
+
+  if (server.args() >= 2)
+  {
     APInfo apInfo;
     strcpy(apInfo.ssid, "");
     strcpy(apInfo.password, "");
 
-    JSONPARSE_START(input)
-      if (strcmp(key, "ssid") == 0)
-      {
-        safeStrncpy(apInfo.ssid, data, sizeof(apInfo.ssid));
-      }
-      else if (strcmp(key, "pwd") == 0)
-      {
-        safeStrncpy(apInfo.password, data, sizeof(apInfo.password));
-      }
-    JSONPARSE_END()
-
-    if (!error)
+    if (!parseAPInfoFromServerArgs(apInfo))
     {
       if (!strcmp(apInfo.ssid, "") == 0)
       {
+        logln("adding wifi");
         Settings.addAP(&apInfo);
       }
+      server.send (200, "text/plain", "OK");
     }
-  POSTHANDLER_END()
+    else
+    {
+      server.send(500, "text/plain", "invalid args!");
+    }
+  }
+  else
+  {
+    server.send(500, "text/plain", "argument missing!");
+  }
 }
+
 void handlePOSTAPSListDelete(void)
 {
-  POSTHANDLER_START()
-    // load old settings
+  logln("handlePOSTAPSListDelete", INFO);
+
+  if (server.args() >= 1)
+  {
     APInfo apInfo;
     strcpy(apInfo.ssid, "");
     strcpy(apInfo.password, "");
 
-    JSONPARSE_START(input)
-      if (strcmp(key, "ssid") == 0)
-      {
-        safeStrncpy(apInfo.ssid, data, sizeof(apInfo.ssid));
-      }
-    JSONPARSE_END()
-
-    if (!error)
+    if (!parseAPInfoFromServerArgs(apInfo))
     {
       if (!strcmp(apInfo.ssid, "") == 0)
       {
+        logln("deleting wifi");
         Settings.deleteAP(apInfo.ssid);
       }
+      server.send (200, "text/plain", "OK");
     }
-  POSTHANDLER_END()
+    else
+    {
+      server.send(500, "text/plain", "invalid args!");
+    }
+  }
+  else
+  {
+    server.send(500, "text/plain", "args missing!");
+  }
 }

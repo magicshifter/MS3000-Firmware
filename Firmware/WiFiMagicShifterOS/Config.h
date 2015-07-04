@@ -8,7 +8,8 @@
 // 192.168.4.1 is the IP it always has in softAP mode
 const bool forceAPMode = false;
 
-int DEBUG_LEVEL = INFO;
+// VERBOSE, INFO, WARNING, ERROR
+int DEBUG_LEVEL = VERBOSE;
 
 const char *jsonLastAP =
 //"{\"ssid\":\"PACIFIC\", \"pwd\":\"AllesR0ger\"}";
