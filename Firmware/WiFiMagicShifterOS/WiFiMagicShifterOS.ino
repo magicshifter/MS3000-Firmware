@@ -119,6 +119,10 @@ void setup()
   //gets the size of the flash as set by the compiler
   Serial.print("flash configured size: ");
   Serial.println(ESP.getFlashChipSize());
+  if (ESP.getFlashChipSize() != ESP.getFlashChipRealSize())
+  {
+    Serial.println("WARNING: configured flash size does not match real flash size!");
+  }
   Serial.print("flash speed: ");
   Serial.println(ESP.getFlashChipSpeed());
   Serial.print("flash mode: ");

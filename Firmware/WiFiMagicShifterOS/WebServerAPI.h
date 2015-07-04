@@ -4,67 +4,6 @@ struct ServerConfig
   int port;
 };
 
-struct HWInfo
-{
-  int leds;
-  char colorFormat[5]; // ABGR
-};
-
-#define POSTHANDLER_START() \
-          if (server.args() >= 1)\
-          {\
-            const char* input = server.arg(0).c_str();\
-            char json[100];\
-            url_decode(json, input, sizeof(json));\
-            logln(server.arg(0));\
-            logln("decoded:");\
-            logln(json);
-
-#define JSONPARSE_START(json) \
-            struct jsonparse_state jsonState;\
-            jsonparse_setup(&jsonState, json, strlen(json));\
-            byte type;\
-            bool error = false;\
-            while (type = jsonparse_next(&jsonState))\
-            {\
-              logln(String(type));\
-              if (type == JSON_TYPE_PAIR_NAME)\
-              {\
-                char key[30], data[50];\
-                jsonparse_copy_value(&jsonState, key, sizeof(key));\
-                logln("found key: ");\
-                logln(key);\
-                if (!AssertParseNext(&jsonState, JSON_TYPE_PAIR))\
-                {\
-                  error=true;\
-                  break;\
-                }\
-                if (!AssertParseNext(&jsonState, JSON_TYPE_STRING)) break;\
-                jsonparse_copy_value(&jsonState, data, sizeof(data));
-
-
-
-// jsonparse_next(&jsonState); \ //dummy parse data of pair TODO: check for int, bool, or string)
-
-
-
-#define JSONPARSE_END()   } }
-
-#define POSTHANDLER_END() \
-            if (!error)\
-            {\
-              server.send ( 200, "text/plain", "OK" );\
-            }\
-            else\
-            {\
-              server.send ( 500, "text/plain", "argument invalid!");\
-            }\
-          }\
-          else\
-          {\
-            server.send ( 500, "text/plain", "argument missing!");\
-          }
-
 class SettingsManager
 {
 private:
@@ -262,6 +201,15 @@ public:
   }
 };
 SettingsManager Settings;
+
+void handleGETAbout(void)
+{
+  logln("handleGETAbout");
+
+  String response = "{\"type\":\"MagicShifter3000\", \"version\":" + String(VERSION) +
+    ", \"leds\":" + String(LEDS) + ", \"id\":" + String(ESP.getChipId()) + "}";
+  server.send(200, "text/plain", response);
+}
 
 bool parseAPInfoFromServerArgs(APInfo &apInfo)
 {
@@ -564,9 +512,9 @@ void handlePOSTAPListAdd(void)
   }
 }
 
-void handlePOSTAPSListDelete(void)
+void handlePOSTAPListDelete(void)
 {
-  logln("handlePOSTAPSListDelete", INFO);
+  logln("handlePOSTAPListDelete", INFO);
 
   if (server.args() >= 1)
   {

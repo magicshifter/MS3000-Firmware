@@ -64,6 +64,7 @@ void StartWebServer(void)
     Serial.println( "MDNS responder started" );
   }
 #endif
+  server.on("/about", HTTP_GET, handleGETAbout);
 
   server.on("/settings/ap", HTTP_GET, handleGETAPSettings);
   server.on("/settings/ap", HTTP_POST, handlePOSTAPSettings);
@@ -76,7 +77,7 @@ void StartWebServer(void)
 
   server.on("/settings/wifi/list", HTTP_GET, handleGETAPList);
   server.on("/settings/wifi/add", HTTP_POST, handlePOSTAPListAdd);
-  server.on("/settings/wifi/delete", HTTP_POST, handlePOSTAPSListDelete);
+  server.on("/settings/wifi/delete", HTTP_POST, handlePOSTAPListDelete);
 
   server.on("/list", HTTP_GET, handleFileList);
   server.on("/leds", handleLedSet);

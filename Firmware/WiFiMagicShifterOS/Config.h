@@ -28,6 +28,8 @@ const char *jsonSoftAP = "{\"ssid\":\"MagicShifter3000\", \"pwd\":\"\"}";
 #define SPI_FREQUENCY 20000000
 #define POV_TIME_MICROSECONDS 1
 
+#define VERSION 0.1
+
 #define LEDS 48
 //#define LEDS 16
 
