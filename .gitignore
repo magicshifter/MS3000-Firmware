@@ -1,5 +1,10 @@
 Firmware/build/*
 
+.idea/*
+Firmware/esptool.py
+trsh/*
+
+
 *~
 # Object files
 *.o
