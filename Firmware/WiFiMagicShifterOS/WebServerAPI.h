@@ -70,7 +70,7 @@ class SettingsManager
 private:
   const String apConfigPath = "settings/ap.bin";
   const String apServerConfigPath = "settings/server1.bin";
-  const String apListConfigPath = "settings/aplist.bin";
+  const String apListConfigPath = "settings/aplist1.bin";
   const String preferedAPConfigPath = "settings/preferedap.bin";
 
   // used in resetAPList & getNextAP
@@ -153,20 +153,29 @@ public:
   void deleteAP(char *ssid)
   {
     String path = apListConfigPath;
-    FSFile apListFile = FS.open((char *)path.c_str(), FSFILE_WRITE);
+    // bug in FS WRITE define!!!!
+    FSFile apListFile = FS.open((char *)path.c_str(), (SPIFFS_RDONLY | SPIFFS_WRONLY | SPIFFS_CREAT));
     APInfo apInfoDummy;
     const int requiredBytes = sizeof(apInfoDummy);
     int apListIndex = 0;
+
+    int lastPos = apListFile.position();
+
     while (apListFile.read(&apInfoDummy, requiredBytes) == requiredBytes)
     {
       if (strcmp(apInfoDummy.ssid, ssid) == 0)
       {
-        memset(&apInfoDummy, 0, requiredBytes);
-        apListFile.seek(apListIndex * requiredBytes);
+        log("deleting wifi:", VERBOSE);
+        logln(ssid, VERBOSE);
+
+        apInfoDummy.clear();
+        int calcPos = apListIndex * requiredBytes;
+        apListFile.seek(calcPos);
         apListFile.write((uint8_t *)&apInfoDummy, requiredBytes);
         break;
       }
       apListIndex++;
+      lastPos = apListFile.position();
     }
     apListFile.close();
   }
@@ -174,7 +183,7 @@ public:
   void addAP(struct APInfo *apInfo)
   {
     String path = apListConfigPath;
-    FSFile apListFile = FS.open((char *)path.c_str(), FSFILE_WRITE);
+    FSFile apListFile = FS.open((char *)path.c_str(), FSFILE_READ);
     const int requiredBytes = sizeof(*apInfo);
     APInfo apInfoDummy;
     int apListIndex = 0;
@@ -182,7 +191,7 @@ public:
 
     while (apListFile.read(&apInfoDummy, requiredBytes) == requiredBytes)
     {
-      if (firstFreePos < 0 && memcmpByte((byte *)apInfo, 0, requiredBytes))
+      if (firstFreePos < 0 && memcmpByte((byte *)&apInfoDummy, 0, requiredBytes))
       {
         firstFreePos = apListIndex * requiredBytes;
       }
@@ -193,9 +202,19 @@ public:
       }
       apListIndex++;
     }
+    apListFile.close();
+
     if (firstFreePos >= 0)
     {
+      logln("found hole!");
+      logln(String(firstFreePos));
+      apListFile = FS.open((char *)path.c_str(), (SPIFFS_RDONLY | SPIFFS_WRONLY | SPIFFS_CREAT));
       apListFile.seek(firstFreePos);
+    }
+    else
+    {
+      logln("appendiong at end");
+      apListFile = FS.open((char *)path.c_str(), FSFILE_WRITE);
     }
     apListFile.write((uint8_t *)apInfo, requiredBytes);
     apListFile.close();
@@ -489,7 +508,7 @@ void handleGETAPList(void)
   String response = "[";
 
   Settings.resetAPList();
-  bool firstAP = false;
+  bool firstAP = true;
   while (Settings.getNextAP(&apInfo))
   {
     if (!firstAP)
@@ -522,8 +541,8 @@ void handlePOSTAPListAdd(void)
   if (server.args() >= 2)
   {
     APInfo apInfo;
-    strcpy(apInfo.ssid, "");
-    strcpy(apInfo.password, "");
+    memset(apInfo.ssid, 0, sizeof(apInfo.ssid));
+    memset(apInfo.password, 0, sizeof(apInfo.password));
 
     if (!parseAPInfoFromServerArgs(apInfo))
     {
@@ -541,7 +560,7 @@ void handlePOSTAPListAdd(void)
   }
   else
   {
-    server.send(500, "text/plain", "argument missing!");
+    server.send(500, "text/plain", "args missing!");
   }
 }
 
