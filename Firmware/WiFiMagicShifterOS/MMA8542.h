@@ -15,13 +15,6 @@
 
 #define GSCALE 8 // Sets full-scale range to +/-2, 4, or 8g. Used to calc real g values.
 
-/*
- * void readRegisters(byte addressToRead, int bytesToRead, byte * dest);
-byte readRegister(byte addressToRead);
-void MMA8452Standby();
-void MMA8452Active();
-void writeRegister(byte addressToWrite, byte dataToWrite);
-*/
 
 void InitI2C()
 {

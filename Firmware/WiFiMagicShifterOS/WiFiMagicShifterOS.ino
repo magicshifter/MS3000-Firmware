@@ -72,7 +72,7 @@ MagicMode magicMode;
 float accelG[3];  // Stores the real accel value in g's
 POVShakeSync shakeSync;
 
-int shifterMode = 4;
+int shifterMode = 0;
 int accelCount[3];  // Stores the 12-bit signed value
 int oldButton1State = 0;
 CircleBall ball(600);

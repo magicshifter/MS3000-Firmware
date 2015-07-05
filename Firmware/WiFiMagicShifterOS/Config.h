@@ -11,6 +11,7 @@ const bool forceAPMode = false;
 // VERBOSE, INFO, WARNING, ERROR
 int DEBUG_LEVEL = VERBOSE;
 
+/*
 const char *jsonLastAP =
 //"{\"ssid\":\"PACIFIC\", \"pwd\":\"AllesR0ger\"}";
 //"{\"ssid\":\"wizard23\", \"pwd\":\"lolinternets\"}";
@@ -23,7 +24,9 @@ const char *jsonAPList = "{\"list\": [\
 ]}";
 
 const char *jsonSoftAP = "{\"ssid\":\"MagicShifter3000\", \"pwd\":\"\"}";
+*/
 
+#define CONNECTION_TIMEOUT 8000
 
 #define SPI_FREQUENCY 20000000
 #define POV_TIME_MICROSECONDS 1

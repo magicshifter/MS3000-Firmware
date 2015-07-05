@@ -3,6 +3,7 @@
 
 #include "tools.h"
 
+// TODO: move to Accel object :)
 extern float accelG[3];
 
 #define FRAME_MULTIPLY 4

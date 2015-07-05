@@ -11,9 +11,9 @@
 MDNSResponder mdns;
 ESP8266WebServer server (80);
 
+#include "WebServerAPI.h"
 #include "WebServerSettings.h"
 #include "WebServerRoutes.h"
-#include "WebServerAPI.h"
 
 String getContentType(String filename){
   if(server.hasArg("download")) return "application/octet-stream";

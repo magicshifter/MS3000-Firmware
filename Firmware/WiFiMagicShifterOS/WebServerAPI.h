@@ -1,7 +1,40 @@
+#define MAX_AP_LEN 48
+struct APInfo
+{
+    char ssid[MAX_AP_LEN];
+    char password[MAX_AP_LEN];
+
+  public:
+    APInfo()
+    {
+      clear();
+    }
+
+    void clear(void)
+    {
+      memset(ssid, 0, sizeof(ssid));
+      memset(password, 0, sizeof(password));
+    }
+};
+
+
 struct ServerConfig
 {
   char hostname[48];
   int port;
+
+public:
+  ServerConfig()
+  {
+    clear();
+  }
+
+  void clear(void)
+  {
+    memset(hostname, 0, sizeof(hostname));
+    strcpy(hostname, "magicshifter");
+    port = 80;
+  }
 };
 
 class SettingsManager
