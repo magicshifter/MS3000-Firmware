@@ -239,7 +239,7 @@ void handleGETAbout(void)
 {
   logln("handleGETAbout");
 
-  String response = "{\"type\":\"MagicShifter3000\", \"version\":" + String(VERSION) +
+  String response = "{\"type\":\"MagicShifter3000\", \"format\":\"BGRA\", \"version\":" + String(VERSION) +
     ", \"leds\":" + String(LEDS) + ", \"id\":" + String(ESP.getChipId()) + "}";
   server.send(200, "text/plain", response);
 }

@@ -12,7 +12,7 @@ MDNSResponder mdns;
 ESP8266WebServer server (80);
 
 #include "WebServerAPI.h"
-#include "WebServerSettings.h"
+#include "WebServerAutoConnect.h"
 #include "WebServerRoutes.h"
 
 String getContentType(String filename){
