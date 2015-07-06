@@ -276,7 +276,7 @@ void handleFileUpload(){
   else if(upload.status == UPLOAD_FILE_END)
   {
     magicMode.setActiveFile(uploadname);
-    
+
     saveString(uploadname, FILENAME_LENGTH);
     if(uploadFile)
     {

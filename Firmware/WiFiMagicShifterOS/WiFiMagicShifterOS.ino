@@ -69,6 +69,8 @@ extern "C" {
 
 // state
 MagicMode magicMode;
+//MagicShifterMode rgbLightMode;
+
 float accelG[3];  // Stores the real accel value in g's
 POVShakeSync shakeSync;
 
