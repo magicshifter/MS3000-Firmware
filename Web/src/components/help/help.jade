@@ -1,0 +1,12 @@
+help
+  section(class='{show: show}')
+    h3 { __('help') }
+
+  style(type='scoped-css')
+    :stylus
+      :scope
+        display block
+
+  script.
+    this.mixin('hq', 'router', 'i18n');
+    this.router.page(this);

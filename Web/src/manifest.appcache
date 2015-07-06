@@ -1,0 +1,8 @@
+CACHE MANIFEST
+# |date|
+CACHE:
+/favicon.gif
+/index.html
+/
+FALLBACK:
+/ /index.html

@@ -1,0 +1,74 @@
+settings-wifi
+  h3 { __('Wifi') }
+  m-loader(if='{ !formData }')
+  div#settings-form(if='{ formData }' onsubmit='{ formSubmit }')
+    fieldset
+      div(if='{ message }' class='{ message.type }') { message.text }
+      div
+        label { __('Accesspoints:') }
+        ul.accesspoints(each='{ formData }')
+          li 
+            span { ssid }
+            input.delete(
+              type='button'
+              onclick='{ parent.deleteAccessPoint }'
+              value='x'
+            )
+
+        form.new(if='{ adding }' onsubmit='{ addAccessPoint }')
+          h4 { __('Add Accesspoint:') }
+          label { __('SSID:') }
+          input.ssid(type='text')
+          label { __('Password:') }
+          input.pwd(type='password' name='pwd')
+          input(type='submit' value='add'
+        )
+
+        input(
+          if='{ !adding }'
+          type='button'
+          value='Add Accesspoint'
+          onclick='{ startAdding }'
+        )
+
+  script.
+    this.mixin('i18n', 'mixins', 'request', 'each');
+
+    this.formUrl = '/settings/wifi/list';
+
+    this.getFormData();
+
+    this.deleteAccessPoint = (evt) => {
+      let url = '/settings/wifi/delete';
+      let ssid = evt.target.parentNode.querySelector('span').innerHTML;
+      this.post(url, {ssid}, (err, xhr) => {
+        if (xhr.ok) {
+          this.each(this.formData, (data, key) => {
+            if (data && data.ssid === ssid) {
+              this.formData.splice(key, 1);
+            }
+          });
+          this.update();
+        }
+      });
+    };
+
+    this.startAdding = () => {
+      this.adding = true;
+      this.update();
+    };
+
+    this.addAccessPoint = (evt) => {
+      let ssid = this['settings-form'].querySelector('input.ssid').value;
+      let pwd = this['settings-form'].querySelector('input.pwd').value;
+
+      if (ssid && (pwd || pwd === '')) {
+        let url = '/settings/wifi/add';
+        this.post(url, {ssid, pwd}, (err, xhr) => {
+          if (xhr.ok) {
+            this.formData.push(ssid);
+            this.update();
+          }
+        });
+      }
+    };

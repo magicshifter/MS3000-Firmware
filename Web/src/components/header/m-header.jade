@@ -1,0 +1,18 @@
+m-header
+  h1 { __('MagicShifter') }
+  m-menu
+  m-log
+
+  style(type='scoped-css')
+    :stylus
+      :scope
+        display inline-block
+        width 100%
+        margin 0 0 .5em
+
+      h1
+        float left
+        margin 0
+
+  script.
+    this.mixin('i18n');

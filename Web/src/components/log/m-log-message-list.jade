@@ -1,0 +1,31 @@
+m-log-message-list
+  m-log-message(
+    each='{ log.messages }'
+    class='{type} {new: new} bubble'
+    onmouseover='{ onHover }'
+  )
+
+  p.bubble(if='{ !log.messages.length }') No new Messages.
+
+  style(type='scoped-css')
+    :stylus
+      :scope
+        background-color #fff
+        min-width 300px
+        position absolute
+        right 5%
+        top 50px
+        width 90%
+        z-index 10
+
+      p
+        padding .5em
+        text-align center
+        width 100%
+        display block
+
+  script.
+    this.mixin('log');
+
+    this.on('log:message:put', () => this.update());
+    this.on('log:message:del', () => this.update());
