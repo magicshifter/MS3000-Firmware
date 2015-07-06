@@ -1,0 +1,15 @@
+#!./node_modules/.bin/babel-node
+
+import st from 'st';
+import mockyShifter from '../index';
+
+let port = 1337;
+
+let mount = st({
+  path: 'public',
+  url: '/',
+  cache: false,
+});
+
+mockyShifter(mount)
+  .listen(port, () => console.log(`MockyShifter listening to port ${port}`));
