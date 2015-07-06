@@ -1,7 +1,6 @@
 MagicShifter onboard
 ====
 
-#Magicshifter onboard webserver
 This app is used to serve the onboard setup pages,
 directly from the MagicShifter.
 
