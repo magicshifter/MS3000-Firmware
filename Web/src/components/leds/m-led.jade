@@ -1,0 +1,29 @@
+m-led
+  input(
+    if='{ led.value }'
+    type='button'
+    onclick='{ toggle }'
+    style='background-color: { led.value }'
+  )
+  m-color-picker(class='{ hidden: !led.active }' led='{ led }')
+
+  style(type='scoped-css')
+    :stylus
+      :scope
+        display block
+        width 1em
+        float left
+
+  script.
+    this.mixin('broadcast', 'ledStore');
+    this.ledStore.enlist(this);
+
+    this.on('leds:init', () => {
+      this.on(`led:update:${this.led.id}`, (value) => console.error('hyay'));
+
+      this.on(`led:toggle:${this.led.id}`, (active) => this.update());
+    });
+
+    this.toggle = (evt) => {
+      this.broadcast('led:toggle', this.led.id);
+    }

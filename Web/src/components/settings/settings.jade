@@ -1,0 +1,15 @@
+settings
+  section(class='{show: show}')
+    h2 { __('Settings') }
+    settings-server
+    settings-wifi
+    settings-accesspoint
+
+  style(type='scoped-css')
+    :stylus
+      :scope
+        display block
+
+  script.
+    this.mixin('router', 'i18n');
+    this.router.page(this);

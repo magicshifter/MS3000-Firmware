@@ -1,0 +1,35 @@
+settings-server
+  h3 { __('Server') }
+  m-loader(if='{ !formData }')
+  form#settings-form(if='{ formData }' onsubmit='{ formSubmit }')
+    fieldset
+      div
+        label(for='host') { __('Host:') }
+        input(type='text' value='{ formData.host }' name='host')
+      div
+        label(for='port') Port:
+        input(
+          type='number' 
+          value='{ formData.port }'
+          name='port' 
+          min='1'
+          max='65535'
+        )
+
+      div(if='{ message }' class='{ message.type }') { message.text }
+      m-submit
+
+  script.
+    this.mixin('i18n', 'mixins');
+
+    this.formUrl = '/settings/server';
+
+    this.getFormData();
+
+    this.formSubmit = () => {
+      let submitData = {
+        host: this.host.value,
+        port: parseInt(this.port.value),
+      };
+      this.postFormData(submitData);
+    }

@@ -1,0 +1,43 @@
+m-menu
+  m-menu-toggle(if='{ cssClass }' class='i i-menu' onclick='{ onClick }')
+  nav(role='main' class='{ cssClass } { hidden: !active }')
+    m-menu-item(each='{ items }')
+
+  style(type='scoped-css')
+    :stylus
+      :scope
+        float right
+
+      li
+        display inline
+        margin 0 0 0 .3em
+
+      @media (max-width 500px)
+        nav.small
+          position absolute
+          width 100%
+          text-align center
+          left 0
+          top 2em
+          background-color #fff
+          z-index 10
+
+  script.
+    this.mixin('hq', 'mixins');
+    this.items = this.hq.config.menu;
+
+    this.onClick = () =>  this.toggle();
+
+    this.setState = () => {
+      let cssClass =  window.innerWidth < 500 ? 'small' : '';
+
+      if (cssClass !== this.cssClass) {
+        this.cssClass = cssClass;
+        this.active = !this.cssClass;
+        this.update();
+      }
+    }
+
+    this.setState();
+
+    window.addEventListener('resize', this.setState);

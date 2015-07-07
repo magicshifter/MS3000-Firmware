@@ -1,0 +1,61 @@
+m-log-bubble
+  span(
+    if='{ message && message.text }'
+    class='{ message.type } {cssClass} bubble'
+  ) { message.text }
+
+  style(type='scoped-css')
+    :stylus
+      :scope
+        left 0
+        position absolute
+        text-align center
+        top 5em
+        width 100%
+        z-index 20
+
+      span.bubble
+        padding .5em
+        border-radius .5em
+
+      @media(min-width 500px)
+        :scope
+          left auto
+          right 0
+          width auto
+          text-align right
+          top 3em
+
+  script.
+    this.mixin('hq', 'log', 'types', 'mixins');
+    this.hq.enlist(this);
+
+    this.on('log:message:put', () => {
+      let msg = this.log.messages[0];
+      if (!msg) { return; }
+
+      if (this.isS(msg)) {
+        let msgObj = false;
+        try {
+          msgObj = JSON.stringify(msg);
+        }
+        catch(e) {
+          msgObj = false;
+        }
+        finally {
+          if (this.isO(msgObj) && msgObj.text) { msg = msgObj; }
+        }
+      }
+      if (this.isO(msg) && msg.text) {
+        msg.type = msg.type || 'info';
+        if (msg.type === 'warning' || msg.type === 'error') {
+          this.type = `#{this.type} i i-flash`;
+        }
+        this.message = msg;
+        this.update();
+        setTimeout(() => {
+          this.message = false;
+          this.update();
+        }, 1000)
+      }
+    });

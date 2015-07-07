@@ -1,0 +1,34 @@
+m-color-history
+  ul(each='{ color in colors }')
+    li(
+      style='background-color:{ color };'
+    )
+
+  style
+    :stylus
+      color-history
+        ul
+          li
+            width 20px
+
+  script.
+    this.mixin('hasLocalStorage');
+    this.hasStore = this.hasLocalStorage();
+    if (this.hasStore) {
+      this.colors = JSON.parse(localStorage.getItem('colors')) || [];
+    }
+
+    this.addColor = (color) => {
+      this.colors.push(color);
+      if (this.hasStore) {
+        localStorage.setItem('colors', this.colors);
+      }
+    }
+
+    this.removeColor = (color) => {
+      if (this.colors.indexOf(color) > -1 ) {
+        this.colors.splice(this.colors.indexOf(color), 1);
+      }
+    }
+
+    
