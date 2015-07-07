@@ -3,7 +3,7 @@
 //float PI = 3.1415;
 
 /*
- float abs(float val) 
+ float abs(float val)
 {
   if (val < 0) return -val;
   return val;
@@ -11,7 +11,7 @@
 //*/
 
 
-class CircleBall 
+class CircleBall
 {
   public:
   float angle;
@@ -19,7 +19,7 @@ class CircleBall
   float radius;
 
   public:
-  CircleBall(float r) 
+  CircleBall(float r)
   {
     angle = .0;
     velocity = .0;
@@ -28,13 +28,26 @@ class CircleBall
 
   float PI_HACK = 3.1415;
 
+  float calX = 1;
+  float calY = 0;
+
+  void calibrate(float gx, float gy)
+  {
+      calX = gx;
+      calY = gy;
+  }
+
   void applyForce(float sec, float gx, float gy)
   {
     sec *= 0.5;
     float posx = cos(angle);
     float posy = sin(angle);
-    
-    float accel = -posy * gx + posx * gy;
+
+    float px = gx * calX + gy * calY;
+    float py = gx * calY - gy * calX;
+    float accel = -posy * px + posx * py;
+
+    //float accel = -posy * gx + posx * gy;
 
     //accel = -accel;
     velocity += sec * accel;
@@ -49,7 +62,7 @@ class CircleBall
   void applyForce(float sec, float g)
   {
     sec *= 0.5;
-    
+
     angle += sec * g;
     while (angle < 0) angle += 2*PI_HACK;
     while (angle > 2*PI_HACK) angle -= 2*PI_HACK;
@@ -62,7 +75,7 @@ class CircleBall
     float delta = pos-idx;
     if (delta < 0) delta = -delta;
 
-    if (delta < 1) 
+    if (delta < 1)
     {
       return 1 - delta;
     }
@@ -70,4 +83,3 @@ class CircleBall
     return 0;
   }
 };
-   

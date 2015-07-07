@@ -230,22 +230,12 @@ void loop()
 #endif
 
 
-  float calX = 1;
-  float calY = 0.87;
 
-  float l = sqrt(calX * calX + calY * calY);
-  calX /= l;
-  calY /= l;
-
-  float fX = calX * accelG[0] + calY * accelG[1];
-  float fY = calY * accelG[0] - calX * accelG[1];
-
-  fX = -fX;
-  fY = -fY;
+  float fX = accelG[0];
+  float fY = accelG[1];
 
   ball.applyForce((currentMicros - lastMicros) / 1000.0, fX, fY);
 
-/*
 
   if (!digitalRead(PIN_BUTTON1))
   {
@@ -255,35 +245,19 @@ void loop()
   {
     if (oldButton1State >= 400)
     {
-      delay(100);
-      float pos = 0;
-      while (digitalRead(PIN_BUTTON1)) {
-        float w = 1;
-        for (byte idx = 0; idx < LEDS; idx++)
-        {
-          float scale = idx - pos;
-          if (scale < 0) scale = -scale;
-          if (scale < w) {
-            scale = 1 - (scale / w);
-          }
-          else scale = 0;
-          setPixel(idx, (frame & 1) ? bright*scale : 0, (frame & 2) ? bright*scale : 0, (frame & 4) ? bright*scale : 0, gs);
-          setPixel(idx, (frame & 1) ? bright*scale : 0, 0 * ((frame & 2) ? bright*scale : 0), (frame & 4) ? bright*scale : 0, gs);
-        }
 
-        updatePixels();
-        frame++;
-        pos += 0.03;
-        if (pos >= LEDS) pos -= LEDS;
-        delay(0);
-      }
+
+
     }
     else if (oldButton1State >= 5)
     {
-      speedMicros += 200;
-      if (speedMicros > 10000) speedMicros = 0;
+      //float l = sqrt(fX * fX + fY * fY);
+      //fX /= l;
+      //fY /= l;
+
+        ball.calibrate(fX, fY);
     }
     oldButton1State = 0;
   }
-*/
+
 }
