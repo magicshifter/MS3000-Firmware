@@ -85,6 +85,7 @@ int frame = 0;
 byte bright = 0x03;
 byte gs = 0x1;
 int loops = 0;
+long bootTime = 0;
 
 extern char uploadname[];
 
@@ -93,7 +94,7 @@ void setup()
   Serial.begin(115200);
   EEPROM.begin(512);
 
-
+  bootTime = millis();
   Serial.println("\r\nMagicShifter 3000 OS V0.24");
 
   // DUMP sysinfo
@@ -170,7 +171,6 @@ void setup()
   Serial.print("using POV file: ");
   Serial.println(uploadname);
   magicMode.setActiveFile(uploadname);
-
 }
 
 void loop()

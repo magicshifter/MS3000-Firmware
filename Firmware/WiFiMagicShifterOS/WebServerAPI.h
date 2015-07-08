@@ -32,9 +32,14 @@ public:
   void clear(void)
   {
     memset(hostname, 0, sizeof(hostname));
-    strcpy(hostname, "magicshifter");
     port = 80;
   }
+};
+
+struct APConfig
+{
+  struct APInfo  apInfo;
+  bool forceAPMode;
 };
 
 class SettingsManager
@@ -235,12 +240,13 @@ public:
 };
 SettingsManager Settings;
 
+extern long bootTime;
 void handleGETAbout(void)
 {
   logln("handleGETAbout");
 
   String response = "{\"type\":\"MagicShifter3000\", \"format\":\"BGRA\", \"version\":" + String(VERSION) +
-    ", \"leds\":" + String(LEDS) + ", \"id\":" + String(ESP.getChipId()) + "}";
+    ", \"leds\":" + String(LEDS) + ", \"id\":" + String(ESP.getChipId()) + ", \"uptime\":" + String(millis() - bootTime) + "}";
   server.send(200, "text/plain", response);
 }
 
