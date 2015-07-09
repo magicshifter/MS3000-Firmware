@@ -51,6 +51,8 @@ extern "C" {
 #include "APA102.h"
 #include "MMA8542.h"
 
+#include "MagicShifter.h"
+
 #include "ShakeSync.h"
 #include "Image.h"
 #include "MagicMode.h"
@@ -60,6 +62,7 @@ extern "C" {
 
 
 // state
+MagicShifter shifter;
 MagicMode magicMode;
 //MagicShifterMode rgbLightMode;
 
@@ -83,6 +86,7 @@ extern char uploadname[];
 
 void setup()
 {
+  shifter.setup();
   Serial.begin(115200);
   EEPROM.begin(512);
 

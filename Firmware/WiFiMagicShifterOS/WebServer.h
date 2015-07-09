@@ -8,6 +8,8 @@
 #include "Config.h"
 #include "APA102.h"
 
+extern MagicShifter shifter;
+
 MDNSResponder mdns;
 ESP8266WebServer server (80);
 
@@ -64,6 +66,11 @@ void StartWebServer(void)
     Serial.println( "MDNS responder started" );
   }
 #endif
+  server.on("/kill", []() {
+    server.send(200, "text/plain", "going down now!");
+    delay(1000);
+    shifter.powerDown();
+  } );
   server.on("/info/about", HTTP_GET, handleGETAbout);
   server.on("/info/status", HTTP_GET, handleGETStatus);
 

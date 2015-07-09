@@ -248,6 +248,8 @@ void handleGETAbout(void)
   String response = "{\"type\":\"MagicShifter3000\", \"format\":\"BGRA\", \"version\":" + String(VERSION) +
     ", \"leds\":" + String(LEDS) + ", \"id\":" + String(ESP.getChipId()) + ", \"uptime\":" + String(millis() - bootTime) + "}";
   server.send(200, "text/plain", response);
+
+  pinMode(PWMGT_PIN, INPUT);
 }
 
 void handleGETStatus(void)
