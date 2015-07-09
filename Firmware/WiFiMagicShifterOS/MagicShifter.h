@@ -9,7 +9,7 @@ class Accelerometer
   void getValues(int *accel); // 3 values (fixed point almost raw data from sensor);
 
   void getAverage(int *accel);
-}
+};
 
 class Leds
 {
@@ -19,4 +19,36 @@ class Leds
   void fastClear();
   void fastPulse(int microsShort, int microsLong);
   void getPixels();
-}
+};
+
+class Magicshifter
+{
+private:
+  bool accelNeedsRefresh = true;
+  bool adNeedsRefresh = true;
+public:
+  void loop()
+  {
+    accelNeedsRefresh = true;
+    adNeedsRefresh = true;
+  }
+
+  int getADValue(void)
+  {
+    return analogRead(A0);
+  }
+
+  float getBatteryVoltage(void)
+  {
+    int adValue = getADValue();
+    int ad1V = 1023
+    float r1 = 180, r2 = 390, r3 = 330;
+    float voltage = ((float)(r1 + r2 + r3) * adValue) / (r1 * ad1V);
+    return volatage;
+  }
+
+  bool powerButtonPressed(void)
+  {
+    return getADValue() > 890;
+  }
+};

@@ -6,6 +6,7 @@ import time
 
 portName = "/dev/ttyUSB0"
 baudRate = 115200
+#baudRate = 76800 # 38400 # bootloader baudreate
 
 def tryOpenSerial():
     try:

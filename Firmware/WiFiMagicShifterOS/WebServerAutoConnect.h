@@ -129,19 +129,11 @@ bool AutoConnect()
 
   Serial.println("fallback to standalone access point...");
 
-  if (Settings.getAPConfig(&apInfo))
+  Settings.getAPConfig(&apInfo);
+  if (TrySoftAP(apInfo))
   {
-    Serial.println("stored AP config found!");
-    if (TrySoftAP(apInfo))
-    {
-      return true;
-    }
+    return true;
   }
-  else
-  {
-    Serial.println("stored AP config has syntax error or is missing!");
-  }
-
 
   Serial.println("ERROR: AutoConnect failed!");
   return false;

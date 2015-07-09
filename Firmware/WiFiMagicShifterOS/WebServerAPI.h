@@ -250,6 +250,22 @@ void handleGETAbout(void)
   server.send(200, "text/plain", response);
 }
 
+void handleGETStatus(void)
+{
+  logln("handleGETStatus");
+
+  int adValue = analogRead(A0);
+
+  int ad1V = 1023;
+
+  float r1 = 180, r2 = 390, r3 = 330;
+
+  float voltage = ((float)(r1 + r2 + r3) * adValue) / (r1 * ad1V);
+
+  String response = "{\"id\":" + String(ESP.getChipId()) + ", \"uptime\":" + String(millis() - bootTime) + ", \"adValue\":" + adValue + ", \"voltage\":" + voltage + "}";
+  server.send(200, "text/plain", response);
+}
+
 bool parseAPInfoFromServerArgs(APInfo &apInfo)
 {
   bool success = true;
