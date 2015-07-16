@@ -6,7 +6,7 @@
 #define HWVERSION 2
 
 // remove define to enable ;)
-#define DISABLE_ACCEL
+//#define DISABLE_ACCEL
 #define USE_MDNS
 
 // 192.168.4.1 is the IP it always has in softAP mode
@@ -37,8 +37,8 @@ const char *jsonSoftAP = "{\"ssid\":\"MagicShifter3000\", \"pwd\":\"\"}";
 
 #define VERSION 0.1
 
-#define LEDS 48
-//#define LEDS 16
+//#define LEDS 48
+#define LEDS 16
 
 // PIN_LED_DATA an PIN_LED_CLOCK can not be changed since we use the hardware SPI
 #define PIN_LED_DATA  13

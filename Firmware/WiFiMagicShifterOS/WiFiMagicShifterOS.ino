@@ -93,6 +93,15 @@ void setup()
   bootTime = millis();
   Serial.println("\r\nMagicShifter 3000 OS V0.24");
 
+#define LEDPOWER_PIN 15
+
+  //pinMode(LEDPOWER_PIN, OUTPUT);
+  //digitalWrite(LEDPOWER_PIN, HIGH);
+
+  //pinMode(PIN_LED_DATA, OUTPUT);
+  //pinMode(PIN_LED_CLOCK, OUTPUT);
+
+
   // DUMP sysinfo
   Serial.print("Vcc: ");
   Serial.println(ESP.getVcc());
@@ -150,6 +159,14 @@ void setup()
 
   // init components
   InitAPA102();
+
+  while (0)
+  {
+      fillPixels(1, 2, 3, 0xFF);
+      updatePixels();
+      delay(1);
+  }
+
 
 #ifndef DISABLE_ACCEL
   InitMMA8452(); //Test and intialize the MMA8452

@@ -34,8 +34,9 @@ public:
 
   void powerDown()
   {
-    pinMode(PWMGT_PIN, OUTPUT);
-    digitalWrite(PWMGT_PIN, LOW);
+    pinMode(PWMGT_PIN, INPUT_PULLDOWN);
+    //pinMode(PWMGT_PIN, OUTPUT);
+    //digitalWrite(PWMGT_PIN, LOW);
     // now sleep forever...
     delay(1000);
   }
