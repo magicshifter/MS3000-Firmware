@@ -64,6 +64,7 @@ extern "C" {
 // state
 MagicShifter shifter;
 MagicMode magicMode;
+DebugMode debugMode;
 //MagicShifterMode rgbLightMode;
 
 float accelG[3];  // Stores the real accel value in g's
@@ -93,7 +94,7 @@ void setup()
   bootTime = millis();
   Serial.println("\r\nMagicShifter 3000 OS V0.24");
 
-#define LEDPOWER_PIN 15
+//#define LEDPOWER_PIN 15
 
   //pinMode(LEDPOWER_PIN, OUTPUT);
   //digitalWrite(LEDPOWER_PIN, HIGH);
@@ -183,11 +184,14 @@ void setup()
   }
   Serial.print("using POV file: ");
   Serial.println(uploadname);
+  magicMode.start(&shifter);
   magicMode.setActiveFile(uploadname);
 }
 
 void loop()
 {
+  shifter.loop();
+
   HandleWebServer();
 
   lastMicros = currentMicros;
@@ -250,27 +254,6 @@ void loop()
   ball.applyForce((currentMicros - lastMicros) / 1000.0, fX, fY);
 
 
-  if (!digitalRead(PIN_BUTTON1))
-  {
-    oldButton1State++;
-  }
-  else
-  {
-    if (oldButton1State >= 400)
-    {
 
-
-
-    }
-    else if (oldButton1State >= 5)
-    {
-      //float l = sqrt(fX * fX + fY * fY);
-      //fX /= l;
-      //fY /= l;
-
-        ball.calibrate(fX, fY);
-    }
-    oldButton1State = 0;
-  }
 
 }

@@ -8,17 +8,39 @@ extern float accelG[3];
 
 #define FRAME_MULTIPLY 4
 
-/*
-class MagicShifterMode
-{
-private:
 
+class IMode
+{
 public:
-  void activate(void);
-  void deactivate(void);
+  void start(MagicShifter *shifter);
+  void stop(void);
   void loop();
 };
 
+class BaseMode : public IMode
+{
+private:
+  MagicShifter *m_shifter;
+
+  public:
+    void start(MagicShifter *shifter)
+    {
+      m_shifter = shifter;
+    }
+
+    void stop(void)
+    {
+      m_shifter = NULL;
+    }
+
+    /*
+    void loop()
+    {
+    }
+    */
+};
+
+/*
 class RGBLightMode :MagicShifterMode
 {
 private:
@@ -34,7 +56,10 @@ public:
 }
 */
 
-class MagicMode // : MagicShifterMode
+class DebugMode : public BaseMode
+{};
+
+class MagicMode : public BaseMode
 {
 private:
   char activeFilename[FILENAME_SIZE];
@@ -42,7 +67,7 @@ private:
   POVShakeSync shakeSync;
 
 public:
-  MagicMode(void)
+  MagicMode()
   {
 
   }
@@ -76,13 +101,6 @@ public:
     Serial.print("set frames to: ");
     Serial.println(w);
   }
-
-  void activate()
-  {
-
-  }
-
-  void deactivate();
 };
 
 
