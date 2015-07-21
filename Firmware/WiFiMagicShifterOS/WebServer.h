@@ -104,8 +104,8 @@ void StartWebServer(void)
   server.on("/",  []() {
     HandleServeStaticFile("index.html");
   });
-  server.on("favicon.gif", HandleServeStaticFile("favicon.gif"));
-  server.on("manifest.appcache", HandleServeStaticFile("manifest.appcache"));
+  //server.on("favicon.gif", HandleServeStaticFile("favicon.gif"));
+  //server.on("manifest.appcache", HandleServeStaticFile("manifest.appcache"));
 
   server.onFileUpload(handleFileUpload);
 
