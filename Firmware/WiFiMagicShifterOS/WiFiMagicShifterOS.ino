@@ -88,7 +88,7 @@ extern char uploadname[];
 void setup()
 {
   shifter.setup();
-  shifter.enableLeds();
+  shifter.enableLeds(); 
   Serial.begin(115200);
   EEPROM.begin(512);
 

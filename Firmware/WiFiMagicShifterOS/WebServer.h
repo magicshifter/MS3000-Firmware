@@ -104,14 +104,10 @@ void StartWebServer(void)
   server.on("/",  []() {
     HandleServeStaticFile("index.html");
   });
-  //server.on("favicon.gif", HandleServeStaticFile("favicon.gif"));
-  //server.on("manifest.appcache", HandleServeStaticFile("manifest.appcache"));
+  server.on("favicon.gif", HandleServeStaticFile("favicon.gif"));
+  server.on("manifest.appcache", HandleServeStaticFile("manifest.appcache"));
 
   server.onFileUpload(handleFileUpload);
-
-  server.on ( "/inline", []() {
-    server.send ( 200, "text/plain", "this works as well" );
-  } );
 
   server.on ( "/format", []() {
     String message = "formatin...";
