@@ -43,6 +43,11 @@ public:
     delay(1000);
   }
 
+  void restart()
+  {
+    ESP.restart();
+  }
+
   void enableLeds()
   {
     pinMode(PIN_LED_ENABLE, OUTPUT);

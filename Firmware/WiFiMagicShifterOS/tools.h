@@ -1,6 +1,8 @@
 #ifndef __TOOLS_H
 #define __TOOLS_H
 
+#define BASE64_ENC_LEN(n) (((n) + 2 - (((n) + 2) % 3)) / 3 * 4)
+
 extern int DEBUG_LEVEL;
 
 const int VERBOSE = 0;

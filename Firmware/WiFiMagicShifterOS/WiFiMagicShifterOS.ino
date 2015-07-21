@@ -82,13 +82,15 @@ byte bright = 0x03;
 byte gs = 0x1;
 int loops = 0;
 long bootTime = 0;
+// make it larger to be on the save side when base64 decoding
+byte web_rgb_buffer[RGB_BUFFER_SIZE + 4];
 
 extern char uploadname[];
 
 void setup()
 {
   shifter.setup();
-  shifter.enableLeds(); 
+  shifter.enableLeds();
   Serial.begin(115200);
   EEPROM.begin(512);
 

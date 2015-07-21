@@ -1,3 +1,5 @@
+extern byte web_rgb_buffer[];
+
 #define MAX_AP_LEN 48
 struct APInfo
 {
@@ -548,4 +550,47 @@ void handlePOSTAPListDelete(void)
   {
     server.send(500, "text/plain", "args missing!");
   }
+}
+
+void handleLedSet()
+{
+  byte ledData[LEDS*5];
+
+  String message = "LedSet\n\n";
+
+  if (server.args() == 1)
+  {
+    const char* input = server.arg(0).c_str();
+    unsigned int inputLen =  (int)server.arg(0).length();
+    Serial.print("inputLen: ");
+    Serial.println(inputLen);
+
+    if (inputLen > sizeof(ledData))
+      inputLen = sizeof(ledData);
+
+    Serial.println(inputLen);
+
+    unsigned int dataLen = base64_decode((char *)ledData, input, inputLen);
+
+    for (int i = 0; i < dataLen; i += 5)
+    {
+      //setPixel(ledData[i], ledData[i+1], ledData[i+2], ledData[i+3], ledData[i+4]);
+      byte idx = ledData[i];
+      Serial.print("idx: ");
+      Serial.println((int)idx);
+      if (idx >= LEDS) continue;
+      Serial.print("data+1: ");
+      Serial.println((int)ledData[i+1]);
+
+      web_rgb_buffer[idx*4] = ledData[i+1];
+      web_rgb_buffer[idx*4+1] = ledData[i+2];
+      web_rgb_buffer[idx*4+2] = ledData[i+3];
+      web_rgb_buffer[idx*4+3] = ledData[i+4];
+    }
+  }
+  else
+  {
+    message += "argument missing or too many arguments!";
+  }
+  server.send ( 200, "text/plain",message );
 }

@@ -66,8 +66,13 @@ void StartWebServer(void)
     Serial.println( "MDNS responder started" );
   }
 #endif
+  server.on("/restart", []() {
+    server.send(200, "text/plain", "going down for restarts now!");
+    delay(1000);
+    shifter.restart();
+  } );
   server.on("/kill", []() {
-    server.send(200, "text/plain", "going down now!");
+    server.send(200, "text/plain", "powering down now!");
     delay(1000);
     shifter.powerDown();
   } );
@@ -88,8 +93,10 @@ void StartWebServer(void)
   server.on("/settings/wifi/delete", HTTP_POST, handlePOSTAPListDelete);
 
   server.on("/list", HTTP_GET, handleFileList);
-  server.on("/leds", handleLedSet);
+  server.on("/leds", handleLedsSet);
   server.on("/read", handleReadFile);
+
+  server.on("/led", handleLedSet);
 
   server.on("/download",  []() {
     if(!server.hasArg("file")) {

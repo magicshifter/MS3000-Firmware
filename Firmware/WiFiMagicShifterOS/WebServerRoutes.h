@@ -1,11 +1,9 @@
-#define BASE64_ENC_LEN(n) (((n) + 2 - (((n) + 2) % 3)) / 3 * 4)
-
-// make it larger to be on the save side when base64 decoding
-byte web_rgb_buffer[RGB_BUFFER_SIZE + 4];
 #define FILENAME_LENGTH 100
 
-
+// make it larger to be on the save side when base64 decoding
+extern byte web_rgb_buffer[];
 extern MagicMode magicMode;
+// TODO: at least move globals to main
 char uploadname[FILENAME_LENGTH];
 FSFile uploadFile;
 
@@ -43,13 +41,9 @@ void handleNotFound() {
   }
 }
 
-void handleLedSet()
+void handleLedsSet()
 {
-  fillPixels(0, 1, 0, 0x1F);
-  updatePixels();
-  byte ledData[200];
-
-  String message = "LedSet\n\n";
+  String message = "LedsSet\n\n";
 
   if (server.args() >= 1)
   {

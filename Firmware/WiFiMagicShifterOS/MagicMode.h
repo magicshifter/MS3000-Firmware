@@ -40,6 +40,7 @@ private:
     */
 };
 
+// make it larger to be on the save side when base64 decoding
 /*
 class RGBLightMode :MagicShifterMode
 {
