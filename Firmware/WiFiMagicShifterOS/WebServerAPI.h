@@ -247,8 +247,8 @@ void handleGETAbout(void)
 {
   logln("handleGETAbout");
 
-  String response = "{\"type\":\"MagicShifter3000\", \"format\":\"BGRA\", \"version\":" + String(VERSION) +
-    ", \"leds\":" + String(LEDS) + ", \"id\":" + String(ESP.getChipId()) + ", \"uptime\":" + String(millis() - bootTime) + "}";
+  String response = "{\"type\":\"MagicShifter3000\",\"format\":\"BGRA\",\"version\":" + String(VERSION) +
+    ",\"leds\":" + String(LEDS) + ",\"id\":" + String(ESP.getChipId()) + ",\"flashid\":" + String(ESP.getFlashChipId()) + ",\"flashsize\":" + String(ESP.getFlashChipSize()) + "}";
   server.send(200, "text/plain", response);
 }
 
@@ -264,7 +264,7 @@ void handleGETStatus(void)
 
   float voltage = ((float)(r1 + r2 + r3) * adValue) / (r1 * ad1V);
 
-  String response = "{\"id\":" + String(ESP.getChipId()) + ", \"uptime\":" + String(millis() - bootTime) + ", \"adValue\":" + adValue + ", \"voltage\":" + voltage + "}";
+  String response = "{\"id\":" + String(ESP.getChipId()) + ",\"uptime\":" + String(millis() - bootTime) + ",\"adValue\":" + adValue + ",\"voltage\":" + voltage + "}";
   server.send(200, "text/plain", response);
 }
 
