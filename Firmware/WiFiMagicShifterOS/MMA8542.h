@@ -20,7 +20,7 @@ void InitI2C()
 {
   //Wire.pins(PIN_I2C_DATA, PIN_I2C_CLOCK);
   Wire.begin(PIN_I2C_DATA, PIN_I2C_CLOCK); //Join the bus as a master
-  Wire.setClock(400000); // crashes if > 200000
+  Wire.setClock(500000); // crashes if > 200000
 }
 
 // Read bytesToRead sequentially, starting at addressToRead into the dest byte array
@@ -113,17 +113,23 @@ void readAccelData(int *destination)
 // http://www.freescale.com/webapp/sps/site/prod_summary.jsp?code=MMA8452Q
 void InitMMA8452()
 {
-  byte c = readRegister(WHO_AM_I);  // Read WHO_AM_I register
-  if (c == 0x2A) // WHO_AM_I should always be 0x2A
-  {
-    Serial.println("MMA8452Q is online...");
-  }
-  else
-  {
-    Serial.print("Could not connect to MMA8452Q: 0x");
-    Serial.println(c, HEX);
-    while(1) {delay(1);}; // Loop forever if communication doesn't happen
-  }
+  byte success = 0;
+
+  do {
+    byte c = readRegister(WHO_AM_I);  // Read WHO_AM_I register
+    if (c == 0x2A) // WHO_AM_I should always be 0x2A
+    {
+      Serial.println("MMA8452Q is online...");
+      success = 1;
+    }
+    else
+    {
+      Serial.print("Could not connect to MMA8452Q: 0x");
+      Serial.println(c, HEX);
+      //while(1) {delay(1);}; // Loop forever if communication doesn't happen
+    }
+    /* code */
+} while(!success);
 
   MMA8452Standby();  // Must be in standby to change registers
 

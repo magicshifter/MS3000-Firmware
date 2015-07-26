@@ -6,7 +6,7 @@
 #define HWVERSION 2
 
 // remove define to enable ;)
-#define DISABLE_ACCEL
+//#define DISABLE_ACCEL
 #define USE_MDNS
 
 // 192.168.4.1 is the IP it always has in softAP mode
@@ -50,14 +50,18 @@ const char *jsonSoftAP = "{\"ssid\":\"MagicShifter3000\", \"pwd\":\"\"}";
 // double features as bootloader button
 #define PIN_BUTTON1   0
 
+#define PIN_I2C_DATA 5 // 5 //blau // labeled 5 on esp12E!!!
+#define PIN_I2C_CLOCK 4 //lila
+
+
 #if (HWVERSION >= 2)
-  #define PIN_I2C_DATA 4 // 5 //blau // labeled 5 on esp12E!!!
-  #define PIN_I2C_CLOCK 5 //lila
+  //#define PIN_I2C_DATA 4 // 5 //blau // labeled 5 on esp12E!!!
+  //#define PIN_I2C_CLOCK 5 //lila
 
   #define PWMGT_PIN 16
 #else
-  #define PIN_I2C_DATA 4 // 5 //blau // labeled 5 on esp12E!!!
-  #define PIN_I2C_CLOCK 2 //lila
+  //#define PIN_I2C_DATA 4 // 5 //blau // labeled 5 on esp12E!!!
+  //#define PIN_I2C_CLOCK 2 //lila
 #endif
 
 #define MIN_TIME_CLICK 10000

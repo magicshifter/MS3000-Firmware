@@ -252,6 +252,9 @@ void handleGETAbout(void)
   server.send(200, "text/plain", response);
 }
 
+
+extern int accelCount[];
+
 void handleGETStatus(void)
 {
   logln("handleGETStatus");
@@ -264,7 +267,18 @@ void handleGETStatus(void)
 
   float voltage = ((float)(r1 + r2 + r3) * adValue) / (r1 * ad1V);
 
-  String response = "{\"id\":" + String(ESP.getChipId()) + ",\"uptime\":" + String(millis() - bootTime) + ",\"adValue\":" + adValue + ",\"voltage\":" + voltage + "}";
+  readAccelData(accelCount);
+
+  float accelG[3];
+  for (int i = 0 ; i < 3 ; i++)
+  {
+    accelG[i] = (float) accelCount[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set
+  }
+
+
+  String response = "{\"id\":" + String(ESP.getChipId()) + ",\"uptime\":" +
+  String(millis() - bootTime) + ",\"adValue\":" + adValue + ",\"voltage\":" + voltage +
+  "\",accelRaw\":[" + accelCount[0] + "," + accelCount[1] + "," + accelCount[2] + "],\"accelG\":[" + accelG[0] + "," + accelG[1] + ","+ accelG[2] + "]}";
   server.send(200, "text/plain", response);
 }
 
