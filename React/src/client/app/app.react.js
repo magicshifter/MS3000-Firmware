@@ -1,0 +1,55 @@
+/* @flow */
+import style from './app.styl';
+import Component from '../components/component.react';
+import Footer from './footer.react';
+import Header from './header.react';
+import React from 'react';
+import {RouteHandler} from 'react-router';
+import {appState} from '../state';
+import {measureRender} from '../console';
+
+// All stores must be imported here.
+import '../auth/store';
+import '../users/store';
+import '../settings/server/store';
+import '../settings/accesspoint/store';
+import '../leds/store';
+import '../colorpicker/store';
+
+export default class App extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = this.getState();
+  }
+
+  getState() {
+    const viewer = appState.get().getIn(['users', 'viewer']);
+    return appState.get().merge({
+      isLoggedIn: !!viewer,
+      viewer: viewer,
+    }).toObject();
+  }
+
+  // Why componentWillMount instead of componentDidMount.
+  // https://github.com/este/este/issues/274
+  componentWillMount() {
+    if (!process.env.IS_BROWSER) return;
+    appState.on('change', () => {
+      measureRender(done => this.setState(this.getState(), done));
+    });
+  }
+
+  render() {
+    return (
+      <div className="wrapper">
+        <Header isLoggedIn={this.state.isLoggedIn} />
+        <article>
+          <RouteHandler {...this.state} />
+        </article>
+        <Footer />
+      </div>
+    );
+  }
+
+}

@@ -1,0 +1,9 @@
+perks:
+shifter multiple hard drive sizes:
+small (4mb),
+medium (8mb),
+large (16mb),
+
+hackathon package:
+visit us in our hackspace metalab in vienna and spend a weekend with our team
+hacking new features into your magicshifters
