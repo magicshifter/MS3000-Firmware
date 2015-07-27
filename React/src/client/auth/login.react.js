@@ -43,19 +43,19 @@ class Login extends Component {
       <div className="login">
         <form onSubmit={(e) => this.onFormSubmit(e)}>
           <fieldset disabled={pendingActions.has(actions.login.toString())}>
-            <legend><h1>{msg('forms.auth.legend')}</h1></legend>
+            <legend><h1>{msg('forms.login.legend')}</h1></legend>
             <input
               autoFocus
               name="email"
               onChange={actions.updateFormField}
-              placeholder={msg('forms.auth.placeholder.email')}
+              placeholder={msg('forms.login.placeholder.email')}
               value={form.fields.email}
             />
             <br />
             <input
               name="password"
               onChange={actions.updateFormField}
-              placeholder={msg('forms.auth.placeholder.password')}
+              placeholder={msg('forms.login.placeholder.password')}
               type="password"
               value={form.fields.password}
             />
@@ -70,7 +70,7 @@ class Login extends Component {
             {form.error &&
               <span className="error-message">{form.error.message}</span>
             }
-            <div>{msg('forms.auth.hint')}</div>
+            <div>{msg('forms.login.hint')}</div>
           </fieldset>
         </form>
       </div>

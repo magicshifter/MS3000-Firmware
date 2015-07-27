@@ -6,7 +6,7 @@ export default {
     menu: {
       home: 'Home',
       leds: 'Leds',
-      paint: 'Paint',
+      draw: 'Draw',
       login: 'Login',
       logout: 'Logout',
       settings: 'Settings',
@@ -15,7 +15,7 @@ export default {
       copyright: '&copy; 2014-2015 MagicShifter.net',
     },
     forms: {
-      auth: {
+      login: {
         hint: 'Hint: pass1',
         legend: 'Login / Sign Up',
         placeholder: {
@@ -69,7 +69,11 @@ export default {
         title: 'Leds',
         header: 'Leds',
       },
-      auth: {
+      draw: {
+        title: 'Draw',
+        header: 'Draw',
+      },
+      login: {
         title: 'Login',
         header: 'Login',
       },
