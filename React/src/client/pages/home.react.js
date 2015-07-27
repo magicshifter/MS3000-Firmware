@@ -3,17 +3,15 @@ import DocumentTitle from 'react-document-title';
 import React from 'react';
 import {msg, FormattedMessage} from '../intl/store';
 
-class Home extends Component {
+import PageTitle from '../components/pagetitle.react.js';
 
-  static propTypes = {
-    isLoggedIn: React.PropTypes.bool.isRequired
-  };
+class Home extends Component {
 
   render() {
     return (
       <DocumentTitle title={msg('pages.home.title')}>
         <div className="home-page">
-          <h2>{msg('pages.home.header')}</h2>
+          <PageTitle page='home'></PageTitle>
           <div className='content'>{msg('pages.home.content')}</div>
         </div>
       </DocumentTitle>
