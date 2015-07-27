@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>MagicShifter Api Example</title>
+  </head>
+  <body>
+    <div id="loading">Connecting to Magicshifter</div>
+    <script src='../../MagicShifter.js'></script>
+    <script>
+      var api = new MagicShifterApi();
+
+      api.connect(function(error, data) {
+        if (error) {
+          console.error(error);
+        }
+        console.log('data', data);
+      });
+    </script>
+  </body>
+</html>

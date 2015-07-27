@@ -1,0 +1,53 @@
+{
+  "name": "MagicShifter-api",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "build": "browserify src/index.js -o MagicShifter.js -t babelify",
+    "build:dev": "watchify src/index.js -o MagicShifter.js -t babelify",
+    "build:min": "npm run build && uglifyjs MagicShifter.js -cm -o MagicShifter.min.js",
+    "build:docs": "esdoc -c esdoc.json",
+    "test": "jest"
+  },
+  "author": "Metalab",
+  "license": "AGPL-3.0",
+  "contributors": [
+    {
+      "name": "jascha ehrenreich",
+      "email": "jascha@jaeh.at",
+      "github": "jaeh"
+    },
+    {
+      "name": "philipp tiefenbacher",
+      "github": "wizard23"
+    }
+  ],
+  "devDependencies": {
+    "babelify": "^6.1.3",
+    "browserify": "^11.0.0",
+    "docco": "^0.7.0",
+    "esdoc": "^0.1.4",
+    "jest": "^0.1.40",
+    "jest-cli": "facebook/jest#0.5.x",
+    "jsdoc": "^3.3.2",
+    "uglify-js": "^2.4.23",
+    "watchify": "^3.3.0"
+  },
+  "jest": {
+    "scriptPreprocessor": "<rootDir>/node_modules/babel-jest",
+    "testFileExtensions": [
+      "es6",
+      "js"
+    ],
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "es6"
+    ]
+  },
+  "dependencies": {
+    "es6-promise": "^2.3.0"
+  }
+}
