@@ -24,6 +24,15 @@ export default class Title extends Component {
       },
     };
 
+    let title = '';
+    try {
+      title = msg(`pages.${this.props.page}.title`);
+    }
+    catch (e) {
+      console.warn(e);
+      console.log(msg('debug.continuehappily'));
+    }
+
     return (
       <header style={styles.header}>
         <h2 style={styles.h2}>

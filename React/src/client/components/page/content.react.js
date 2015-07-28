@@ -23,6 +23,7 @@ export default class Content extends Component {
         float: 'left',
       },
     };
+
     let content = '';
 
     try {
@@ -30,6 +31,7 @@ export default class Content extends Component {
     }
     catch (e) {
       console.warn(e);
+      console.log(msg('debug.continuehappily'));
       content = '';
     }
 

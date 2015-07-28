@@ -80,6 +80,11 @@ export default {
       login: {
         title: 'Login',
         header: 'Login',
+        content: `
+          If you do not have a login yet,
+          try to politely ask the person this MagicShifter belongs to
+          for an account.
+        `,
       },
       settings: {
         title: 'Settings',
@@ -111,6 +116,9 @@ export default {
         title: 'Remove this color',
         text: 'x',
       },
+    },
+    debug: {
+      continuehappily: 'Continue Happily, it is just a warning',
     },
   },
 };
