@@ -39,8 +39,8 @@ class Header extends Component {
             <FormattedHTMLMessage message={msg('header.h1Html')} />
           </h1>
         </Link>
-        <Nav menuItems={menuItems}></Nav>
-        <StatusBar {...this.props}></StatusBar>
+        <Nav menuItems={menuItems} />
+        <StatusBar {...this.props} />
       </header>
     );
   }
