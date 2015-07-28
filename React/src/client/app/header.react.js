@@ -7,6 +7,7 @@ import Logout from '../auth/logout.react';
 import styles from './app.styles';
 import Logo from '../components/logo.react';
 import Nav from '../components/nav.react';
+import StatusBar from '../components/statusbar.react';
 
 class Header extends Component {
 
@@ -39,6 +40,7 @@ class Header extends Component {
           </h1>
         </Link>
         <Nav menuItems={menuItems}></Nav>
+        <StatusBar {...this.props}></StatusBar>
       </header>
     );
   }
