@@ -25,6 +25,7 @@ export default class Logo extends Component {
 
     if (this.props.shadow) {
       style.filter = `drop-shadow(${this.props.shadow})`;
+      style.WebkitFilter = style.filter;
     }
 
     return (
