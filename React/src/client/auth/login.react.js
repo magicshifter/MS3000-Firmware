@@ -13,7 +13,7 @@ class Login extends Component {
   static propTypes = {
     auth: React.PropTypes.instanceOf(immutable.Map).isRequired,
     pendingActions: React.PropTypes.instanceOf(immutable.Map).isRequired,
-    router: React.PropTypes.func
+    router: React.PropTypes.func,
   };
 
   getForm() {
@@ -33,7 +33,8 @@ class Login extends Component {
   redirectAfterLogin() {
     const {router} = this.props;
     const nextPath = router.getCurrentQuery().nextPath;
-    router.replaceWith(nextPath || 'home');
+
+    router.replaceWith(nextPath || 'login');
   }
 
   render() {
@@ -43,9 +44,14 @@ class Login extends Component {
     return (
       <div className='login'>
         <form onSubmit={(e) => this.onFormSubmit(e)} style={formStyles.form}>
-          <fieldset disabled={pendingActions.has(actions.login.toString())}>
-            <legend>{msg('forms.login.legend')}</legend>
-            <div className='field' style={formStyles.field}>
+          <fieldset
+            style={formStyles.fieldset}
+            disabled={pendingActions.has(actions.login.toString())}
+          >
+            <legend style={formStyles.legend}>
+              {msg('forms.login.legend')}
+            </legend>
+            <div style={formStyles.field}>
               <label htmlFor="email" children={msg('forms.login.email.label')}>
               </label>
               <input
@@ -58,7 +64,7 @@ class Login extends Component {
               />
             </div>
 
-            <div className='field' style={formStyles.field}>
+            <div style={formStyles.field}>
               <label htmlFor='password' children={msg('forms.login.password.label')}>
               </label>
               <input
@@ -70,6 +76,7 @@ class Login extends Component {
                 value={form.fields.password}
               />
             </div>
+
             <div style={formStyles.buttonContainer}>
               <button
                 style={formStyles.button}
