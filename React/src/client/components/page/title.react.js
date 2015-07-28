@@ -36,9 +36,9 @@ export default class Title extends Component {
     return (
       <header style={styles.header}>
         <h2 style={styles.h2}>
-          <Logo src={`${this.props.page}.svg`} size='5vw' float='left'></Logo>
+          <Logo src={`${this.props.page}.svg`} size='60px' float='left'></Logo>
           <span style={styles.textSpan}>
-            {msg(`pages.${this.props.page}.title`).toUpperCase()}
+            {title.toUpperCase()}
           </span>
         </h2>
       </header>
