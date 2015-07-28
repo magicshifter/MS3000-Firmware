@@ -21,7 +21,7 @@ export default class Item extends Component {
     };
 
     return (
-      <li key={this.props.key} style={styles.container}>
+      <li style={styles.container}>
         <Link to={this.props.to}>
           <Logo
             src={`${this.props.to}.svg`}
