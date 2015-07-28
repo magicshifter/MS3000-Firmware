@@ -29,30 +29,30 @@ export default class AccesspointForm extends Component {
     const {pendingActions} = this.props;
 
     return (
-      <div className="settings-accesspoint">
+      <div className='settings-accesspoint'>
         <form onSubmit={(e) => this.onFormSubmit(e)}>
           <fieldset disabled={pendingActions.has(actions.saveAccesspoint.toString())}>
             <legend>{msg('forms.settings.accesspoint.legend')}</legend>
             <input
-              name="ssid"
+              name='ssid'
               onChange={actions.updateFormField}
               placeholder={msg('forms.settings.accesspoint.placeholder.ssid')}
               value={form.fields.ssid}
             />
             <br />
             <input
-              name="password"
+              name='password'
               onChange={actions.updateFormField}
               placeholder={msg('forms.settings.accesspoint.placeholder.password')}
-              type="password"
+              type='password'
               value={form.fields.password}
             />
             <button
               children={msg('buttons.save')}
-              type="submit"
+              type='submit'
             />
             {form.error &&
-              <span className="error-message">{form.error.message}</span>
+              <span className='error-message'>{form.error.message}</span>
             }
           </fieldset>
         </form>

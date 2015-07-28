@@ -4,9 +4,9 @@ import {FormattedHTMLMessage} from 'react-intl';
 import {Link} from 'react-router';
 import {msg} from '../intl/store';
 import Logout from '../auth/logout.react';
-import MenuItem from './menuitem.react';
 import styles from './app.styles';
 import Logo from '../components/logo.react';
+import Nav from '../components/nav.react';
 
 class Header extends Component {
 
@@ -25,12 +25,6 @@ class Header extends Component {
       menuItems.push('login');
     }
 
-    let i = 0;
-    menuItems = menuItems.map((to) => {
-      i += 1;
-      return <MenuItem key={i} to={to} />;
-    });
-
     if (isLoggedIn) {
       menuItems.push(<Logout key='logout' />);
     }
@@ -39,16 +33,12 @@ class Header extends Component {
       <header className='main' style={styles.header.container}>
         <div style={styles.header.background}></div>
         <Link to='home' style={styles.header.link}>
-          <Logo src="logo.png" size="10vw" />
+          <Logo src='logo.png' size='10vw' float='left' />
           <h1 style={styles.header.h1}>
             <FormattedHTMLMessage message={msg('header.h1Html')} />
           </h1>
         </Link>
-        <nav style={styles.header.nav}>
-          <ul>
-            {menuItems}
-          </ul>
-        </nav>
+        <Nav menuItems={menuItems}></Nav>
       </header>
     );
   }

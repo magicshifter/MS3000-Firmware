@@ -9,7 +9,7 @@ class Home extends Component {
   render() {
     return (
       <DocumentTitle title={msg('pages.home.title')}>
-        <div className="home-page">
+        <div className='home-page'>
           <PageTitle page='home'></PageTitle>
           <div className='content'>{msg('pages.home.content')}</div>
         </div>

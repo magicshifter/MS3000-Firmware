@@ -11,7 +11,7 @@ class NotFound extends Component {
     return (
       <DocumentTitle title={msg('pages.notFound.title')}>
         <Page page='notfound'></Page>
-        <Link to="home">{msg('pages.notFound.continueMessage')}</Link>
+        <Link to='home'>{msg('pages.notFound.continueMessage')}</Link>
       </DocumentTitle>
     );
   }

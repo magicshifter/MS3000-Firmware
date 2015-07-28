@@ -39,12 +39,12 @@ export default class Editable extends Component {
     showEditButtons: false,
     showViewButtons: false,
     editButtons: (onSaveClick, onCancelClick, disabled) =>
-      <div className="btn-group">
+      <div className='btn-group'>
         <button disabled={disabled} onClick={onSaveClick}>Save</button>
         <button disabled={disabled} onClick={onCancelClick}>Cancel</button>
       </div>,
     viewButtons: (onEditClick, disabled) =>
-      <div className="btn-group">
+      <div className='btn-group'>
         <button disabled={disabled} onClick={onEditClick}>Edit</button>
       </div>,
   }

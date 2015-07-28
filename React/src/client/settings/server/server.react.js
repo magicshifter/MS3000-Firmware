@@ -29,31 +29,31 @@ export default class ServerForm extends Component {
     const {pendingActions} = this.props;
 
     return (
-      <div className="settings-server">
+      <div className='settings-server'>
         <form onSubmit={(e) => this.onFormSubmit(e)}>
           <fieldset disabled={pendingActions.has(actions.saveServer.toString())}>
             <legend>{msg('forms.settings.server.legend')}</legend>
             <input
               autoFocus
-              name="hostname"
+              name='hostname'
               onChange={actions.updateFormField}
               placeholder={msg('forms.settings.server.placeholder.hostname')}
               value={form.fields.hostname}
             />
             <br />
             <input
-              name="port"
+              name='port'
               onChange={actions.updateFormField}
               placeholder={msg('forms.settings.server.placeholder.port')}
-              type="number"
+              type='number'
               value={form.fields.port}
             />
             <button
               children={msg('buttons.save')}
-              type="submit"
+              type='submit'
             />
             {form.error &&
-              <span className="error-message">{form.error.message}</span>
+              <span className='error-message'>{form.error.message}</span>
             }
           </fieldset>
         </form>

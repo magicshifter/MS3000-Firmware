@@ -40,35 +40,35 @@ class Login extends Component {
     const {pendingActions} = this.props;
 
     return (
-      <div className="login">
+      <div className='login'>
         <form onSubmit={(e) => this.onFormSubmit(e)}>
           <fieldset disabled={pendingActions.has(actions.login.toString())}>
             <legend><h1>{msg('forms.login.legend')}</h1></legend>
             <input
               autoFocus
-              name="email"
+              name='email'
               onChange={actions.updateFormField}
               placeholder={msg('forms.login.placeholder.email')}
               value={form.fields.email}
             />
             <br />
             <input
-              name="password"
+              name='password'
               onChange={actions.updateFormField}
               placeholder={msg('forms.login.placeholder.password')}
-              type="password"
+              type='password'
               value={form.fields.password}
             />
             <br />
             <button
               children={msg('buttons.login')}
-              type="submit"
+              type='submit'
             />
             {/*
-             <button type="submit">{msg('buttons.signup')} />
+             <button type='submit'>{msg('buttons.signup')} />
             */}
             {form.error &&
-              <span className="error-message">{form.error.message}</span>
+              <span className='error-message'>{form.error.message}</span>
             }
             <div>{msg('forms.login.hint')}</div>
           </fieldset>

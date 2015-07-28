@@ -28,7 +28,7 @@ export default class LedsForm extends Component {
     });
 
     return (
-      <div className="leds">
+      <div className='leds'>
         <div className='leds-list'>
           {ledsHtml}
         </div>
