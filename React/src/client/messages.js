@@ -72,6 +72,10 @@ export default {
       draw: {
         title: 'Draw',
         header: 'Draw',
+        content: `
+          Someday soon one will draw beautiful images here.
+          And one will rest and look at one's work and will be happy.
+        `,
       },
       login: {
         title: 'Login',
