@@ -15,8 +15,8 @@ export default class Logo extends Component {
       height: `${size}`,
       width: `${size}`,
       display: 'block',
-      maxHeight: '90px',
-      maxWidth: '90px',
+      maxHeight: '80px',
+      maxWidth: '80px',
     };
 
     if (this.props.float) {
