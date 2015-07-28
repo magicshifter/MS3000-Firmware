@@ -44,9 +44,7 @@ export default class App extends Component {
     return (
       <div className='wrapper'>
         <Header isLoggedIn={this.state.isLoggedIn} />
-        <article>
-          <RouteHandler {...this.state} />
-        </article>
+        <RouteHandler {...this.state} />
         <Footer />
       </div>
     );
