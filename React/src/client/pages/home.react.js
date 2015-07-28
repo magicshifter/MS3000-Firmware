@@ -2,8 +2,7 @@ import Component from '../components/component.react';
 import DocumentTitle from 'react-document-title';
 import React from 'react';
 import {msg, FormattedMessage} from '../intl/store';
-
-import PageTitle from '../components/pagetitle.react.js';
+import Page from '../components/page.react.js';
 
 class Home extends Component {
 
