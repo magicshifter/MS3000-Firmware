@@ -90,12 +90,33 @@ extern char uploadname[];
 void setup()
 {
   shifter.setup();
-  shifter.enableLeds();
   Serial.begin(115200);
   EEPROM.begin(512);
 
-  bootTime = millis();
   Serial.println("\r\nMagicShifter 3000 OS V0.24");
+
+  // leds
+  InitSPI();
+
+  // init components
+  InitAPA102();
+
+  shifter.enableLeds();
+  for (byte idx = 0; idx < LEDS; idx++)
+  {
+    setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
+    updatePixels();
+    delay(20);
+  }
+  for (byte idx = 0; idx < LEDS; idx++)
+  {
+    setPixel(idx, 0, 0, 0, 1);
+    updatePixels();
+    delay(20);
+  }
+
+  bootTime = millis();
+
 
 //#define LEDPOWER_PIN 15
 
@@ -155,14 +176,9 @@ void setup()
   // init pinmodes
   pinMode(PIN_BUTTON1, INPUT);
 
-  // leds
-  InitSPI();
-
   // accel
   InitI2C();
 
-  // init components
-  InitAPA102();
 
   while (0)
   {
@@ -189,6 +205,13 @@ void setup()
   Serial.println(uploadname);
   magicMode.start(&shifter);
   magicMode.setActiveFile(uploadname);
+
+  for (byte idx = 0; idx < LEDS; idx++)
+  {
+    setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
+  }
+  updatePixels();
+  //saveBuffer(web_rgb_buffer);
 }
 
 void loop()
