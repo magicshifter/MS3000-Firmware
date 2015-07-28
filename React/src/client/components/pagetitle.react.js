@@ -21,7 +21,7 @@ export default class PageTitle extends Component {
         margin: '.2em 0 0',
         display: 'block',
         float: 'left',
-      }
+      },
     };
 
     return (
