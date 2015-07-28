@@ -11,6 +11,9 @@ export default {
     borderRight: '#ECEFF1',
     borderBottom: '#ECEFF1',
   },
+  legend: {
+    color: '#607D8B',
+  },
   errorMessage: {
     color: 'red',
   },

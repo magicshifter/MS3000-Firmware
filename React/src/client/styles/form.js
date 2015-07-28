@@ -1,13 +1,16 @@
-import {input, button, errorMessage} from './colors';
+import {input, button, legend, errorMessage} from './colors';
 
 export default {
   form: {
     width: '100%',
   },
+  fieldset: {
+    maxWidth: '60%',
+    margin: '0 auto',
+  },
   field: {
     textAlign: 'right',
-    maxWidth: '50%',
-    margin: '0 auto 1em',
+    margin: '1em auto',
   },
   input: {
     fontSize: '1.2em',
@@ -17,8 +20,15 @@ export default {
     padding: '.4em .4em 0 .4em',
     backgroundColor: input.backgroundColor,
     borderRadius: '.3em',
-    '-webkit-box-shadow': `0 0 0 50em ${input.backgroundColor} inset`,
+    WebkitBoxShadow: `0 0 0 50em ${input.backgroundColor} inset`,
     maxWidth: '70%',
+    margin: '0 0 0 .5em',
+  },
+  legend: {
+    color: legend.color,
+    fontStyle: 'italic',
+    fontSize: '.8em',
+    margin: '0 0 .5em',
   },
   textarea: {
     fontSize: '1.2em',
@@ -31,9 +41,8 @@ export default {
     WebkitBoxShadow: `0 0 0 50em ${input.backgroundColor} inset`,
   },
   buttonContainer: {
-    maxWidth: '50%',
     textAlign: 'right',
-    margin: '0 auto',
+    margin: '0 auto 1em',
   },
   button: {
     fontSize: '1.2em',
@@ -45,9 +54,6 @@ export default {
     padding: '.4em .4em 0 .4em',
     backgroundColor: button.backgroundColor,
     borderRadius: '.3em',
-  },
-  checkbox: {
-
   },
   errorMessage: {
     color: errorMessage.color,
