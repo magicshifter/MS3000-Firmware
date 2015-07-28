@@ -2,15 +2,12 @@ import Component from './component.react';
 import React from 'react';
 import {Link} from 'react-router';
 import {msg} from '../intl/store';
-import Radium from 'radium';
 
-@Radium
 export default class Logo extends Component {
   render() {
     let size = (this.props.size)
            ? this.props.size
-           : '10vw'
-           ;
+           : '10vw';
 
     let style = {
       backgroundImage: `url(/assets/img/${this.props.src})`,
@@ -19,7 +16,7 @@ export default class Logo extends Component {
       width: `${size}`,
       display: 'block',
       float: 'left',
-    }
+    };
 
     if (this.props.shadow) {
       style.filter = `drop-shadow(${this.props.shadow})`;

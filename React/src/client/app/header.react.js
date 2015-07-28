@@ -4,12 +4,10 @@ import {FormattedHTMLMessage} from 'react-intl';
 import {Link} from 'react-router';
 import {msg} from '../intl/store';
 import Logout from '../auth/logout.react';
-import Radium from 'radium';
 import MenuItem from './menuitem.react';
 import styles from './app.styles';
 import Logo from '../components/logo.react';
 
-@Radium
 class Header extends Component {
 
   static propTypes = {
