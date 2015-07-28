@@ -19,7 +19,7 @@ export default {
         hint: 'Hint: pass1',
         legend: `
           If you do not have a login yet,
-          try to politely ask the person the owner to get yourself registered
+          you can try to politely ask the owner to get yourself registered
         `,
         email: {
           label: 'Email:',
@@ -101,6 +101,9 @@ export default {
         content: `
           After logging in you will be able to control the MagicShifter.
         `,
+        bubble: {
+          text: 'Welcome to the MagicShifter Control Panel',
+        },
       },
       settings: {
         title: 'Settings',
