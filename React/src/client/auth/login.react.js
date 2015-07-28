@@ -45,33 +45,38 @@ class Login extends Component {
         <form onSubmit={(e) => this.onFormSubmit(e)} style={formStyles.form}>
           <fieldset disabled={pendingActions.has(actions.login.toString())}>
             <legend>{msg('forms.login.legend')}</legend>
-            <label htmlFor="email" children={msg('forms.login.email.label')}>
-            </label>
-            <input
-              style={formStyles.input}
-              autoFocus
-              name='email'
-              onChange={actions.updateFormField}
-              placeholder={msg('forms.login.email.placeholder')}
-              value={form.fields.email}
-            />
-            <br />
-            <label htmlFor='password' children={msg('forms.login.password.label')}>
-            </label>
-            <input
-              style={formStyles.input}
-              name='password'
-              onChange={actions.updateFormField}
-              placeholder={msg('forms.login.password.placeholder')}
-              type='password'
-              value={form.fields.password}
-            />
-            <br />
-            <button
-              style={formStyles.button}
-              children={msg('buttons.login')}
-              type='submit'
-            />
+            <div className='field' style={formStyles.field}>
+              <label htmlFor="email" children={msg('forms.login.email.label')}>
+              </label>
+              <input
+                style={formStyles.input}
+                autoFocus
+                name='email'
+                onChange={actions.updateFormField}
+                placeholder={msg('forms.login.email.placeholder')}
+                value={form.fields.email}
+              />
+            </div>
+
+            <div className='field' style={formStyles.field}>
+              <label htmlFor='password' children={msg('forms.login.password.label')}>
+              </label>
+              <input
+                style={formStyles.input}
+                name='password'
+                onChange={actions.updateFormField}
+                placeholder={msg('forms.login.password.placeholder')}
+                type='password'
+                value={form.fields.password}
+              />
+            </div>
+            <div style={formStyles.buttonContainer}>
+              <button
+                style={formStyles.button}
+                children={msg('buttons.login')}
+                type='submit'
+              />
+            </div>
             {/*
              <button type='submit'>{msg('buttons.signup')} />
             */}
