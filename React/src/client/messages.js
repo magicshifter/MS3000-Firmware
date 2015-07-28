@@ -17,7 +17,10 @@ export default {
     forms: {
       login: {
         hint: 'Hint: pass1',
-        legend: 'Login / Sign Up',
+        legend: `
+          If you do not have a login yet,
+          try to politely ask the person the owner to get yourself registered
+        `,
         email: {
           label: 'Email:',
           placeholder: 'your@email.com',
@@ -30,22 +33,29 @@ export default {
       },
       settings: {
         server: {
+          title: 'WebServer Settings',
           legend: 'Change webserver settings',
           placeholder: {
             hostname: 'webserver hostname',
             port: 'webserver port',
           },
+          label: {
+            hostname: 'Hostname:',
+            port: 'Port:',
+          },
         },
         accesspoint: {
+          title: 'AccessPoint Settings',
           legend: 'Change accesspoint settings',
           placeholder: {
             ssid: 'ssid for the MagicShifter Network',
             password: 'Password',
           },
+          label: {
+            ssid: 'SSID:',
+            password: 'Password:',
+          },
         },
-      },
-      leds: {
-        legend: 'You can set Led Colors here',
       },
     },
     buttons: {
@@ -72,6 +82,10 @@ export default {
       leds: {
         title: 'Leds',
         header: 'Leds',
+        content: `
+          You can edit the leds here.
+          If your MagicShifter is online it will react to your inputs
+        `,
       },
       draw: {
         title: 'Draw',
@@ -85,9 +99,7 @@ export default {
         title: 'Login',
         header: 'Login',
         content: `
-          If you do not have a login yet,
-          try to politely ask the person this MagicShifter belongs to
-          for an account.
+          After logging in you will be able to control the MagicShifter.
         `,
       },
       settings: {
