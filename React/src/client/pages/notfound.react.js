@@ -3,18 +3,19 @@ import DocumentTitle from 'react-document-title';
 import React from 'react';
 import {Link} from 'react-router';
 import {msg} from '../intl/store';
+import Page from '../components/page.react';
 
 class NotFound extends Component {
 
   render() {
+    const append = <Link to='home'>
+                      {msg('pages.notFound.continueMessage')}
+                    </Link>;
+
     return (
-      <DocumentTitle title={msg('pages.notFound.title')}>
-        <div className="notfound-page">
-          <h2>{msg('pages.notFound.header')}</h2>
-          <p>{msg('pages.notFound.message')}</p>
-          <Link to="home">{msg('pages.notFound.continueMessage')}</Link>
-        </div>
-      </DocumentTitle>
+      <article className='notfound'>
+        <Page page='notfound' append={append}></Page>
+      </article>
     );
   }
 

@@ -6,7 +6,7 @@ export default {
     menu: {
       home: 'Home',
       leds: 'Leds',
-      paint: 'Paint',
+      draw: 'Draw',
       login: 'Login',
       logout: 'Logout',
       settings: 'Settings',
@@ -15,33 +15,47 @@ export default {
       copyright: '&copy; 2014-2015 MagicShifter.net',
     },
     forms: {
-      auth: {
+      login: {
         hint: 'Hint: pass1',
-        legend: 'Login / Sign Up',
-        placeholder: {
-          email: 'your@email.com',
-          password: 'password',
+        legend: `
+          If you do not have a login yet,
+          you can try to politely ask the owner to get yourself registered
+        `,
+        email: {
+          label: 'Email:',
+          placeholder: 'your@email.com',
+        },
+        password: {
+          label: 'Password:',
+          placeholder: 'password',
         },
         wrongPassword: 'Wrong password',
       },
       settings: {
         server: {
+          title: 'WebServer Settings',
           legend: 'Change webserver settings',
           placeholder: {
             hostname: 'webserver hostname',
             port: 'webserver port',
           },
+          label: {
+            hostname: 'Hostname:',
+            port: 'Port:',
+          },
         },
         accesspoint: {
+          title: 'AccessPoint Settings',
           legend: 'Change accesspoint settings',
           placeholder: {
             ssid: 'ssid for the MagicShifter Network',
             password: 'Password',
           },
+          label: {
+            ssid: 'SSID:',
+            password: 'Password:',
+          },
         },
-      },
-      leds: {
-        legend: 'You can set Led Colors here',
       },
     },
     buttons: {
@@ -68,10 +82,28 @@ export default {
       leds: {
         title: 'Leds',
         header: 'Leds',
+        content: `
+          You can edit the leds here.
+          If your MagicShifter is online it will react to your inputs
+        `,
       },
-      auth: {
+      draw: {
+        title: 'Draw',
+        header: 'Draw',
+        content: `
+          Someday soon one will draw beautiful images here.
+          And one will rest and look at one's work and will be happy.
+        `,
+      },
+      login: {
         title: 'Login',
         header: 'Login',
+        content: `
+          After logging in you will be able to control the MagicShifter.
+        `,
+        bubble: {
+          text: 'Welcome to the MagicShifter Control Panel',
+        },
       },
       settings: {
         title: 'Settings',
@@ -103,6 +135,9 @@ export default {
         title: 'Remove this color',
         text: 'x',
       },
+    },
+    debug: {
+      continuehappily: 'Continue Happily, it is just a warning',
     },
   },
 };

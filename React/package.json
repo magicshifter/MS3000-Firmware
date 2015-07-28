@@ -73,7 +73,6 @@
     "nib": "^1.1.0",
     "node-notifier": "^4.1.0",
     "node-sass": "^3.1.2",
-    "normalize.css": "^3.0.2",
     "piping": "^0.2.0",
     "react": "^0.13.1",
     "react-document-title": "^1.0.0",

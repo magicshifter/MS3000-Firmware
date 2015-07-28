@@ -3,16 +3,15 @@ import DocumentTitle from 'react-document-title';
 import React from 'react';
 import {msg} from '../intl/store';
 import Leds from '../leds/leds.react';
+import Page from '../components/page.react';
 
 class LedsPage extends Component {
   render() {
     return (
-      <DocumentTitle title={msg('pages.leds.title')}>
-        <div className="leds-page">
-          <h2>{msg('pages.leds.header')}</h2>
-          <Leds {...this.props} />
-        </div>
-      </DocumentTitle>
+      <article className='leds'>
+        <Page page='leds'></Page>
+        <Leds {...this.props} />
+      </article>
     );
   }
 }

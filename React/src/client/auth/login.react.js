@@ -1,4 +1,3 @@
-import './login.styl';
 import * as actions from './actions';
 import Component from '../components/component.react';
 import React from 'react';
@@ -7,12 +6,14 @@ import immutable from 'immutable';
 import {focusInvalidField} from '../lib/validation';
 import {msg} from '../intl/store';
 
+import formStyles from '../styles/form.js';
+
 class Login extends Component {
 
   static propTypes = {
     auth: React.PropTypes.instanceOf(immutable.Map).isRequired,
     pendingActions: React.PropTypes.instanceOf(immutable.Map).isRequired,
-    router: React.PropTypes.func
+    router: React.PropTypes.func,
   };
 
   getForm() {
@@ -32,7 +33,8 @@ class Login extends Component {
   redirectAfterLogin() {
     const {router} = this.props;
     const nextPath = router.getCurrentQuery().nextPath;
-    router.replaceWith(nextPath || 'home');
+
+    router.replaceWith(nextPath || 'login');
   }
 
   render() {
@@ -40,37 +42,55 @@ class Login extends Component {
     const {pendingActions} = this.props;
 
     return (
-      <div className="login">
-        <form onSubmit={(e) => this.onFormSubmit(e)}>
-          <fieldset disabled={pendingActions.has(actions.login.toString())}>
-            <legend><h1>{msg('forms.auth.legend')}</h1></legend>
-            <input
-              autoFocus
-              name="email"
-              onChange={actions.updateFormField}
-              placeholder={msg('forms.auth.placeholder.email')}
-              value={form.fields.email}
-            />
-            <br />
-            <input
-              name="password"
-              onChange={actions.updateFormField}
-              placeholder={msg('forms.auth.placeholder.password')}
-              type="password"
-              value={form.fields.password}
-            />
-            <br />
-            <button
-              children={msg('buttons.login')}
-              type="submit"
-            />
+      <div className='login'>
+        <form onSubmit={(e) => this.onFormSubmit(e)} style={formStyles.form}>
+          <fieldset
+            style={formStyles.fieldset}
+            disabled={pendingActions.has(actions.login.toString())}
+          >
+            <legend style={formStyles.legend}>
+              {msg('forms.login.legend')}
+            </legend>
+            <div style={formStyles.field}>
+              <label htmlFor="email" children={msg('forms.login.email.label')}>
+              </label>
+              <input
+                style={formStyles.input}
+                autoFocus
+                name='email'
+                onChange={actions.updateFormField}
+                placeholder={msg('forms.login.email.placeholder')}
+                value={form.fields.email}
+              />
+            </div>
+
+            <div style={formStyles.field}>
+              <label htmlFor='password' children={msg('forms.login.password.label')}>
+              </label>
+              <input
+                style={formStyles.input}
+                name='password'
+                onChange={actions.updateFormField}
+                placeholder={msg('forms.login.password.placeholder')}
+                type='password'
+                value={form.fields.password}
+              />
+            </div>
+
+            <div style={formStyles.buttonContainer}>
+              <button
+                style={formStyles.button}
+                children={msg('buttons.login')}
+                type='submit'
+              />
+            </div>
             {/*
-             <button type="submit">{msg('buttons.signup')} />
+             <button type='submit'>{msg('buttons.signup')} />
             */}
             {form.error &&
-              <span className="error-message">{form.error.message}</span>
+              <span style={formStyles.errorMessage}>{form.error.message}</span>
             }
-            <div>{msg('forms.auth.hint')}</div>
+            <div>{msg('forms.login.hint')}</div>
           </fieldset>
         </form>
       </div>
