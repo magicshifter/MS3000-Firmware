@@ -33,6 +33,7 @@ export default class ServerForm extends Component {
       <div className='settings-server'>
         <form onSubmit={(e) => this.onFormSubmit(e)} style={styles.form}>
           <fieldset
+            style={styles.fieldset}
             disabled={pendingActions.has(actions.saveServer.toString())}
           >
             <legend><h2>{msg('forms.settings.server.legend')}</h2></legend>
@@ -64,6 +65,7 @@ export default class ServerForm extends Component {
             </div>
             <div style={styles.buttonContainer}>
               <button
+                style={styles.button}
                 children={msg('buttons.save')}
                 type='submit'
               />
@@ -76,5 +78,4 @@ export default class ServerForm extends Component {
       </div>
     );
   }
-
 }

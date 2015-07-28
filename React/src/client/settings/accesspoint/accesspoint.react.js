@@ -32,7 +32,10 @@ export default class AccesspointForm extends Component {
     return (
       <div className='settings-accesspoint'>
         <form onSubmit={(e) => this.onFormSubmit(e)} style={styles.form}>
-          <fieldset disabled={pendingActions.has(actions.saveAccesspoint.toString())}>
+          <fieldset
+            style={styles.fieldset}
+            disabled={pendingActions.has(actions.saveAccesspoint.toString())}
+          >
             <legend>
               <h2>{msg('forms.settings.accesspoint.legend')}</h2>
             </legend>
