@@ -8,11 +8,31 @@ import Logo from './logo.react.js';
 export default class PageTitle extends Component {
 
   render() {
+    const styles = {
+      header: {
+        width: '100%',
+        textAlign: 'center',
+        margin: '1em 0 .5em',
+      },
+      h2: {
+        display: 'inline-block',
+      },
+      textSpan: {
+        margin: '.2em 0 0',
+        display: 'block',
+        float: 'left',
+      }
+    };
+
     return (
-      <h2>
-        <Logo src={`${this.props.page}.svg`} size='5vw'></Logo>
-        <span>{msg(`pages.${this.props.page}.title`)}</span>
-      </h2>
+      <header style={styles.header}>
+        <h2 style={styles.h2}>
+          <Logo src={`${this.props.page}.svg`} size='5vw'></Logo>
+          <span style={styles.textSpan}>
+            {msg(`pages.${this.props.page}.title`).toUpperCase()}
+          </span>
+        </h2>
+      </header>
     );
   }
 }
