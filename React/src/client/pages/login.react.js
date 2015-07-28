@@ -3,14 +3,18 @@ import DocumentTitle from 'react-document-title';
 import LoginForm from '../auth/login.react';
 import React from 'react';
 import {msg} from '../intl/store';
-import Page from '../components/page.react';
+import Title from '../components/page/title.react';
+import Content from '../components/page/content.react';
+import Bubble from '../components/bubble.react';
 
 class Login extends Component {
 
   render() {
     return (
       <article className='login'>
-        <Page page='login'></Page>
+        <Title page='login' />
+        <Bubble text={msg('pages.login.bubble.text')} />
+        <Content page='login' />
         <LoginForm {...this.props} />
       </article>
     );
