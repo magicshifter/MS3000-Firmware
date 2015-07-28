@@ -7,9 +7,9 @@ import Page from '../components/page.react.js';
 class DrawPage extends Component {
   render() {
     return (
-      <DocumentTitle title={msg('pages.draw.title')}>
+      <article className='home'>
         <Page page='draw'></Page>
-      </DocumentTitle>
+      </article>
     );
   }
 }

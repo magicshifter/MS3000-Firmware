@@ -10,12 +10,11 @@ import Page from '../components/page.react';
 class Settings extends Component {
 
   render() {
+    let append = <ServerForm {...this.props} />;
+    append += <AccesspointForm {...this.props} />;
+
     return (
-      <DocumentTitle title={msg('pages.settings.title')}>
-        <Page page='settings'></Page>
-        <ServerForm {...this.props} />
-        <AccesspointForm {...this.props} />
-      </DocumentTitle>
+      <Page page='settings' append={append}></Page>
     );
   }
 

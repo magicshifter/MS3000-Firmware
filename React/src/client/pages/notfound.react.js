@@ -8,11 +8,14 @@ import Page from '../components/page.react';
 class NotFound extends Component {
 
   render() {
+    const append = <Link to='home'>
+                      {msg('pages.notFound.continueMessage')}
+                    </Link>;
+
     return (
-      <DocumentTitle title={msg('pages.notFound.title')}>
-        <Page page='notfound'></Page>
-        <Link to='home'>{msg('pages.notFound.continueMessage')}</Link>
-      </DocumentTitle>
+      <article className='notfound'>
+        <Page page='notfound' append={append}></Page>
+      </article>
     );
   }
 

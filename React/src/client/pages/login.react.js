@@ -9,13 +9,12 @@ class Login extends Component {
 
   render() {
     return (
-      <DocumentTitle title={msg('pages.login.title')}>
+      <article className='login'>
         <Page page='login'></Page>
         <LoginForm {...this.props} />
-      </DocumentTitle>
+      </article>
     );
   }
-
 }
 
 export default Login;

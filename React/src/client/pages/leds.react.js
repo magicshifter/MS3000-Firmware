@@ -8,10 +8,10 @@ import Page from '../components/page.react';
 class LedsPage extends Component {
   render() {
     return (
-      <DocumentTitle title={msg('pages.leds.title')}>
+      <article className='leds'>
         <Page page='leds'></Page>
         <Leds {...this.props} />
-      </DocumentTitle>
+      </article>
     );
   }
 }
