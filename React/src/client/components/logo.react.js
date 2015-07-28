@@ -15,8 +15,11 @@ export default class Logo extends Component {
       height: `${size}`,
       width: `${size}`,
       display: 'block',
-      float: 'left',
     };
+
+    if (this.props.float) {
+      style.float = this.props.float;
+    }
 
     if (this.props.shadow) {
       style.filter = `drop-shadow(${this.props.shadow})`;
