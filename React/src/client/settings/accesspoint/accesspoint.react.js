@@ -1,4 +1,3 @@
-import './accesspoint.styl';
 import * as actions from './actions';
 import Component from '../../components/component.react';
 import React from 'react';
