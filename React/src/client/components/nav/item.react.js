@@ -25,10 +25,10 @@ export default class Item extends Component {
         <Link to={this.props.to}>
           <Logo
             src={`${this.props.to}.svg`}
-            size='7vw'
+            size='10vw'
             shadow='5px 5px 0px #78909C'
           />
-          <span style={styles.span}>{msg(`menu.${this.props.to}`)}</span>
+          <div style={styles.span}>{msg(`menu.${this.props.to}`)}</div>
         </Link>
       </li>
     );
