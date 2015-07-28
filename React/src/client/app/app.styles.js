@@ -1,13 +1,17 @@
 
 export default {
   header: {
-    container: {
+    wrapper: {
       display: 'inline-block',
       width: '100%',
       padding: '1em 2em 0',
       height: '150px',
       backgroundColor: '#039BE5',
       position: 'relative',
+    },
+    container: {
+      maxWidth: '800px',
+      margin: '0 auto',
     },
     background: {
       backgroundImage: 'url(/assets/img/header-background.png)',
