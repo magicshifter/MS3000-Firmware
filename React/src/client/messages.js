@@ -18,9 +18,13 @@ export default {
       login: {
         hint: 'Hint: pass1',
         legend: 'Login / Sign Up',
-        placeholder: {
-          email: 'your@email.com',
-          password: 'password',
+        email: {
+          label: 'Email:',
+          placeholder: 'your@email.com',
+        },
+        password: {
+          label: 'Password:',
+          placeholder: 'password',
         },
         wrongPassword: 'Wrong password',
       },

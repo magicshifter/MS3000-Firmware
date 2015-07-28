@@ -1,4 +1,3 @@
-import './login.styl';
 import * as actions from './actions';
 import Component from '../components/component.react';
 import React from 'react';
@@ -6,6 +5,8 @@ import exposeRouter from '../components/exposerouter.react';
 import immutable from 'immutable';
 import {focusInvalidField} from '../lib/validation';
 import {msg} from '../intl/store';
+
+import formStyles from '../styles/form.js';
 
 class Login extends Component {
 
@@ -41,26 +42,33 @@ class Login extends Component {
 
     return (
       <div className='login'>
-        <form onSubmit={(e) => this.onFormSubmit(e)}>
+        <form onSubmit={(e) => this.onFormSubmit(e)} style={formStyles.form}>
           <fieldset disabled={pendingActions.has(actions.login.toString())}>
-            <legend><h1>{msg('forms.login.legend')}</h1></legend>
+            <legend>{msg('forms.login.legend')}</legend>
+            <label htmlFor="email" children={msg('forms.login.email.label')}>
+            </label>
             <input
+              style={formStyles.input}
               autoFocus
               name='email'
               onChange={actions.updateFormField}
-              placeholder={msg('forms.login.placeholder.email')}
+              placeholder={msg('forms.login.email.placeholder')}
               value={form.fields.email}
             />
             <br />
+            <label htmlFor='password' children={msg('forms.login.password.label')}>
+            </label>
             <input
+              style={formStyles.input}
               name='password'
               onChange={actions.updateFormField}
-              placeholder={msg('forms.login.placeholder.password')}
+              placeholder={msg('forms.login.password.placeholder')}
               type='password'
               value={form.fields.password}
             />
             <br />
             <button
+              style={formStyles.button}
               children={msg('buttons.login')}
               type='submit'
             />
@@ -68,7 +76,7 @@ class Login extends Component {
              <button type='submit'>{msg('buttons.signup')} />
             */}
             {form.error &&
-              <span className='error-message'>{form.error.message}</span>
+              <span style={formStyles.errorMessage}>{form.error.message}</span>
             }
             <div>{msg('forms.login.hint')}</div>
           </fieldset>
