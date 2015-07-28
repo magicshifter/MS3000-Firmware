@@ -24,9 +24,13 @@ export default class Content extends Component {
       },
     };
     let content = '';
-    let m = msg(`pages.${this.props.page}.content`);
-    if (m) {
-      content = m;
+
+    try {
+      content = msg(`pages.${this.props.page}.content`);
+    }
+    catch (e) {
+      console.warn(e);
+      content = '';
     }
 
     return (
