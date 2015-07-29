@@ -38,7 +38,11 @@ class Header extends Component {
         <div style={styles.header.background}></div>
         <div style={styles.header.container}>
           <Link to={homeLinksTo} style={styles.header.link}>
-            <Logo src='logo.png' size='10vw' float='left' />
+            <Logo
+              src='logo.png'
+              size='10vw'
+              float='left'
+            />
             <h1 style={styles.header.h1}>
               <FormattedHTMLMessage message={msg('header.h1Html')} />
             </h1>
