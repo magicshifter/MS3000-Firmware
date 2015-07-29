@@ -1,8 +1,8 @@
+import React from 'react';
+
 import * as actions from './actions';
 import Component from '../components/component.react';
-import React from 'react';
-import immutable from 'immutable';
-import {msg} from '../intl/store';
+
 
 import ColorPickerPreview from '../colorpicker/colorpickerpreview.react';
 import ColorPicker from '../colorpicker/colorpicker.react';
