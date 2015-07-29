@@ -1,8 +1,8 @@
-import './colorlist.styl';
+import React from 'react';
+
 import Component from '../components/component.react';
 import * as actions from './actions';
 import * as ledActions from '../leds/actions';
-import React from 'react';
 import {msg} from '../intl/store';
 import color from 'sc-color';
 
@@ -22,16 +22,23 @@ export default class ColorList extends Component {
   }
 
   render() {
+    const styles = {
+      li: {
+        listStyle: 'none',
+        display: 'inline-block',
+      },
+    };
+
     const { colorPicker } = this.props;
 
     const colors = colorPicker.get('colors').sort(function(colorA, colorB) {
       return color(colorA).hue() - color(colorB).hue();
-    });;
+    });
 
     let colorHtmlList = [];
     colors.map((val, key) => {
       colorHtmlList.push(
-        <li key={key}>
+        <li key={key} style={styles.li}>
           <ColorPickerPreview
             value={val}
             key={key}
@@ -48,7 +55,7 @@ export default class ColorList extends Component {
     });
 
     return (
-      <ul className='color-list'>
+      <ul>
         {colorHtmlList}
       </ul>
     );
