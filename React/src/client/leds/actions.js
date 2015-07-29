@@ -5,7 +5,6 @@ import {dispatch} from '../dispatcher';
 import {validate} from '../validation';
 import {msg} from '../intl/store';
 
-
 export function toggleLed(data) {
   dispatch(toggleLed, data);
 }
