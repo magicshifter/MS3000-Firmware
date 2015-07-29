@@ -68,6 +68,7 @@
     "karma-webpack": "^1.5.1",
     "less": "^2.5.1",
     "less-loader": "^2.0.0",
+    "magic-merge": "express-magic/magic-merge",
     "mocha": "^2.2.5",
     "nconf": "^0.7.1",
     "nib": "^1.1.0",
