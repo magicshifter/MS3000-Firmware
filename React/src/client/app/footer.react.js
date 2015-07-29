@@ -5,7 +5,7 @@ import {msg} from '../intl/store';
 
 import styles from './app.styles';
 
-class Footer extends Component {
+export default class Footer extends Component {
 
   render() {
     return (
@@ -15,5 +15,3 @@ class Footer extends Component {
     );
   }
 }
-
-export default Footer;

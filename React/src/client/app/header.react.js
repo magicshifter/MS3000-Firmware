@@ -10,7 +10,7 @@ import StatusBar from '../components/statusbar.react';
 
 import styles from './app.styles';
 
-class Header extends Component {
+export default class Header extends Component {
 
   static propTypes = {
     isLoggedIn: React.PropTypes.bool.isRequired,
@@ -54,5 +54,3 @@ class Header extends Component {
     );
   }
 }
-
-export default Header;

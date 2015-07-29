@@ -5,7 +5,7 @@ import {Link} from 'react-router';
 import {msg} from '../intl/store';
 import Page from '../components/page.react';
 
-class NotFound extends Component {
+export default class NotFound extends Component {
 
   render() {
     const append = <Link to='home'>
@@ -18,7 +18,4 @@ class NotFound extends Component {
       </article>
     );
   }
-
 }
-
-export default NotFound;

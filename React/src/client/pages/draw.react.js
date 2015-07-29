@@ -4,7 +4,7 @@ import React from 'react';
 import {msg} from '../intl/store';
 import Page from '../components/page.react.js';
 
-class DrawPage extends Component {
+export default class DrawPage extends Component {
   render() {
     return (
       <article className='home'>
@@ -13,5 +13,3 @@ class DrawPage extends Component {
     );
   }
 }
-
-export default DrawPage;

@@ -4,7 +4,7 @@ import React from 'react';
 import {msg, FormattedMessage} from '../intl/store';
 import Page from '../components/page.react.js';
 
-class Home extends Component {
+export default class Home extends Component {
 
   render() {
     return (
@@ -14,5 +14,3 @@ class Home extends Component {
     );
   }
 }
-
-export default Home;
