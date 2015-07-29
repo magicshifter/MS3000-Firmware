@@ -15,8 +15,8 @@ export function dispatch(action: Function, data: ?Object, options: ?Object) {
     );
   }
 
-  const looksLikePromise = data && typeof data.then === 'function';
-  if (looksLikePromise) {
+  const isThenable = data && typeof data.then === 'function';
+  if (isThenable) {
     return dispatchAsync(action, data, options);
   } else {
     dispatchSync(action, data);
