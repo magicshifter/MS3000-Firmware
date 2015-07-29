@@ -7,7 +7,7 @@ import Led from './led.react';
 import ColorPicker from '../colorpicker/colorpicker.react';
 import ColorList from '../colorpicker/colorlist.react';
 
-export default class LedsForm extends Component {
+export default class Leds extends Component {
 
   render() {
     const styles = {
