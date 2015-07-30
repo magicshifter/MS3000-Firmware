@@ -7,7 +7,7 @@ export const dispatchToken = register(({action, data}) => {
 
   switch (action) {
     case actions.addColor:
-      colorPickerCursor(settings => {
+      colorPickerCursor(cursor => {
         let colors = settings.get('colors');
         if (colors.indexOf(data) < 0) {
           colors = colors.push(data);
@@ -15,15 +15,17 @@ export const dispatchToken = register(({action, data}) => {
 
         return settings.set('colors', colors);
       });
+
       break;
 
     case actions.removeColor:
-      colorPickerCursor(settings => {
+      colorPickerCursor(cursor => {
         let colors = settings
                       .get('colors')
                       .filter((val) => val !== data);
         return settings.set('colors', colors);
       });
+
       break;
 
   }
