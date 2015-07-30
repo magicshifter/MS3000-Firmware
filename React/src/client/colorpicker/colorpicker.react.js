@@ -9,14 +9,7 @@ import {msg} from '../intl/store';
 export default class ColorPicker extends Component {
 
   onChange(e) {
-    e.preventDefault();
-    const {id, active} = this.props;
-    const props = {
-      value: e.target.value,
-      id,
-      active,
-    };
-    ledActions.changeLed(props);
+    actions.updateActiveLeds(e.target.value);
   }
 
   addColor(e) {

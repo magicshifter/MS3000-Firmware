@@ -23,9 +23,14 @@ export default class ColorList extends Component {
 
   render() {
     const styles = {
+      container: {
+        width: '10vw',
+        height: '100%',
+      },
       li: {
         listStyle: 'none',
         display: 'inline-block',
+        width: '100%',
       },
     };
 
@@ -43,6 +48,7 @@ export default class ColorList extends Component {
             value={val}
             key={key}
             onClick={(e) => this.changeLed(e)}
+            size='3vw'
           />
           <button
             value={val}
@@ -55,9 +61,11 @@ export default class ColorList extends Component {
     });
 
     return (
-      <ul>
-        {colorHtmlList}
-      </ul>
+      <div style={styles.container}>
+        <ul>
+          {colorHtmlList}
+        </ul>
+      </div>
     );
   }
 }
