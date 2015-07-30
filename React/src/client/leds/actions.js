@@ -13,7 +13,37 @@ export function changeLed(data) {
   dispatch(changeLed, data);
 }
 
+export function updateActiveLeds(data) {
+  return dispatch(updateActiveLeds, data);
+}
+
+export function selectAllLeds(data) {
+  dispatch(selectAllLeds, data);
+}
+
+export function deselectAllLeds(data) {
+  dispatch(deselectAllLeds, data);
+}
+
+export function activateLed(data) {
+  dispatch(activateLed, data);
+}
+
+export function startSelection(e) {
+  dispatch(startSelection, e);
+}
+
+export function stopSelection(e) {
+  dispatch(stopSelection, e);
+}
+
 setToString('leds', {
   toggleLed,
   changeLed,
+  updateActiveLeds,
+  selectAllLeds,
+  deselectAllLeds,
+  activateLed,
+  startSelection,
+  stopSelection,
 });
