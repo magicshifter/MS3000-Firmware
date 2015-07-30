@@ -8,6 +8,7 @@ import merge from 'magic-merge';
 import * as actions from '../leds/actions';
 
 export default class ColorPickerPreview extends Component {
+
   onClick(e) {
     e.preventDefault();
     actions.toggleLed(this.props);
@@ -17,39 +18,24 @@ export default class ColorPickerPreview extends Component {
     const styles = {
       container: {
         display: 'inline-block',
-      },
-      normal: {
-        width: '20px',
-        height: '20px',
-        margin: '1px',
-        border: '3px solid grey',
-      },
-      big: {
-        width: '40px',
-        height: '40px',
-        margin: '2px',
-        border: '5px solid grey',
-      },
-      active: {
-        borderColor: 'lightgrey',
+        height: '100%',
+        width: '100%',
+        backgroundColor: '#000000',
       },
     };
 
-    const {value: backgroundColor, big, key} = this.props;
+    const {value, size} = this.props;
     let containerStyle = styles.container;
-    if (big) {
-      containerStyle = merge(containerStyle, styles.big);
-    } else {
-      containerStyle = merge(containerStyle, styles.normal);
+
+    if (size) {
+      containerStyle.width = size;
+      containerStyle.height = size;
     }
 
-    containerStyle.backgroundColor = backgroundColor || '#000000';
+    containerStyle.backgroundColor = value;
 
     return (
-      <span
-        style={containerStyle}
-        onClick={(e) => this.props.onClick(e)}
-      ></span>
+      <div style={containerStyle}></div>
     );
   }
 }
