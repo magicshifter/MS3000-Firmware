@@ -1,4 +1,5 @@
 extern byte web_rgb_buffer[];
+extern int shifterMode;
 
 #define MAX_AP_LEN 48
 struct APInfo
@@ -263,7 +264,9 @@ void handleGETStatus(void)
 
   int ad1V = 1023;
 
-  float r1 = 180, r2 = 390, r3 = 330;
+  //float r1 = 180, r2 = 390, r3 = 330;
+
+  float r1 = 270, r2 = 1000, r3 = 0;
 
   float voltage = ((float)(r1 + r2 + r3) * adValue) / (r1 * ad1V);
 
@@ -565,6 +568,49 @@ void handlePOSTAPListDelete(void)
     server.send(500, "text/plain", "args missing!");
   }
 }
+
+
+void handleSetMode(void)
+{
+  logln("handleSetMode", INFO);
+  if (server.args() == 1)
+  {
+    ServerConfig config;
+    Settings.getServerConfig(&config);
+
+    bool success = true;
+    for (int i = 0; i < server.args(); i++)
+    {
+      logln("argName: ", VERBOSE);
+      logln(server.argName(i), VERBOSE);
+
+      logln("arg: ", VERBOSE);
+      logln(server.arg(i), VERBOSE);
+
+      shifterMode = atoi(server.arg(i).c_str());
+    }
+
+    if (success)
+    {
+      String response = "{";
+      response += "\"mode\":";
+      response += "\"";
+      response += shifterMode;
+      response += "\"";
+      response += "}";
+      server.send(200, "text/plain", response);
+    }
+    else
+    {
+      server.send(500, "text/plain", "invalid args!");
+    }
+  }
+  else
+  {
+    server.send ( 500, "text/plain", "argument missing!");
+  }
+}
+
 
 void handleLedSet()
 {

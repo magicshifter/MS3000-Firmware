@@ -44,6 +44,8 @@ void InitSPI()
   #endif
 }
 
+void fillPixels(byte r, byte g, byte b, byte gs);
+
 void InitAPA102() {
   ledBuffer[0] = 0;
   ledBuffer[1] = 0;
@@ -65,6 +67,8 @@ void InitAPA102() {
     clearBuffer[i+2] = 0;
     clearBuffer[i+3] = 0;
   }
+
+  fillPixels(0,0,0, 0);
 }
 
 void setPixel(int index, byte r, byte g, byte b, byte gs = 0x1F)
