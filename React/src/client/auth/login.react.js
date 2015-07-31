@@ -34,7 +34,7 @@ class Login extends Component {
     const {router} = this.props;
     const nextPath = router.getCurrentQuery().nextPath;
 
-    router.replaceWith(nextPath || 'login');
+    router.replaceWith(nextPath || 'settings');
   }
 
   render() {
