@@ -55,9 +55,12 @@ def main(stdscr):
                 code = ord(s)
                 if (xx == 0):
                     stdscr.clear()
-                xx = (xx + 1) % 1000
+                xx = (xx + 1) % 700
                 if code > 13 and code <= 255:
-                    stdscr.addstr(s)
+                    try:
+                        stdscr.addstr(s)
+                    except:
+                        pass
                 elif code == 13:
                     stdscr.addstr("\n\r")
                 else:
