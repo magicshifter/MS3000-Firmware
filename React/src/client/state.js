@@ -1,4 +1,5 @@
 import State from './lib/state';
+
 import reviveAuth from './auth/revive';
 import reviveServerSettings from './settings/server/revive';
 import reviveAccesspointSettings from './settings/accesspoint/revive';
@@ -23,7 +24,7 @@ export const appState = new State(initialState, function(key, value) {
 
 export const authCursor = appState.cursor(['auth']);
 export const serverSettingsCursor = appState.cursor(['serverSettings']);
-export const accesspointSettingsCursor = appState.cursor(['accesspointSettings']);
+export const apSettingsCursor = appState.cursor(['accesspointSettings']);
 export const i18nCursor = appState.cursor(['i18n']);
 export const pendingActionsCursor = appState.cursor(['pendingActions']);
 export const usersCursor = appState.cursor(['users']);

@@ -5,7 +5,7 @@ import {msg} from '../intl/store';
 import Leds from '../leds/leds.react';
 import Page from '../components/page.react';
 
-class LedsPage extends Component {
+export default class LedsPage extends Component {
   render() {
     return (
       <article className='leds'>
@@ -15,5 +15,3 @@ class LedsPage extends Component {
     );
   }
 }
-
-export default LedsPage;

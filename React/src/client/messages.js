@@ -86,6 +86,11 @@ export default {
           You can edit the leds here.
           If your MagicShifter is online it will react to your inputs
         `,
+        menu: {
+          title: 'Select:',
+          all: 'All',
+          none: 'None',
+        },
       },
       draw: {
         title: 'Draw',

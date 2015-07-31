@@ -7,7 +7,7 @@ import Title from '../components/page/title.react';
 import Content from '../components/page/content.react';
 import Bubble from '../components/bubble.react';
 
-class Login extends Component {
+export default class Login extends Component {
 
   render() {
     return (
@@ -20,5 +20,3 @@ class Login extends Component {
     );
   }
 }
-
-export default Login;

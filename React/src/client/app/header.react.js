@@ -10,7 +10,7 @@ import StatusBar from '../components/statusbar.react';
 
 import styles from './app.styles';
 
-class Header extends Component {
+export default class Header extends Component {
 
   static propTypes = {
     isLoggedIn: React.PropTypes.bool.isRequired,
@@ -38,7 +38,11 @@ class Header extends Component {
         <div style={styles.header.background}></div>
         <div style={styles.header.container}>
           <Link to={homeLinksTo} style={styles.header.link}>
-            <Logo src='logo.png' size='10vw' float='left' />
+            <Logo
+              src='logo.png'
+              size='10vw'
+              float='left'
+            />
             <h1 style={styles.header.h1}>
               <FormattedHTMLMessage message={msg('header.h1Html')} />
             </h1>
@@ -50,5 +54,3 @@ class Header extends Component {
     );
   }
 }
-
-export default Header;

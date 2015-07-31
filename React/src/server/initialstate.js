@@ -7,6 +7,7 @@ let ledArray = [];
 for (let i = 0; i < ledCount; i++) {
   ledArray.push({
     key: i,
+    ledId: i,
     value: '#000000',
     active: false,
   });
@@ -28,11 +29,11 @@ export default {
   i18n: {
     formats: {},
     locales: initialLocale,
-    messages: messages[initialLocale]
+    messages: messages[initialLocale],
   },
   pendingActions: {},
   users: {
-    viewer: null
+    viewer: null,
   },
   leds: {
     settings: {

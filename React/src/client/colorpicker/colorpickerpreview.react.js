@@ -1,30 +1,41 @@
-import './colorpickerpreview.styl';
-import Component from '../components/component.react';
 import React from 'react';
+
+import Component from '../components/component.react';
 import {msg} from '../intl/store';
 
-import {toggleLed} from '../leds/actions';
+import merge from 'magic-merge';
+
+import * as actions from '../leds/actions';
 
 export default class ColorPickerPreview extends Component {
+
   onClick(e) {
     e.preventDefault();
-    console.log('toggle', this.props);
-    toggleLed(this.props);
+    actions.toggleLed(this.props);
   }
 
   render() {
-    const {value: backgroundColor, big, key} = this.props;
-    let className = 'color-picker-preview';
-    className += big ? ' big' : '';
+    const styles = {
+      container: {
+        display: 'inline-block',
+        height: '100%',
+        width: '100%',
+        backgroundColor: '#000000',
+      },
+    };
+
+    const {value, size} = this.props;
+    let containerStyle = styles.container;
+
+    if (size) {
+      containerStyle.width = size;
+      containerStyle.height = size;
+    }
+
+    containerStyle.backgroundColor = value;
 
     return (
-      <span
-        className={className}
-        style={{
-          backgroundColor,
-        }}
-        onClick={(e) => this.props.onClick(e)}
-      ></span>
+      <div style={containerStyle}></div>
     );
   }
 }

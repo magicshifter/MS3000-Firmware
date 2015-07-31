@@ -1,21 +1,15 @@
-import './colorpicker.styl';
+import React from 'react';
+
 import Component from '../components/component.react';
 import * as actions from './actions';
 import * as ledActions from '../leds/actions';
-import React from 'react';
+
 import {msg} from '../intl/store';
 
 export default class ColorPicker extends Component {
 
   onChange(e) {
-    e.preventDefault();
-    const {id, active} = this.props;
-    const props = {
-      value: e.target.value,
-      id,
-      active,
-    };
-    ledActions.changeLed(props);
+    actions.updateActiveLeds(e.target.value);
   }
 
   addColor(e) {
@@ -24,10 +18,16 @@ export default class ColorPicker extends Component {
   }
 
   render() {
+    const styles = {
+      container: {
+        display: 'inline-block',
+      },
+    };
+
     const { active, value } = this.props;
 
     return (
-      <div className='color-picker'>
+      <div style={styles.container}>
         <input
           type='color'
           value={ value }

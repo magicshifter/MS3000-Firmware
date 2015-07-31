@@ -35,7 +35,8 @@ export default class State extends EventEmitter {
   }
 
   set(state, path?) {
-    if (this._state === state) return;
+    if (this._state === state) { return; }
+
     // Previous state if useful for debugging global app state diff.
     // It's easy with: https://github.com/intelie/immutable-js-diff
     const previousState = this._state;
