@@ -25,6 +25,10 @@ export function deselectAllLeds(data) {
   dispatch(deselectAllLeds, data);
 }
 
+export function toggleAllLeds(data) {
+  dispatch(toggleAllLeds, data);
+}
+
 export function activateLed(data) {
   dispatch(activateLed, data);
 }
@@ -43,6 +47,7 @@ setToString('leds', {
   updateActiveLeds,
   selectAllLeds,
   deselectAllLeds,
+  toggleAllLeds,
   activateLed,
   startSelection,
   stopSelection,
