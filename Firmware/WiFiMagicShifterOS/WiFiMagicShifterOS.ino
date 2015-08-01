@@ -264,7 +264,7 @@ void loop()
       {
         for (byte idx = 0; idx < LEDS; idx++)
         {
-          float scale = ball.getLedBright(idx, LEDS);
+          float scale = ball.getLedBrightCB(idx, LEDS);
           scale *= 10;
           setPixel(idx, (frame & 1) ? bright*scale : 0, (frame & 2) ? bright*scale : 0, (frame & 4) ? bright*scale : 0, gs);
           setPixel(idx, bright * scale, 0, bright * scale, gs);
@@ -297,9 +297,5 @@ void loop()
   float fX = accelG[0];
   float fY = accelG[1];
 
-  ball.applyForce((currentMicros - lastMicros) / 1000.0, fX, fY);
-
-
-
-
+  ball.applyForceCB((currentMicros - lastMicros) / 1000.0, fX, fY);
 }

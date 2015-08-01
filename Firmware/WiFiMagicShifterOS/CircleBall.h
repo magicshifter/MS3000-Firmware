@@ -31,13 +31,13 @@ class CircleBall
   float calX = 1;
   float calY = 0;
 
-  void calibrate(float gx, float gy)
+  void calibrateCB(float gx, float gy)
   {
       calX = gx;
       calY = gy;
   }
 
-  void applyForce(float sec, float gx, float gy)
+  void applyForceCB(float sec, float gx, float gy)
   {
     sec *= 0.5;
     float posx = cos(angle);
@@ -59,7 +59,28 @@ class CircleBall
     while (angle > 2*PI_HACK) angle -= 2*PI_HACK;
   }
 
-  void applyForce(float sec, float g)
+  float pos = 0.5;
+  float vel = 0;
+
+  void applyForceMB(float sec, float g)
+  {
+    vel *= 0.99;
+    vel += sec*g;
+    pos += vel;
+
+    if (pos < 0)
+    {
+      pos = 0;
+      vel = -vel;
+    }
+    else if (pos > 1)
+    {
+      pos = 1;
+      vel = -vel;
+    }
+  }
+
+  void applyForceCB(float sec, float g)
   {
     sec *= 0.5;
 
@@ -68,7 +89,7 @@ class CircleBall
     while (angle > 2*PI_HACK) angle -= 2*PI_HACK;
   }
 
-  float getLedBright(int idx, int leds)
+  float getLedBrightCB(int idx, int leds)
   {
     float pos = leds * angle / (2*PI_HACK);
 
