@@ -18,6 +18,11 @@ export default class LedsMenu extends Component {
             </button>
           </li>
           <li>
+            <button onClick={(e) => actions.toggleAllLeds(e)}>
+              {msg('pages.leds.menu.toggle')}
+            </button>
+          </li>
+          <li>
             <button onClick={(e) => actions.deselectAllLeds(e)}>
               {msg('pages.leds.menu.none')}
             </button>

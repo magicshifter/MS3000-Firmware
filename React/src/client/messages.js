@@ -89,6 +89,7 @@ export default {
         menu: {
           title: 'Select:',
           all: 'All',
+          toggle: 'Toggle',
           none: 'None',
         },
       },

@@ -57,6 +57,17 @@ export const dispatchToken = register(({action, data}) => {
 
       break;
 
+    case actions.toggleAllLeds:
+      ledsCursor(cursor => {
+        const leds = cursor
+          .get('list')
+          .map((val, key) => val.set('active', !val.get('active')));
+
+        return cursor.setIn(['list'], leds);
+      });
+
+      break;
+
     case actions.selectAllLeds:
       ledsCursor(cursor => {
         const leds = cursor
