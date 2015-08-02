@@ -233,6 +233,27 @@ void setup()
   }
   updatePixels();
   //saveBuffer(web_rgb_buffer);
+
+  while (0)
+  {
+    MSImage activeImage = MSImage(uploadname);
+    Serial.print("loaded: ");
+    Serial.println(uploadname);
+
+    Serial.print("width: ");
+    Serial.println(activeImage.getWidth());
+
+    for (int i = 0; i < activeImage.getWidth(); i++)
+    {
+      byte povData[RGB_BUFFER_SIZE];
+      activeImage.readFrame(i, povData, RGB_BUFFER_SIZE);
+      loadBuffer(povData);
+      updatePixels();
+      delay(1);
+    }
+
+    activeImage.close();
+  } 
 }
 
 void loop()
