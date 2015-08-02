@@ -1,5 +1,59 @@
 #define PREDICT_SAME_DIRECTION true
 
+class POVShakeSyncDummy
+{
+  int frames = 16;
+  int frameIndex = 0;
+  int dir = 1;
+  bool isActive = false; // is shaking happening at all?
+  // are we in a shaking position that has a frame to display? Is frameIndex valid?
+  bool isFrameIndexActive = false;
+
+  int cooldown = 0;
+
+public:
+  // sensitivity is the min distance between min and max to start poving
+  POVShakeSyncDummy(void)
+  {
+  }
+
+  void setFrames(int w)
+  {
+		frames = w;
+  }
+
+  const int COOLTIME = 10;
+
+  int getFrameIndex()
+  {
+   if (cooldown == 0)
+   {
+   		frameIndex = frameIndex + dir;
+   		if (frameIndex < 0 || frameIndex >= frames)
+   		{
+   			dir = -dir;
+   			cooldown = COOLTIME;
+   			return -1;
+   		}
+   		return frameIndex;
+   }
+   else
+   {
+   	cooldown--;
+   	return -1;
+   }
+  }
+
+	// returns true if POV shake is actve
+  bool update(float g)
+  {
+    return true;
+  }
+};
+
+
+
+
 class POVShakeSync {
 
   typedef struct struct_ShakePoint {

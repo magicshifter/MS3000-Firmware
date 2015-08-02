@@ -68,9 +68,10 @@ DebugMode debugMode;
 //MagicShifterMode rgbLightMode;
 
 float accelG[3];  // Stores the real accel value in g's
-POVShakeSync shakeSync;
+//POVShakeSync shakeSync;
+POVShakeSyncDummy shakeSync;
 
-int shifterMode = 1;
+int shifterMode = 4;
 int accelCount[3];  // Stores the 12-bit signed value
 int oldButton1State = 0;
 CircleBall ball(600);
@@ -215,11 +216,11 @@ void setup()
   StartWebServer();
 
   loadString(uploadname, FILENAME_LENGTH);
-  if (!FS.exists(uploadname))
+  //if (!FS.exists(uploadname))
   {
     Serial.print("could not find: ");
     Serial.println(uploadname);
-    strcpy(uploadname, "mario_48_png.magicBitmap");
+    strcpy(uploadname, "big_smile_gif.magicBitmap");
   }
   Serial.print("using POV file: ");
   Serial.println(uploadname);
