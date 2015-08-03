@@ -7,7 +7,6 @@ import * as actions from './actions';
 export default class LedsMenu extends Component {
 
   render() {
-
     return (
       <div>
         <h3>{msg('pages.leds.menu.title')}</h3>
