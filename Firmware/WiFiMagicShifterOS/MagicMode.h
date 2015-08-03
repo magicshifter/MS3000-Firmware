@@ -65,7 +65,7 @@ class MagicMode : public BaseMode
 private:
   char activeFilename[FILENAME_SIZE];
   MSImage activeImage;
-  POVShakeSync shakeSync;
+  POVShakeSyncDummy shakeSync;
 
 public:
   MagicMode()
@@ -80,6 +80,7 @@ public:
       int index = shakeSync.getFrameIndex();
       if (index > 0)
       {
+        //Serial.println(index);
         byte povData[RGB_BUFFER_SIZE];
         activeImage.readFrame(index / FRAME_MULTIPLY, povData, RGB_BUFFER_SIZE);
         loadBuffer(povData);
@@ -87,6 +88,7 @@ public:
 
         delayMicroseconds(POV_TIME_MICROSECONDS);
         fastClear();
+        //delay(10);
       }
     }
   }

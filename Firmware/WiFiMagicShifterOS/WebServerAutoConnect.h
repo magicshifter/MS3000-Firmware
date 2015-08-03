@@ -14,7 +14,7 @@ bool TryConnect(struct APInfo &apInfo, int timeoutMs)
     for (int i = 0; i < LEDS; i++)
     {
       if (i < frame % LEDS)
-        setPixel(i, 1, 1, 1, 0x1);
+        setPixel(i, 5, 5, 5, 0x10);
       else
         setPixel(i, 0, 0, 0, 0);
     }

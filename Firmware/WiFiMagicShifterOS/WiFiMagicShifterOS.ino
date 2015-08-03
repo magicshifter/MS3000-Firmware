@@ -68,7 +68,8 @@ DebugMode debugMode;
 //MagicShifterMode rgbLightMode;
 
 float accelG[3];  // Stores the real accel value in g's
-POVShakeSync shakeSync;
+//POVShakeSync shakeSync;
+POVShakeSyncDummy shakeSync;
 
 int shifterMode = 1;
 int accelCount[3];  // Stores the 12-bit signed value
@@ -215,11 +216,11 @@ void setup()
   StartWebServer();
 
   loadString(uploadname, FILENAME_LENGTH);
-  if (!FS.exists(uploadname))
+  //if (!FS.exists(uploadname))
   {
     Serial.print("could not find: ");
     Serial.println(uploadname);
-    strcpy(uploadname, "mario_48_png.magicBitmap");
+    strcpy(uploadname, "big_smile_gif.magicBitmap");
   }
   Serial.print("using POV file: ");
   Serial.println(uploadname);
@@ -232,6 +233,27 @@ void setup()
   }
   updatePixels();
   //saveBuffer(web_rgb_buffer);
+
+  while (0)
+  {
+    MSImage activeImage = MSImage(uploadname);
+    Serial.print("loaded: ");
+    Serial.println(uploadname);
+
+    Serial.print("width: ");
+    Serial.println(activeImage.getWidth());
+
+    for (int i = 0; i < activeImage.getWidth(); i++)
+    {
+      byte povData[RGB_BUFFER_SIZE];
+      activeImage.readFrame(i, povData, RGB_BUFFER_SIZE);
+      loadBuffer(povData);
+      updatePixels();
+      delay(1);
+    }
+
+    activeImage.close();
+  } 
 }
 
 void loop()
@@ -264,7 +286,7 @@ void loop()
       {
         for (byte idx = 0; idx < LEDS; idx++)
         {
-          float scale = ball.getLedBright(idx, LEDS);
+          float scale = ball.getLedBrightCB(idx, LEDS);
           scale *= 10;
           setPixel(idx, (frame & 1) ? bright*scale : 0, (frame & 2) ? bright*scale : 0, (frame & 4) ? bright*scale : 0, gs);
           setPixel(idx, bright * scale, 0, bright * scale, gs);
@@ -297,9 +319,5 @@ void loop()
   float fX = accelG[0];
   float fY = accelG[1];
 
-  ball.applyForce((currentMicros - lastMicros) / 1000.0, fX, fY);
-
-
-
-
+  ball.applyForceCB((currentMicros - lastMicros) / 1000.0, fX, fY);
 }

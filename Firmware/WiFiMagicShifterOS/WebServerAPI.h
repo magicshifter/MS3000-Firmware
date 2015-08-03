@@ -654,3 +654,27 @@ void handleLedSet()
   }
   server.send ( 200, "text/plain",message );
 }
+
+
+void handleLedsSet()
+{
+  logln("handleLedsSet", INFO);
+  
+  String message = "LedsSet\n\n";
+
+  if (server.args() >= 1)
+  {
+    const char* input = server.arg(0).c_str();
+    int inputLen = BASE64_ENC_LEN(RGB_BUFFER_SIZE);
+
+    base64_decode((char *)web_rgb_buffer, input, inputLen);
+
+    message += "done";
+  }
+  else
+  {
+    message += "argument missing!";
+  }
+  server.send ( 200, "text/plain",message );
+}
+
