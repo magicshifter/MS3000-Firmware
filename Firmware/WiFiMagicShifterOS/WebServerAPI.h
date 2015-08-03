@@ -658,6 +658,8 @@ void handleLedSet()
 
 void handleLedsSet()
 {
+  logln("handleLedsSet", INFO);
+  
   String message = "LedsSet\n\n";
 
   if (server.args() >= 1)
