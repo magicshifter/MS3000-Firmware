@@ -3,7 +3,7 @@ import {dispatch} from '../dispatcher';
 
 export function saveColor(data) {
   console.log('action add Color dispatching', data);
-  return dispatch(addColor, data);
+  return dispatch(saveColor, data);
 }
 
 export function removeColor(data) {

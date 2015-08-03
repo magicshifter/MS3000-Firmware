@@ -12,11 +12,6 @@ export default class ColorPicker extends Component {
     actions.updateActiveLeds(e.target.value);
   }
 
-  addColor(e) {
-    e.preventDefault();
-    actions.addColor(e.target.value);
-  }
-
   render() {
     const styles = {
       container: {
@@ -36,7 +31,7 @@ export default class ColorPicker extends Component {
         <button
           value={ value }
           title={msg('colorPicker.add.title')}
-          onClick={(e) => this.addColor(e)}
+          onClick={(e) => this.saveColor(e)}
         >
           {msg('colorPicker.add.text')}
         </button>

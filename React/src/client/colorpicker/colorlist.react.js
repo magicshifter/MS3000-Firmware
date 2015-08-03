@@ -17,7 +17,7 @@ export default class ColorList extends Component {
 
   changeLed(e) {
     const value = color(e.target.style.backgroundColor).hex6();
-    const {id} = this.props;
+    const { id } = this.props;
     ledActions.changeLed({id, value});
   }
 
@@ -36,33 +36,39 @@ export default class ColorList extends Component {
 
     const { colorPicker } = this.props;
 
-    const colors = colorPicker.get('colors').sort(function(colorA, colorB) {
-      return color(colorA).hue() - color(colorB).hue();
-    });
-
     let colorHtmlList = [];
-    colors.map((val, key) => {
-      colorHtmlList.push(
-        <li key={key} style={styles.li}>
-          <ColorPickerPreview
-            value={val}
-            key={key}
-            onClick={(e) => this.changeLed(e)}
-            size='3vw'
-          />
-          <button
-            value={val}
-            onClick={(e) => this.removeColor(e)}
-            title={msg('colorPicker.remove.title')}>
-            {msg('colorPicker.remove.text')}
-          </button>
-        </li>
-      );
-    });
+    const colors = colorPicker.get('colors')
+      .sort((colorA, colorB) => color(colorA).hue() - color(colorB).hue())
+      .map((val, key) => {
+        colorHtmlList.push(
+          <li key={key} style={styles.li}>
+            <ColorPickerPreview
+              value={val}
+              key={key}
+              onClick={(e) => this.changeLed(e)}
+              size='3vw'
+            />
+            <button
+              value={val}
+              onClick={(e) => this.removeColor(e)}
+              title={msg('colorPicker.remove.title')}>
+              {msg('colorPicker.remove.text')}
+            </button>
+          </li>
+        );
+      });
 
     return (
       <div style={styles.container}>
         <ul>
+          <li>
+            <button
+              onClick={e => actions.saveColor(this.props.value)}
+              title={msg('pages.leds.colorList.saveColorTitle')}
+            >
+              {msg('pages.leds.colorList.saveColor')}
+            </button>
+          </li>
           {colorHtmlList}
         </ul>
       </div>

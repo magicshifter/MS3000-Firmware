@@ -6,7 +6,7 @@ import {register} from '../dispatcher';
 export const dispatchToken = register(({action, data}) => {
 
   switch (action) {
-    case actions.addColor:
+    case actions.saveColor:
       colorPickerCursor(cursor => {
         let colors = cursor.get('colors');
         if (colors.indexOf(data) < 0) {
