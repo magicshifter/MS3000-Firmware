@@ -2,7 +2,7 @@ import setToString from '../lib/settostring';
 import {dispatch} from '../dispatcher';
 
 export function saveColor(data) {
-  console.log('action add Color dispatching', data);
+  console.log('action save Color dispatching', data);
   return dispatch(saveColor, data);
 }
 
