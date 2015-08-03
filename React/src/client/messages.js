@@ -11,6 +11,14 @@ export default {
       logout: 'Logout',
       settings: 'Settings',
     },
+    statusbar: {
+      title: 'Api Version {version}',
+      connectors: {
+        title: 'Connecting to:',
+        api: 'Api',
+        magicshifter: 'MagicShifter',
+      },
+    },
     footer: {
       copyright: '&copy; 2014-2015 MagicShifter.net',
     },
@@ -91,6 +99,10 @@ export default {
           all: 'All',
           toggle: 'Toggle',
           none: 'None',
+        },
+        colorList: {
+          saveColor: 'Save Color',
+          saveColorTitle: 'Save currently selected color',
         },
       },
       draw: {

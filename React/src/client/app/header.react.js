@@ -6,7 +6,7 @@ import {msg} from '../intl/store';
 import Logout from '../auth/logout.react';
 import Logo from '../components/logo.react';
 import Nav from '../components/nav.react';
-import StatusBar from '../components/statusbar.react';
+import StatusBar from '../statusbar/statusbar.react';
 
 import styles from './app.styles';
 
