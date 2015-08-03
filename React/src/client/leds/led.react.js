@@ -41,5 +41,4 @@ export default class Led extends Component {
       </div>
     );
   }
-
 }
