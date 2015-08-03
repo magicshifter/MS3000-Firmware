@@ -1,5 +1,7 @@
 import * as actions from './actions';
 
+import color from 'sc-color';
+
 import {ledsCursor} from '../state';
 import {register} from '../dispatcher';
 
@@ -25,13 +27,13 @@ export const dispatchToken = register(({action, data}) => {
     case actions.changeLed:
       ledsCursor(cursor => {
         const {id, value} = data;
+
         const leds = cursor
           .get('list')
           .map(val => {
             if (val && val.get('active')) {
               val = val.set('value', value);
             }
-
             return val;
           });
 
@@ -41,6 +43,9 @@ export const dispatchToken = register(({action, data}) => {
       break;
 
     case actions.updateActiveLeds:
+
+      let byteString = '';
+
       ledsCursor(cursor => {
         const leds = cursor
           .get('list')
@@ -51,6 +56,17 @@ export const dispatchToken = register(({action, data}) => {
 
             return val;
           });
+
+          leds.forEach(val => {
+            const rgbColor = color(val.get('value'));
+            byteString += String.fromCharCode(rgbColor.red());
+            byteString += String.fromCharCode(rgbColor.green());
+            byteString += String.fromCharCode(rgbColor.blue());
+            byteString += String.fromCharCode(0xff);
+          });
+
+          byteString = btoa(byteString);
+          fetch(`http://magicshifter.local/leds?b=${byteString}`);
 
         return cursor.setIn(['list'], leds);
       });
