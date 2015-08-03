@@ -4,6 +4,7 @@ import {ValidationError} from '../lib/validation';
 import {dispatch} from '../dispatcher';
 import {validate} from '../validation';
 import {msg} from '../intl/store';
+import fetch from 'isomorphic-fetch';
 
 export function login(fields) {
   // Promise, because we don't know whether fields are valid.
@@ -11,6 +12,7 @@ export function login(fields) {
     .then(() => {
       return validateCredentials(fields);
     })
+
     .catch(error => {
       loginError(error);
       throw error;
@@ -22,8 +24,8 @@ export function login(fields) {
 function validateForm(fields) {
   // Validate function is just wrapper for node-validator providing promise api,
   // so we can mix client sync and server async validations easily.
+
   return validate(fields)
-    // Of course we can add another validation methods.
     .prop('email').required().email()
     .prop('password').required().simplePassword()
     .promise;
@@ -31,23 +33,24 @@ function validateForm(fields) {
 
 function validateCredentials(fields) {
   return new Promise((resolve, reject) => {
-
-    // For real usage, consider matthew-andrews/isomorphic-fetch.
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', '/api/v1/auth/login', true);
-    xhr.setRequestHeader('Content-type', 'application/json');
-
-    // TODO: Show how to handle different password/username server errors.
-    xhr.onreadystatechange = () => {
-      if (xhr.readyState !== 4) return;
-      if (xhr.status === 200) {
+    fetch('/api/v1/auth/login', {
+      method: 'post',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(fields),
+    })
+    .then((res) => res.status)
+    .then((status) => {
+      if (status === 200) {
         resolve(fields);
       } else {
-        reject(new ValidationError(msg('forms.auth.wrongPassword'), 'password'));
+        reject(
+          new ValidationError(msg('forms.login.wrongPassword'), 'password')
+        );
       }
-    };
-
-    xhr.send(JSON.stringify(fields));
+    });
   });
 }
 
@@ -70,5 +73,5 @@ setToString('auth', {
   login,
   loginError,
   logout,
-  updateFormField
+  updateFormField,
 });
