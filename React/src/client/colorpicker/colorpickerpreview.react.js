@@ -32,7 +32,9 @@ export default class ColorPickerPreview extends Component {
       containerStyle.height = size;
     }
 
-    containerStyle.backgroundColor = value;
+    if (value) {
+      containerStyle.backgroundColor = value;
+    }
 
     return (
       <div style={containerStyle}></div>
