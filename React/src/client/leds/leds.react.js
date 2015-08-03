@@ -57,12 +57,15 @@ export default class Leds extends Component {
         <div style={styles.controls}>
           <LedsMenu
             leds={leds}
+            value={this.props.value}
           />
           <ColorPicker
             value={this.props.value}
             onDrag={(e) => actions.updateActiveLeds(e)}
           />
-          <ColorList {...this.props} />
+        <ColorList
+          colorPicker={this.props.colorPicker}
+        />
         </div>
       </div>
     );
