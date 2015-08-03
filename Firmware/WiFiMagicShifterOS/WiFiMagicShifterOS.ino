@@ -71,7 +71,7 @@ float accelG[3];  // Stores the real accel value in g's
 //POVShakeSync shakeSync;
 POVShakeSyncDummy shakeSync;
 
-int shifterMode = 4;
+int shifterMode = 1;
 int accelCount[3];  // Stores the 12-bit signed value
 int oldButton1State = 0;
 CircleBall ball(600);
