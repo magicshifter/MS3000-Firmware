@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 
 import Component from '../components/component.react';
 import {msg} from '../intl/store';
@@ -10,7 +10,22 @@ import '../../../node_modules/react-color-picker/style/index.styl';
 import ColorList from '../colorpicker/colorlist.react';
 import LedsMenu from './ledsmenu.react';
 
+import merge from 'magic-merge';
+import globalStyles from '../styles/global';
+
 export default class Leds extends Component {
+
+  static propTypes = {
+    activeColor: PropTypes.string
+  }
+
+  static defaultProps = {
+    activeColor: '#ff0000',
+  }
+
+  changeActiveColor(data) {
+    actions.changeActiveColor(data);
+  }
 
   render() {
     const styles = {
@@ -21,16 +36,25 @@ export default class Leds extends Component {
       list: {
         display: 'inline-block',
       },
-      controls: {
-        display: 'inline-block',
+      colorPicker: {
         backgroundColor: '#fff',
         borderRadius: '5px',
         border: '2px solid grey',
+        float: 'left',
       },
+      colorList: {
+        float: 'left',
+      },
+      ledsMenu: {
+        width: '100%',
+        textAlign: 'center',
+        display: 'block',
+      }
     };
 
-    const { leds } = this.props;
+    const { leds, colorPicker } = this.props;
     const list = leds.get('list');
+    const activeColor = leds.get('activeColor');
     let ledsHtml = [];
     list.map((val, key) => {
       if (val) {
@@ -54,19 +78,22 @@ export default class Leds extends Component {
         >
           {ledsHtml}
         </div>
-        <div style={styles.controls}>
-          <LedsMenu
-            leds={leds}
-            value={this.props.value}
-          />
-          <ColorPicker
-            value={this.props.value}
-            onDrag={(e) => actions.updateActiveLeds(e)}
-          />
-        <ColorList
-          colorPicker={this.props.colorPicker}
+
+        <LedsMenu
+          style={globalStyles.float('left')}
+          leds={leds}
         />
-        </div>
+
+        <ColorPicker
+          style={globalStyles.float('left')}
+          onDrag={(e) => this.changeActiveColor(e)}
+        />
+
+        <ColorList
+          style={globalStyles.float('left')}
+          activeColor={leds.get('activeColor')}
+          colorPicker={colorPicker}
+        />
       </div>
     );
   }
