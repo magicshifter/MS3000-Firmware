@@ -8,7 +8,13 @@ import color from 'sc-color';
 
 import ColorPickerPreview from './colorpickerpreview.react';
 
+import merge from 'magic-merge';
+
 export default class ColorList extends Component {
+
+  saveColor(data) {
+    actions.saveColor(data);
+  }
 
   removeColor(e) {
     e.preventDefault();
@@ -21,12 +27,13 @@ export default class ColorList extends Component {
     ledActions.changeLed({id, value});
   }
 
+
   render() {
+
     const styles = {
-      container: {
+      container: merge({
         width: '10vw',
-        height: '100%',
-      },
+      }, this.props.style),
       li: {
         listStyle: 'none',
         display: 'inline-block',
@@ -34,7 +41,7 @@ export default class ColorList extends Component {
       },
     };
 
-    const { colorPicker } = this.props;
+    const { colorPicker, activeColor } = this.props;
 
     let colorHtmlList = [];
     const colors = colorPicker.get('colors')
@@ -63,7 +70,7 @@ export default class ColorList extends Component {
         <ul>
           <li>
             <button
-              onClick={e => actions.saveColor(this.props.value)}
+              onClick={e => this.saveColor(activeColor)}
               title={msg('pages.leds.colorList.saveColorTitle')}
             >
               {msg('pages.leds.colorList.saveColor')}
