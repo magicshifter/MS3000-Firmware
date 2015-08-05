@@ -11,6 +11,11 @@ export function changeLed(data) {
   dispatch(changeLed, data);
 }
 
+export function changeActiveColor(data) {
+  updateActiveLeds(data);
+  return dispatch(changeActiveColor, data);
+}
+
 export function updateActiveLeds(data) {
   return dispatch(updateActiveLeds, data);
 }
@@ -49,4 +54,5 @@ setToString('leds', {
   activateLed,
   startSelection,
   stopSelection,
+  changeActiveColor,
 });

@@ -105,6 +105,13 @@ export const dispatchToken = register(({action, data}) => {
       });
 
       break;
-  }
+  
+    case actions.changeActiveColor:
+      ledsCursor(cursor => {
+        return cursor.set('activeColor', data);
+      });
 
+      break;
+
+  }
 });
