@@ -266,7 +266,7 @@ void handleGETStatus(void)
 
   //float r1 = 180, r2 = 390, r3 = 330;
 
-  float r1 = 270, r2 = 1000, r3 = 0;
+  float r1 = R601_VAL, r2 = R602_VAL, r3 = 0;
 
   float voltage = ((float)(r1 + r2 + r3) * adValue) / (r1 * ad1V);
 
