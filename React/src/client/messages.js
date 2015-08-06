@@ -129,9 +129,9 @@ export default {
       },
       notFound: {
         continueMessage: 'Continue here please.',
+        title: '404 - Page not found',
         header: 'This page is not available',
-        message: 'The link may be broken, or the page may have been removed.',
-        title: 'Page Not Found',
+        content: 'The link may be broken, or the page may have been removed.',
       },
     },
     validation: {
