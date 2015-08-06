@@ -1,28 +1,29 @@
+import materialColors from './materialcolors';
+
 export default {
   input: {
-    backgroundColor: '#ECEFF1',
-    color: '#607D8B',
-    borderRight: '#607D8B',
-    borderBottom: '#B0BEC5',
+    backgroundColor: materialColors.blueGrey['50'],
+    color: materialColors.blueGrey['500'],
+    borderRight: materialColors.blueGrey['500'], borderBottom: '#B0BEC5',
   },
   button: {
-    backgroundColor: '#607D8B',
-    color: '#ECEFF1',
-    borderRight: '#ECEFF1',
-    borderBottom: '#ECEFF1',
+    backgroundColor: materialColors.blueGrey['500'],
+    color: materialColors.blueGrey['50'],
+    borderRight: materialColors.blueGrey['50'],
+    borderBottom: materialColors.blueGrey['50'],
   },
   legend: {
-    color: '#607D8B',
+    color: materialColors.blueGrey['500'],
   },
   errorMessage: {
-    color: 'red',
+    color: materialColors.red['500'],
   },
   pages: {
-    draw: 'red',
-    leds: 'cyan',
-    settings: 'lightBlue',
-    login: 'purple',
-    logout: 'purple',
-    notFound: 'deepOrange',
+    draw: materialColors.red,
+    leds: materialColors.cyan,
+    settings: materialColors.lightBlue,
+    login: materialColors.purple,
+    logout: materialColors.purple,
+    notFound: materialColors.deepOrange,
   },
 };
