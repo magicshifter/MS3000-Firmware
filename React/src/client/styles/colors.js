@@ -17,4 +17,12 @@ export default {
   errorMessage: {
     color: 'red',
   },
+  pages: {
+    draw: 'red',
+    leds: 'cyan',
+    settings: 'lightBlue',
+    login: 'purple',
+    logout: 'purple',
+    notFound: 'deepOrange',
+  },
 };
