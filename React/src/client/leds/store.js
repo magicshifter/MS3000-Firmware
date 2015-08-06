@@ -90,5 +90,10 @@ export const dispatchToken = register(({action, data}) => {
 
       break;
 
+    case actions.changeBrightness:
+      ledsCursor(cursor => {
+        return cursor.set('brightness', data);
+      });
+
   }
 });
