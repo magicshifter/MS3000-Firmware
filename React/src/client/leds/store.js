@@ -44,31 +44,8 @@ export const dispatchToken = register(({action, data}) => {
 
     case actions.updateActiveLeds:
 
-      let byteString = '';
-
       ledsCursor(cursor => {
-        const leds = cursor
-          .get('list')
-          .map(val => {
-            if (val && val.get('active')) {
-              return val.set('value', data);
-            }
-
-            return val;
-          });
-
-          leds.forEach(val => {
-            const rgbColor = color(val.get('value'));
-            byteString += String.fromCharCode(rgbColor.red());
-            byteString += String.fromCharCode(rgbColor.green());
-            byteString += String.fromCharCode(rgbColor.blue());
-            byteString += String.fromCharCode(0xff);
-          });
-
-          byteString = btoa(byteString);
-          fetch(`http://magicshifter.local/leds?b=${byteString}`);
-
-        return cursor.setIn(['list'], leds);
+        return cursor.setIn(['list'], data);
       });
 
       break;
@@ -105,13 +82,18 @@ export const dispatchToken = register(({action, data}) => {
       });
 
       break;
-  
+
     case actions.changeActiveColor:
       ledsCursor(cursor => {
         return cursor.set('activeColor', data);
       });
 
       break;
+
+    case actions.changeBrightness:
+      ledsCursor(cursor => {
+        return cursor.set('brightness', data);
+      });
 
   }
 });

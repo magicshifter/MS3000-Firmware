@@ -10,6 +10,12 @@ import Content from './page/content.react';
 export default class Page extends Component {
 
   render() {
+    const styles = {
+      container: {
+
+      },
+    };
+
     let title = '';
 
     try {
@@ -22,9 +28,9 @@ export default class Page extends Component {
 
     return (
       <DocumentTitle title={title}>
-        <div>
-          <Title {...this.props}></Title>
-          <Content {...this.props}></Content>
+        <div style={styles.container}>
+          <Title {...this.props} />
+          <Content {...this.props } />
         </div>
       </DocumentTitle>
     );

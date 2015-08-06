@@ -9,6 +9,7 @@ import ColorPicker from 'react-color-picker';
 import '../../../node_modules/react-color-picker/style/index.styl';
 import ColorList from '../colorpicker/colorlist.react';
 import LedsMenu from './ledsmenu.react';
+import BrightnessControl from './brightnesscontrol.react.js';
 
 import merge from 'magic-merge';
 import globalStyles from '../styles/global';
@@ -16,15 +17,13 @@ import globalStyles from '../styles/global';
 export default class Leds extends Component {
 
   static propTypes = {
-    activeColor: PropTypes.string
+    activeColor: PropTypes.string,
+    brightness: PropTypes.number,
   }
 
   static defaultProps = {
     activeColor: '#ff0000',
-  }
-
-  changeActiveColor(data) {
-    actions.changeActiveColor(data);
+    brightness: 120,
   }
 
   render() {
@@ -52,7 +51,7 @@ export default class Leds extends Component {
       }
     };
 
-    const { leds, colorPicker } = this.props;
+    const { leds, colorPicker, brightness } = this.props;
     const list = leds.get('list');
     const activeColor = leds.get('activeColor');
     let ledsHtml = [];
@@ -84,9 +83,11 @@ export default class Leds extends Component {
           leds={leds}
         />
 
+        <BrightnessControl brightness={brightness} />
+
         <ColorPicker
           style={globalStyles.float('left')}
-          onDrag={(e) => this.changeActiveColor(e)}
+          onDrag={(e) => actions.changeActiveColor(e)}
         />
 
         <ColorList
