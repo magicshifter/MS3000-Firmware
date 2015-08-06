@@ -8,7 +8,7 @@ export default class DrawPage extends Component {
   render() {
     return (
       <article className='home'>
-        <Page page='draw'></Page>
+        <Page page='draw' />
       </article>
     );
   }

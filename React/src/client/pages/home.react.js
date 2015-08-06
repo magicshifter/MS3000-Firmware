@@ -9,7 +9,7 @@ export default class Home extends Component {
   render() {
     return (
       <article className='home'>
-        <Page page='home'></Page>
+        <Page page='home' />
       </article>
     );
   }

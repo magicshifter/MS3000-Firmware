@@ -9,7 +9,7 @@ export default class LedsPage extends Component {
   render() {
     return (
       <article className='leds'>
-        <Page page='leds'></Page>
+        <Page page='leds' />
         <Leds {...this.props} />
       </article>
     );
