@@ -10,9 +10,9 @@ import {DefaultRoute, NotFoundRoute, Route} from 'react-router';
 export default (
   <Route handler={App} path='/'>
     <DefaultRoute handler={Leds} name='leds' />
+    <NotFoundRoute handler={NotFound} name='not-found' />r
     <Route handler={Login} name='login' />
     <Route handler={Draw} name='draw' />
     <Route handler={Settings} name='settings' />
-    <NotFoundRoute handler={NotFound} name='not-found' />r
   </Route>
 );
