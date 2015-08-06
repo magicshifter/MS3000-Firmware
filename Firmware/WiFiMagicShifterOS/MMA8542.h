@@ -2,11 +2,6 @@
 #include <math.h>
 #include <Wire.h> // Used for I2C
 
-#ifndef MMA8452_ADDRESS
-  //#define MMA8452_ADDRESS 0x1D  // 0x1D if SA0 is high, 0x1C if low
-  #define MMA8452_ADDRESS 0x1C
-#endif
-
 //Define a few of the registers that we will be accessing on the MMA8452
 #define OUT_X_MSB 0x01
 #define XYZ_DATA_CFG  0x0E
@@ -16,12 +11,20 @@
 #define GSCALE 8 // Sets full-scale range to +/-2, 4, or 8g. Used to calc real g values.
 
 
+
+
 void InitI2C()
 {
   //Wire.pins(PIN_I2C_DATA, PIN_I2C_CLOCK);
   Wire.begin(PIN_I2C_DATA, PIN_I2C_CLOCK); //Join the bus as a master
   Wire.setClock(500000); // crashes if > 200000
 }
+
+#ifdef DISABLE_ACCEL
+  void InitMMA8452() {};
+  void readAccelData(int *destination) {};
+#else
+
 
 // Read bytesToRead sequentially, starting at addressToRead into the dest byte array
 void readRegisters(byte addressToRead, int bytesToRead, byte * dest)
@@ -129,7 +132,7 @@ void InitMMA8452()
       //while(1) {delay(1);}; // Loop forever if communication doesn't happen
     }
     /* code */
-} while(!success);
+} while(0); //while(!success);
 
   MMA8452Standby();  // Must be in standby to change registers
 
@@ -143,3 +146,4 @@ void InitMMA8452()
 
   MMA8452Active();  // Set to active to start reading
 }
+#endif

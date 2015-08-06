@@ -266,7 +266,7 @@ void handleGETStatus(void)
 
   //float r1 = 180, r2 = 390, r3 = 330;
 
-  float r1 = 270, r2 = 1000, r3 = 0;
+  float r1 = R601_VAL, r2 = R602_VAL, r3 = 0;
 
   float voltage = ((float)(r1 + r2 + r3) * adValue) / (r1 * ad1V);
 
@@ -503,6 +503,50 @@ void handleGETAPList(void)
     //response += "\"" + apInfo.pwd + "\"";
     response += "}";
   }
+  response += "]";
+  Settings.resetAPList();
+
+  server.send(200, "text/plain", response);
+}
+
+void handleGETWLANList(void)
+{
+  logln("handleGETWLANList", INFO);
+
+  String response = "[";
+
+  int n = WiFi.scanNetworks();
+  Serial.println("scan done");
+  if (n == 0)
+    Serial.println("\"no networks found\"");
+  else
+  {
+    //Serial.print(n);
+    Serial.println(" networks found");
+    bool firstAP = true;
+    for (int i = 0; i < n; ++i)
+    {
+      if (!firstAP)
+      {
+        response += ",";
+      }
+      firstAP = false;
+
+      response += "{\"ssid\":";
+      response += "\"";
+      response += WiFi.SSID(i);
+      response += "\"";
+      response += ",";
+      response += "\"rssi\":";
+      response +=  WiFi.RSSI(i);
+      response += ",";
+      response += "\"free\":";
+      response += (WiFi.encryptionType(i) == ENC_TYPE_NONE)?"true":"false";
+      response += "}";
+    }
+  }
+
+
   response += "]";
   Settings.resetAPList();
 

@@ -100,6 +100,9 @@ void StartWebServer(void)
 
   server.on("/mode", handleSetMode);
 
+  server.on("/listwlans", HTTP_GET, handleGETWLANList);
+  
+
 
 
   server.on("/download",  []() {
