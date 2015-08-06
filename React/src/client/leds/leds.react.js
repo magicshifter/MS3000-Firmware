@@ -23,10 +23,6 @@ export default class Leds extends Component {
     activeColor: '#ff0000',
   }
 
-  changeActiveColor(data) {
-    actions.changeActiveColor(data);
-  }
-
   render() {
     const styles = {
       container: {
@@ -86,7 +82,7 @@ export default class Leds extends Component {
 
         <ColorPicker
           style={globalStyles.float('left')}
-          onDrag={(e) => this.changeActiveColor(e)}
+          onDrag={(e) => actions.changeActiveColor(e)}
         />
 
         <ColorList
