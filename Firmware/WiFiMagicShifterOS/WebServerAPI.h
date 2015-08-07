@@ -270,6 +270,7 @@ void handleGETStatus(void)
 
   float voltage = ((float)(r1 + r2 + r3) * adValue) / (r1 * ad1V);
 
+
   readAccelData(accelCount);
 
   float accelG[3];
