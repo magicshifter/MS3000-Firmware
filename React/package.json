@@ -1,10 +1,10 @@
 {
-  "name": "este-bare",
+  "name": "local.magicshifter.net",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "postinstall": "gulp build --production",
-    "start": "node src/server",
+    "start": "NODE_ENV=production node src/server",
     "test": "gulp test"
   },
   "engines": {
@@ -52,10 +52,10 @@
     "gulp-bg": "0.0.7",
     "gulp-eslint": "^1.0.0",
     "gulp-util": "^3.0.2",
-    "harmonize": "*",
+    "harmonize": "^1.4.4",
     "immutable": "^3.6.4",
     "immutablediff": "^0.4.2",
-    "intl": "^0.1.4",
+    "intl": "^1.0.0",
     "intl-messageformat": "^1.1.0",
     "intl-relativeformat": "^1.1.0",
     "isomorphic-fetch": "^2.1.1",
