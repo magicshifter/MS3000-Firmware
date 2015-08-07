@@ -5,7 +5,7 @@ import reviveServerSettings from './settings/server/revive';
 import reviveAccesspointSettings from './settings/accesspoint/revive';
 import reviveUsers from './users/revive';
 import reviveLeds from './leds/revive';
-import reviveColorPicker from './colorpicker/revive';
+import reviveColorList from './colorlist/revive';
 
 const initialState = process.env.IS_BROWSER
   ? window._appState
@@ -18,7 +18,7 @@ export const appState = new State(initialState, function(key, value) {
     case 'serverSettings': return reviveServerSettings(value);
     case 'accesspointSettings': return reviveAccesspointSettings(value);
     case 'ledsSettings': return reviveLeds(value);
-    case 'colorPicker': return reviveColorPicker(value);
+    case 'colorList': return reviveColorList(value);
   }
 });
 
@@ -29,4 +29,4 @@ export const i18nCursor = appState.cursor(['i18n']);
 export const pendingActionsCursor = appState.cursor(['pendingActions']);
 export const usersCursor = appState.cursor(['users']);
 export const ledsCursor = appState.cursor(['leds']);
-export const colorPickerCursor = appState.cursor(['colorPicker']);
+export const colorListCursor = appState.cursor(['colorList']);

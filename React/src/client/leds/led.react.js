@@ -2,8 +2,7 @@ import React from 'react';
 
 import * as actions from './actions';
 import Component from '../components/component.react';
-
-import ColorPickerPreview from '../colorpicker/colorpickerpreview.react';
+import LedPreview from '../components/ledpreview.react';
 
 export default class Led extends Component {
 
@@ -17,6 +16,8 @@ export default class Led extends Component {
         border: '.5vw solid',
         borderColor: 'grey',
         margin: '.1vw',
+        maxHeight: '50px',
+        maxWidth: '50px',
       },
       active: {
         borderColor: 'lightgrey',
@@ -34,7 +35,7 @@ export default class Led extends Component {
         onMouseUp={e => actions.toggleLed({ledId, active})}
         onDragEnter={e => actions.activateLed({e, ledId})}
       >
-        <ColorPickerPreview
+        <LedPreview
           value={value}
           active={active}
         />

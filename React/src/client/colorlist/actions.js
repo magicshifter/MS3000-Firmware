@@ -9,7 +9,7 @@ export function removeColor(data) {
   return dispatch(removeColor, data);
 }
 
-setToString('colorPicker', {
+setToString('colorList', {
   saveColor,
   removeColor,
 });

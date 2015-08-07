@@ -14,7 +14,7 @@ import '../users/store';
 import '../settings/server/store';
 import '../settings/accesspoint/store';
 import '../leds/store';
-import '../colorpicker/store';
+import '../colorlist/store';
 
 export default class App extends Component {
 

@@ -6,7 +6,7 @@ import * as ledActions from '../leds/actions';
 import {msg} from '../intl/store';
 import color from 'sc-color';
 
-import ColorPickerPreview from './colorpickerpreview.react';
+import LedPreview from '../components/ledpreview.react';
 
 import merge from 'magic-merge';
 
@@ -49,7 +49,7 @@ export default class ColorList extends Component {
       .map((val, key) => {
         colorHtmlList.push(
           <li key={key} style={styles.li}>
-            <ColorPickerPreview
+            <LedPreview
               value={val}
               key={key}
               onClick={(e) => this.changeLed(e)}
@@ -58,8 +58,8 @@ export default class ColorList extends Component {
             <button
               value={val}
               onClick={(e) => this.removeColor(e)}
-              title={msg('colorPicker.remove.title')}>
-              {msg('colorPicker.remove.text')}
+              title={msg('colorList.remove.title')}>
+              {msg('colorList.remove.text')}
             </button>
           </li>
         );
@@ -71,9 +71,9 @@ export default class ColorList extends Component {
           <li>
             <button
               onClick={e => this.saveColor(activeColor)}
-              title={msg('pages.leds.colorList.saveColorTitle')}
+              title={msg('colorList.saveColorTitle')}
             >
-              {msg('pages.leds.colorList.saveColor')}
+              {msg('colorList.saveColor')}
             </button>
           </li>
           {colorHtmlList}

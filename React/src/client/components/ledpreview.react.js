@@ -7,7 +7,7 @@ import * as actions from '../leds/actions';
 
 import merge from 'magic-merge';
 
-export default class ColorPickerPreview extends Component {
+export default class LedPreview extends Component {
 
   onClick(e) {
     e.preventDefault();

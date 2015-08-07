@@ -100,10 +100,7 @@ export default {
           toggle: 'Toggle',
           none: 'None',
         },
-        colorList: {
-          saveColor: 'Save Color',
-          saveColorTitle: 'Save currently selected color',
-        },
+        brightness: 'Brightness:',
       },
       draw: {
         title: 'Draw',
@@ -144,7 +141,7 @@ export default {
       }.`,
       ssid: `ssid can only contain a combination of a-z, A-Z and 0-9`,
     },
-    colorPicker: {
+    colorList: {
       add: {
         title: 'Save selected color',
         text: 'Save color',
@@ -153,6 +150,8 @@ export default {
         title: 'Remove this color',
         text: 'x',
       },
+      saveColor: 'Save Color',
+      saveColorTitle: 'Save currently selected color',
     },
     debug: {
       continuehappily: 'Continue Happily, it is just a warning',
