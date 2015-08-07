@@ -6,15 +6,11 @@ import * as ledActions from '../leds/actions';
 import {msg} from '../intl/store';
 import color from 'sc-color';
 
-import ColorPickerPreview from './colorpickerpreview.react';
+import LedPreview from '../components/ledpreview.react';
 
 import merge from 'magic-merge';
 
 export default class ColorList extends Component {
-
-  saveColor(data) {
-    actions.saveColor(data);
-  }
 
   removeColor(e) {
     e.preventDefault();
@@ -41,15 +37,15 @@ export default class ColorList extends Component {
       },
     };
 
-    const { colorPicker, activeColor } = this.props;
+    const { colorList, activeColor } = this.props;
 
     let colorHtmlList = [];
-    const colors = colorPicker.get('colors')
+    const colors = colorList.get('colors')
       .sort((colorA, colorB) => color(colorA).hue() - color(colorB).hue())
       .map((val, key) => {
         colorHtmlList.push(
           <li key={key} style={styles.li}>
-            <ColorPickerPreview
+            <LedPreview
               value={val}
               key={key}
               onClick={(e) => this.changeLed(e)}
@@ -58,8 +54,8 @@ export default class ColorList extends Component {
             <button
               value={val}
               onClick={(e) => this.removeColor(e)}
-              title={msg('colorPicker.remove.title')}>
-              {msg('colorPicker.remove.text')}
+              title={msg('colorList.remove.title')}>
+              {msg('colorList.remove.text')}
             </button>
           </li>
         );
@@ -70,10 +66,10 @@ export default class ColorList extends Component {
         <ul>
           <li>
             <button
-              onClick={e => this.saveColor(activeColor)}
-              title={msg('pages.leds.colorList.saveColorTitle')}
+              onClick={e => actions.saveColor(activeColor)}
+              title={msg('colorList.saveColorTitle')}
             >
-              {msg('pages.leds.colorList.saveColor')}
+              {msg('colorList.saveColor')}
             </button>
           </li>
           {colorHtmlList}

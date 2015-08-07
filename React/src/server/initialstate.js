@@ -8,7 +8,7 @@ for (let i = 0; i < ledCount; i++) {
   ledArray.push({
     key: i,
     ledId: i,
-    value: '#000000',
+    value: '#ff9d1c',
     active: false,
   });
 }
@@ -41,8 +41,10 @@ export default {
       format: 'abgr',
     },
     list: ledArray,
+    brightness: 16,
+    activeColor: '#ff9d1c',
   },
-  colorPicker: {
+  colorList: {
     colors: [
       '#ff0000',
       '#00ff00',

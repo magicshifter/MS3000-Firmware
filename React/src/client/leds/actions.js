@@ -14,6 +14,7 @@ export function toggleLed(data) {
 }
 
 export function changeLed(data) {
+  console.log('changeLed', data);
   dispatch(changeLed, data);
 }
 
@@ -27,7 +28,7 @@ export function changeBrightness(data) {
     return cursor.set('brightness', brightness);
   });
 
-  return dispatch(changeBrightness, data);
+  return dispatch(changeBrightness, brightness);
 }
 
 export function changeActiveColor(data) {
@@ -62,13 +63,13 @@ export function fetchLeds(leds) {
   let fetcher;
 
   ledsCursor(cursor => {
-    let byteString = '';
     const brightness = cursor.get('brightness');
+
+    let byteString = '';
 
     cursor
       .get('list')
-      .forEach(key => {
-        const val = leds[key];
+      .forEach((val, key) => {
         byteString += createByteString(val, brightness);
       });
 
@@ -78,13 +79,18 @@ export function fetchLeds(leds) {
 
     lastFetchFinished = false;
 
-    fetcher = fetch(`http://magicshifter.local/leds?b=${btoa(byteString)}`)
-    .then(
-      (res) => { console.log('res', res); },
-      (error, res) => { console.log('res', res, 'error', error); }
-    ).then(
-      () => { lastFetchFinished = true; }
-    );
+    byteString = btoa(byteString);
+
+    const url = `http://magicshifter.local/leds?b=${byteString}`;
+
+    fetcher = fetch(url)
+      .then(
+        (res) => {
+          console.log('res', res);
+        },
+        (error, res) => { console.log('res', res, 'error', error); }
+      )
+      .then(() => lastFetchFinished = true);
 
     return cursor;
   });
@@ -94,17 +100,16 @@ export function fetchLeds(leds) {
   }
 }
 
-function createByteString(val = false, brightness = 120) {
+function createByteString(val = false, brightness = 31) {
   if (!val) { return ''; }
-  console.log(val);
 
   const col = color(val.get('value'));
   let bs = '';
-  //format is bgr not rgb
+  //format is abgr not rgba!
+  bs += String.fromCharCode(brightness | 0xc0);
   bs += String.fromCharCode(col.blue());
   bs += String.fromCharCode(col.green());
   bs += String.fromCharCode(col.red());
-  bs += String.fromCharCode(brightness);
 
   return bs;
 }
@@ -125,14 +130,6 @@ export function activateLed(data) {
   dispatch(activateLed, data);
 }
 
-export function startSelection(e) {
-  dispatch(startSelection, e);
-}
-
-export function stopSelection(e) {
-  dispatch(stopSelection, e);
-}
-
 setToString('leds', {
   toggleLed,
   changeLed,
@@ -141,8 +138,6 @@ setToString('leds', {
   deselectAllLeds,
   toggleAllLeds,
   activateLed,
-  startSelection,
-  stopSelection,
   changeActiveColor,
   changeBrightness,
   fetchLeds,
