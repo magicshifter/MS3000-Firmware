@@ -90,27 +90,8 @@ extern char uploadname[];
 
 void setup()
 {
-  /*
-  pinMode(1, INPUT);
-  while (1)
-  {
-    delay(10);
-  }
-  */
-
-
-  Serial.begin(115200);
-  Serial.println("\r\nMagicShifter 3000 OS V0.24");
-  EEPROM.begin(512);
-
   shifter.setup();
-
-  // init pinmodes
-  pinMode(PIN_BUTTON1, INPUT);
-
-  // accel
-  InitI2C();
-
+  shifter.enableLeds();   // we need this for MIDI optocouplers
 
   // leds
   InitSPI();
@@ -118,21 +99,25 @@ void setup()
   // init components
   InitAPA102();
 
-  shifter.enableLeds();
-
-/*
-  while (1)
-  {
-
-  }
-*/
-
+  // swipe colors
   for (byte idx = 0; idx < LEDS; idx++)
   {
     setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
     updatePixels();
     delay(20);
   }
+
+  Serial.begin(115200);
+  Serial.println("\r\nMagicShifter 3000 OS V0.24");
+
+  EEPROM.begin(512);
+
+  // init pinmodes
+  pinMode(PIN_BUTTON1, INPUT);
+
+  // accel
+  InitI2C();
+
   for (byte idx = 0; idx < LEDS; idx++)
   {
     setPixel(idx, 0, 0, 0, 1);
@@ -141,15 +126,6 @@ void setup()
   }
 
   bootTime = millis();
-
-
-//#define LEDPOWER_PIN 15
-
-  //pinMode(LEDPOWER_PIN, OUTPUT);
-  //digitalWrite(LEDPOWER_PIN, HIGH);
-
-  //pinMode(PIN_LED_DATA, OUTPUT);
-  //pinMode(PIN_LED_CLOCK, OUTPUT);
 
 
   // DUMP sysinfo
