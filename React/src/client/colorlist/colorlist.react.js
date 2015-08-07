@@ -12,10 +12,6 @@ import merge from 'magic-merge';
 
 export default class ColorList extends Component {
 
-  saveColor(data) {
-    actions.saveColor(data);
-  }
-
   removeColor(e) {
     e.preventDefault();
     actions.removeColor(e.target.value);
@@ -41,10 +37,10 @@ export default class ColorList extends Component {
       },
     };
 
-    const { colorPicker, activeColor } = this.props;
+    const { colorList, activeColor } = this.props;
 
     let colorHtmlList = [];
-    const colors = colorPicker.get('colors')
+    const colors = colorList.get('colors')
       .sort((colorA, colorB) => color(colorA).hue() - color(colorB).hue())
       .map((val, key) => {
         colorHtmlList.push(
@@ -70,7 +66,7 @@ export default class ColorList extends Component {
         <ul>
           <li>
             <button
-              onClick={e => this.saveColor(activeColor)}
+              onClick={e => actions.saveColor(activeColor)}
               title={msg('colorList.saveColorTitle')}
             >
               {msg('colorList.saveColor')}
