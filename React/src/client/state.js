@@ -17,7 +17,7 @@ export const appState = new State(initialState, function(key, value) {
     case 'users': return reviveUsers(value);
     case 'serverSettings': return reviveServerSettings(value);
     case 'accesspointSettings': return reviveAccesspointSettings(value);
-    case 'ledsSettings': return reviveLeds(value);
+    case 'leds': return reviveLeds(value);
     case 'colorList': return reviveColorList(value);
   }
 });
