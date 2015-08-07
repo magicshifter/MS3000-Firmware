@@ -54,7 +54,6 @@ export default {
   footer: {
     fontSize: '.75em',
     fontStyle: 'italic',
-    position: 'absolute',
-    bottom: 0,
+    margin: '3em 0',
   },
 };
