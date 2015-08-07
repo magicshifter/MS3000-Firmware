@@ -22,8 +22,7 @@ export default class Leds extends Component {
   }
 
   static defaultProps = {
-    activeColor: '#ff0000',
-    brightness: 120,
+    brightness: 16,
   }
 
   render() {
@@ -44,14 +43,9 @@ export default class Leds extends Component {
       colorList: {
         float: 'left',
       },
-      ledsMenu: {
-        width: '100%',
-        textAlign: 'center',
-        display: 'block',
-      },
       controls: {
         clear: 'both',
-        display: 'block',
+        display: 'inline-block',
         margin: '0 auto',
       },
       ledControls: {
@@ -59,9 +53,11 @@ export default class Leds extends Component {
       },
     };
 
-    const { leds, colorPicker, brightness } = this.props;
+    const { leds, colorList } = this.props;
     const list = leds.get('list');
+    const brightness = leds.get('brightness');
     const activeColor = leds.get('activeColor');
+
     let ledsHtml = [];
     list.map((val, key) => {
       if (val) {
@@ -80,8 +76,6 @@ export default class Leds extends Component {
       <div style={styles.container}>
         <div
           style={styles.list}
-          onMouseDown={e => actions.startSelection(e)}
-          onMouseUp={e => actions.stopSelection(e)}
         >
           {ledsHtml}
         </div>
@@ -96,17 +90,18 @@ export default class Leds extends Component {
             />
 
             <BrightnessControl brightness={brightness} />
+
+            <ColorList
+              style={globalStyles.float('left')}
+              activeColor={leds.get('activeColor')}
+              colorList={colorList}
+            />
           </div>
 
           <ColorPicker
             style={globalStyles.float('left')}
+            defaultValue={activeColor}
             onDrag={(e) => actions.changeActiveColor(e)}
-          />
-
-          <ColorList
-            style={globalStyles.float('left')}
-            activeColor={leds.get('activeColor')}
-            colorPicker={colorPicker}
           />
         </div>
       </div>
