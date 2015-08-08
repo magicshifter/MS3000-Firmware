@@ -1,4 +1,3 @@
-import './editable.styl';
 import Component from '../components/component.react';
 import React from 'react';
 import Textarea from 'react-textarea-autosize';
@@ -144,6 +143,13 @@ export default class Editable extends Component {
   }
 
   render() {
+    const styles = {
+      editableView: {
+        cursor: 'pointer',
+      },
+    };
+
+
     const {
       className, disabled, editButtons, maxRows, rows, showEditButtons,
       showViewButtons, state, text, type, viewButtons
@@ -151,7 +157,9 @@ export default class Editable extends Component {
     const isEditing = state && state.isEditing;
 
     if (!isEditing) return (
-      <div className={classnames('editable view', className)}>
+      <div
+        style={styles.editableView}
+        className={classnames('editable view', className)}>
         <span onClick={this.onViewClick}>{text}</span>
         {showViewButtons && viewButtons(this.enableEdit, disabled)}
       </div>

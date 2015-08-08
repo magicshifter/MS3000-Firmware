@@ -10,6 +10,7 @@ export const dispatchToken = register(({action, data}) => {
         const error = data;
         return ap.setIn(['form', 'error'], error);
       });
+
       break;
 
     case actions.updateFormField:
@@ -17,6 +18,7 @@ export const dispatchToken = register(({action, data}) => {
         const {name, value} = data;
         return ap.setIn(['form', 'fields', name], value);
       });
+
       break;
   }
 

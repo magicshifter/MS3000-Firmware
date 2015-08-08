@@ -25,6 +25,7 @@ export function focusInvalidField(component) {
       el.focus();
       return;
     }
+
     throw error;
   };
 }
@@ -46,6 +47,7 @@ export default class Validation {
       if (required && !this._isEmptyString(value)) return;
       callback(value, prop, object);
     });
+
     return this;
   }
 
@@ -90,7 +92,8 @@ export default class Validation {
 
   ssid() {
     return this.custom((value, prop) => {
-      if(validator.isAscii(value)) { return; }
+      if (validator.isAscii(value)) { return; }
+
       throw new ValidationError(
         msg('validation.ssid'),
         prop

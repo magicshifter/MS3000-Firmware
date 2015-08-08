@@ -12,7 +12,7 @@ export default function requireAuth(BaseComponent) {
       const isLoggedIn = !!usersCursor().get('viewer');
       if (isLoggedIn) return;
       transition.redirect('/login', {}, {
-        nextPath: transition.path
+        nextPath: transition.path,
       });
     }
 

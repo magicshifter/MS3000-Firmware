@@ -34,6 +34,7 @@ export const dispatchToken = register(({action, data}) => {
             if (val && val.get('active')) {
               val = val.set('value', value);
             }
+
             return val;
           });
 

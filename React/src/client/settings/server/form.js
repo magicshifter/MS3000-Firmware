@@ -4,9 +4,9 @@ import {Record} from 'immutable';
 const FormRecord = Record({
   fields: new (Record({
     hostname: 'magicshifter',
-    port: '80'
+    port: '80',
   })),
-  error: null
+  error: null,
 });
 
 export default class Form extends FormRecord {

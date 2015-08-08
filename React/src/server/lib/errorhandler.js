@@ -29,6 +29,7 @@ export default (err, req, res, next) => {
         : `${errorDetails}`;
 
       res.send(`500 Internal server error:\n${message}`);
-    }
+    },
+
   });
 };
