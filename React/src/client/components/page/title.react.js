@@ -18,7 +18,7 @@ export default class Title extends Component {
         display: 'inline-block',
       },
       textSpan: {
-        margin: '.2em 0 0',
+        margin: '.6em 0 0',
         display: 'block',
         float: 'left',
       },
