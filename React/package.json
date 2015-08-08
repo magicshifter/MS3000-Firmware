@@ -8,7 +8,7 @@
     "test": "gulp test"
   },
   "engines": {
-    "iojs": ">= 2.2.x",
+    "iojs": "3.0.x",
     "node": "0.10.x"
   },
   "contributors": [
@@ -75,7 +75,6 @@
     "nconf": "^0.7.1",
     "nib": "^1.1.0",
     "node-notifier": "^4.1.0",
-    "node-sass": "^3.1.2",
     "piping": "^0.2.0",
     "react": "^0.13.1",
     "react-color-picker": "^2.1.9",
