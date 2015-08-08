@@ -12,7 +12,7 @@ export default class LedPreview extends Component {
 
     const styles = {
       container: merge({
-        display: 'inline-block',
+        display: 'block',
         backgroundColor: value || '#000000',
         width: size ? size : '100%',
         height: size ? size : '100%',
