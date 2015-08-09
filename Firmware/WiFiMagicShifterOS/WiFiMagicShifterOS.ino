@@ -175,16 +175,6 @@ void setup()
   //Serial.println(FS.check() ? "OK" : "ERROR!");
 
 
-
-
-  while (0)
-  {
-      fillPixels(1, 2, 3, 0xFF);
-      updatePixels();
-      delay(1);
-  }
-
-
 #ifndef DISABLE_ACCEL
   InitMMA8452(); //Test and intialize the MMA8452
 #endif

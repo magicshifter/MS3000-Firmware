@@ -77,19 +77,28 @@ public:
 // TODO: private state
 // state for button timing
   int buttonAPressedTime = 0;
+  int buttonPowerPressedTime = 0;
   int buttonBPressedTime = 0;
+
 // state for double click timing
   int timeToLastClickedButtonA = 0;
+  int timeToLastClickedButtonPower = 0;
   int timeToLastClickedButtonB = 0;
+
   bool m_enableLongClicks = false;
 
 // todo public properties? Logic for consuming buttons?
 // events for consumers true/false;
   bool clickedButtonA = false;
+  bool clickedButtonPower = false;
   bool clickedButtonB = false;
+
   bool longClickedButtonA = false;
+  bool longClickedButtonPower = false;
   bool longClickedButtonB = false;
+  
   bool doubleClickedButtonA = false;
+  bool doubleClickedButtonPower = false;
   bool doubleClickedButtonB = false;
 
   void handleButtons()
@@ -97,6 +106,7 @@ public:
     // reset public btton state
     clickedButtonA = longClickedButtonA = false;
 
+    // TODO: rename 1 to LEFT op (no left AND RIGHT are not unique because of y rotation)
     if (!digitalRead(PIN_BUTTON1))
     {
       if (buttonAPressedTime)
@@ -116,6 +126,35 @@ public:
       }
 
       buttonAPressedTime = 0;
+    }
+
+        // reset public btton state
+    clickedButtonPower = longClickedButtonPower = false;
+
+    if (powerButtonPressed())
+    {
+      if (buttonPowerPressedTime)
+        buttonPowerPressedTime += microsSinceLast;
+      else
+        buttonPowerPressedTime = 1;
+    }
+    else
+    {
+      if (buttonPowerPressedTime >= MIN_TIME_LONG_CLICK)
+      {
+        longClickedButtonPower = true;
+      }
+      else if (buttonPowerPressedTime >= MIN_TIME_CLICK)
+      {
+        clickedButtonPower = true;
+      }
+
+      buttonPowerPressedTime = 0;
+    }
+
+    if (longClickedButtonPower)
+    {
+      powerDown();
     }
   }
 
@@ -140,6 +179,6 @@ public:
 
   bool powerButtonPressed(void)
   {
-    return getADValue() > 890;
+    return getADValue() > 950;
   }
 };

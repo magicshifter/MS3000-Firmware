@@ -28,6 +28,7 @@ bool TryConnect(struct APInfo &apInfo, int timeoutMs)
       Serial.println(apInfo.ssid);
       return false; // :(
     }
+    shifter.loop();
     delay(20);
   }
 

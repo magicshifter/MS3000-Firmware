@@ -14,14 +14,16 @@ const bool forceAPMode = false;
 
 
 // with jqVic (Alpha, Beta)
-/*
+///*
 #define R601_VAL 270
 #define R602_VAL 1000
-*/
+//*/
 
 // Metalab wih Flo (Gamma)
+/*
 #define R601_VAL 200
 #define R602_VAL 820
+//*/
 
 // VERBOSE, INFO, WARNING, ERROR
 int DEBUG_LEVEL = VERBOSE;
