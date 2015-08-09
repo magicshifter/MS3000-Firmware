@@ -65,6 +65,7 @@ public:
 
   void loop()
   {
+    //delay(0);
     lastTimeStamp = currentTimeStamp;
     currentTimeStamp = micros();
     microsSinceLast = currentTimeStamp - lastTimeStamp;
@@ -72,7 +73,10 @@ public:
     accelNeedsRefresh = true;
     adNeedsRefresh = true;
     handleButtons();
+    //delay(0);
   }
+
+  int bFrame = 0;
 
 // TODO: private state
 // state for button timing
@@ -85,7 +89,7 @@ public:
   int timeToLastClickedButtonPower = 0;
   int timeToLastClickedButtonB = 0;
 
-  bool m_enableLongClicks = false;
+  bool m_enableLongClicks = true;
 
 // todo public properties? Logic for consuming buttons?
 // events for consumers true/false;
@@ -131,6 +135,8 @@ public:
         // reset public btton state
     clickedButtonPower = longClickedButtonPower = false;
 
+/*
+    if (bFrame++ % 10 == 0)
     if (powerButtonPressed())
     {
       if (buttonPowerPressedTime)
@@ -151,11 +157,13 @@ public:
 
       buttonPowerPressedTime = 0;
     }
+    //*/
 
-    if (longClickedButtonPower)
+    if (longClickedButtonA)
     {
       powerDown();
     }
+
   }
 
   void enableLongClicks(bool enable)
