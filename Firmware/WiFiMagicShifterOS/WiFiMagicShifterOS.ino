@@ -71,7 +71,8 @@ float accelG[3];  // Stores the real accel value in g's
 //POVShakeSync shakeSync;
 POVShakeSyncDummy shakeSync;
 
-int shifterMode = 1;
+#define MODES 3
+int shifterMode = 0;
 int accelCount[3];  // Stores the 12-bit signed value
 int oldButton1State = 0;
 CircleBall ball(600);
@@ -79,7 +80,7 @@ int currentMicros = 0, lastMicros = 0;
 int speedMicros = 1000;
 long lastFrameMicros = 0;
 int frame = 0;
-byte bright = 0x03;
+byte bright = 0xFF;
 byte gs = 0x1;
 int loops = 0;
 long bootTime = 0;
@@ -114,7 +115,8 @@ void setup()
   EEPROM.begin(512);
 
   // init pinmodes
-  pinMode(PIN_BUTTON1, INPUT);
+  pinMode(PIN_BUTTON_A, INPUT);
+  pinMode(PIN_BUTTON_B, INPUT);
 
   // accel
   InitI2C();
@@ -235,10 +237,8 @@ void loop()
 
   shakeSync.setFrames(32);
 
-  if (loops % 500 == 0)
+  if (loops % 1000 == 0)
   {
-    if (loops % 40000 == 0)
-      Serial.println("x");
     Serial.print("_");
   }
 
@@ -254,9 +254,9 @@ void loop()
         for (byte idx = 0; idx < LEDS; idx++)
         {
           float scale = ball.getLedBrightCB(idx, LEDS);
-          scale *= 10;
-          setPixel(idx, (frame & 1) ? bright*scale : 0, (frame & 2) ? bright*scale : 0, (frame & 4) ? bright*scale : 0, gs);
-          setPixel(idx, bright * scale, 0, bright * scale, gs);
+          //scale *= 10;
+          //setPixel(idx, (frame & 1) ? bright*scale : 0, (frame & 2) ? bright*scale : 0, (frame & 4) ? bright*scale : 0, gs);
+          setPixel(idx, bright * scale, 0, bright * scale, 0x07);
         }
       }
       updatePixels();
@@ -266,7 +266,7 @@ void loop()
       loadBuffer(web_rgb_buffer);
       updatePixels();
     }
-    else if (shifterMode == 4)
+    else if (shifterMode == 2)
     {
       magicMode.loop();
     }

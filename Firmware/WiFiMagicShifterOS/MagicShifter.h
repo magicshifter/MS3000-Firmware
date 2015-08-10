@@ -1,7 +1,10 @@
 #ifndef __MAGICSHIFTER_H
 #define __MAGICSHIFTER_H
 
+#include "Config.h"
+
 extern bool apMode;
+extern int shifterMode;
 
 class Accelerometer
 {
@@ -34,8 +37,39 @@ private:
 public:
   void setup()
   {
-      pinMode(PWMGT_PIN, INPUT);
-      pinMode(PIN_LED_ENABLE, INPUT);
+    pinMode(PWMGT_PIN, INPUT);
+    pinMode(PIN_LED_ENABLE, INPUT);
+
+      // init pinmodes
+    pinMode(PIN_BUTTON_A, INPUT);
+    pinMode(PIN_BUTTON_B, INPUT);
+
+    enableLeds();   // we need this for MIDI optocouplers!!
+
+    Serial.begin(115200);
+    Serial.println("\r\nMagicShifter 3000 OS V0.24");
+
+    EEPROM.begin(512);
+    // accel
+    InitI2C();
+      // leds
+    InitSPI();
+    // init components
+    InitAPA102();
+
+    // swipe colors
+    for (byte idx = 0; idx < LEDS; idx++)
+    {
+      setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 4);
+      updatePixels();
+      delay(30);
+    }
+    for (byte idx = 0; idx < LEDS; idx++)
+    {
+      setPixel(idx, 0, 0, 0, 1);
+      updatePixels();
+      delay(30);
+    }
   }
 
   void powerDown()
@@ -114,9 +148,7 @@ public:
   {
     // reset public btton state
     clickedButtonA = longClickedButtonA = false;
-
-    // TODO: rename 1 to LEFT op (no left AND RIGHT are not unique because of y rotation)
-    if (!digitalRead(PIN_BUTTON1))
+    if (!digitalRead(PIN_BUTTON_A))
     {
       if (buttonAPressedTime)
         buttonAPressedTime += microsSinceLast;
@@ -137,9 +169,33 @@ public:
       buttonAPressedTime = 0;
     }
 
-        // reset public btton state
-    clickedButtonPower = longClickedButtonPower = false;
 
+    // reset public btton state
+    clickedButtonB = longClickedButtonB = false;
+    if (!digitalRead(PIN_BUTTON_B))
+    {
+      if (buttonBPressedTime)
+        buttonBPressedTime += microsSinceLast;
+      else
+        buttonBPressedTime = 1;
+    }
+    else
+    {
+      if (m_enableLongClicks && buttonBPressedTime >= MIN_TIME_LONG_CLICK)
+      {
+        longClickedButtonB = true;
+      }
+      else if (buttonBPressedTime >= MIN_TIME_CLICK)
+      {
+        clickedButtonB = true;
+      }
+
+      buttonBPressedTime = 0;
+    }
+
+
+    // reset public btton state
+    clickedButtonPower = longClickedButtonPower = false;
 /*
     if (bFrame++ % 10 == 0)
     if (powerButtonPressed())
@@ -164,11 +220,16 @@ public:
     }
     //*/
 
+// internal button usage
     if (longClickedButtonA)
     {
       powerDown();
     }
 
+    if (clickedButtonB)
+    {
+      shifterMode = (shifterMode+1)%MODES;
+    }
   }
 
   void enableLongClicks(bool enable)

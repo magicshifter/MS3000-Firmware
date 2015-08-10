@@ -9,6 +9,8 @@
 //#define DISABLE_ACCEL
 #define USE_MDNS
 
+#define MODES 3
+
 // 192.168.4.1 is the IP it always has in softAP mode
 const bool forceAPMode = false;
 
@@ -61,7 +63,8 @@ const char *jsonSoftAP = "{\"ssid\":\"MagicShifter3000\", \"pwd\":\"\"}";
 #define PIN_LED_CLOCK 14
 
 // double features as bootloader button
-#define PIN_BUTTON1   0
+#define PIN_BUTTON_A   0
+#define PIN_BUTTON_B 12
 
 #define PIN_I2C_DATA 5 // 5 //blau // labeled 5 on esp12E!!!
 #define PIN_I2C_CLOCK 4 //lila
