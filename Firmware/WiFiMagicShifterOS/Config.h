@@ -85,6 +85,8 @@ const int MIN_TIME_LONG_CLICK = 500000;
 //#define MMA8452_ADDRESS 0x1D  // 0x1D if SA0 is high, 0x1C if low
 #define MMA8452_ADDRESS 0x1C
 
+#define MMA8452_ID 0x2A 
+
 #define FILENAME_SIZE 40
 
 #endif

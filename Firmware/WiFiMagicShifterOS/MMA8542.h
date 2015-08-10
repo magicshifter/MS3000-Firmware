@@ -37,10 +37,10 @@ void readRegisters(byte addressToRead, int bytesToRead, byte * dest)
 
   Wire.requestFrom(MMA8452_ADDRESS, bytesToRead); //Ask for bytes, once done, bus is released by default
 
-  while(Wire.available() < bytesToRead)
+  if (Wire.available() < bytesToRead)
   {
     Serial.println("I2C not available. This should NEVER happen!");
-    delay(100);
+    delay(10);
   }; //Hang out until we get the # of bytes we expect
 
   for(int x = 0 ; x < bytesToRead ; x++)
@@ -58,9 +58,9 @@ byte readRegister(byte addressToRead)
 
   Wire.requestFrom(MMA8452_ADDRESS, 1); //Ask for 1 byte, once done, bus is released by default
 
-  while(!Wire.available()){
+  if (!Wire.available()){
     Serial.println("I2C not available. This should NEVER happen!");
-    delay(100);
+    delay(10);
   } ; //Wait for the data to come back
   return Wire.read(); //Return this one byte
 }
@@ -120,16 +120,18 @@ void InitMMA8452()
 
   do {
     byte c = readRegister(WHO_AM_I);  // Read WHO_AM_I register
-    if (c == 0x2A) // WHO_AM_I should always be 0x2A
+    if (c == MMA8452_ID) // WHO_AM_I should always be 0x2A
     {
       Serial.println("MMA8452Q is online...");
       success = 1;
     }
     else
     {
-      Serial.print("Could not connect to MMA8452Q: 0x");
+      Serial.print("Could not connect to MMA8452Q: expected 0x");
+      Serial.print(MMA8452_ID, HEX);
+      Serial.print(" but received 0x");
       Serial.println(c, HEX);
-      //while(1) {delay(1);}; // Loop forever if communication doesn't happen
+      delay(10);
     }
     /* code */
 } while(0); //while(!success);

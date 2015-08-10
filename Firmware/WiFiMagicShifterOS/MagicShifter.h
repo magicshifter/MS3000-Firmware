@@ -1,3 +1,8 @@
+#ifndef __MAGICSHIFTER_H
+#define __MAGICSHIFTER_H
+
+extern bool apMode;
+
 class Accelerometer
 {
   bool update();
@@ -189,4 +194,17 @@ public:
   {
     return getADValue() > 950;
   }
+
+  IPAddress getIP()
+  {
+    if (apMode)
+    {
+      return WiFi.softAPIP();
+    }
+    else
+    {
+      return WiFi.localIP();
+    }
+  }
 };
+#endif
