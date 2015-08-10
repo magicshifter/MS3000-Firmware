@@ -10,7 +10,8 @@ import shallowEqual from 'react-pure-render/shallowEqual';
 class Component extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState) {
-    // TODO: Make whole React Pure, add something like dangerouslySetLocalState.
+
+    // todo: Make whole React Pure, add something like dangerouslySetLocalState.
     // https://github.com/gaearon/react-pure-render#known-issues
     // https://twitter.com/steida/status/600395820295450624
     if (this.context.router) {

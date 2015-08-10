@@ -20,7 +20,6 @@ function validateServerForm(fields) {
   // Validate function is just wrapper for node-validator providing promise api,
   // so we can mix client sync and server async validations easily.
   return validate(fields)
-    // Of course we can add another validation methods.
     .prop('hostname').required()
     .prop('port').required()
     .promise;
@@ -36,6 +35,7 @@ export function updateFormField({target: {name, value}}) {
   if (name === 'port') {
     maxLength = 5;
   }
+
   value = value.slice(0, maxLength);
 
   dispatch(updateFormField, {name, value});
@@ -44,5 +44,5 @@ export function updateFormField({target: {name, value}}) {
 setToString('serverSettings', {
   saveServer,
   saveFormError,
-  updateFormField
+  updateFormField,
 });

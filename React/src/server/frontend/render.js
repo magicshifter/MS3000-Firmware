@@ -31,8 +31,9 @@ function renderPage(req, res, appState) {
           resolve();
           return;
         }
+
         reject(abortReason);
-      }
+      },
     });
 
     router.run((Handler, routerState) => {

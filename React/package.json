@@ -1,6 +1,6 @@
 {
   "name": "local.magicshifter.net",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "postinstall": "gulp build --production",
@@ -14,16 +14,17 @@
   "contributors": [
     {
       "name": "jascha ehrenreich",
-      "email": "jascha@jaeh.at",
+      "email": "jascha@magicshifter.net",
       "github": "jaeh"
     },
     {
-      "name": "philipp tiefenbacher",
-      "github": "wizard23"
+      "name": "flo bittner",
+      "github": "overflo23"
     },
     {
-      "name": "daniel steigerwald",
-      "github": "steinda"
+      "name": "philipp tiefenbacher",
+      "email": "wizard23@magicshifter.net",
+      "github": "wizard23"
     }
   ],
   "dependencies": {

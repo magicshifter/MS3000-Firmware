@@ -1,4 +1,5 @@
 export default {
-  float: float => { return {float} },
-  display: display => { return {display} },
-}
+  float: float => { return {float}; },
+
+  display: display => { return {display}; },
+};

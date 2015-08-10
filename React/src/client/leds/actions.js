@@ -88,7 +88,8 @@ export function fetchLeds(leds) {
         (res) => {
           console.log('res', res);
         },
-        (error, res) => { console.log('res', res, 'error', error); }
+
+        (error, res) => console.log('res', res, 'error', error)
       )
       .then(() => lastFetchFinished = true);
 
@@ -105,6 +106,7 @@ function createByteString(val = false, brightness = 31) {
 
   const col = color(val.get('value'));
   let bs = '';
+
   //format is abgr not rgba!
   bs += String.fromCharCode(brightness | 0xc0);
   bs += String.fromCharCode(col.blue());

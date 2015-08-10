@@ -22,7 +22,6 @@ export default class LedsMenu extends Component {
       },
     };
 
-
     return (
       <div>
         <ul>

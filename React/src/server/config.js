@@ -10,8 +10,10 @@ var config = {
   googleAnalyticsId: 'UA-XXXXXXX-X',
   isProduction: process.env.NODE_ENV === 'production',
   piping: {
-    // Ignore webpack custom loaders on server. TODO: Reuse index.js config.
+
+    // Ignore webpack custom loaders on server. todo: Reuse index.js config.
     ignore: /(\/\.|~$|\.(css|less|sass|scss|styl))/,
+
     // Hook ensures always fresh server response even for client file change.
     hook: true,
   },

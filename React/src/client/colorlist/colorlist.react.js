@@ -23,7 +23,6 @@ export default class ColorList extends Component {
     ledActions.changeLed({id, value});
   }
 
-
   render() {
 
     const styles = {

@@ -10,6 +10,7 @@ export const dispatchToken = register(({action, data}) => {
         const error = data;
         return cursor.setIn(['form', 'error'], error);
       });
+
       break;
 
     case actions.updateFormField:
@@ -17,6 +18,7 @@ export const dispatchToken = register(({action, data}) => {
         const {name, value} = data;
         return cursor.setIn(['form', 'fields', name], value);
       });
+
       break;
   }
 
