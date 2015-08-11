@@ -162,10 +162,12 @@ public:
       if (m_enableLongClicks && buttonAPressedTime >= MIN_TIME_LONG_CLICK)
       {
         longClickedButtonA = true;
+        log("longClickedButtonA", INFO);
       }
       else if (buttonAPressedTime >= MIN_TIME_CLICK)
       {
         clickedButtonA = true;
+        log("clickedButtonA", INFO);
       }
 
       buttonAPressedTime = 0;
@@ -186,10 +188,13 @@ public:
       if (m_enableLongClicks && buttonBPressedTime >= MIN_TIME_LONG_CLICK)
       {
         longClickedButtonB = true;
+        log("longClickedButtonB", INFO);
+
       }
       else if (buttonBPressedTime >= MIN_TIME_CLICK)
       {
         clickedButtonB = true;
+        log("clickedButtonB", INFO);
       }
 
       buttonBPressedTime = 0;
@@ -228,7 +233,7 @@ public:
       powerDown();
     }
 
-    if (clickedButtonB)
+    if (longClickedButtonB)
     {
       shifterMode = (shifterMode+1)%MODES;
     }

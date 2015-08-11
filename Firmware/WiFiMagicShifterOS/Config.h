@@ -12,7 +12,7 @@
 #define MODES 3
 
 // 192.168.4.1 is the IP it always has in softAP mode
-const bool forceAPMode = false;
+const bool forceAPMode = true;
 
 
 // with jqVic (Alpha, Beta)
@@ -45,7 +45,7 @@ const char *jsonAPList = "{\"list\": [\
 const char *jsonSoftAP = "{\"ssid\":\"MagicShifter3000\", \"pwd\":\"\"}";
 */
 
-#define CONNECTION_TIMEOUT 8000
+#define CONNECTION_TIMEOUT 30000
 
 #define SPI_FREQUENCY 20000000
 #define POV_TIME_MICROSECONDS 1
@@ -63,7 +63,7 @@ const char *jsonSoftAP = "{\"ssid\":\"MagicShifter3000\", \"pwd\":\"\"}";
 #define PIN_LED_CLOCK 14
 
 // double features as bootloader button
-#define PIN_BUTTON_A   0
+#define PIN_BUTTON_A  0
 #define PIN_BUTTON_B 12
 
 #define PIN_I2C_DATA 5 // 5 //blau // labeled 5 on esp12E!!!

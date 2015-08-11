@@ -80,6 +80,7 @@ class CircleBall
   //   }
   // }
 
+ 
   void applyForce(float sec, float g)
   {
     sec *= 0.5;
