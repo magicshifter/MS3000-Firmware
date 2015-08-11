@@ -80,7 +80,7 @@ class CircleBall
   //   }
   // }
 
- 
+
   void applyForce(float sec, float g)
   {
     sec *= 0.5;
@@ -118,6 +118,39 @@ class BouncingBall
   {
   }
 
+  void flash(int start, int end)
+  {
+    int delta = 1;
+
+    if (start > end)
+    {
+      delta = -1;
+    }
+
+    bool stopLoop = false;
+    for (byte idx = start; !stopLoop ; idx += delta)
+    {
+      setPixel(idx, 255, 255, 255, 255);
+      updatePixels();
+      delay(2);
+
+      if (idx == end)
+      {
+        stopLoop = true;
+      }
+    }
+  }
+
+public:
+  int allowFlashTimer = 0;
+  bool allowFlash = false;
+  bool smoothLanding = false;
+
+  const float minFlashSpeed = 0.18;
+  const float maxFlashLandingSpeed = 0.027;
+  const float minFastPeriod = 0.00005;
+  const float flashDifficulty = 1;
+
   void applyForce(float sec, float g)
   {
     g = -g;
@@ -126,20 +159,53 @@ class BouncingBall
     vel += sec*g*0.004;
     pos += vel*0.004;
 
+    if (vel < (-minFlashSpeed*flashDifficulty) || vel > (minFlashSpeed*flashDifficulty))
+    {
+      //allowFlashTimer += sec;
+      //if (allowFlashTimer > minFastPeriod)
+        allowFlash = true;
+    }
+    else  
+    {
+      //allowFlashTimer -= sec;
+      //if (allowFlashTimer < 0) allowFlashTimer = 0;
+    }
+
+    smoothLanding = vel < (maxFlashLandingSpeed/flashDifficulty) && vel > (-maxFlashLandingSpeed/flashDifficulty);
+
     if (pos < 0)
     {
       pos = 0;
       vel = -vel;
+
+      if (allowFlash && smoothLanding)
+      {
+        flash(0, LEDS - 1);
+        pos = 1;
+        vel = 0;
+      } 
+      allowFlash = 0;
+      allowFlashTimer = 0;
     }
     else if (pos > 1)
     {
       pos = 1;
       vel = -vel;
+
+      if (allowFlash && smoothLanding)
+      {
+        flash(LEDS - 1, 0);
+        pos = 0;
+        vel = 0; 
+      }
+      allowFlash = 0;
+      allowFlashTimer = 0;
     }
   }
 
   float getLedBright(int idx, int leds)
   {
+    float scale = 1;
     float i = (leds-1) * pos; 
 
     if (i < 0) i = 0;
@@ -150,7 +216,7 @@ class BouncingBall
 
     if (delta < 1)
     {
-      return 1 - delta;
+      return (1 - delta)* scale;
     }
 
     return 0;
