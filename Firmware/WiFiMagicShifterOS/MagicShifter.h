@@ -29,6 +29,8 @@ class Leds
   void getPixels();
 };
 
+// TODO: all init and all sensors and leds in here :)
+// (accelerometer wuld also be a class but the MAgicShifter object has one ;)
 class MagicShifter
 {
 private:

@@ -71,7 +71,6 @@ float accelG[3];  // Stores the real accel value in g's
 //POVShakeSync shakeSync;
 POVShakeSyncDummy shakeSync;
 
-#define MODES 3
 int shifterMode = 0;
 int accelCount[3];  // Stores the 12-bit signed value
 int oldButton1State = 0;
@@ -93,40 +92,8 @@ extern char uploadname[];
 void setup()
 {
   shifter.setup();
-  shifter.enableLeds();   // we need this for MIDI optocouplers
+  
 
-  // leds
-  InitSPI();
-
-  // init components
-  InitAPA102();
-
-  // swipe colors
-  for (byte idx = 0; idx < LEDS; idx++)
-  {
-    setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
-    updatePixels();
-    delay(20);
-  }
-
-  Serial.begin(115200);
-  Serial.println("\r\nMagicShifter 3000 OS V0.24");
-
-  EEPROM.begin(512);
-
-  // init pinmodes
-  pinMode(PIN_BUTTON_A, INPUT);
-  pinMode(PIN_BUTTON_B, INPUT);
-
-  // accel
-  InitI2C();
-
-  for (byte idx = 0; idx < LEDS; idx++)
-  {
-    setPixel(idx, 0, 0, 0, 1);
-    updatePixels();
-    delay(20);
-  }
 
   bootTime = millis();
 
