@@ -63,18 +63,22 @@ extern "C" {
 
 // state
 MagicShifter shifter;
+
 MagicMode magicMode;
 DebugMode debugMode;
-//MagicShifterMode rgbLightMode;
-
-float accelG[3];  // Stores the real accel value in g's
 //POVShakeSync shakeSync;
 POVShakeSyncDummy shakeSync;
+
+//CircleBall ball(600);
+BouncingBall ball(600);
+
+
+float accelG[3];  // Stores the real accel value in g's
 
 int shifterMode = 0;
 int accelCount[3];  // Stores the 12-bit signed value
 int oldButton1State = 0;
-CircleBall ball(600);
+
 int currentMicros = 0, lastMicros = 0;
 int speedMicros = 1000;
 long lastFrameMicros = 0;
@@ -220,7 +224,7 @@ void loop()
       {
         for (byte idx = 0; idx < LEDS; idx++)
         {
-          float scale = ball.getLedBrightCB(idx, LEDS);
+          float scale = ball.getLedBright(idx, LEDS);
           //scale *= 10;
           //setPixel(idx, (frame & 1) ? bright*scale : 0, (frame & 2) ? bright*scale : 0, (frame & 4) ? bright*scale : 0, gs);
           setPixel(idx, bright * scale, 0, bright * scale, 0x07);
@@ -253,5 +257,6 @@ void loop()
   float fX = accelG[0];
   float fY = accelG[1];
 
-  ball.applyForceCB((currentMicros - lastMicros) / 1000.0, fX, fY);
+  //ball.applyForce((currentMicros - lastMicros) / 1000.0, fX, fY);
+  ball.applyForce((currentMicros - lastMicros) / 1000.0, fX);
 }
