@@ -226,6 +226,8 @@ void loop()
         {
           float scale = ball.getLedBright(idx, LEDS);
 
+          scale *= 0.5;
+
           /*if (ball.allowFlash && ball.smoothLanding)
           {
 
@@ -237,22 +239,24 @@ void loop()
           }
           */
 
+         // int bright = 1;
           //scale *= 10;
           //setPixel(idx, (frame & 1) ? bright*scale : 0, (frame & 2) ? bright*scale : 0, (frame & 4) ? bright*scale : 0, gs);
+          
           if (ball.allowFlash)
           {
             if (ball.smoothLanding)
             {
-              setPixel(idx, 0, bright * scale, 0, 0x8);
+              setPixel(idx, 0, bright * scale, 0, GLOBAL_GS);
             }
             else
             {
-              setPixel(idx, bright * scale, bright * scale, bright * scale, 0x5);
+              setPixel(idx, bright * scale, bright * scale, bright * scale, GLOBAL_GS);
             }
           }
           else
           {  
-            setPixel(idx, bright * scale, 0, bright * scale, 0x7);
+            setPixel(idx, bright * scale, 0, 0.5 * bright * scale, GLOBAL_GS);
           }
         }
       }

@@ -1,6 +1,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#define GLOBAL_GS 31
+
 // v1 == breadboard pcb
 // 2 == 0.9 pcb :)
 #define HWVERSION 2
