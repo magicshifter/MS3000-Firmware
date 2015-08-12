@@ -106,7 +106,7 @@ public:
 
 	int getFrameIndex()
 	{
-    if (!digitalRead(PIN_BUTTON1) && searchMin)
+    if (!digitalRead(PIN_BUTTON_B) && searchMin)
     {
       return -1;
     }

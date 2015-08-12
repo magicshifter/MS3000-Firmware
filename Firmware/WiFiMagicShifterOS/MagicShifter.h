@@ -1,3 +1,11 @@
+#ifndef __MAGICSHIFTER_H
+#define __MAGICSHIFTER_H
+
+#include "Config.h"
+
+extern bool apMode;
+extern int shifterMode;
+
 class Accelerometer
 {
   bool update();
@@ -21,6 +29,8 @@ class Leds
   void getPixels();
 };
 
+// TODO: all init and all sensors and leds in here :)
+// (accelerometer wuld also be a class but the MAgicShifter object has one ;)
 class MagicShifter
 {
 private:
@@ -29,8 +39,39 @@ private:
 public:
   void setup()
   {
-      pinMode(PWMGT_PIN, INPUT);
-      pinMode(PIN_LED_ENABLE, INPUT);
+    pinMode(PWMGT_PIN, INPUT);
+    pinMode(PIN_LED_ENABLE, INPUT);
+
+      // init pinmodes
+    pinMode(PIN_BUTTON_A, INPUT);
+    pinMode(PIN_BUTTON_B, INPUT);
+
+    enableLeds();   // we need this for MIDI optocouplers!!
+
+    Serial.begin(115200);
+    Serial.println("\r\nMagicShifter 3000 OS V0.24");
+
+    EEPROM.begin(512);
+    // accel
+    InitI2C();
+      // leds
+    InitSPI();
+    // init components
+    InitAPA102();
+
+    // swipe colors
+    for (byte idx = 0; idx < LEDS; idx++)
+    {
+      setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, GLOBAL_GS);
+      updatePixels();
+      delay(30);
+    }
+    for (byte idx = 0; idx < LEDS; idx++)
+    {
+      setPixel(idx, 0, 0, 0, 1);
+      updatePixels();
+      delay(30);
+    }
   }
 
   void powerDown()
@@ -65,6 +106,7 @@ public:
 
   void loop()
   {
+    //delay(0);
     lastTimeStamp = currentTimeStamp;
     currentTimeStamp = micros();
     microsSinceLast = currentTimeStamp - lastTimeStamp;
@@ -72,32 +114,43 @@ public:
     accelNeedsRefresh = true;
     adNeedsRefresh = true;
     handleButtons();
+    //delay(0);
   }
+
+  int bFrame = 0;
 
 // TODO: private state
 // state for button timing
   int buttonAPressedTime = 0;
+  int buttonPowerPressedTime = 0;
   int buttonBPressedTime = 0;
+
 // state for double click timing
   int timeToLastClickedButtonA = 0;
+  int timeToLastClickedButtonPower = 0;
   int timeToLastClickedButtonB = 0;
-  bool m_enableLongClicks = false;
+
+  bool m_enableLongClicks = true;
 
 // todo public properties? Logic for consuming buttons?
 // events for consumers true/false;
   bool clickedButtonA = false;
+  bool clickedButtonPower = false;
   bool clickedButtonB = false;
+
   bool longClickedButtonA = false;
+  bool longClickedButtonPower = false;
   bool longClickedButtonB = false;
+  
   bool doubleClickedButtonA = false;
+  bool doubleClickedButtonPower = false;
   bool doubleClickedButtonB = false;
 
   void handleButtons()
   {
     // reset public btton state
     clickedButtonA = longClickedButtonA = false;
-
-    if (!digitalRead(PIN_BUTTON1))
+    if (!digitalRead(PIN_BUTTON_A))
     {
       if (buttonAPressedTime)
         buttonAPressedTime += microsSinceLast;
@@ -109,13 +162,80 @@ public:
       if (m_enableLongClicks && buttonAPressedTime >= MIN_TIME_LONG_CLICK)
       {
         longClickedButtonA = true;
+        log("longClickedButtonA", INFO);
       }
       else if (buttonAPressedTime >= MIN_TIME_CLICK)
       {
         clickedButtonA = true;
+        log("clickedButtonA", INFO);
       }
 
       buttonAPressedTime = 0;
+    }
+
+
+    // reset public btton state
+    clickedButtonB = longClickedButtonB = false;
+    if (!digitalRead(PIN_BUTTON_B))
+    {
+      if (buttonBPressedTime)
+        buttonBPressedTime += microsSinceLast;
+      else
+        buttonBPressedTime = 1;
+    }
+    else
+    {
+      if (m_enableLongClicks && buttonBPressedTime >= MIN_TIME_LONG_CLICK)
+      {
+        longClickedButtonB = true;
+        log("longClickedButtonB", INFO);
+
+      }
+      else if (buttonBPressedTime >= MIN_TIME_CLICK)
+      {
+        clickedButtonB = true;
+        log("clickedButtonB", INFO);
+      }
+
+      buttonBPressedTime = 0;
+    }
+
+
+    // reset public btton state
+    clickedButtonPower = longClickedButtonPower = false;
+/*
+    if (bFrame++ % 10 == 0)
+    if (powerButtonPressed())
+    {
+      if (buttonPowerPressedTime)
+        buttonPowerPressedTime += microsSinceLast;
+      else
+        buttonPowerPressedTime = 1;
+    }
+    else
+    {
+      if (buttonPowerPressedTime >= MIN_TIME_LONG_CLICK)
+      {
+        longClickedButtonPower = true;
+      }
+      else if (buttonPowerPressedTime >= MIN_TIME_CLICK)
+      {
+        clickedButtonPower = true;
+      }
+
+      buttonPowerPressedTime = 0;
+    }
+    //*/
+
+// internal button usage
+    if (longClickedButtonA)
+    {
+      powerDown();
+    }
+
+    if (longClickedButtonB)
+    {
+      shifterMode = (shifterMode+1)%MODES;
     }
   }
 
@@ -140,6 +260,19 @@ public:
 
   bool powerButtonPressed(void)
   {
-    return getADValue() > 890;
+    return getADValue() > 950;
+  }
+
+  IPAddress getIP()
+  {
+    if (apMode)
+    {
+      return WiFi.softAPIP();
+    }
+    else
+    {
+      return WiFi.localIP();
+    }
   }
 };
+#endif

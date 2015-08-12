@@ -1,6 +1,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#define GLOBAL_GS 31
+
 // v1 == breadboard pcb
 // 2 == 0.9 pcb :)
 #define HWVERSION 2
@@ -9,19 +11,23 @@
 //#define DISABLE_ACCEL
 #define USE_MDNS
 
+#define MODES 3
+
 // 192.168.4.1 is the IP it always has in softAP mode
-const bool forceAPMode = false;
+const bool forceAPMode = true;
 
 
 // with jqVic (Alpha, Beta)
-/*
+///*
 #define R601_VAL 270
 #define R602_VAL 1000
-*/
+//*/
 
 // Metalab wih Flo (Gamma)
+/*
 #define R601_VAL 200
 #define R602_VAL 820
+//*/
 
 // VERBOSE, INFO, WARNING, ERROR
 int DEBUG_LEVEL = VERBOSE;
@@ -41,7 +47,7 @@ const char *jsonAPList = "{\"list\": [\
 const char *jsonSoftAP = "{\"ssid\":\"MagicShifter3000\", \"pwd\":\"\"}";
 */
 
-#define CONNECTION_TIMEOUT 8000
+#define CONNECTION_TIMEOUT 30000
 
 #define SPI_FREQUENCY 20000000
 #define POV_TIME_MICROSECONDS 1
@@ -59,7 +65,8 @@ const char *jsonSoftAP = "{\"ssid\":\"MagicShifter3000\", \"pwd\":\"\"}";
 #define PIN_LED_CLOCK 14
 
 // double features as bootloader button
-#define PIN_BUTTON1   0
+#define PIN_BUTTON_A  0
+#define PIN_BUTTON_B 12
 
 #define PIN_I2C_DATA 5 // 5 //blau // labeled 5 on esp12E!!!
 #define PIN_I2C_CLOCK 4 //lila
@@ -82,6 +89,8 @@ const int MIN_TIME_LONG_CLICK = 500000;
 
 //#define MMA8452_ADDRESS 0x1D  // 0x1D if SA0 is high, 0x1C if low
 #define MMA8452_ADDRESS 0x1C
+
+#define MMA8452_ID 0x2A 
 
 #define FILENAME_SIZE 40
 

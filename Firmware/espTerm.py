@@ -55,7 +55,7 @@ def main(stdscr):
                 code = ord(s)
                 if (xx == 0):
                     stdscr.clear()
-                xx = (xx + 1) % 700
+                xx = (xx + 1) % 900
                 if code > 13 and code <= 255:
                     try:
                         stdscr.addstr(s)

@@ -1,3 +1,5 @@
+//#include "MagicShifter.h"
+
 extern byte web_rgb_buffer[];
 extern int shifterMode;
 
@@ -279,10 +281,12 @@ void handleGETStatus(void)
     accelG[i] = (float) accelCount[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set
   }
 
+  uint32_t ip = (uint32_t)shifter.getIP();
 
   String response = "{\"id\":" + String(ESP.getChipId()) + ",\"uptime\":" +
   String(millis() - bootTime) + ",\"adValue\":" + adValue + ",\"voltage\":" + voltage +
-  "\",accelRaw\":[" + accelCount[0] + "," + accelCount[1] + "," + accelCount[2] + "],\"accelG\":[" + accelG[0] + "," + accelG[1] + ","+ accelG[2] + "]}";
+  "\",accelRaw\":[" + accelCount[0] + "," + accelCount[1] + "," + accelCount[2] + "],\"accelG\":[" + accelG[0] + "," + accelG[1] + ","+ accelG[2] + 
+    "],\"ip\":\"" + (0xFF & (ip>>0)) + "."  + (0xFF & (ip>>8)) + "."  + (0xFF & (ip>>16)) + "."  + (0xFF & (ip>>24)) + "\"}";
   server.send(200, "text/plain", response);
 }
 
@@ -513,6 +517,12 @@ void handleGETAPList(void)
 void handleGETWLANList(void)
 {
   logln("handleGETWLANList", INFO);
+
+  if (apMode)
+  {
+    server.send(200, "text/plain", "crash in AP mode...so diusabled for now");
+    return;
+  }
 
   String response = "[";
 

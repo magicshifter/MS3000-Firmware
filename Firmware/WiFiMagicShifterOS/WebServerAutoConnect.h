@@ -1,5 +1,7 @@
 #include "Config.h"
 
+extern bool apMode;
+
 bool TryConnect(struct APInfo &apInfo, int timeoutMs)
 {
   Serial.print("trying to connect to AP: ");
@@ -28,6 +30,10 @@ bool TryConnect(struct APInfo &apInfo, int timeoutMs)
       Serial.println(apInfo.ssid);
       return false; // :(
     }
+
+    // crashes!
+    shifter.loop();
+    
     delay(20);
   }
 
@@ -39,6 +45,8 @@ bool TryConnect(struct APInfo &apInfo, int timeoutMs)
 
   return true;
 }
+
+
 
 bool TrySoftAP(struct APInfo &apInfo)
 {
@@ -77,6 +85,7 @@ bool AutoConnect()
       Serial.println("stored prefered wifi found.");
       if (TryConnect(apInfo, CONNECTION_TIMEOUT))
       {
+        apMode = false;
         return true;
       }
     }
@@ -117,6 +126,7 @@ bool AutoConnect()
         {
           if (TryConnect(apInfo, CONNECTION_TIMEOUT))
           {
+            apMode = false;
             return true;
           }
         }
@@ -132,6 +142,7 @@ bool AutoConnect()
   Settings.getAPConfig(&apInfo);
   if (TrySoftAP(apInfo))
   {
+    apMode = true;
     return true;
   }
 

@@ -63,26 +63,31 @@ extern "C" {
 
 // state
 MagicShifter shifter;
+
 MagicMode magicMode;
 DebugMode debugMode;
-//MagicShifterMode rgbLightMode;
-
-float accelG[3];  // Stores the real accel value in g's
 //POVShakeSync shakeSync;
 POVShakeSyncDummy shakeSync;
 
-int shifterMode = 1;
+//CircleBall ball(600);
+BouncingBall ball(600);
+
+
+float accelG[3];  // Stores the real accel value in g's
+
+int shifterMode = 0;
 int accelCount[3];  // Stores the 12-bit signed value
 int oldButton1State = 0;
-CircleBall ball(600);
+
 int currentMicros = 0, lastMicros = 0;
 int speedMicros = 1000;
 long lastFrameMicros = 0;
 int frame = 0;
-byte bright = 0x03;
+byte bright = 0xFF;
 byte gs = 0x1;
 int loops = 0;
 long bootTime = 0;
+bool apMode = false;
 // make it larger to be on the save side when base64 decoding
 byte web_rgb_buffer[RGB_BUFFER_SIZE + 4];
 
@@ -91,39 +96,8 @@ extern char uploadname[];
 void setup()
 {
   shifter.setup();
-  shifter.enableLeds();   // we need this for MIDI optocouplers
+  
 
-  // leds
-  InitSPI();
-
-  // init components
-  InitAPA102();
-
-  // swipe colors
-  for (byte idx = 0; idx < LEDS; idx++)
-  {
-    setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
-    updatePixels();
-    delay(20);
-  }
-
-  Serial.begin(115200);
-  Serial.println("\r\nMagicShifter 3000 OS V0.24");
-
-  EEPROM.begin(512);
-
-  // init pinmodes
-  pinMode(PIN_BUTTON1, INPUT);
-
-  // accel
-  InitI2C();
-
-  for (byte idx = 0; idx < LEDS; idx++)
-  {
-    setPixel(idx, 0, 0, 0, 1);
-    updatePixels();
-    delay(20);
-  }
 
   bootTime = millis();
 
@@ -173,16 +147,6 @@ void setup()
   // chercking crashes the ESP so its disabled atm
   //Serial.print("FS check: ");
   //Serial.println(FS.check() ? "OK" : "ERROR!");
-
-
-
-
-  while (0)
-  {
-      fillPixels(1, 2, 3, 0xFF);
-      updatePixels();
-      delay(1);
-  }
 
 
 #ifndef DISABLE_ACCEL
@@ -244,10 +208,8 @@ void loop()
 
   shakeSync.setFrames(32);
 
-  if (loops % 500 == 0)
+  if (loops % 1000 == 0)
   {
-    if (loops % 40000 == 0)
-      Serial.println("x");
     Serial.print("_");
   }
 
@@ -262,10 +224,40 @@ void loop()
       {
         for (byte idx = 0; idx < LEDS; idx++)
         {
-          float scale = ball.getLedBrightCB(idx, LEDS);
-          scale *= 10;
-          setPixel(idx, (frame & 1) ? bright*scale : 0, (frame & 2) ? bright*scale : 0, (frame & 4) ? bright*scale : 0, gs);
-          setPixel(idx, bright * scale, 0, bright * scale, gs);
+          float scale = ball.getLedBright(idx, LEDS);
+
+          scale *= 0.5;
+
+          /*if (ball.allowFlash && ball.smoothLanding)
+          {
+
+
+          }
+          else
+          {
+            scale *= 0.25;
+          }
+          */
+
+         // int bright = 1;
+          //scale *= 10;
+          //setPixel(idx, (frame & 1) ? bright*scale : 0, (frame & 2) ? bright*scale : 0, (frame & 4) ? bright*scale : 0, gs);
+          
+          if (ball.allowFlash)
+          {
+            if (ball.smoothLanding)
+            {
+              setPixel(idx, 0, bright * scale, 0, GLOBAL_GS);
+            }
+            else
+            {
+              setPixel(idx, bright * scale, bright * scale, bright * scale, GLOBAL_GS);
+            }
+          }
+          else
+          {  
+            setPixel(idx, bright * scale, 0, 0.5 * bright * scale, GLOBAL_GS);
+          }
         }
       }
       updatePixels();
@@ -275,7 +267,7 @@ void loop()
       loadBuffer(web_rgb_buffer);
       updatePixels();
     }
-    else if (shifterMode == 4)
+    else if (shifterMode == 2)
     {
       magicMode.loop();
     }
@@ -295,5 +287,6 @@ void loop()
   float fX = accelG[0];
   float fY = accelG[1];
 
-  ball.applyForceCB((currentMicros - lastMicros) / 1000.0, fX, fY);
+  //ball.applyForce((currentMicros - lastMicros) / 1000.0, fX, fY);
+  ball.applyForce((currentMicros - lastMicros) / 1000.0, fX);
 }

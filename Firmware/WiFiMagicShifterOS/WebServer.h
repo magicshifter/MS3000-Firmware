@@ -80,17 +80,17 @@ void StartWebServer(void)
   server.on("/info/status", HTTP_GET, handleGETStatus);
 
   server.on("/settings/ap", HTTP_GET, handleGETAPSettings);
-  server.on("/settings/ap", HTTP_POST, handlePOSTAPSettings);
+  server.on("/settings/ap/set", handlePOSTAPSettings);
 
   server.on("/settings/server", HTTP_GET, handleGETServerSettings);
-  server.on("/settings/server", HTTP_POST, handlePOSTServerSettings);
+  server.on("/settings/server/set", handlePOSTServerSettings);
 
   server.on("/settings/wifi/prefered", HTTP_GET, handleGETPreferdAPSettings);
-  server.on("/settings/wifi/prefered", HTTP_POST, handlePOSTPreferedAPSettings);
+  server.on("/settings/wifi/prefered/set", handlePOSTPreferedAPSettings);
 
   server.on("/settings/wifi/list", HTTP_GET, handleGETAPList);
-  server.on("/settings/wifi/add", HTTP_POST, handlePOSTAPListAdd);
-  server.on("/settings/wifi/delete", HTTP_POST, handlePOSTAPListDelete);
+  server.on("/settings/wifi/add", handlePOSTAPListAdd);
+  server.on("/settings/wifi/delete", handlePOSTAPListDelete);
 
   server.on("/list", HTTP_GET, handleFileList);
   server.on("/leds", handleLedsSet);
