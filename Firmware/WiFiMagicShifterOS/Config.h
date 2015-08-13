@@ -1,7 +1,7 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#define GLOBAL_GS 31
+int GLOBAL_GS = 5;
 
 // v1 == breadboard pcb
 // 2 == 0.9 pcb :)

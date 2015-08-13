@@ -233,9 +233,25 @@ public:
       powerDown();
     }
 
+    if (clickedButtonB)
+    {
+      GLOBAL_GS+=2;
+      if (GLOBAL_GS > 31)
+      {
+        GLOBAL_GS = 31;
+      }
+
+      //shifterMode = (shifterMode+1)%MODES;
+    }
     if (longClickedButtonB)
     {
-      shifterMode = (shifterMode+1)%MODES;
+      GLOBAL_GS-=6;
+      if (GLOBAL_GS < 1)
+      {
+        GLOBAL_GS = 1;
+      }
+
+      //shifterMode = (shifterMode+1)%MODES;
     }
   }
 

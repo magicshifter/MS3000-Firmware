@@ -5,7 +5,7 @@ from https://github.com/esp8266/Arduino/issues/373
 */
 
 #include "SPI.h"
-#include <Ticker.h>
+//#include <Ticker.h>
 #include <math.h>
 #include <Wire.h> // Used for I2C
 #include <Arduino.h>
@@ -198,6 +198,7 @@ void setup()
 
 void loop()
 {
+   pinMode(PIN_BUTTON_B, INPUT);
   shifter.loop();
 
   HandleWebServer();
