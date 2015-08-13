@@ -5,7 +5,7 @@ extern byte web_rgb_buffer[];
 extern MagicMode magicMode;
 // TODO: at least move globals to main
 char uploadname[FILENAME_LENGTH];
-FSFile uploadFile;
+File uploadFile;
 
 
 void handleNotFound() {
@@ -66,7 +66,7 @@ void handleReadFile()
 
 
     byte buffer[105];
-    FSFile file = FS.open(uploadname, FSFILE_READ);
+    File file = SPIFFS.open(uploadname, "r");
 
     if (file)
     {
@@ -116,15 +116,18 @@ void handleFileList() {
   }
   String path = server.arg("dir");
 
-  FSFile entry;
-  FSFile dir = FS.open((char *)path.c_str());
+  //File entry;
+  Dir dir = SPIFFS.openDir((char *)path.c_str());
   path = String();
+ 
+/*
   if(!dir.isDirectory()){
     dir.close();
     server.send(500, "text/plain", "NOT DIR");
     return;
   }
-  dir.rewindDirectory();
+  */
+  //dir.rewindDirectory();
 
   String output = "<html>\
     <head>\
@@ -135,24 +138,26 @@ void handleFileList() {
       <h1>/" + path + "</h1>";
 
   while(true){
-    entry = dir.openNextFile();
-    if (!entry)
+    if (!dir.next())
       break;
 
+/*
     if(!FS.exists(entry.name())){
       os_printf("Entry[%s] Not Exists!\n", entry.name());
       entry.remove();
       entry.close();
       continue;
     }
+*/
+    String name = dir.fileName();
 
-    output += "<p><a href=\"download?file=" + String(entry.name()) + "\">" +
-      String(entry.name()) + "</a> " +
-      (entry.isDirectory()?"dir":"file") + " : " + entry.size() +
-      " <a href=\"read?file=" + String(entry.name()) + "\">show</a></p>";
-    entry.close();
+    output += "<p><a href=\"download?file=" + name + "\">" +
+      name + "</a> " +
+    //  (entry.isDirectory()?"dir":"file") + " : " + entry.size() +
+      " <a href=\"read?file=" + name + "\">show</a></p>";
+    //entry.close();
   }
-  dir.close();
+  //dir.close();
 
 
     output += "</body>\
@@ -161,7 +166,7 @@ void handleFileList() {
 }
 
 
-
+/*
 void handleFileListJson() {
   if(!server.hasArg("dir")) {
     server.send(500, "text/plain", "BAD ARGS, missing dir=");
@@ -169,9 +174,10 @@ void handleFileListJson() {
   }
   String path = server.arg("dir");
 
-  FSFile entry;
-  FSFile dir = FS.open((char *)path.c_str());
+  File entry;
+  File dir = FS.open((char *)path.c_str());
   path = String();
+
   if(!dir.isDirectory()){
     dir.close();
     server.send(500, "text/plain", "NOT DIR");
@@ -208,6 +214,7 @@ void handleFileListJson() {
   output += "]";
   server.send(200, "text/json", output);
 }
+*/
 
 void handleFileUpload(){
   Serial.println("handle upload!");
@@ -218,7 +225,7 @@ void handleFileUpload(){
     strcpy(uploadname, upload.filename.c_str());//.c_str();
     Serial.print("upload started: ");
     Serial.println(uploadname);
-    uploadFile = FS.open(uploadname, FSFILE_OVERWRITE);
+    uploadFile = SPIFFS.open(uploadname, "w");
 
     if (!uploadFile)
       Serial.println("ERROR: COULD NOT open file!!!");

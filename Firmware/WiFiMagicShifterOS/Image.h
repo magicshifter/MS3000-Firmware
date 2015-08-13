@@ -3,7 +3,7 @@
 class MSImage {
 
   int width, height;
-  FSFile file;
+  File file;
 
 public:
   MSImage(void)
@@ -13,7 +13,7 @@ public:
 
   MSImage(char *fileName)
   {
-      file = FS.open(fileName, FSFILE_READ);
+      file = SPIFFS.open(fileName, "r");
       if (file)
       {
         // TODO: real file format
@@ -49,7 +49,7 @@ public:
   {
     if (file)
     {
-      file.seek(frameIdx * height * BYTESPERPIXEL);
+      file.seek(frameIdx * height * BYTESPERPIXEL, SeekSet);
 
       if (height < maxHeight) maxHeight = height;
       int result = file.read(frameData, maxHeight * BYTESPERPIXEL);
