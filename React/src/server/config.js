@@ -12,7 +12,7 @@ var config = {
   piping: {
 
     // Ignore webpack custom loaders on server. todo: Reuse index.js config.
-    ignore: /(\/\.|~$|\.(css|less|sass|scss|styl))/,
+    ignore: /(\/\.|~$|\.(css|styl))/,
 
     // Hook ensures always fresh server response even for client file change.
     hook: true,

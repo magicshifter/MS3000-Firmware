@@ -20,8 +20,9 @@ export function msg(path, values = null): string {
   const pathParts = ['messages'].concat(path.split('.'));
   const message = i18nCursor(pathParts);
 
-  if (message == null)
+  if (message == null) {
     throw new ReferenceError('Could not find Intl message: ' + path);
+  }
 
   return !values ? message : getCachedInstanceOf(message).format(values);
 }

@@ -12,7 +12,7 @@ export default {
       settings: 'Settings',
     },
     statusbar: {
-      title: 'Api Version {version}',
+      title: 'v{version}',
       connectors: {
         title: 'Connecting to:',
         api: 'Api',

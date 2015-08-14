@@ -94,3 +94,30 @@ body
     font-size 1.2em
   h5
     font-size 1em
+
+
+@media (max-width 800px)
+  #app
+    header.main
+      div:first-child
+        background-size contain !important
+
+@media (max-width 600px)
+  #app
+    header.main
+      height 110px !important
+      overflow hidden !important
+
+      h1
+        display none !important
+
+      nav ul li a
+        span
+          max-height 45px !important
+          max-width 45px !important
+
+        div
+          font-size .8em !important
+
+      h5
+        display none !important

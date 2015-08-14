@@ -34,7 +34,10 @@ export default class App extends Component {
   // Why componentWillMount instead of componentDidMount.
   // https://github.com/este/este/issues/274
   componentWillMount() {
-    if (!process.env.IS_BROWSER) return;
+    if (!process.env.IS_BROWSER) {
+      return;
+    }
+
     appState.on('change', () => {
       measureRender(done => this.setState(this.getState(), done));
     });

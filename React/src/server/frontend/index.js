@@ -9,8 +9,9 @@ import userState from './userstate';
 const app = express();
 
 // Add Este.js headers for React related routes only.
-if (!config.isProduction)
+if (!config.isProduction) {
   app.use(headers());
+}
 
 app.use(compression());
 app.use(favicon('assets/favicon.ico'));

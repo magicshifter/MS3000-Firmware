@@ -41,11 +41,11 @@ export default class StatusBar extends Component {
     return (
       <div style={styles.wrapper}>
         <div style={styles.container}>
-          <div style={styles.floatLeft}>{msg('statusbar.title')}</div>
+          <div style={styles.floatLeft}>{msg('statusbar.title', {version: '0.0.1'})}</div>
           <div style={styles.floatRight}>
-            <span style={styles.title}>
+            <h5 style={styles.title}>
               {msg('statusbar.connectors.title')}
-            </span>
+            </h5>
             <Connector apiName='api' url='magicshifter.net/api/v1/' />
             <Connector apiName='magicshifter' />
           </div>
