@@ -137,6 +137,7 @@ void StartWebServer(void)
 
 void HandleWebServer ( void ) {
 #ifdef USE_MDNS
+  // CRASHES in new toolchain 
   mdns.update();
 #endif
   server.handleClient();

@@ -52,12 +52,14 @@ public:
       file.seek(frameIdx * height * BYTESPERPIXEL, SeekSet);
 
       if (height < maxHeight) maxHeight = height;
+
       int result = file.read(frameData, maxHeight * BYTESPERPIXEL);
 
       if (result < maxHeight * BYTESPERPIXEL)
       {
         return false;
       }
+      
       return true;
     }
     return false;
@@ -65,6 +67,7 @@ public:
 
   void close()
   {
-    file.close();
+    if (file)
+      file.close();
   }
 };

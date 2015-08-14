@@ -7,6 +7,7 @@ from https://github.com/esp8266/Arduino/issues/373
 
 
 
+/*
 // FS hack in FS.h/FS.c
 //////////////////////////////////////
 // hacked by wizard23
@@ -26,7 +27,7 @@ bool FS::exists(const char* path) {
    }
 }
 ////////////////////////////////////////
-
+*/
 
 
 
@@ -226,12 +227,13 @@ void setup()
     }
 
     activeImage.close();
+    
   } 
 }
 
 void loop()
 {
-   pinMode(PIN_BUTTON_B, INPUT);
+  pinMode(PIN_BUTTON_B, INPUT);
   shifter.loop();
 
   HandleWebServer();
