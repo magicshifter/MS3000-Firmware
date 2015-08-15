@@ -37,10 +37,10 @@ String getContentType(String filename){
 bool streamFile(String path){
   if(path.endsWith("/")) path += "index.htm";
   String contentType = getContentType(path);
-  if(FS.exists((char *)(path+".gz").c_str()) || FS.exists((char *)path.c_str())){
-    if(FS.exists((char *)(path+".gz").c_str()))
+  if(SPIFFS.exists((char *)(path+".gz").c_str()) || SPIFFS.exists((char *)path.c_str())){
+    if(SPIFFS.exists((char *)(path+".gz").c_str()))
       path += ".gz";
-    FSFile file = FS.open((char *)path.c_str());
+    File file = SPIFFS.open((char *)path.c_str(), "r");
     server.streamFile(file, contentType);
     file.close();
     return true;
@@ -124,8 +124,8 @@ void StartWebServer(void)
   server.onFileUpload(handleFileUpload);
 
   server.on ( "/format", []() {
-    String message = "formatin...";
-    FS.format();
+    String message = "formatin DISABLED cos of FS change, TODO: implement!!!11";
+    //FS.format();
     server.send ( 200, "text/plain", "formated" );
   } );
 
@@ -137,6 +137,7 @@ void StartWebServer(void)
 
 void HandleWebServer ( void ) {
 #ifdef USE_MDNS
+  // CRASHES in new toolchain 
   mdns.update();
 #endif
   server.handleClient();

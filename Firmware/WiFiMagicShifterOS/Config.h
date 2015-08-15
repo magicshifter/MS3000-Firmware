@@ -9,7 +9,9 @@ int GLOBAL_GS = 5;
 
 // remove define to enable ;)
 //#define DISABLE_ACCEL
-#define USE_MDNS
+
+//crashes on new esp aruino toolchain :\
+//#define USE_MDNS
 
 #define MODES 3
 
