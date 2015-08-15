@@ -1,195 +1,182 @@
 /*
  * MIDIMode.cpp
- *
  * Created: Wed Jul  9 22:19:46 CEST 2014
- *  Author: ibisum  <ibisum@gmail.com
+ * Author: Jay Vaughan <ibisum@gmail.com
  *
- *  NOTE: camelBack for types and functions, snake_case for vars, SCREAMING_SNAKE_CASE for defs
+ * A MIDI Processing mode for the MagicShifter
+ *
+ * Utilizes miby for MIDI Byte Parsing, from Neil Johnson  <http://www.njohnson.co.uk>
+ * Arpeggiator originally based on inspiration from RobG @ 43oh
+ *
+ * NOTE: camelBack for types and functions, snake_case for vars, SCREAMING_SNAKE_CASE for
+ * constant definitions
  *
  */
 
-// #include "../firmware.h"
+//#include "../firmware.h"
 
-#include "list.h"
+//#include "list.h"				// light list library (future-use)
 
-// MIDI-specific definitions
+// Neil Johnsons' tight MIDI Byte parser:
+#include "miby.h"
+#include "miby.cc"	// included like this because Arduino
+
+// NOTE: the configuration for the miby callbacks is done in MidiModeMibyConfig.h
+// .. which refers to functions declared in this module.  -D is used at build
+// time for configuration - see Makefile
+
+// Standard MIDI 1.0 definitions and other constants
 #include "midi_defs.h"
 
-#include "miby.cc"
+// ADSR Envelope calculator
+#include "envelope.h"
 
-// LAB/HAK ZONE:
-#define SEQ_LEN 10
-uint8_t midi_sequence[SEQ_LEN] =
-	{ 0xF0, 0x00, 0x00, 0x50, 0x22, 0x03, 0x40, 0x09, 0x00, 0xF7 };
+// Status Indicator LED's - for the Arpeggiator, etc.
+#define LED_ARP_COUNTER (13)
+#define LED_MEASURE_COUNTER (14)
+#define LED_BEAT_COUNTER (15)
+#define LED_CONTROL_CHANGE (10)
+#define LED_NOTE_EVENT (8)
 
-#define CSEQ_LEN (2 * 3)
-uint8_t midi_complex[CSEQ_LEN] = {
-	0x90, 0x40, 0x40,			//Start of E3 note, pitch = 64)
-// 0x90, 0x43, 0x40, //Start of G3 note, pitch= 67)
-// 0x80, 0x43, 0x00, //End of G3 note, pitch=67)
-// 0x90, 0x45, 0x40, //Start of A3 note, pitch=69)
-// 0x80, 0x45, 0x00, //End of A3 note, pitch=69)
-	0x80, 0x40, 0x00,			//End of E3 note, pitch=64)
-// 0x90, 0x3C, 0x40, //Start of C3 note, pitch = 60)
-// 0x90, 0x47, 0x40, //Start of B3 note, pitch= 71)
-// 0x80, 0x47, 0x00, //End of B3 note, pitch= 71)
-// 0x90, 0x48, 0x40, //Start of C4 note, pitch= 72)
-// 0x80, 0x48, 0x00, //End of C4 note, pitch= 72)
-// 0x80, 0x3C, 0x40, //End of C3 note, pitch = 60)
+// Current View per MIDI input
+typedef struct {
+	uint8_t midi_channel;		// MIDI channel of View
+	uint16_t time_base;			// Base Time for sequencer-Put
+	void *v_arg;				// user data
+} MIDIViewT ;
+
+MIDIViewT curr_midiview;
+
+// MIDI housekeeping
+uint8_t midi_mode = 0;			// Mode of this module (future-use)
+uint8_t sync_count;				// sync counter
+uint16_t midi_frame = 0;		// current MIDI Processing frame
+
+static uint16_t MIDI_Put(uint8_t * data, uint16_t cnt);
+static uint16_t MIDI_Get(uint8_t * data, uint16_t cnt);
+
+// MIDI event handlers
+void MIDI_Start(miby_this_t a_miby);
+void MIDI_Stop(miby_this_t a_miby);
+void MIDI_Program_Change(miby_this_t a_miby);
+void MIDI_Control_Change(miby_this_t a_miby);
+void MIDI_Note_On(miby_this_t a_miby);
+void MIDI_Note_Off(miby_this_t a_miby);
+
+// main entry point:
+void MIDIMode();
+
+// Frame Processor:
+void MIDIFrame(miby_t *miby);
+void MIDISync();
+
+// Arpeggiator constants -----------------------------------------------------------------
+#define BUFFER_SIZE (64)
+#define BUFFER_MASK (0x3F)
+#define ARP_DURATION_FOR_BPM(v) (600000/v/2)
+#define LOWEST_ARP_TEMPO (20)
+
+// Arpeggiator function declarations:
+void arpFrame(); // Arpeggiator processing is done per-frame
+void arpPlayNote(uint8_t noteNumber, uint8_t on_off);
+void arpSoundOff();
+void arpNoteOn(uint8_t noteChannel, uint8_t noteNumber, uint8_t velocity);
+void arpPushMIDI(uint8_t data);
+void arpSendMIDI();
+void arpProgramChange(uint8_t pcChannel, uint8_t number);
+uint8_t getNextNaturalNote(uint8_t note);
+uint8_t getNextNaturalNoteAdd(uint8_t naturalNote, uint8_t offset);
+
+// Arpeggiator structures:
+
+// ring buffer for queued events
+uint8_t fifo[BUFFER_SIZE];
+uint8_t fifo_in_index = 0;
+uint8_t fifo_out_index = 0;
+
+// An arpeggiator event
+typedef struct {
+	uint8_t beat;
+	uint8_t note;
+	uint8_t on_off;
+} ArpEventT;
+
+// A list of arpeggiator events (fixed size)
+ArpEventT arp_events[8];
+
+// Arpeggiator configuration state
+uint8_t  arp_play_state = 0;
+uint8_t arp_bpm = LOWEST_ARP_TEMPO;
+uint32_t arp_beat_duration = 0;
+uint32_t arp_frame_time = 0;
+uint8_t arp_frame = 0; // internal beat, which is 1/16th of the actual beat (see arp_bpm)
+uint8_t current_pattern = 1; // this will trigger loading for the first time.
+uint8_t new_pattern = 6;
+uint8_t current_note = 0;
+uint8_t new_note = 0;
+uint8_t current_velocity = 64;
+uint8_t new_velocity = 64;
+
+const uint8_t note_offset[12] = { 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0};
+
+const uint8_t note_LUT[7][7] = {
+	{ 0, 1, 2, 2, 3, 4, 5 },
+	{ 0, 1, 1, 2, 3, 4, 4 },
+	{ 0, 0, 1, 2, 3, 3, 4 },
+	{ 0, 1, 2, 3, 3, 4, 5 },
+	{ 0, 1, 2, 2, 3, 4, 4 },
+	{ 0, 1, 1, 2, 3, 3, 4 },
+	{ 0, 0, 1, 2, 2, 3, 4 }
 };
 
-// END OF LAB/HAK ZONE
+const uint8_t note_to_natural[12] = { 0, 1, 1, 2, 2, 3, 4, 4, 5, 5, 6, 6 };
+
+// A pattern of arpeggiator units
+typedef struct {
+	uint8_t note_offset;
+	uint8_t beat;
+	uint8_t note_duration;
+} ArpPatternT;
+
+const ArpPatternT arp_patterns[][4] = { // arp_patterns 4/4
+		{ { 0, BEAT1, EIGHTH },
+		  { 2, BEAT2, EIGHTH },
+		  { 0, BEAT3, EIGHTH },
+		  { 2, BEAT4, EIGHTH } }, //
+		{ { 0, BEAT1, EIGHTH },
+		  { 0, BEAT2, EIGHTH },
+  		  { 2, BEAT3, EIGHTH },
+  		  { 2, BEAT4, EIGHTH } }, //
+		{ { 0, BEAT1, EIGHTH },
+		  { 0, BEAT2, EIGHTH },
+		  { 2, BEAT3, EIGHTH },
+		  { 4, BEAT4, EIGHTH } }, //
+		{ { 0, BEAT1, EIGHTH },
+		  { 2, BEAT2, EIGHTH },
+		  { 4, BEAT3, EIGHTH },
+		  { 6, BEAT4, EIGHTH } }, //
+		{ { 0, BEAT1, EIGHTH },
+		  { 12, BEAT2, EIGHTH },
+		  { 0, BEAT3, EIGHTH },
+		  { 12, BEAT4, EIGHTH } }, //
+		{ { 0, BEAT1, EIGHTH },
+		  { 0, BEAT2, EIGHTH },
+		  { 12, BEAT3, EIGHTH },
+		  { 12, BEAT4, EIGHTH } }, //
+		{ { 0, BEAT1, EIGHTH },
+		  { 0, BEAT2, EIGHTH },
+		  { 4, BEAT3, EIGHTH },
+		  { 12, BEAT4, EIGHTH } }, //
+		{ { 0, BEAT1, EIGHTH },
+		  { 2, BEAT1 + 8, EIGHTH },
+		  { 4, BEAT2, QUARTER },
+		  { 6, BEAT4, EIGHTH } }, //
+		};
+
+// Envelopes - used for the LED's
+adsr_envelope anEnvelope;
 
 
-// from TEPIS - time divisors
-#define DEFAULT_DIVISOR 976
-#define DEFAULT_TIME_BASE 1000000
-// up to NUM_MIDI_SEQS can be recorded, per NUM_CHANNELS
-#define NUM_MIDI_SEQS 8
-#define NUM_CHANNELS 16
-
-// current state of the MIDI processing system
-static uint16_t midi_state = 0;
-
-// what we are looking at - the current View
-struct tMIDIView {
-	uint8_t channel;			// MIDI loved MTV
-	uint16_t time_base;			// time lords too
-	void *v_arg;				// this ones for you
-} ;
-
-struct tMIDIView curr_midiview;
-
-// a MIDI record
-struct tMIDIPacket {
-	uint8_t buffer[4];			// raw midi bytes
-	uint16_t pkt_time;			// time of arrival
-	uint8_t is_used;			// is currently in use
-	uint8_t r_stat;				// read status
-	uint8_t w_stat;				// write status
-} ;
-
-// head of MIDI_sequences
-struct tMIDISequence {
-	uint16_t in_time;			//
-	struct list_head list;		// for larger MIDI seqs (sysex)
-	struct tMIDIPacket midi_seqs[NUM_MIDI_SEQS];	// set of midi_seqs
-} ;
-
-// MIDI Sequences
-struct tMIDISequence MIDI_sequences[NUM_CHANNELS];
-
-// current packets per frame
-struct tMIDIPacket *midi_in_pkt;
-struct tMIDIPacket *midi_out_pkt;
-
-// inbox/outbox for packets per frame
-uint8_t midi_inbox;
-uint8_t midi_outbox;
-
-// uint8_t d_period=50;
-uint8_t sync_count;				// sync counter
-uint16_t midi_frame = 0;
-
-// Send a MIDI message
-static uint16_t MIDIPut(uint8_t * data, uint16_t cnt)
-{
-	// setPixel(15, 100, 100, 0);
-	// Serial.print(data[ret], HEX);
-	// blink(STAT2, d_period);
-// setPixel(15, 0, 100, 0);
-// delay(10);
-	return (Serial1.write(data, cnt));
-}
-
-// Receive a MIDI message if its available
-static uint16_t MIDIGet(uint8_t * data, uint16_t cnt)
-{
-	uint16_t ret;
-	ret = 0;
-	while ((cnt > 0) && (data[ret] = Serial1.read()) != -1) {
-// Serial.println(data[ret], HEX);
-		ret++;
-		cnt--;
-	}
-	// blink(STAT1, d_period);
-// setPixel(0, 100, 0, 0);
-// delay(10);
-	return ret;
-}
-
-void MIDIFrame()
-{
-// ANALYZE:
-// PROCESS I/O:
-	midi_in_pkt =
-		&MIDI_sequences[curr_midiview.channel].midi_seqs[midi_inbox];
-
-	midi_out_pkt =
-		&MIDI_sequences[curr_midiview.channel].midi_seqs[midi_outbox];
-
-	// pull midi_inbox
-	if (Serial1.available() > 0) {
-		setPixel(4, 100, 0, 0);
-		setPixel(5, 0,0,0);
-		if (midi_in_pkt->is_used == 0) {
-			midi_in_pkt->r_stat = MIDIGet(&midi_in_pkt->buffer[0], 4);
-			midi_in_pkt->pkt_time = micros();	///  time
-			midi_in_pkt->is_used = 1;
-			// inbox wrap
-			midi_inbox++;
-			if (midi_inbox >= NUM_MIDI_SEQS)
-				midi_inbox = 0;
-		}
-	}
-
-	// push midi_outbox
-	if (midi_out_pkt->pkt_time <= (micros() - curr_midiview.time_base)) {
-		if (midi_out_pkt->is_used == 1) {
-			setPixel(4, 0,0,0);
-			setPixel(5, 0, 0, 100);
-			midi_out_pkt->w_stat = MIDIPut(&midi_out_pkt->buffer[0], 4);
-			midi_out_pkt->is_used = 0;
-
-			// if (midi_state==1)
-			// {
-			//  midi_out_pkt->pkt_time += (micros() + curr_midiview.time_base * 2);
-			//  midi_out_pkt->is_used = 1;
-			//        // blink(STAT2, d_period * 2);
-			// }
-			// else
-			//  midi_out_pkt->is_used = 0;
-
-			// outbox wrap
-			midi_outbox++;
-			if (midi_outbox >= NUM_MIDI_SEQS)
-				midi_outbox = 0;
-		}
-	}
-
-
-	midi_frame++;
-	// if (midi_outbox == midi_inbox) midi_inbox=0;
-}
-
-// TODO: MIDI Sync
-void MIDISync()
-{
-	if (sync_count < 24) {
-		sync_count = sync_count + 1;
-		// blink(STAT2, d_period);
-	} else {
-		sync_count = 0;
-		//MIDIPut(0x80, 60, 0x00);
-		//MIDIPut(0x90, 60, 0x40);
-		// blink(STAT1);
-	}
-}
-
-
-  int currentTimeStamp = 0;
-  int lastTimeStamp = 0;
-  int microsSinceLast = 0;
 
 // !J! TODO : There should be a MagicShifter API for this
 // TODO: private state
@@ -216,6 +203,207 @@ void MIDISync()
   bool doubleClickedButtonA = false;
   bool doubleClickedButtonPower = false;
   bool doubleClickedButtonB = false;
+
+
+// ------------------------------------------------------------------------------ MIDI I/O
+// Send a MIDI message
+// returns the # of bytes sent
+static uint16_t MIDI_Put(uint8_t * data, uint16_t length)
+{
+	return (Serial1.write(data, length));
+}
+// Receive a MIDI message if its available
+// returns the # of bytes received in the message (count should be length)
+static uint16_t MIDI_Get(uint8_t * data, uint16_t length)
+{
+	int8_t count;
+	count = 0;
+	while ((length > 0) && (data[count] = Serial1.read()) != -1) {
+		count++;
+		length--;
+	}
+	return count;
+}
+
+// ------------------------------------------------------------------- MIDI Event Handlers
+// MIDI Event handlers, configured for use by miby
+void MIDI_Start(miby_this_t a_miby)
+{
+	if (arp_play_state == 0) {
+		arp_play_state = 1;
+		arp_frame = 0;
+	}
+}
+
+void MIDI_Stop(miby_this_t a_miby)
+{
+	if (arp_play_state == 1) {
+		arp_play_state = 0;
+		// arpSoundOff();
+	}
+}
+
+void MIDI_Program_Change(miby_this_t a_miby)
+{
+	arpProgramChange(curr_midiview.midi_channel,  MIBY_ARG0(a_miby));
+}
+
+void MIDI_Control_Change(miby_this_t a_miby)
+{
+	setPixel(LED_CONTROL_CHANGE, 0, 100, 100);
+	// TODO: Channel processing
+	// if (curr_midiview.midi_channel == MIBY_CHAN(a_miby)) {
+		// any controller can be used, cc#1 for now (modwheel)
+		if (MIBY_ARG0(a_miby) == 1) {
+			arp_bpm = LOWEST_ARP_TEMPO + (MIBY_ARG1(a_miby));
+			arp_beat_duration = ARP_DURATION_FOR_BPM(arp_bpm);
+		}
+	// }
+}
+
+void MIDI_Note_On( miby_this_t a_miby)
+{
+	arpNoteOn(curr_midiview.midi_channel,  MIBY_ARG0(a_miby),  MIBY_ARG1(a_miby));
+	setPixel(LED_NOTE_EVENT, 0, 0, 100);
+}
+
+void MIDI_Note_Off( miby_this_t a_miby)
+{
+	uint8_t note_msg[3];
+	note_msg[0] = MIBY_STATUSBYTE(a_miby);
+	note_msg[1] = MIBY_ARG0(a_miby);
+	note_msg[2] = MIBY_ARG1(a_miby);
+
+	MIDI_Put(note_msg, 3);
+
+	setPixel(LED_NOTE_EVENT, 0, 0, 0);
+}
+
+void LEDFrame()
+{
+	// Blink Arpeggiator LED's
+	if (arp_frame == 0) {
+		setPixel(LED_BEAT_COUNTER, 100, 0, 0);
+		setPixel(LED_MEASURE_COUNTER, 0, 100, 0);
+	}
+	else if ((arp_frame & 0x0F) == 0) {
+		setPixel(LED_BEAT_COUNTER, 0, 100, 0);
+	}
+	else { // LEDs off
+		setPixel(LED_ARP_COUNTER, 100, 0, 0);
+		setPixel(LED_BEAT_COUNTER, 0, 0, 0);
+		setPixel(LED_MEASURE_COUNTER, 0, 0, 0);
+	}
+
+#if 0
+		// updateLedsWithBlank();		// !J! 
+		if (!MagicShifter_Poll())
+			break;
+#endif
+
+	// Debug:
+	if (clickedButtonA) {
+		fillPixels(100, 0, 0);
+		// updateLedsWithBlank();
+		delay(10);
+		fillPixels(0, 0, 0);
+		clickedButtonA = false;
+	}
+	if (clickedButtonB) {
+		fillPixels(0, 0, 100);
+		// updateLedsWithBlank();
+		delay(10);
+		fillPixels(0, 0, 0);
+		clickedButtonB = false;
+	}
+
+}
+
+
+void envDump()
+{
+	int c;
+
+	Serial.println("Current Dump:");
+
+	Serial.print(" T: ");
+	Serial.print(anEnvelope.timer, DEC);
+
+	Serial.print(" L: ");
+	Serial.print(anEnvelope.level, DEC);
+
+	Serial.print(" C: ");
+	Serial.print((unsigned int)anEnvelope.current, HEX);
+
+	Serial.print(" IDLE: ");
+	Serial.println(anEnvelope.is_idle, DEC);
+
+	Serial.println("Envelope Dump:");
+
+	for (c=0;c<=ENV_RELEASE;c++){
+		Serial.print("Stage:");
+		Serial.print((unsigned int)&anEnvelope.stages[c], HEX);
+		Serial.print(" ");
+		Serial.print(c, DEC);
+		Serial.print(" L:");
+		Serial.print(anEnvelope.stages[c].level, DEC);
+		Serial.print(" / D:");
+		Serial.print(anEnvelope.stages[c].duration, DEC);
+		Serial.print(" @ C:");
+		Serial.println(anEnvelope.stages[c].coeff, DEC);
+
+	}
+}
+
+// Initialize the envelopes
+void envInit()
+{
+	adsr_envelope_init(&anEnvelope);
+	anEnvelope.stages[ENV_START].level = 1;
+	anEnvelope.stages[ENV_START].duration = 1;
+	anEnvelope.stages[ENV_START].coeff = 1;
+
+	anEnvelope.stages[ENV_ATTACK].level = 10;
+	anEnvelope.stages[ENV_ATTACK].duration = 2;
+	anEnvelope.stages[ENV_ATTACK].coeff = -1;
+
+	anEnvelope.stages[ENV_DECAY].level = 20;
+	anEnvelope.stages[ENV_DECAY].duration = 3;
+	anEnvelope.stages[ENV_DECAY].coeff = -1;
+
+	anEnvelope.stages[ENV_SUSTAIN].level = 30;
+	anEnvelope.stages[ENV_SUSTAIN].duration = 4;
+	anEnvelope.stages[ENV_SUSTAIN].coeff = -1;
+
+	anEnvelope.stages[ENV_RELEASE].level = 40;
+	anEnvelope.stages[ENV_RELEASE].duration = 5;
+	anEnvelope.stages[ENV_RELEASE].coeff = -1;
+
+	anEnvelope.current = &anEnvelope.stages[ENV_START]; // active
+
+}
+
+// calculate the envelopes
+void envFrame()
+{
+	static int8_t dbg;
+	adsr_envelope_tick(&anEnvelope);
+
+
+
+	envDump();
+
+
+	dbg++;
+	if (dbg>=10)
+		exit;
+}
+
+
+
+  int currentTimeStamp = 0;
+  int lastTimeStamp = 0;
+  int microsSinceLast = 0;
 
   void handleButtons()
   {
@@ -327,46 +515,222 @@ void MIDISync()
   }
 
 
+// ---------------------------------------------------------------------- Main Entry Point
 void MIDIMode()
 {
+	// Debug - set an LED so we know we made it ..
 	fillPixels(0, 0, 0);
-	setPixel(3, 0, 100, 0);
+	setPixel(0, 0, 100, 0);
 
-	curr_midiview.time_base = DEFAULT_DIVISOR;	//knob_1 * DEFAULT_DIVISOR;
-	curr_midiview.channel = 0;
-	midi_inbox = 0;
-	midi_outbox = 0;
+	// Initial view
+	curr_midiview.midi_channel = 0;
+
+	// The MIDI byte parser, provided by the miby module ..
+	miby_t 	miby;
+	miby_init(&miby, NULL);
+
+	// prime the Arp
+	arp_beat_duration = ARP_DURATION_FOR_BPM(arp_bpm);
+	//
+	arp_frame_time = micros();
+	arpFrame();
+
+	// prime the envelopes
+	envInit();
+
+delay(1000);
+
+Serial.println("START START START START");
+Serial.println("START START START START");
+Serial.println("START START START START");
+Serial.println("START START START START");
+Serial.println("START START START START");
+
+delay(200);
+
+	arpSoundOff();
 
 	while (1) {
+		MIDIFrame(&miby);
 
-		handleButtons();		// !J! TODO: use MS API for this?
 
-// blink(50, 50, 3);
-// MIDIPut(midi_complex, CSEQ_LEN);
-		MIDIFrame();
-		// fillPixels(0,0,0);
-		// setPixel(15, centerBtnPressed ? 100 : 0, powerBtnPressed ? 100 : 0, 0);
+  		// minimize latency introduced by the Arp frame
+		if (!((micros() - arp_frame_time) < arp_beat_duration))
+			arpFrame();
+
+		envFrame();
 
 #if 0
-		// updateLedsWithBlank();		// !J! 
 		if (!MagicShifter_Poll())
 			break;
 #endif
 
-		// Debug:
-		if (clickedButtonA) {
-			fillPixels(100, 0, 0);
-			// updateLedsWithBlank();
-			delay(10);
-			fillPixels(0, 0, 0);
-			clickedButtonA = false;
-		}
-		if (clickedButtonB) {
-			fillPixels(0, 0, 100);
-			// updateLedsWithBlank();
-			delay(10);
-			fillPixels(0, 0, 0);
-			clickedButtonB = false;
-		}
 	}
+}
+
+// ------------------------------------------------------------- Main MIDI Frame Processor
+void MIDIFrame(miby_t *miby)
+{
+	uint8_t	midi_inb;
+// ANALYZE:
+// PROCESS I/O:
+	// pull midi_inbox
+	if (Serial1.available()) {
+		MIDI_Get(&midi_inb, 1);
+		miby_parse(miby, midi_inb);
+	}
+	else  // Soft-thru, etc.
+	{
+		// MIDI_Put(&midi_buf[0], 4);
+	}
+	midi_frame++;
+
+}
+
+
+// TODO: MIDI Sync
+void MIDISync()
+{
+	if (sync_count < 24) {
+		sync_count = sync_count + 1;
+	} else {
+		sync_count = 0;
+	}
+}
+
+
+// --------------------------------------------------------------------------- ARPEGGIATOR
+// Process a frame of the Arpeggiator
+void arpFrame() {
+
+	uint8_t event_idx = 0;
+
+	// end of arp measure, go to the beginning
+	if (arp_frame == 64) {
+		arp_frame = 0;
+
+		// finish current pattern before stopping
+		if (arp_play_state == 0)
+			return;
+	}
+
+	// handle changes in arp inputs - at the beginning of the measure...
+	if (arp_frame == 0 && (new_note != current_note || new_pattern != current_pattern
+					       || new_velocity != current_velocity)) {
+		// ...update arp_events if anything has changed
+
+		// 8 arp_events, 4 pairs of notes, one on and one off
+		while (event_idx < 4) {
+			// if you don't use getNextNaturalNote in arpNoteOn, use getNextNaturalNote
+			// here instead
+			uint8_t note = getNextNaturalNoteAdd(new_note,
+								arp_patterns[new_pattern][event_idx].note_offset);
+			// on
+			arp_events[event_idx].beat = arp_patterns[new_pattern][event_idx].beat;
+			arp_events[event_idx].note = note;
+			arp_events[event_idx].on_off = 1;
+
+			// off
+			// assuming that the beat and the duration is correctly calculated, sum
+			// must be < 64
+			arp_events[event_idx + 4].beat = arp_patterns[new_pattern][event_idx].beat
+					+ arp_patterns[new_pattern][event_idx].note_duration;
+
+			arp_events[event_idx + 4].note = note;
+			arp_events[event_idx + 4].on_off = 0;
+			event_idx++;
+		}
+
+		// note any potential new pattern change
+		current_pattern = new_pattern;
+		current_note = new_note;
+		current_velocity = new_velocity;
+
+	}
+
+	// process arp_events
+	event_idx = 0;
+
+	// go through all arp_events and play when event beat matches arp_frame
+	while (event_idx < 8) {
+		if (arp_events[event_idx].beat == arp_frame) {
+			arpPlayNote(arp_events[event_idx].note, arp_events[event_idx].on_off);
+		}
+		event_idx++;
+	}
+
+	LEDFrame();
+
+	// gather time data for next arp Frame
+	arp_frame++;
+	arp_frame_time = micros();
+}
+
+void arpPlayNote(uint8_t noteNumber, uint8_t on_off) {
+	arpPushMIDI((on_off ? MIDI_NOTE_ON : MIDI_NOTE_OFF) + curr_midiview.midi_channel);
+	arpPushMIDI(noteNumber);
+	arpPushMIDI(current_velocity);
+
+	arpSendMIDI();
+}
+
+void arpSoundOff() {
+	arpPushMIDI(MIDI_CONTROLLER + curr_midiview.midi_channel);
+	arpPushMIDI(MIDI_ALL_NOTES_OFF);
+	arpPushMIDI(0);
+
+	arpSendMIDI();
+}
+
+void arpNoteOn(uint8_t noteChannel, uint8_t noteNumber, uint8_t velocity) {
+	//new_note = noteNumber;
+	new_note = getNextNaturalNote(noteNumber);
+	new_velocity = velocity;
+	if (arp_play_state == 0) { // start if stopped
+		arp_frame = 0;
+		arp_play_state = 1;
+	}
+}
+
+// push a MIDI event into the arpeggiator queue for later processing
+void arpPushMIDI(uint8_t data) {
+	fifo[++fifo_in_index & BUFFER_MASK] = data;
+}
+
+// arpSendMIDI should be called after queueing up all messages and associated data for
+// those messages
+void arpSendMIDI() {
+	while (fifo_in_index != fifo_out_index) { // send whatever is in the buffer
+		MIDI_Put(&fifo[++fifo_out_index & BUFFER_MASK], 1);
+	}
+}
+
+// reeive a Program change to change Arp Pattern
+void arpProgramChange(uint8_t pcChannel, uint8_t number) {
+	if (curr_midiview.midi_channel == pcChannel) {
+		// only 8 preset arp_patterns right now so each program number is masked
+		new_pattern = number & 0x07;
+	}
+}
+
+// If the note is not a natural note, return next natural note
+uint8_t getNextNaturalNote(uint8_t note) {
+	uint8_t offset = note;
+	while (offset > 11) {
+		offset -= 12;
+	}
+	return note + note_offset[offset];
+}
+
+// Calculate net natural note + offset
+uint8_t getNextNaturalNoteAdd(uint8_t naturalNote, uint8_t offset) {
+	uint8_t n = naturalNote;
+	while (n > 11) {
+		n -= 12;
+	}
+	uint8_t o = offset;
+	while (o > 6) {
+		o -= 7;
+	}
+	return naturalNote + offset + note_LUT[note_to_natural[n]][o];
 }
