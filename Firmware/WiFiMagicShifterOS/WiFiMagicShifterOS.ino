@@ -93,6 +93,10 @@ extern "C" {
 
 #include "WebServer.h"
 
+#ifdef MIDISHIFTER
+#include "MidiShifter/MidiShifter.h"
+#endif
+
 
 // state
 MagicShifter shifter;
