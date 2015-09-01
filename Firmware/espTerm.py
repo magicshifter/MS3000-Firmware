@@ -4,7 +4,7 @@ import serial
 import curses
 import time
 
-portName = "/dev/ttyUSB0"
+portName = "/dev/cu.SLAB_USBtoUART"
 baudRate = 115200
 #baudRate = 76800 # 38400 # bootloader baudreate
 

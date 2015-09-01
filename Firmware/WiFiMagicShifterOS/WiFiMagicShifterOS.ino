@@ -4,39 +4,6 @@ prevent restarts: Make sure GPIO 2 is not connected, i.e. float.
 from https://github.com/esp8266/Arduino/issues/373
 */
 
-
-
-
-/*
-// FS hack in FS.h/FS.c
-//////////////////////////////////////
-// hacked by wizard23
-bool FS::exists(const String& path) {
-    return exists(path.c_str());
-}
-
-bool FS::exists(const char* path) {
-   File f = open(path, "r");
-   if (f)
-   {
-    return true;
-   }
-   else
-   {
-    return false;
-   }
-}
-////////////////////////////////////////
-*/
-
-
-
-
-
-
-
-
-
 #include "SPI.h"
 //#include <Ticker.h>
 #include <math.h>

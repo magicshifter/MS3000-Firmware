@@ -13,7 +13,23 @@ const int ERROR = 15;
 void log(String msg, int level = ERROR)
 {
   if (DEBUG_LEVEL <= level)
-    Serial.print(msg);
+  {
+#ifdef DEBUG_SERIAL
+    Serial.print(msg)
+#endif
+
+// !J!
+#define DEBUG_SYSLOG 1
+#ifdef DEBUG_SYSLOG
+    WiFiUDP udp;
+#define __SYSLOG_PORT 514
+    udp.beginPacket(address, __SYSLOG_PORT); //NTP requests are to port 123
+    udp.print(packetBuffer);
+    udp.endPacket();
+#endif
+
+
+  }
 }
 
 void logln(String msg, int level = ERROR)
