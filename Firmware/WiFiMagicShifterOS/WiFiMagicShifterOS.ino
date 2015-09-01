@@ -4,6 +4,39 @@ prevent restarts: Make sure GPIO 2 is not connected, i.e. float.
 from https://github.com/esp8266/Arduino/issues/373
 */
 
+
+
+
+/*
+// FS hack in FS.h/FS.c
+//////////////////////////////////////
+// hacked by wizard23
+bool FS::exists(const String& path) {
+    return exists(path.c_str());
+} 
+
+bool FS::exists(const char* path) {
+   File f = open(path, "r");
+   if (f)
+   {
+    return true;
+   }
+   else
+   {
+    return false;
+   }
+}
+////////////////////////////////////////
+*/
+
+
+
+
+
+
+
+
+
 #include "SPI.h"
 //#include <Ticker.h>
 #include <math.h>
@@ -178,6 +211,64 @@ void setup()
   }
   updatePixels();
   //saveBuffer(web_rgb_buffer);
+
+
+  const String debugPath = "debug";
+  uint8_t testVals[] = {1,23, 3, 7};
+  uint8_t readBuffer[] = {0,0,0,0};
+  //File file = SPIFFS.open((char *)debugPath.c_str(), "w");
+  
+  Serial.print("openin for w: ");
+  Serial.println(debugPath);
+  
+  File file = SPIFFS.open(debugPath, "w");
+
+  Serial.print("opended for w: ");
+  Serial.println((bool)file);
+
+  Serial.print("writin: ");
+  Serial.println(testVals[1]);
+
+  file.write((uint8_t *)testVals, sizeof(testVals));
+  file.close();
+
+  Serial.print("openin for r: ");
+  Serial.println(debugPath);
+  
+  File fileR = SPIFFS.open(debugPath, "w");
+
+  Serial.print("opended for r: ");
+  Serial.println((bool)fileR);
+
+  Serial.print("readin: ");
+
+  fileR.read((uint8_t *)readBuffer, sizeof(readBuffer));
+  fileR.close();
+
+  Serial.print("readback: ");
+  Serial.println(readBuffer[1]);
+
+
+
+ // delay(1000)
+
+while (1)
+{
+  // swipe colors
+    for (byte idx = 0; idx < LEDS; idx++)
+    {
+      setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, GLOBAL_GS);
+      updatePixels();
+      delay(30);
+    }
+    for (byte idx = 0; idx < LEDS; idx++)
+    {
+      setPixel(idx, 0, 0, 0, 1);
+      updatePixels();
+      delay(30);
+    }
+}
+  
 
   while (0)
   {
