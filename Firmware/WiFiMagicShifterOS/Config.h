@@ -8,7 +8,7 @@ int GLOBAL_GS = 5;
 #define HWVERSION 2
 
 // remove define to enable ;)
-//#define DISABLE_ACCEL
+#define DISABLE_ACCEL
 
 //crashes on new esp aruino toolchain :\
 //#define USE_MDNS
