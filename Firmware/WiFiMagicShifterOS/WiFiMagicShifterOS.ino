@@ -94,7 +94,7 @@ extern "C" {
 #include "WebServer.h"
 
 #ifdef MIDISHIFTER
-#include "MidiShifter/MidiShifter.h"
+//#include "MidiShifter/MidiShifter.h"
 #endif
 
 
@@ -221,7 +221,7 @@ void setup()
   Serial.print("openin for w: ");
   Serial.println(debugPath);
   
-  File file = SPIFFS.open(debugPath, "w");
+  File file = SPIFFS.open("debug", "w");
 
   Serial.print("opended for w: ");
   Serial.println((bool)file);
@@ -235,7 +235,7 @@ void setup()
   Serial.print("openin for r: ");
   Serial.println(debugPath);
   
-  File fileR = SPIFFS.open(debugPath, "w");
+  File fileR = SPIFFS.open("debug", "w");
 
   Serial.print("opended for r: ");
   Serial.println((bool)fileR);

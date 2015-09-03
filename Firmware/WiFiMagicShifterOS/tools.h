@@ -19,16 +19,15 @@ void log(String msg, int level = ERROR)
 #endif
 
 // !J!
-#define DEBUG_SYSLOG 1
+#define DEBUG_SYSLOG 0
 #ifdef DEBUG_SYSLOG
     WiFiUDP udp;
 #define __SYSLOG_PORT 514
-    udp.beginPacket(address, __SYSLOG_PORT); //NTP requests are to port 123
-    udp.print(packetBuffer);
+    // udp.beginPacket("192.168.43.151", __SYSLOG_PORT); //NTP requests are to port 123
+    udp.beginPacket("192.168.0.24", __SYSLOG_PORT); //NTP requests are to port 123
+    udp.print(msg);
     udp.endPacket();
 #endif
-
-
   }
 }
 
