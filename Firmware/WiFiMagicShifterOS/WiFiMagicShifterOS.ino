@@ -254,12 +254,55 @@ void setup()
   magicMode.start(&shifter);
   magicMode.setActiveFile(uploadname);
 
+///*
   for (byte idx = 0; idx < LEDS; idx++)
   {
     setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
   }
   updatePixels();
   //saveBuffer(web_rgb_buffer);
+//*/
+
+  while (0)
+  {
+    float voltage = shifter.getBatteryVoltage();
+
+    Serial.print(voltage);
+    Serial.println("V");
+
+    for (int i = 0; i < 10; i ++)
+    {
+      shifter.getBatteryVoltage();
+      delay(1); 
+    }
+
+    int bbb = 255;
+
+    for (byte idx = 0; idx < LEDS; idx++)
+    {
+      setPixel(idx, ((idx % 3)  == 0) ? bbb : 0, ((idx  % 3) == 1 ) ? bbb : 0, ((idx %  3) == 2) ? bbb : 0, 0);
+
+      setPixel((LEDS + idx - 16)%LEDS, 0, 0, 0, 0);
+      updatePixels();
+      delay(100);
+      shifter.getBatteryVoltage();
+    }
+
+    delay(1);
+
+/*
+     // swipe colors
+    for (byte idx = 0; idx < LEDS; idx++)
+    {
+      setPixel(idx, (idx & 1) ? bbb : 0, (idx & 2) ? bbb : 0, (idx & 4) ? bbb : 0, 0);
+      updatePixels();
+      delay(20);
+      shifter.getBatteryVoltage();
+    }
+  */  
+   
+  }
+  /*
 
 
 
@@ -304,6 +347,7 @@ void setup()
     activeImage.close();
     
   } 
+  */
 }
 
 void loop()
