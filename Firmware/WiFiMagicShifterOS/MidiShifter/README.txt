@@ -1,7 +1,19 @@
 
 This is the MIDIShifter codebase, for use as an app with the MagicShifter.
 
-Tooling for MIDIShifter = Current Arduino-ESP tools (from repo), plus SublimeText3+Stino plugin.
-			i.e. do not use the Arduino API if you #undef MIDISHIFTER
+Tooling for MIDIShifter:
+		Please use the current Arduino-ESP tools (from repo), typically used
+			with the SublimeText3+Stino plugin.
+
+		ESP Arduino for your platform:
+				https://github.com/esp8266/Arduino
+
+		(Build from source from latest stable branch recommended)
+
+		SublimeText3 for your platform: 
+				http://www.sublimetext.com/
+
+		Stino plugin (ties Arduino/ESP tools to SublimeText):
+				https://github.com/Robot-Will/Stino
 
 
