@@ -26,6 +26,11 @@ bool FS::exists(const char* path) {
     return false;
    }
 }
+
+/// for h
+  bool exists(const String& path);
+  bool exists(const char* path);
+  
 ////////////////////////////////////////
 */
 
