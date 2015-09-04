@@ -3,6 +3,8 @@
 
 int GLOBAL_GS = 5;
 
+
+#define MIDISHIFTER 1
 // v1 == breadboard pcb
 // 2 == 0.9 pcb :)
 #define HWVERSION 2

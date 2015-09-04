@@ -35,7 +35,7 @@ String getContentType(String filename){
 }
 
 bool streamFile(String path){
-  /*
+  
   if(path.endsWith("/")) path += "index.htm";
   String contentType = getContentType(path);
   if(SPIFFS.exists((char *)(path+".gz").c_str()) || SPIFFS.exists((char *)path.c_str())){
@@ -46,7 +46,12 @@ bool streamFile(String path){
     file.close();
     return true;
   }
-  */
+  else
+  {
+    Serial.print("streamFile fail:");
+    Serial.println(path.c_str());
+  }
+  
   return false;
 }
 
