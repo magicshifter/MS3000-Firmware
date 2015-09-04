@@ -5,6 +5,7 @@
 
 extern int DEBUG_LEVEL;
 
+// TODO: enum this
 const int VERBOSE = 0;
 const int INFO = 5;
 const int WARNING = 10;

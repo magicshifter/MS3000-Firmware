@@ -14,7 +14,7 @@
 byte ledBuffer[RGB_BUFFER_SIZE + 8];
 byte clearBuffer[RGB_BUFFER_SIZE + 8];
 
-byte *RGB_COLORS = ledBuffer + 4;;
+byte *RGB_COLORS = ledBuffer + 4;
 
 
 void saveBuffer(byte *buffer)
@@ -73,34 +73,35 @@ void InitAPA102() {
 
 void setPixel(int index, byte r, byte g, byte b, byte gs = 0x1F)
 {
-  int idx = index << 2;
-  RGB_COLORS[idx] = 0xE0 | gs;
-  RGB_COLORS[idx+1] = b;
-  RGB_COLORS[idx+2] = g;
-  RGB_COLORS[idx+3] = r;
+#if (LED_TYPE == LED_TYPE_APA102)
+    int idx = index << 2;
+    RGB_COLORS[idx] = 0xE0 | gs;
+    RGB_COLORS[idx+1] = b;
+    RGB_COLORS[idx+2] = g;
+    RGB_COLORS[idx+3] = r;
+#else
+    int idx = index * 3;
+    RGB_COLORS[idx+0] = b;
+    RGB_COLORS[idx+1] = g;
+    RGB_COLORS[idx+2] = r;
+#endif
 }
 
 void fillPixels(byte r, byte g, byte b, byte gs = 0x1F)
 {
   for (int idx = 0; idx < LEDS; idx++)
   {
-    setPixel(idx, r, g, b);
+    setPixel(idx, r, g, b, gs);
   }
 }
 
 void updatePixels()
 {
-  SPI.writeBytes(ledBuffer, RGB_BUFFER_SIZE + 8);
-/*
-  SPI.write32(0);
-
-  for (int idx = 0; idx < RGB_BUFFER_SIZE; idx++)
-  {
-    SPI.write(RGB_COLORS[idx]);
-  }
-
-  SPI.write32(0);
-*/
+#if (LED_TYPE == LED_TYPE_APA102)
+    SPI.writeBytes(ledBuffer, RGB_BUFFER_SIZE + 8);
+#else
+    SPI.writeBytes(RGB_COLORS, RGB_BUFFER_SIZE);
+#endif
 }
 
 void fastClear()

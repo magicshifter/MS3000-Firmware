@@ -59,6 +59,7 @@ public:
     // init components
     InitAPA102();
 
+/*
     // swipe colors
     for (byte idx = 0; idx < LEDS; idx++)
     {
@@ -72,6 +73,7 @@ public:
       updatePixels();
       delay(30);
     }
+    */
   }
 
   void powerDown()
@@ -265,14 +267,27 @@ public:
     return analogRead(A0);
   }
 
+  float avg = 3.2;
+
   float getBatteryVoltage(void)
   {
     int adValue = getADValue();
     int ad1V = 1023;
-    float r1 = 180, r2 = 390, r3 = 330;
+
+
+
+    //float r1 = 180, r2 = 390, r3 = 330; // gamma??? or (not beta)
+    float r1 = 270, r2 = 1000, r3 = 0; // alpha
+
     float voltage = ((float)(r1 + r2 + r3) * adValue) / (r1 * ad1V);
-    return voltage;
+
+    static float p = 0.01;
+    avg = p*0.02 + voltage * (1-p);
+
+    return avg;
   }
+
+
 
   bool powerButtonPressed(void)
   {
