@@ -62,7 +62,7 @@ private:
 public:
   bool getServerConfig(struct ServerConfig *config)
   {
-    /*
+    
     String path = apServerConfigPath;
     if(SPIFFS.exists((char *)path.c_str()))
     {
@@ -71,26 +71,32 @@ public:
       file.close();
       return true;
     }
+    else 
+    {
+      Serial.print("File doesn't exist:");
+      Serial.println((char * )path.c_str());
+    }
+
     safeStrncpy(config->hostname, "magicshifter", sizeof(config->hostname));
     config->port = 80;
-    */
+    
     return false;
   }
 
   void setServerConfig(struct ServerConfig *config)
   {
-    /*
+    
     String path = apServerConfigPath;
     File file = SPIFFS.open((char *)path.c_str(), "w");
     file.write((uint8_t *)config, sizeof(*config));
     
     file.close();
-  */
+  
   }
 
   bool getAPConfig(struct APInfo *config)
   {
-    /*
+    
     String path = apConfigPath;
     if(SPIFFS.exists((char *)path.c_str()))
     {
@@ -99,15 +105,21 @@ public:
       file.close();
       return true;
     }
+    else
+    {
+      Serial.print("AP config missing:");
+      Serial.println((char *)path.c_str());
+    }
+
     safeStrncpy(config->ssid, "MS3000", sizeof(config->ssid));
     safeStrncpy(config->password, "", sizeof(config->password));
-    */
+    
     return false;
   }
 
   void setAPConfig(struct APInfo *config)
   {
-    /*
+    
     String path = apConfigPath;
     File file = SPIFFS.open((char *)path.c_str(), "w");
     file.write((uint8_t *)config, sizeof(*config));
@@ -115,12 +127,12 @@ public:
 
     logln("saved:");
     logln(config->ssid);
-    */
+    
   }
 
   bool getPreferedAP(struct APInfo *config)
   {
-    /*
+    
     String path = preferedAPConfigPath;
     if(SPIFFS.exists((char *)path.c_str()))
     {
@@ -132,22 +144,22 @@ public:
     safeStrncpy(config->ssid, "", sizeof(config->ssid));
     safeStrncpy(config->password, "", sizeof(config->password));
     return false;
-    */
+    
   }
 
   void setPreferedAP(struct APInfo *config)
   {
-    /*
+    
     String path = preferedAPConfigPath;
     File file = SPIFFS.open((char *)path.c_str(), "w");
     file.write((uint8_t *)config, sizeof(*config));
     file.close();
-    */
+    
   }
 
   void deleteAP(char *ssid)
   {
-    /*
+    
     String path = apListConfigPath;
     // bug in FS WRITE define!!!!
     //FSFile apListFile = FS.open((char *)path.c_str(), (SPIFFS_RDONLY | SPIFFS_WRONLY | SPIFFS_CREAT));
@@ -176,12 +188,12 @@ public:
       lastPos = apListFile.position();
     }
     apListFile.close();
-    */
+    
   }
 
   void addAP(struct APInfo *apInfo)
   {
-    /*
+    
     String path = apListConfigPath;
     File apListFile = SPIFFS.open((char *)path.c_str(), "r");
     const int requiredBytes = sizeof(*apInfo);
@@ -218,24 +230,24 @@ public:
     }
     apListFile.write((uint8_t *)apInfo, requiredBytes);
     apListFile.close();
-    */
+    
   }
 
   void resetAPList()
   {
-    /*
+    
       apListIndex = -1;
       apListFile.close();
-      */
+      
   }
 
   bool getNextAP(struct APInfo *apInfo)
   {
-    /*
+    
     if (apListIndex < 0)
     {
       String path = apListConfigPath;
-      //if(SPIFFS.exists((char *)path.c_str()))
+      if(SPIFFS.exists((char *)path.c_str()))
       {
         //apListFile = SPIFFS.open((char *)path.c_str(), "r");
         apListIndex = 0;
@@ -247,7 +259,7 @@ public:
       const int requiredBytes = sizeof(*apInfo);
       do
       {
-        //if (apListFile.read((uint8_t *)apInfo, requiredBytes) == requiredBytes)
+        if (apListFile.read((uint8_t *)apInfo, requiredBytes) == requiredBytes)
         {
           apListIndex++;
           if (!memcmpByte((byte *)apInfo, 0, requiredBytes))
@@ -263,7 +275,7 @@ public:
     {
       return false;
     }
-    */
+    
 
     ///hack
     return false;

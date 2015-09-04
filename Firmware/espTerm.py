@@ -4,8 +4,8 @@ import serial
 import curses
 import time
 
-portName = "/dev/cu.SLAB_USBtoUART"
-baudRate = 115200
+portName = "/dev/tty.SLAB_USBtoUART"
+baudRate = 57600 * 2
 #baudRate = 76800 # 38400 # bootloader baudreate
 
 def tryOpenSerial():
@@ -25,6 +25,11 @@ def resetESP(port):
 def main(stdscr):
     port = tryOpenSerial()
     # resetESP(port)
+
+    # reset 
+    port.setDTR(False)
+    port.setRTS(True)
+    port.setRTS(False)
 
     canChangeColor = curses.can_change_color()
     #curses.noecho()
