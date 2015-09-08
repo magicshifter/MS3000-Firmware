@@ -1,7 +1,11 @@
 //#include "MagicShifter.h"
 
-extern byte web_rgb_buffer[];
-extern int shifterMode;
+#include "MagicGlobals.h"
+
+extern CMagicGlobals mGlobals;
+
+#include "MagicShifter.h"
+extern MagicShifter mShifter;
 
 #define MAX_AP_LEN 48
 struct APInfo
@@ -125,8 +129,8 @@ public:
     file.write((uint8_t *)config, sizeof(*config));
     file.close();
 
-    logln("saved:");
-    logln(config->ssid);
+    // logln("saved:");
+    // logln(config->ssid);
     
   }
 
@@ -175,8 +179,8 @@ public:
     {
       if (strcmp(apInfoDummy.ssid, ssid) == 0)
       {
-        log("deleting wifi:", VERBOSE);
-        logln(ssid, VERBOSE);
+        // log("deleting wifi:", VERBOSE);
+        // logln(ssid, VERBOSE);
 
         apInfoDummy.clear();
         int calcPos = apListIndex * requiredBytes;
@@ -218,14 +222,14 @@ public:
 
     if (firstFreePos >= 0)
     {
-      logln("found hole!");
-      logln(String(firstFreePos));
+      // logln("found hole!");
+      // logln(String(firstFreePos));
       apListFile = SPIFFS.open((char *)path.c_str(), "a+");
       apListFile.seek(firstFreePos, SeekSet);
     }
     else
     {
-      logln("appendiong at end");
+      // logln("appendiong at end");
       apListFile = SPIFFS.open((char *)path.c_str(), "a");
     }
     apListFile.write((uint8_t *)apInfo, requiredBytes);
@@ -283,22 +287,18 @@ public:
 };
 SettingsManager Settings;
 
-extern long bootTime;
 void handleGETAbout(void)
 {
-  logln("handleGETAbout");
+  // logln("handleGETAbout");
 
   String response = "{\"type\":\"MagicShifter3000\",\"format\":\"BGRA\",\"version\":" + String(VERSION) +
     ",\"leds\":" + String(LEDS) + ",\"id\":" + String(ESP.getChipId()) + ",\"flashid\":" + String(ESP.getFlashChipId()) + ",\"flashsize\":" + String(ESP.getFlashChipSize()) + "}";
   server.send(200, "text/plain", response);
 }
 
-
-extern int accelCount[];
-
 void handleGETStatus(void)
 {
-  logln("handleGETStatus");
+  // logln("handleGETStatus");
 
   int adValue = analogRead(A0);
 
@@ -311,19 +311,18 @@ void handleGETStatus(void)
   float voltage = ((float)(r1 + r2 + r3) * adValue) / (r1 * ad1V);
 
 
-  readAccelData(accelCount);
+  readAccelData(mGlobals.accelCount);
 
-  float accelG[3];
   for (int i = 0 ; i < 3 ; i++)
   {
-    accelG[i] = (float) accelCount[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set
+    mGlobals.accelG[i] = (float) mGlobals.accelCount[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set
   }
 
-  uint32_t ip = (uint32_t)shifter.getIP();
+  uint32_t ip = (uint32_t)mShifter.getIP();
 
   String response = "{\"id\":" + String(ESP.getChipId()) + ",\"uptime\":" +
-  String(millis() - bootTime) + ",\"adValue\":" + adValue + ",\"voltage\":" + voltage +
-  "\",accelRaw\":[" + accelCount[0] + "," + accelCount[1] + "," + accelCount[2] + "],\"accelG\":[" + accelG[0] + "," + accelG[1] + ","+ accelG[2] + 
+  String(millis() - mGlobals.bootTime) + ",\"adValue\":" + adValue + ",\"voltage\":" + voltage +
+  "\",accelRaw\":[" + mGlobals.accelCount[0] + "," + mGlobals.accelCount[1] + "," + mGlobals.accelCount[2] + "],\"mGlobals.accelG\":[" + mGlobals.accelG[0] + "," + mGlobals.accelG[1] + ","+ mGlobals.accelG[2] + 
     "],\"ip\":\"" + (0xFF & (ip>>0)) + "."  + (0xFF & (ip>>8)) + "."  + (0xFF & (ip>>16)) + "."  + (0xFF & (ip>>24)) + "\"}";
   server.send(200, "text/plain", response);
 }
@@ -333,11 +332,11 @@ bool parseAPInfoFromServerArgs(APInfo &apInfo)
   bool success = true;
   for (int i = 0; i < server.args(); i++)
   {
-    logln("argName: ", VERBOSE);
-    logln(server.argName(i), VERBOSE);
+    // logln("argName: ", VERBOSE);
+    // logln(server.argName(i), VERBOSE);
 
-    logln("arg: ", VERBOSE);
-    logln(server.arg(i), VERBOSE);
+    // logln("arg: ", VERBOSE);
+    // logln(server.arg(i), VERBOSE);
 
     if (strcmp(server.argName(i).c_str(), "ssid") == 0)
     {
@@ -349,7 +348,7 @@ bool parseAPInfoFromServerArgs(APInfo &apInfo)
     }
     else
     {
-      logln("arg is not known!", VERBOSE);
+      // logln("arg is not known!", VERBOSE);
       success = false;
     }
   }
@@ -358,7 +357,7 @@ bool parseAPInfoFromServerArgs(APInfo &apInfo)
 
 void handleGETServerSettings(void)
 {
-  logln("handleGETServerSettings", INFO);
+  // logln("handleGETServerSettings", INFO);
 
   ServerConfig config;
   Settings.getServerConfig(&config);
@@ -377,7 +376,7 @@ void handleGETServerSettings(void)
 
 void handlePOSTServerSettings(void)
 {
-  logln("handlePOSTServerSettings", INFO);
+  // logln("handlePOSTServerSettings", INFO);
   if (server.args() >= 2)
   {
     ServerConfig config;
@@ -386,11 +385,11 @@ void handlePOSTServerSettings(void)
     bool success = true;
     for (int i = 0; i < server.args(); i++)
     {
-      logln("argName: ", VERBOSE);
-      logln(server.argName(i), VERBOSE);
+      // logln("argName: ", VERBOSE);
+      // logln(server.argName(i), VERBOSE);
 
-      logln("arg: ", VERBOSE);
-      logln(server.arg(i), VERBOSE);
+      // logln("arg: ", VERBOSE);
+      // logln(server.arg(i), VERBOSE);
 
       if (strcmp(server.argName(i).c_str(), "host") == 0)
       {
@@ -424,7 +423,7 @@ void handlePOSTServerSettings(void)
 
 void handleGETAPSettings(void)
 {
-  logln("handleGETAPSettings");
+  // logln("handleGETAPSettings");
 
   APInfo apInfo;
   Settings.getAPConfig(&apInfo);
@@ -443,7 +442,7 @@ void handleGETAPSettings(void)
 
 void handlePOSTAPSettings(void)
 {
-  logln("handlePOSTAPSettings", INFO);
+  // logln("handlePOSTAPSettings", INFO);
 
   if (server.args() >= 2)
   {
@@ -453,7 +452,7 @@ void handlePOSTAPSettings(void)
 
     if (parseAPInfoFromServerArgs(apInfo))
     {
-      logln("saving setAPConfig");
+      // logln("saving setAPConfig");
       Settings.setAPConfig(&apInfo);
       server.send (200, "text/plain", "OK");
     }
@@ -471,7 +470,7 @@ void handlePOSTAPSettings(void)
 
 void handleGETPreferdAPSettings(void)
 {
-  logln("handleGETPreferdAPSettings", INFO);
+  // logln("handleGETPreferdAPSettings", INFO);
 
   APInfo apInfo;
   Settings.getPreferedAP(&apInfo);
@@ -490,7 +489,7 @@ void handleGETPreferdAPSettings(void)
 
 void handlePOSTPreferedAPSettings(void)
 {
-  logln("handlePOSTPreferedAPSettings", INFO);
+  // logln("handlePOSTPreferedAPSettings", INFO);
 
   if (server.args() >= 2)
   {
@@ -499,7 +498,7 @@ void handlePOSTPreferedAPSettings(void)
 
     if (parseAPInfoFromServerArgs(apInfo))
     {
-      logln("saving setAPConfig");
+      // logln("saving setAPConfig");
       Settings.setPreferedAP(&apInfo);
       server.send (200, "text/plain", "OK");
     }
@@ -520,7 +519,7 @@ void handlePOSTPreferedAPSettings(void)
 
 void handleGETAPList(void)
 {
-  logln("handleGETAPList", INFO);
+  // logln("handleGETAPList", INFO);
 
   APInfo apInfo;
   Settings.getPreferedAP(&apInfo);
@@ -554,9 +553,9 @@ void handleGETAPList(void)
 
 void handleGETWLANList(void)
 {
-  logln("handleGETWLANList", INFO);
+  // logln("handleGETWLANList", INFO);
 
-  if (apMode)
+  if (mGlobals.apMode)
   {
     server.send(200, "text/plain", "crash in AP mode...so diusabled for now");
     return;
@@ -604,7 +603,7 @@ void handleGETWLANList(void)
 
 void handlePOSTAPListAdd(void)
 {
-  logln("handlePOSTAPListAdd", INFO);
+  // logln("handlePOSTAPListAdd", INFO);
 
   if (server.args() >= 2)
   {
@@ -616,7 +615,7 @@ void handlePOSTAPListAdd(void)
     {
       if (!strcmp(apInfo.ssid, "") == 0)
       {
-        logln("adding wifi");
+        // logln("adding wifi");
         Settings.addAP(&apInfo);
       }
       server.send (200, "text/plain", "OK");
@@ -634,7 +633,7 @@ void handlePOSTAPListAdd(void)
 
 void handlePOSTAPListDelete(void)
 {
-  logln("handlePOSTAPListDelete", INFO);
+  // logln("handlePOSTAPListDelete", INFO);
 
   if (server.args() >= 1)
   {
@@ -646,7 +645,7 @@ void handlePOSTAPListDelete(void)
     {
       if (!strcmp(apInfo.ssid, "") == 0)
       {
-        logln("deleting wifi");
+        // logln("deleting wifi");
         Settings.deleteAP(apInfo.ssid);
       }
       server.send (200, "text/plain", "OK");
@@ -665,7 +664,7 @@ void handlePOSTAPListDelete(void)
 
 void handleSetMode(void)
 {
-  logln("handleSetMode", INFO);
+  // logln("handleSetMode", INFO);
   if (server.args() == 1)
   {
     ServerConfig config;
@@ -674,13 +673,13 @@ void handleSetMode(void)
     bool success = true;
     for (int i = 0; i < server.args(); i++)
     {
-      logln("argName: ", VERBOSE);
-      logln(server.argName(i), VERBOSE);
+      // logln("argName: ", VERBOSE);
+      // logln(server.argName(i), VERBOSE);
 
-      logln("arg: ", VERBOSE);
-      logln(server.arg(i), VERBOSE);
+      // logln("arg: ", VERBOSE);
+      // logln(server.arg(i), VERBOSE);
 
-      shifterMode = atoi(server.arg(i).c_str());
+      mGlobals.shifterMode = atoi(server.arg(i).c_str());
     }
 
     if (success)
@@ -688,7 +687,7 @@ void handleSetMode(void)
       String response = "{";
       response += "\"mode\":";
       response += "\"";
-      response += shifterMode;
+      response += mGlobals.shifterMode;
       response += "\"";
       response += "}";
       server.send(200, "text/plain", response);
@@ -735,10 +734,10 @@ void handleLedSet()
       Serial.print("data+1: ");
       Serial.println((int)ledData[i+1]);
 
-      web_rgb_buffer[idx*4] = ledData[i+1];
-      web_rgb_buffer[idx*4+1] = ledData[i+2];
-      web_rgb_buffer[idx*4+2] = ledData[i+3];
-      web_rgb_buffer[idx*4+3] = ledData[i+4];
+      mGlobals.web_rgb_buffer[idx*4] = ledData[i+1];
+      mGlobals.web_rgb_buffer[idx*4+1] = ledData[i+2];
+      mGlobals.web_rgb_buffer[idx*4+2] = ledData[i+3];
+      mGlobals.web_rgb_buffer[idx*4+3] = ledData[i+4];
     }
   }
   else
@@ -751,7 +750,7 @@ void handleLedSet()
 
 void handleLedsSet()
 {
-  logln("handleLedsSet", INFO);
+  // logln("handleLedsSet", INFO);
   
   String message = "LedsSet\n\n";
 
@@ -760,7 +759,7 @@ void handleLedsSet()
     const char* input = server.arg(0).c_str();
     int inputLen = BASE64_ENC_LEN(RGB_BUFFER_SIZE);
 
-    base64_decode((char *)web_rgb_buffer, input, inputLen);
+    base64_decode((char *)mGlobals.web_rgb_buffer, input, inputLen);
 
     message += "done";
   }

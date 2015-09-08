@@ -1,5 +1,9 @@
 #define PREDICT_SAME_DIRECTION true
 
+#include "MagicGlobals.h"
+extern CMagicGlobals mGlobals;
+
+
 class POVShakeSyncDummy
 {
   int frames = 16;
@@ -123,7 +127,7 @@ public:
 	// returns true if POV shake is actve
   bool update(float g)
   {
-    int currentMicros = micros();
+    mGlobals.currentMicros = micros();
 		ShakePoint currentPoint;
 
     // frame handling
@@ -139,7 +143,7 @@ public:
   	else
   	{
   		// TODO: make values configurable
-  		if (lastMin.micros > currentMicros + 500 * 1000 || lastMin.g + 1. > lastMax.g)
+  		if (lastMin.micros > mGlobals.currentMicros + 500 * 1000 || lastMin.g + 1. > lastMax.g)
         isActive = false;
       else
         isActive = true;
@@ -157,7 +161,7 @@ public:
 			if (g < activeMin.g)
 			{
 			  activeMin.g = g;
-			  activeMin.micros = currentMicros;
+			  activeMin.micros = mGlobals.currentMicros;
         activeFramesMin2Max = 0;
 			}
       else
@@ -202,14 +206,14 @@ public:
 
 				// reset max
 				activeMax.g = g;
-				activeMax.micros = currentMicros;
+				activeMax.micros = mGlobals.currentMicros;
 
 				//fillPixels(3, 0, 3);
 			}
 			// last this dir or last other dir
-			//else if (!firedPredictedZero && (currentMicros > lastMax.micros + min2maxDelta/2)) // ikes
-      //else if (!firedPredictedZero && (currentMicros > lastMax.micros + max2minDelta/2)) // correct
-      else if (!firedPredictedZero && currentMicros > frameStartTime)
+			//else if (!firedPredictedZero && (mGlobals.currentMicros > lastMax.micros + min2maxDelta/2)) // ikes
+      //else if (!firedPredictedZero && (mGlobals.currentMicros > lastMax.micros + max2minDelta/2)) // correct
+      else if (!firedPredictedZero && mGlobals.currentMicros > frameStartTime)
 			{
         frameIndex = frames - 1;
         isFrameIndexActive = true;
@@ -217,7 +221,7 @@ public:
 
 			  //fillPixels(5, 0, 0);
 			}
-			else if (!firedPredictedExtremum && currentMicros >= lastMax.micros + max2minDelta)
+			else if (!firedPredictedExtremum && mGlobals.currentMicros >= lastMax.micros + max2minDelta)
 			{
 				firedPredictedExtremum = true;
 				//fillPixels(20, 0, 0);
@@ -227,7 +231,7 @@ public:
 			if (g > activeMax.g)
 			{
 			  activeMax.g = g;
-			  activeMax.micros = currentMicros;
+			  activeMax.micros = mGlobals.currentMicros;
 				activeFramesMax2Min = 0;
 			}
 			else
@@ -249,13 +253,13 @@ public:
 
 				// reset min
 				activeMin.g = g;
-				activeMin.micros = currentMicros;
+				activeMin.micros = mGlobals.currentMicros;
 
 				//fillPixels(0, 3, 3);
 			}
-			//else if (!firedPredictedZero && (currentMicros > lastMin.micros + max2minDelta/2)) // ikes
-			//else if (!firedPredictedZero && (currentMicros > lastMin.micros + min2maxDelta/2)) // ok
-			else if (!firedPredictedZero && currentMicros > frameStartTime)
+			//else if (!firedPredictedZero && (mGlobals.currentMicros > lastMin.micros + max2minDelta/2)) // ikes
+			//else if (!firedPredictedZero && (mGlobals.currentMicros > lastMin.micros + min2maxDelta/2)) // ok
+			else if (!firedPredictedZero && mGlobals.currentMicros > frameStartTime)
       {
         frameIndex = 0;
         isFrameIndexActive = true;

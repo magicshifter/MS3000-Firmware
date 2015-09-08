@@ -130,7 +130,7 @@ class BouncingBall
     bool stopLoop = false;
     for (byte idx = start; !stopLoop ; idx += delta)
     {
-      setPixel(idx, 255, 255, 255, GLOBAL_GS);
+      setPixel(idx, 255, 255, 255, mGlobals.GLOBAL_GS);
       updatePixels();
       delay(2);
 

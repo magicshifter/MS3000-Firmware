@@ -306,23 +306,23 @@ void MIDISync()
 
     if (clickedButtonB)
     {
-      GLOBAL_GS+=2;
-      if (GLOBAL_GS > 31)
+      mGlobals.GLOBAL_GS+=2;
+      if (mGlobals.GLOBAL_GS > 31)
       {
-        GLOBAL_GS = 31;
+        mGlobals.GLOBAL_GS = 31;
       }
 
-      //shifterMode = (shifterMode+1)%MODES;
+      //mGlobals.shifterMode = (mGlobals.shifterMode+1)%MODES;
     }
     if (longClickedButtonB)
     {
-      GLOBAL_GS-=6;
-      if (GLOBAL_GS < 1)
+      mGlobals.GLOBAL_GS-=6;
+      if (mGlobals.GLOBAL_GS < 1)
       {
-        GLOBAL_GS = 1;
+        mGlobals.GLOBAL_GS = 1;
       }
 
-      //shifterMode = (shifterMode+1)%MODES;
+      //mGlobals.shifterMode = (mGlobals.shifterMode+1)%MODES;
     }
   }
 

@@ -1,6 +1,8 @@
 #include "Config.h"
 
-extern bool apMode;
+#include "MagicGlobals.h"
+
+extern CMagicGlobals mGlobals;
 
 bool TryConnect(struct APInfo &apInfo, int timeoutMs)
 {
@@ -32,7 +34,7 @@ bool TryConnect(struct APInfo &apInfo, int timeoutMs)
     }
 
     // crashes!
-    shifter.loop();
+    mShifter.loop();
     
     delay(20);
   }
@@ -85,7 +87,7 @@ bool AutoConnect()
       Serial.println("stored prefered wifi found.");
       if (TryConnect(apInfo, CONNECTION_TIMEOUT))
       {
-        apMode = false;
+        mGlobals.apMode = false;
         return true;
       }
     }
@@ -126,7 +128,7 @@ bool AutoConnect()
         {
           if (TryConnect(apInfo, CONNECTION_TIMEOUT))
           {
-            apMode = false;
+            mGlobals.apMode = false;
             return true;
           }
         }
@@ -142,7 +144,7 @@ bool AutoConnect()
   Settings.getAPConfig(&apInfo);
   if (TrySoftAP(apInfo))
   {
-    apMode = true;
+    mGlobals.apMode = true;
     return true;
   }
 

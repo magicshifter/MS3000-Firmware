@@ -1,12 +1,14 @@
 #define FILENAME_LENGTH 100
 
-// make it larger to be on the save side when base64 decoding
-extern byte web_rgb_buffer[];
-extern MagicMode magicMode;
-// TODO: at least move globals to main
-char uploadname[FILENAME_LENGTH];
-File uploadFile;
+#include "MagicGlobals.h"
+extern CMagicGlobals mGlobals;
 
+#include "MagicMode.h"
+extern MagicMode magicMode;
+
+
+// TODO: Move to MagicGlobals?
+File uploadFile;
 
 void handleNotFound() {
   if (server.uri() != "/upload")
@@ -34,7 +36,7 @@ void handleNotFound() {
         <title><a href=\"/\">MagicShifter3000</a> upload done</title>\
       </head>\
       <body>\
-        <h1>Upload of " + String(uploadname) + " done</h1><a href=\"/list?dir=\">list</a><br><a href=\"\">index.html</a></body></html>";
+        <h1>Upload of " + String(mGlobals.uploadname) + " done</h1><a href=\"/list?dir=\">list</a><br><a href=\"\">index.html</a></body></html>";
 
     server.send ( 200, "text/html", message );
 
@@ -56,17 +58,17 @@ void handleReadFile()
   {
     String args = server.arg(0);
 
-    strcpy(uploadname, args.c_str());
-    saveString(uploadname, FILENAME_LENGTH);
+    strcpy(mGlobals.uploadname, args.c_str());
+    saveString(mGlobals.uploadname, FILENAME_LENGTH);
 
 
     message += "file name: \"" + args /* String(filename)*/ + "\"\n";
 
-    //message += "file name strcpied: \"" +  uploadname + "\"\n";
+    //message += "file name strcpied: \"" +  mGlobals.uploadname + "\"\n";
 
 
     byte buffer[105];
-    File file = SPIFFS.open(uploadname, "r");
+    File file = SPIFFS.open(mGlobals.uploadname, "r");
 
     if (file)
     {
@@ -222,10 +224,11 @@ void handleFileUpload(){
   HTTPUpload& upload = server.upload();
   if(upload.status == UPLOAD_FILE_START)
   {
-    strcpy(uploadname, upload.filename.c_str());//.c_str();
+    strcpy(mGlobals.uploadname, upload.filename.c_str());//.c_str();
     Serial.print("upload started: ");
-    Serial.println(uploadname);
-    uploadFile = SPIFFS.open(uploadname, "w");
+    Serial.println(mGlobals.uploadname);
+
+    uploadFile = SPIFFS.open(mGlobals.uploadname, "w");
 
     if (!uploadFile)
       Serial.println("ERROR: COULD NOT open file!!!");
@@ -249,9 +252,9 @@ void handleFileUpload(){
   }
   else if(upload.status == UPLOAD_FILE_END)
   {
-    magicMode.setActiveFile(uploadname);
+    magicMode.setActiveFile(mGlobals.uploadname);
 
-    saveString(uploadname, FILENAME_LENGTH);
+    saveString(mGlobals.uploadname, FILENAME_LENGTH);
     if(uploadFile)
     {
       //bool result;

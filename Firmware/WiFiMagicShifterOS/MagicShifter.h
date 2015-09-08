@@ -3,8 +3,7 @@
 
 #include "Config.h"
 
-extern bool apMode;
-extern int shifterMode;
+#include "MagicGlobals.h"
 
 class Accelerometer
 {
@@ -63,7 +62,7 @@ public:
     // swipe colors
     for (byte idx = 0; idx < LEDS; idx++)
     {
-      setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, GLOBAL_GS);
+      setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, mGlobals.GLOBAL_GS);
       updatePixels();
       delay(30);
     }
@@ -164,12 +163,12 @@ public:
       if (m_enableLongClicks && buttonAPressedTime >= MIN_TIME_LONG_CLICK)
       {
         longClickedButtonA = true;
-        log("longClickedButtonA", INFO);
+        // log("longClickedButtonA", INFO);
       }
       else if (buttonAPressedTime >= MIN_TIME_CLICK)
       {
         clickedButtonA = true;
-        log("clickedButtonA", INFO);
+        // log("clickedButtonA", INFO);
       }
 
       buttonAPressedTime = 0;
@@ -190,13 +189,13 @@ public:
       if (m_enableLongClicks && buttonBPressedTime >= MIN_TIME_LONG_CLICK)
       {
         longClickedButtonB = true;
-        log("longClickedButtonB", INFO);
+        // log("longClickedButtonB", INFO);
 
       }
       else if (buttonBPressedTime >= MIN_TIME_CLICK)
       {
         clickedButtonB = true;
-        log("clickedButtonB", INFO);
+        // log("clickedButtonB", INFO);
       }
 
       buttonBPressedTime = 0;
@@ -237,23 +236,23 @@ public:
 
     if (clickedButtonB)
     {
-      GLOBAL_GS+=2;
-      if (GLOBAL_GS > 31)
+      mGlobals.GLOBAL_GS+=2;
+      if (mGlobals.GLOBAL_GS > 31)
       {
-        GLOBAL_GS = 31;
+        mGlobals.GLOBAL_GS = 31;
       }
 
-      //shifterMode = (shifterMode+1)%MODES;
+      //mGlobals.shifterMode = (mGlobals.shifterMode+1)%MODES;
     }
     if (longClickedButtonB)
     {
-      GLOBAL_GS-=6;
-      if (GLOBAL_GS < 1)
+      mGlobals.GLOBAL_GS-=6;
+      if (mGlobals.GLOBAL_GS < 1)
       {
-        GLOBAL_GS = 1;
+        mGlobals.GLOBAL_GS = 1;
       }
 
-      //shifterMode = (shifterMode+1)%MODES;
+      //mGlobals.shifterMode = (mGlobals.shifterMode+1)%MODES;
     }
   }
 
@@ -296,7 +295,7 @@ public:
 
   IPAddress getIP()
   {
-    if (apMode)
+    if (mGlobals.apMode)
     {
       return WiFi.softAPIP();
     }

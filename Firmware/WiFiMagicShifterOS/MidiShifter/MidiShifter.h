@@ -18,7 +18,7 @@
 //#include "list.h"				// light list library (future-use)
 
 // Neil Johnsons' tight MIDI Byte parser:
-#include "miby.h"
+// #include "miby.h"
 #include "miby.cc"	// included like this because Arduino
 
 // NOTE: the configuration for the miby callbacks is done in MidiModeMibyConfig.h
@@ -108,7 +108,6 @@ ArpEventT arp_events[8];
 uint8_t  arp_play_state = 0;
 uint8_t arp_bpm = LOWEST_ARP_TEMPO;
 uint32_t arp_beat_duration = 0;
-uint32_t arp_frame_time = 0;
 uint8_t arp_frame = 0; // internal beat, which is 1/16th of the actual beat (see arp_bpm)
 uint8_t current_pattern = 1; // this will trigger loading for the first time.
 uint8_t new_pattern = 6;
@@ -421,12 +420,12 @@ void envFrame()
       if (m_enableLongClicks && buttonAPressedTime >= MIN_TIME_LONG_CLICK)
       {
         longClickedButtonA = true;
-        log("longClickedButtonA", INFO);
+        // log("longClickedButtonA", INFO);
       }
       else if (buttonAPressedTime >= MIN_TIME_CLICK)
       {
         clickedButtonA = true;
-        log("clickedButtonA", INFO);
+        // log("clickedButtonA", INFO);
       }
 
       buttonAPressedTime = 0;
@@ -447,13 +446,13 @@ void envFrame()
       if (m_enableLongClicks && buttonBPressedTime >= MIN_TIME_LONG_CLICK)
       {
         longClickedButtonB = true;
-        log("longClickedButtonB", INFO);
+        // log("longClickedButtonB", INFO);
 
       }
       else if (buttonBPressedTime >= MIN_TIME_CLICK)
       {
         clickedButtonB = true;
-        log("clickedButtonB", INFO);
+        // log("clickedButtonB", INFO);
       }
 
       buttonBPressedTime = 0;
@@ -494,23 +493,23 @@ void envFrame()
 
     if (clickedButtonB)
     {
-      GLOBAL_GS+=2;
-      if (GLOBAL_GS > 31)
+      mGlobals.GLOBAL_GS+=2;
+      if (mGlobals.GLOBAL_GS > 31)
       {
-        GLOBAL_GS = 31;
+        mGlobals.GLOBAL_GS = 31;
       }
 
-      //shifterMode = (shifterMode+1)%MODES;
+      //mGlobals.shifterMode = (mGlobals.shifterMode+1)%MODES;
     }
     if (longClickedButtonB)
     {
-      GLOBAL_GS-=6;
-      if (GLOBAL_GS < 1)
+      mGlobals.GLOBAL_GS-=6;
+      if (mGlobals.GLOBAL_GS < 1)
       {
-        GLOBAL_GS = 1;
+        mGlobals.GLOBAL_GS = 1;
       }
 
-      //shifterMode = (shifterMode+1)%MODES;
+      //mGlobals.shifterMode = (mGlobals.shifterMode+1)%MODES;
     }
   }
 
@@ -532,33 +531,26 @@ void MIDIMode()
 	// prime the Arp
 	arp_beat_duration = ARP_DURATION_FOR_BPM(arp_bpm);
 	//
+	uint32_t arp_frame_time = 0;
 	arp_frame_time = micros();
 	arpFrame();
 
 	// prime the envelopes
 	envInit();
 
-delay(1000);
-
-Serial.println("START START START START");
-Serial.println("START START START START");
-Serial.println("START START START START");
-Serial.println("START START START START");
-Serial.println("START START START START");
-
-delay(200);
-
 	arpSoundOff();
 
 	while (1) {
 		MIDIFrame(&miby);
 
-
   		// minimize latency introduced by the Arp frame
 		if (!((micros() - arp_frame_time) < arp_beat_duration))
 			arpFrame();
+		arp_frame_time = micros();
 
 		envFrame();
+
+
 
 #if 0
 		if (!MagicShifter_Poll())
@@ -663,7 +655,6 @@ void arpFrame() {
 
 	// gather time data for next arp Frame
 	arp_frame++;
-	arp_frame_time = micros();
 }
 
 void arpPlayNote(uint8_t noteNumber, uint8_t on_off) {

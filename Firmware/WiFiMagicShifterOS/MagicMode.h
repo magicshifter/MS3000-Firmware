@@ -3,8 +3,13 @@
 
 #include "tools.h"
 
-// TODO: move to Accel object :)
-extern float accelG[3];
+#include "MagicGlobals.h"
+
+extern CMagicGlobals mGlobals;
+
+#include "Image.h"
+
+#include "ShakeSync.h"
 
 #define FRAME_MULTIPLY 4
 
@@ -42,16 +47,16 @@ private:
 
 // make it larger to be on the save side when base64 decoding
 /*
-class RGBLightMode :MagicShifterMode
+class RGBLightMode :MagicMS_Globals.shifterMode
 {
 private:
-  loadBuffer(web_rgb_buffer);
+  loadBuffer(mGlobals.web_rgb_buffer);
   updatePixels();
 
 public:
   void loop(void)
   {
-    loadBuffer(web_rgb_buffer);
+    loadBuffer(mGlobals.web_rgb_buffer);
     updatePixels();
   }
 }
@@ -75,7 +80,7 @@ public:
 
   void loop()
   {
-    if (shakeSync.update(accelG[2]))
+    if (shakeSync.update(mGlobals.accelG[2]))
     {
       int index = shakeSync.getFrameIndex();
       if (index > 0)

@@ -1,7 +1,6 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-int GLOBAL_GS = 5;
 
 
 #define MIDISHIFTER 1
@@ -34,8 +33,6 @@ const bool forceAPMode = true;
 #define R602_VAL 820
 //*/
 
-// VERBOSE, INFO, WARNING, ERROR
-int DEBUG_LEVEL = VERBOSE;
 
 /*
 const char *jsonLastAP =

@@ -1,43 +1,40 @@
 /* NOTES
 
-prevent restarts: Make sure GPIO 2 is not connected, i.e. float.
-from https://github.com/esp8266/Arduino/issues/373
-*/
+ * This is the MIDIShifter branch, which is set up to add full MIDI
+   capabilities to the MagicShifter.  We use MagicShifter3000 modules,
+   but will proceed rapidly to tighten/tidy things up a bit..
+
+ * At the moment, we depend on a hack to FS.h/FS.cpp, which is not 
+    upstream .. hacked by wizard23
+
+    The hack is:
+  bool FS::exists(const String& path) {
+      return exists(path.c_str());
+  } 
+
+  bool FS::exists(const char* path) {
+     File f = open(path, "r");
+     if (f)
+     {
+      return true;
+     }
+     else
+     {
+      return false;
+     }
+  }
+
+ * To prevent restarts: Make sure GPIO 2 is not connected, i.e. float.
+      from https://github.com/esp8266/Arduino/issues/373
 
 
+ * TODO:
+      !J! Construct mGlobals &etc.
+      !J! Make execution environment changes (i.e. main_loop() -> app_loop())
+      !J! Add single MagicShifter:: API: LEDs, MIDI, Web-UI, Files, etc.
+      !J! Port existing MagicShifter UI apps to new app_loop() and API
+      */
 
-
-/*
-// FS hack in FS.h/FS.c
-//////////////////////////////////////
-// hacked by wizard23
-bool FS::exists(const String& path) {
-    return exists(path.c_str());
-} 
-
-bool FS::exists(const char* path) {
-   File f = open(path, "r");
-   if (f)
-   {
-    return true;
-   }
-   else
-   {
-    return false;
-   }
-}
-////////////////////////////////////////
-*/
-
-
-
-
-
-
-
-
-
-#include "SPI.h"
 //#include <Ticker.h>
 #include <math.h>
 #include <Wire.h> // Used for I2C
@@ -49,6 +46,7 @@ bool FS::exists(const char* path) {
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 #include <Base64.h>
+#include <EEPROM.h>
 
 #include <stdbool.h>
 #include <ctype.h>
@@ -66,69 +64,66 @@ bool FS::exists(const char* path) {
 
 //compiler.c.elf.libs=-lm -lgcc -lhal -lphy -lnet80211 -llwip -lwpa -lmain -lpp -lsmartconfig -lc -ljson
 extern "C" {
-#include "json/json.h"
-#include <json/jsonparse.h>
-#include <json/jsontree.h>
+  #include "json/json.h"
+  #include <json/jsonparse.h>
+  #include <json/jsontree.h>
 }
-
-#include <EEPROM.h>
-
-//#define LEDS 48
-//#define LEDS 16
-
-//#define MMA8452_ADDRESS 0x1D  // 0x1D if SA0 is high, 0x1C if low
-//#define MMA8452_ADDRESS 0x1C
 
 #include "tools.h"
 #include "Config.h"
 #include "APA102.h"
 #include "MMA8542.h"
+#include "WebServer.h"
+
+#include "MagicGlobals.h"
+CMagicGlobals mGlobals;
 
 #include "MagicShifter.h"
+MagicShifter mShifter;
 
-#include "ShakeSync.h"
-#include "Image.h"
 #include "MagicMode.h"
-#include "CircleBall.h"
-
-#include "WebServer.h"
 
 #ifdef MIDISHIFTER
 #include "MidiShifter/MidiShifter.h"
 #endif
 
-
-// state
-MagicShifter shifter;
+#include "CircleBall.h"
 
 MagicMode magicMode;
 DebugMode debugMode;
 //POVShakeSync shakeSync;
 POVShakeSyncDummy shakeSync;
+//CircleBall aBouncingBall(600);
+BouncingBall aBouncingBall(600);
 
-//CircleBall ball(600);
-BouncingBall ball(600);
 
+void log(String msg, int level = ERROR)
+{
+  if (mGlobals.DEBUG_LEVEL <= level)
+  {
+    #ifdef DEBUG_SERIAL
+    Serial.print(msg)
+    #endif
 
-float accelG[3];  // Stores the real accel value in g's
+// !J!
+#define DEBUG_SYSLOG 0
+#ifdef DEBUG_SYSLOG
+WiFiUDP udp;
+#define __SYSLOG_PORT 514
+    // udp.beginPacket("192.168.43.151", __SYSLOG_PORT); //NTP requests are to port 123
+    udp.beginPacket("192.168.0.24", __SYSLOG_PORT); //NTP requests are to port 123
+    udp.print(msg);
+    udp.endPacket();
+    #endif
+  }
+}
 
-int shifterMode = 0;
-int accelCount[3];  // Stores the 12-bit signed value
-int oldButton1State = 0;
+void logln(String msg, int level = ERROR)
+{
+  if (mGlobals.DEBUG_LEVEL <= level)
+  Serial.println(msg);
+}
 
-int currentMicros = 0, lastMicros = 0;
-int speedMicros = 1000;
-long lastFrameMicros = 0;
-int frame = 0;
-byte bright = 0xFF;
-byte gs = 0x1;
-int loops = 0;
-long bootTime = 0;
-bool apMode = false;
-// make it larger to be on the save side when base64 decoding
-byte web_rgb_buffer[RGB_BUFFER_SIZE + 4];
-
-extern char uploadname[];
 
 void TEST_SPIFFS_bug()
 {
@@ -172,11 +167,11 @@ void TEST_SPIFFS_bug()
 
 void setup()
 {
-  shifter.setup();
+  mShifter.setup();
   
 
 
-  bootTime = millis();
+  mGlobals.bootTime = millis();
 
 
   // DUMP sysinfo
@@ -220,9 +215,9 @@ void setup()
   Serial.println(ESP.getResetInfo());
 
   if (SPIFFS.begin()) 
-    Serial.println("SPIFFS begin!");
+  Serial.println("SPIFFS begin!");
   else
-    Serial.println("SPIFFS not begin .. :(");
+  Serial.println("SPIFFS not begin .. :(");
 
 // TEST_SPIFFS_bug();
 
@@ -236,59 +231,59 @@ void setup()
   //Serial.println(FS.check() ? "OK" : "ERROR!");
 
 
-#ifndef DISABLE_ACCEL
+  #ifndef DISABLE_ACCEL
   InitMMA8452(); //Test and intialize the MMA8452
-#endif
+  #endif
 
   StartWebServer();
 
-  loadString(uploadname, FILENAME_LENGTH);
-  //if (!FS.exists(uploadname))
+  loadString(mGlobals.uploadname, FILENAME_LENGTH);
+  //if (!FS.exists(mGlobals.uploadname))
   {
     Serial.print("could not find: ");
-    Serial.println(uploadname);
-    strcpy(uploadname, "big_smile_gif.magicBitmap");
+    Serial.println(mGlobals.uploadname);
+    strcpy(mGlobals.uploadname, "big_smile_gif.magicBitmap");
   }
   Serial.print("using POV file: ");
-  Serial.println(uploadname);
-  magicMode.start(&shifter);
-  magicMode.setActiveFile(uploadname);
+  Serial.println(mGlobals.uploadname);
+  magicMode.start(&mShifter);
+  magicMode.setActiveFile(mGlobals.uploadname);
 
 ///*
-  for (byte idx = 0; idx < LEDS; idx++)
-  {
-    setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
-  }
-  updatePixels();
-  //saveBuffer(web_rgb_buffer);
+for (byte idx = 0; idx < LEDS; idx++)
+{
+  setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
+}
+updatePixels();
+  //saveBuffer(mGlobals.web_rgb_buffer);
 //*/
 
-  while (0)
+while (0)
+{
+  float voltage = mShifter.getBatteryVoltage();
+
+  Serial.print(voltage);
+  Serial.println("V");
+
+  for (int i = 0; i < 10; i ++)
   {
-    float voltage = shifter.getBatteryVoltage();
+    mShifter.getBatteryVoltage();
+    delay(1); 
+  }
 
-    Serial.print(voltage);
-    Serial.println("V");
+  int bbb = 255;
 
-    for (int i = 0; i < 10; i ++)
-    {
-      shifter.getBatteryVoltage();
-      delay(1); 
-    }
+  for (byte idx = 0; idx < LEDS; idx++)
+  {
+    setPixel(idx, ((idx % 3)  == 0) ? bbb : 0, ((idx  % 3) == 1 ) ? bbb : 0, ((idx %  3) == 2) ? bbb : 0, 0);
 
-    int bbb = 255;
+    setPixel((LEDS + idx - 16)%LEDS, 0, 0, 0, 0);
+    updatePixels();
+    delay(100);
+    mShifter.getBatteryVoltage();
+  }
 
-    for (byte idx = 0; idx < LEDS; idx++)
-    {
-      setPixel(idx, ((idx % 3)  == 0) ? bbb : 0, ((idx  % 3) == 1 ) ? bbb : 0, ((idx %  3) == 2) ? bbb : 0, 0);
-
-      setPixel((LEDS + idx - 16)%LEDS, 0, 0, 0, 0);
-      updatePixels();
-      delay(100);
-      shifter.getBatteryVoltage();
-    }
-
-    delay(1);
+  delay(1);
 
 /*
      // swipe colors
@@ -297,10 +292,10 @@ void setup()
       setPixel(idx, (idx & 1) ? bbb : 0, (idx & 2) ? bbb : 0, (idx & 4) ? bbb : 0, 0);
       updatePixels();
       delay(20);
-      shifter.getBatteryVoltage();
+      mGlobals.mShifter.getBatteryVoltage();
     }
-  */  
-   
+    */  
+
   }
   /*
 
@@ -313,7 +308,7 @@ void setup()
 //   // swipe colors
 //     for (byte idx = 0; idx < LEDS; idx++)
 //     {
-//       setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, GLOBAL_GS);
+//       setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, mGlobals.GLOBAL_GS);
 //       updatePixels();
 //       delay(30);
 //     }
@@ -328,9 +323,9 @@ void setup()
 
   while (0)
   {
-    MSImage activeImage = MSImage(uploadname);
+    MSImage activeImage = MSImage(mGlobals.uploadname);
     Serial.print("loaded: ");
-    Serial.println(uploadname);
+    Serial.println(mGlobals.uploadname);
 
     Serial.print("width: ");
     Serial.println(activeImage.getWidth());
@@ -353,37 +348,37 @@ void setup()
 void loop()
 {
   pinMode(PIN_BUTTON_B, INPUT);
-  shifter.loop();
+  mShifter.loop();
 
   HandleWebServer();
 
-  lastMicros = currentMicros;
-  currentMicros = micros();
-  loops++;
+  mGlobals.lastMicros = mGlobals.currentMicros;
+  mGlobals.currentMicros = micros();
+  mGlobals.loops++;
 
   shakeSync.setFrames(32);
 
-  if (loops % 1000 == 0)
+  if (mGlobals.loops % 1000 == 0)
   {
     Serial.print("_");
   }
 
-  if (lastFrameMicros + speedMicros < currentMicros)
+  if (mGlobals.lastFrameMicros + mGlobals.speedMicros < mGlobals.currentMicros)
   {
-    lastFrameMicros = currentMicros;
-    frame++;
+    mGlobals.lastFrameMicros = mGlobals.currentMicros;
+    mGlobals.currentFrame++;
 
-    // pov ball mode
-    if (shifterMode == 0)
+    // pov aBouncingBall mode
+    if (mGlobals.shifterMode == 0)
     {
       {
         for (byte idx = 0; idx < LEDS; idx++)
         {
-          float scale = ball.getLedBright(idx, LEDS);
+          float scale = aBouncingBall.getLedBright(idx, LEDS);
 
           scale *= 0.5;
 
-          /*if (ball.allowFlash && ball.smoothLanding)
+          /*if (aBouncingBall.allowFlash && aBouncingBall.smoothLanding)
           {
 
 
@@ -394,54 +389,52 @@ void loop()
           }
           */
 
-         // int bright = 1;
+         // int mGlobals.bright = 1;
           //scale *= 10;
-          //setPixel(idx, (frame & 1) ? bright*scale : 0, (frame & 2) ? bright*scale : 0, (frame & 4) ? bright*scale : 0, gs);
+          //setPixel(idx, (mGlobals.currentFrame & 1) ? mGlobals.bright*scale : 0, (mGlobals.currentFrame & 2) ? mGlobals.bright*scale : 0, (mGlobals.currentFrame & 4) ? mGlobals.bright*scale : 0, mGlobals.gs);
           
-          if (ball.allowFlash)
+          if (aBouncingBall.allowFlash)
           {
-            if (ball.smoothLanding)
+            if (aBouncingBall.smoothLanding)
             {
-              setPixel(idx, 0, bright * scale, 0, GLOBAL_GS);
+              setPixel(idx, 0, mGlobals.bright * scale, 0, mGlobals.GLOBAL_GS);
             }
             else
             {
-              setPixel(idx, bright * scale, bright * scale, bright * scale, GLOBAL_GS);
+              setPixel(idx, mGlobals.bright * scale, mGlobals.bright * scale, mGlobals.bright * scale, mGlobals.GLOBAL_GS);
             }
           }
           else
           {  
-            setPixel(idx, bright * scale, 0, 0.5 * bright * scale, GLOBAL_GS);
+            setPixel(idx, mGlobals.bright * scale, 0, 0.5 * mGlobals.bright * scale, mGlobals.GLOBAL_GS);
           }
         }
       }
       updatePixels();
     }
-    else if (shifterMode == 1)
+    else if (mGlobals.shifterMode == 1)
     {
-      loadBuffer(web_rgb_buffer);
+      loadBuffer(mGlobals.web_rgb_buffer);
       updatePixels();
     }
-    else if (shifterMode == 2)
+    else if (mGlobals.shifterMode == 2)
     {
       magicMode.loop();
     }
   }
 
-#ifndef DISABLE_ACCEL
-  readAccelData(accelCount);
+  #ifndef DISABLE_ACCEL
+  readAccelData(mGlobals.accelCount);
 
   for (int i = 0 ; i < 3 ; i++)
   {
-    accelG[i] = (float) accelCount[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set
+    mGlobals.accelG[i] = (float) mGlobals.accelCount[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set
   }
-#endif
+  #endif
 
+  float fX = mGlobals.accelG[0];
+  float fY = mGlobals.accelG[1];
 
-
-  float fX = accelG[0];
-  float fY = accelG[1];
-
-  //ball.applyForce((currentMicros - lastMicros) / 1000.0, fX, fY);
-  ball.applyForce((currentMicros - lastMicros) / 1000.0, fX);
+  //aBouncingBall.applyForce((mGlobals.currentMicros - mGlobals.lastMicros) / 1000.0, fX, fY);
+  aBouncingBall.applyForce((mGlobals.currentMicros - mGlobals.lastMicros) / 1000.0, fX);
 }
