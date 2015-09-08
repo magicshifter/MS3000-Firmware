@@ -8,11 +8,11 @@
 #include "Config.h"
 #include "APA102.h"
 
-#include "MagicGlobals.h"
-extern CMagicGlobals mGlobals;
+#include "MagicShifterGlobals.h"
+extern MagicShifterGlobals msGlobals;
 
-#include "MagicShifter.h"
-extern MagicShifter mShifter; // !J!
+#include "MagicShifterSystem.h"
+extern MagicShifterSystem msSystem; // !J!
 
 MDNSResponder mdns;
 ESP8266WebServer server (80);
@@ -80,12 +80,12 @@ void StartWebServer(void)
   server.on("/restart", []() {
     server.send(200, "text/plain", "going down for restarts now!");
     delay(1000);
-    mShifter.restart();
+    msSystem.restart();
   } );
   server.on("/kill", []() {
     server.send(200, "text/plain", "powering down now!");
     delay(1000);
-    mShifter.powerDown();
+    msSystem.powerDown();
   } );
   server.on("/info/about", HTTP_GET, handleGETAbout);
   server.on("/info/status", HTTP_GET, handleGETStatus);

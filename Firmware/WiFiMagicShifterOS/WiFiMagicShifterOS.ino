@@ -29,7 +29,7 @@
 
 
  * TODO:
-      !J! Construct mGlobals &etc.
+      !J! Construct msGlobals &etc.
       !J! Make execution environment changes (i.e. main_loop() -> app_loop())
       !J! Add single MagicShifter:: API: LEDs, MIDI, Web-UI, Files, etc.
       !J! Port existing MagicShifter UI apps to new app_loop() and API
@@ -75,11 +75,11 @@ extern "C" {
 #include "MMA8542.h"
 #include "WebServer.h"
 
-#include "MagicGlobals.h"
-CMagicGlobals mGlobals;
+#include "MagicShifterGlobals.h"
+#include "MagicShifterSystem.h"
 
-#include "MagicShifter.h"
-MagicShifter mShifter;
+MagicShifterGlobals msGlobals;
+MagicShifterSystem msSystem;
 
 #include "MagicMode.h"
 
@@ -99,7 +99,7 @@ BouncingBall aBouncingBall(600);
 
 void log(String msg, int level = ERROR)
 {
-  if (mGlobals.DEBUG_LEVEL <= level)
+  if (msGlobals.DEBUG_LEVEL <= level)
   {
     #ifdef DEBUG_SERIAL
     Serial.print(msg)
@@ -120,7 +120,7 @@ WiFiUDP udp;
 
 void logln(String msg, int level = ERROR)
 {
-  if (mGlobals.DEBUG_LEVEL <= level)
+  if (msGlobals.DEBUG_LEVEL <= level)
   Serial.println(msg);
 }
 
@@ -167,11 +167,11 @@ void TEST_SPIFFS_bug()
 
 void setup()
 {
-  mShifter.setup();
+  msSystem.setup();
   
 
 
-  mGlobals.bootTime = millis();
+  msGlobals.bootTime = millis();
 
 
   // DUMP sysinfo
@@ -237,17 +237,17 @@ void setup()
 
   StartWebServer();
 
-  loadString(mGlobals.uploadname, FILENAME_LENGTH);
-  //if (!FS.exists(mGlobals.uploadname))
+  loadString(msGlobals.uploadFileName, FILENAME_LENGTH);
+  //if (!FS.exists(msGlobals.uploadFileName))
   {
     Serial.print("could not find: ");
-    Serial.println(mGlobals.uploadname);
-    strcpy(mGlobals.uploadname, "big_smile_gif.magicBitmap");
+    Serial.println(msGlobals.uploadFileName);
+    strcpy(msGlobals.uploadFileName, "big_smile_gif.magicBitmap");
   }
   Serial.print("using POV file: ");
-  Serial.println(mGlobals.uploadname);
-  magicMode.start(&mShifter);
-  magicMode.setActiveFile(mGlobals.uploadname);
+  Serial.println(msGlobals.uploadFileName);
+  magicMode.start(&msSystem);
+  magicMode.setActiveFile(msGlobals.uploadFileName);
 
 ///*
 for (byte idx = 0; idx < LEDS; idx++)
@@ -255,19 +255,19 @@ for (byte idx = 0; idx < LEDS; idx++)
   setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
 }
 updatePixels();
-  //saveBuffer(mGlobals.web_rgb_buffer);
+  //saveBuffer(msGlobals.web_rgb_buffer);
 //*/
 
 while (0)
 {
-  float voltage = mShifter.getBatteryVoltage();
+  float voltage = msSystem.getBatteryVoltage();
 
   Serial.print(voltage);
   Serial.println("V");
 
   for (int i = 0; i < 10; i ++)
   {
-    mShifter.getBatteryVoltage();
+    msSystem.getBatteryVoltage();
     delay(1); 
   }
 
@@ -280,7 +280,7 @@ while (0)
     setPixel((LEDS + idx - 16)%LEDS, 0, 0, 0, 0);
     updatePixels();
     delay(100);
-    mShifter.getBatteryVoltage();
+    msSystem.getBatteryVoltage();
   }
 
   delay(1);
@@ -292,7 +292,7 @@ while (0)
       setPixel(idx, (idx & 1) ? bbb : 0, (idx & 2) ? bbb : 0, (idx & 4) ? bbb : 0, 0);
       updatePixels();
       delay(20);
-      mGlobals.mShifter.getBatteryVoltage();
+      msGlobals.msSystem.getBatteryVoltage();
     }
     */  
 
@@ -308,7 +308,7 @@ while (0)
 //   // swipe colors
 //     for (byte idx = 0; idx < LEDS; idx++)
 //     {
-//       setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, mGlobals.GLOBAL_GS);
+//       setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, msGlobals.GLOBAL_GS);
 //       updatePixels();
 //       delay(30);
 //     }
@@ -323,9 +323,9 @@ while (0)
 
   while (0)
   {
-    MSImage activeImage = MSImage(mGlobals.uploadname);
+    MSImage activeImage = MSImage(msGlobals.uploadFileName);
     Serial.print("loaded: ");
-    Serial.println(mGlobals.uploadname);
+    Serial.println(msGlobals.uploadFileName);
 
     Serial.print("width: ");
     Serial.println(activeImage.getWidth());
@@ -348,28 +348,28 @@ while (0)
 void loop()
 {
   pinMode(PIN_BUTTON_B, INPUT);
-  mShifter.loop();
+  msSystem.loop();
 
   HandleWebServer();
 
-  mGlobals.lastMicros = mGlobals.currentMicros;
-  mGlobals.currentMicros = micros();
-  mGlobals.loops++;
+  msGlobals.lastMicros = msGlobals.currentMicros;
+  msGlobals.currentMicros = micros();
+  msGlobals.loops++;
 
   shakeSync.setFrames(32);
 
-  if (mGlobals.loops % 1000 == 0)
+  if (msGlobals.loops % 1000 == 0)
   {
     Serial.print("_");
   }
 
-  if (mGlobals.lastFrameMicros + mGlobals.speedMicros < mGlobals.currentMicros)
+  if (msGlobals.lastFrameMicros + msGlobals.speedMicros < msGlobals.currentMicros)
   {
-    mGlobals.lastFrameMicros = mGlobals.currentMicros;
-    mGlobals.currentFrame++;
+    msGlobals.lastFrameMicros = msGlobals.currentMicros;
+    msGlobals.currentFrame++;
 
     // pov aBouncingBall mode
-    if (mGlobals.shifterMode == 0)
+    if (msGlobals.shifterMode == 0)
     {
       {
         for (byte idx = 0; idx < LEDS; idx++)
@@ -389,52 +389,52 @@ void loop()
           }
           */
 
-         // int mGlobals.bright = 1;
+         // int msGlobals.bright = 1;
           //scale *= 10;
-          //setPixel(idx, (mGlobals.currentFrame & 1) ? mGlobals.bright*scale : 0, (mGlobals.currentFrame & 2) ? mGlobals.bright*scale : 0, (mGlobals.currentFrame & 4) ? mGlobals.bright*scale : 0, mGlobals.gs);
+          //setPixel(idx, (msGlobals.currentFrame & 1) ? msGlobals.bright*scale : 0, (msGlobals.currentFrame & 2) ? msGlobals.bright*scale : 0, (msGlobals.currentFrame & 4) ? msGlobals.bright*scale : 0, msGlobals.gs);
           
           if (aBouncingBall.allowFlash)
           {
             if (aBouncingBall.smoothLanding)
             {
-              setPixel(idx, 0, mGlobals.bright * scale, 0, mGlobals.GLOBAL_GS);
+              setPixel(idx, 0, msGlobals.bright * scale, 0, msGlobals.GLOBAL_GS);
             }
             else
             {
-              setPixel(idx, mGlobals.bright * scale, mGlobals.bright * scale, mGlobals.bright * scale, mGlobals.GLOBAL_GS);
+              setPixel(idx, msGlobals.bright * scale, msGlobals.bright * scale, msGlobals.bright * scale, msGlobals.GLOBAL_GS);
             }
           }
           else
           {  
-            setPixel(idx, mGlobals.bright * scale, 0, 0.5 * mGlobals.bright * scale, mGlobals.GLOBAL_GS);
+            setPixel(idx, msGlobals.bright * scale, 0, 0.5 * msGlobals.bright * scale, msGlobals.GLOBAL_GS);
           }
         }
       }
       updatePixels();
     }
-    else if (mGlobals.shifterMode == 1)
+    else if (msGlobals.shifterMode == 1)
     {
-      loadBuffer(mGlobals.web_rgb_buffer);
+      loadBuffer(msGlobals.web_rgb_buffer);
       updatePixels();
     }
-    else if (mGlobals.shifterMode == 2)
+    else if (msGlobals.shifterMode == 2)
     {
       magicMode.loop();
     }
   }
 
   #ifndef DISABLE_ACCEL
-  readAccelData(mGlobals.accelCount);
+  readAccelData(msGlobals.accelCount);
 
   for (int i = 0 ; i < 3 ; i++)
   {
-    mGlobals.accelG[i] = (float) mGlobals.accelCount[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set
+    msGlobals.accelG[i] = (float) msGlobals.accelCount[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set
   }
   #endif
 
-  float fX = mGlobals.accelG[0];
-  float fY = mGlobals.accelG[1];
+  float fX = msGlobals.accelG[0];
+  float fY = msGlobals.accelG[1];
 
-  //aBouncingBall.applyForce((mGlobals.currentMicros - mGlobals.lastMicros) / 1000.0, fX, fY);
-  aBouncingBall.applyForce((mGlobals.currentMicros - mGlobals.lastMicros) / 1000.0, fX);
+  //aBouncingBall.applyForce((msGlobals.currentMicros - msGlobals.lastMicros) / 1000.0, fX, fY);
+  aBouncingBall.applyForce((msGlobals.currentMicros - msGlobals.lastMicros) / 1000.0, fX);
 }

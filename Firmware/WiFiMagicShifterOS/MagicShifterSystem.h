@@ -3,7 +3,7 @@
 
 #include "Config.h"
 
-#include "MagicGlobals.h"
+#include "MagicShifterGlobals.h"
 
 class Accelerometer
 {
@@ -30,7 +30,7 @@ class Leds
 
 // TODO: all init and all sensors and leds in here :)
 // (accelerometer wuld also be a class but the MAgicShifter object has one ;)
-class MagicShifter
+class MagicShifterSystem
 {
 private:
   bool accelNeedsRefresh = true;
@@ -62,7 +62,7 @@ public:
     // swipe colors
     for (byte idx = 0; idx < LEDS; idx++)
     {
-      setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, mGlobals.GLOBAL_GS);
+      setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, msGlobals.GLOBAL_GS);
       updatePixels();
       delay(30);
     }
@@ -236,23 +236,23 @@ public:
 
     if (clickedButtonB)
     {
-      mGlobals.GLOBAL_GS+=2;
-      if (mGlobals.GLOBAL_GS > 31)
+      msGlobals.GLOBAL_GS+=2;
+      if (msGlobals.GLOBAL_GS > 31)
       {
-        mGlobals.GLOBAL_GS = 31;
+        msGlobals.GLOBAL_GS = 31;
       }
 
-      //mGlobals.shifterMode = (mGlobals.shifterMode+1)%MODES;
+      //msGlobals.shifterMode = (msGlobals.shifterMode+1)%MODES;
     }
     if (longClickedButtonB)
     {
-      mGlobals.GLOBAL_GS-=6;
-      if (mGlobals.GLOBAL_GS < 1)
+      msGlobals.GLOBAL_GS-=6;
+      if (msGlobals.GLOBAL_GS < 1)
       {
-        mGlobals.GLOBAL_GS = 1;
+        msGlobals.GLOBAL_GS = 1;
       }
 
-      //mGlobals.shifterMode = (mGlobals.shifterMode+1)%MODES;
+      //msGlobals.shifterMode = (msGlobals.shifterMode+1)%MODES;
     }
   }
 
@@ -295,7 +295,7 @@ public:
 
   IPAddress getIP()
   {
-    if (mGlobals.apMode)
+    if (msGlobals.apMode)
     {
       return WiFi.softAPIP();
     }

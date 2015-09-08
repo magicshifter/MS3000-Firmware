@@ -493,23 +493,23 @@ void envFrame()
 
     if (clickedButtonB)
     {
-      mGlobals.GLOBAL_GS+=2;
-      if (mGlobals.GLOBAL_GS > 31)
+      msGlobals.GLOBAL_GS+=2;
+      if (msGlobals.GLOBAL_GS > 31)
       {
-        mGlobals.GLOBAL_GS = 31;
+        msGlobals.GLOBAL_GS = 31;
       }
 
-      //mGlobals.shifterMode = (mGlobals.shifterMode+1)%MODES;
+      //msGlobals.shifterMode = (msGlobals.shifterMode+1)%MODES;
     }
     if (longClickedButtonB)
     {
-      mGlobals.GLOBAL_GS-=6;
-      if (mGlobals.GLOBAL_GS < 1)
+      msGlobals.GLOBAL_GS-=6;
+      if (msGlobals.GLOBAL_GS < 1)
       {
-        mGlobals.GLOBAL_GS = 1;
+        msGlobals.GLOBAL_GS = 1;
       }
 
-      //mGlobals.shifterMode = (mGlobals.shifterMode+1)%MODES;
+      //msGlobals.shifterMode = (msGlobals.shifterMode+1)%MODES;
     }
   }
 

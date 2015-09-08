@@ -3,9 +3,9 @@
 
 #include "tools.h"
 
-#include "MagicGlobals.h"
+#include "MagicShifterGlobals.h"
 
-extern CMagicGlobals mGlobals;
+extern MagicShifterGlobals msGlobals;
 
 #include "Image.h"
 
@@ -17,7 +17,7 @@ extern CMagicGlobals mGlobals;
 class IMode
 {
 public:
-  void start(MagicShifter *shifter);
+  void start(MagicShifterSystem *msSystem);
   void stop(void);
   void loop();
 };
@@ -25,17 +25,17 @@ public:
 class BaseMode : public IMode
 {
 private:
-  MagicShifter *m_shifter;
+  MagicShifterSystem *m_msSystem;
 
   public:
-    void start(MagicShifter *shifter)
+    void start(MagicShifterSystem *msSystem)
     {
-      m_shifter = shifter;
+      m_msSystem = msSystem;
     }
 
     void stop(void)
     {
-      m_shifter = NULL;
+      m_msSystem = NULL;
     }
 
     /*
@@ -50,13 +50,13 @@ private:
 class RGBLightMode :MagicMS_Globals.shifterMode
 {
 private:
-  loadBuffer(mGlobals.web_rgb_buffer);
+  loadBuffer(msGlobals.web_rgb_buffer);
   updatePixels();
 
 public:
   void loop(void)
   {
-    loadBuffer(mGlobals.web_rgb_buffer);
+    loadBuffer(msGlobals.web_rgb_buffer);
     updatePixels();
   }
 }
@@ -80,7 +80,7 @@ public:
 
   void loop()
   {
-    if (shakeSync.update(mGlobals.accelG[2]))
+    if (shakeSync.update(msGlobals.accelG[2]))
     {
       int index = shakeSync.getFrameIndex();
       if (index > 0)

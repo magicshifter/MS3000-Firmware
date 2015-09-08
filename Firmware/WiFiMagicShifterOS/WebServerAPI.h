@@ -1,11 +1,9 @@
-//#include "MagicShifter.h"
 
-#include "MagicGlobals.h"
+#include "MagicShifterGlobals.h"
+#include "MagicShifterSystem.h"
 
-extern CMagicGlobals mGlobals;
-
-#include "MagicShifter.h"
-extern MagicShifter mShifter;
+extern MagicShifterGlobals msGlobals;
+extern MagicShifterSystem msSystem;
 
 #define MAX_AP_LEN 48
 struct APInfo
@@ -311,18 +309,18 @@ void handleGETStatus(void)
   float voltage = ((float)(r1 + r2 + r3) * adValue) / (r1 * ad1V);
 
 
-  readAccelData(mGlobals.accelCount);
+  readAccelData(msGlobals.accelCount);
 
   for (int i = 0 ; i < 3 ; i++)
   {
-    mGlobals.accelG[i] = (float) mGlobals.accelCount[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set
+    msGlobals.accelG[i] = (float) msGlobals.accelCount[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set
   }
 
-  uint32_t ip = (uint32_t)mShifter.getIP();
+  uint32_t ip = (uint32_t)msSystem.getIP();
 
   String response = "{\"id\":" + String(ESP.getChipId()) + ",\"uptime\":" +
-  String(millis() - mGlobals.bootTime) + ",\"adValue\":" + adValue + ",\"voltage\":" + voltage +
-  "\",accelRaw\":[" + mGlobals.accelCount[0] + "," + mGlobals.accelCount[1] + "," + mGlobals.accelCount[2] + "],\"mGlobals.accelG\":[" + mGlobals.accelG[0] + "," + mGlobals.accelG[1] + ","+ mGlobals.accelG[2] + 
+  String(millis() - msGlobals.bootTime) + ",\"adValue\":" + adValue + ",\"voltage\":" + voltage +
+  "\",accelRaw\":[" + msGlobals.accelCount[0] + "," + msGlobals.accelCount[1] + "," + msGlobals.accelCount[2] + "],\"msGlobals.accelG\":[" + msGlobals.accelG[0] + "," + msGlobals.accelG[1] + ","+ msGlobals.accelG[2] + 
     "],\"ip\":\"" + (0xFF & (ip>>0)) + "."  + (0xFF & (ip>>8)) + "."  + (0xFF & (ip>>16)) + "."  + (0xFF & (ip>>24)) + "\"}";
   server.send(200, "text/plain", response);
 }
@@ -555,7 +553,7 @@ void handleGETWLANList(void)
 {
   // logln("handleGETWLANList", INFO);
 
-  if (mGlobals.apMode)
+  if (msGlobals.apMode)
   {
     server.send(200, "text/plain", "crash in AP mode...so diusabled for now");
     return;
@@ -679,7 +677,7 @@ void handleSetMode(void)
       // logln("arg: ", VERBOSE);
       // logln(server.arg(i), VERBOSE);
 
-      mGlobals.shifterMode = atoi(server.arg(i).c_str());
+      msGlobals.shifterMode = atoi(server.arg(i).c_str());
     }
 
     if (success)
@@ -687,7 +685,7 @@ void handleSetMode(void)
       String response = "{";
       response += "\"mode\":";
       response += "\"";
-      response += mGlobals.shifterMode;
+      response += msGlobals.shifterMode;
       response += "\"";
       response += "}";
       server.send(200, "text/plain", response);
@@ -734,10 +732,10 @@ void handleLedSet()
       Serial.print("data+1: ");
       Serial.println((int)ledData[i+1]);
 
-      mGlobals.web_rgb_buffer[idx*4] = ledData[i+1];
-      mGlobals.web_rgb_buffer[idx*4+1] = ledData[i+2];
-      mGlobals.web_rgb_buffer[idx*4+2] = ledData[i+3];
-      mGlobals.web_rgb_buffer[idx*4+3] = ledData[i+4];
+      msGlobals.web_rgb_buffer[idx*4] = ledData[i+1];
+      msGlobals.web_rgb_buffer[idx*4+1] = ledData[i+2];
+      msGlobals.web_rgb_buffer[idx*4+2] = ledData[i+3];
+      msGlobals.web_rgb_buffer[idx*4+3] = ledData[i+4];
     }
   }
   else
@@ -759,7 +757,7 @@ void handleLedsSet()
     const char* input = server.arg(0).c_str();
     int inputLen = BASE64_ENC_LEN(RGB_BUFFER_SIZE);
 
-    base64_decode((char *)mGlobals.web_rgb_buffer, input, inputLen);
+    base64_decode((char *)msGlobals.web_rgb_buffer, input, inputLen);
 
     message += "done";
   }

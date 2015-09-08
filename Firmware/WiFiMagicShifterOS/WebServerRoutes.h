@@ -1,7 +1,7 @@
 #define FILENAME_LENGTH 100
 
-#include "MagicGlobals.h"
-extern CMagicGlobals mGlobals;
+#include "MagicShifterGlobals.h"
+extern MagicShifterGlobals msGlobals;
 
 #include "MagicMode.h"
 extern MagicMode magicMode;
@@ -33,7 +33,7 @@ void handleNotFound() {
         <title><a href=\"/\">MagicShifter3000</a> upload done</title>\
       </head>\
       <body>\
-        <h1>Upload of " + String(mGlobals.uploadFileName) + " done</h1><a href=\"/list?dir=\">list</a><br><a href=\"\">index.html</a></body></html>";
+        <h1>Upload of " + String(msGlobals.uploadFileName) + " done</h1><a href=\"/list?dir=\">list</a><br><a href=\"\">index.html</a></body></html>";
 
     server.send ( 200, "text/html", message );
 
@@ -55,17 +55,17 @@ void handleReadFile()
   {
     String args = server.arg(0);
 
-    strcpy(mGlobals.uploadFileName, args.c_str());
-    saveString(mGlobals.uploadFileName, FILENAME_LENGTH);
+    strcpy(msGlobals.uploadFileName, args.c_str());
+    saveString(msGlobals.uploadFileName, FILENAME_LENGTH);
 
 
     message += "file name: \"" + args /* String(filename)*/ + "\"\n";
 
-    //message += "file name strcpied: \"" +  mGlobals.uploadFileName + "\"\n";
+    //message += "file name strcpied: \"" +  msGlobals.uploadFileName + "\"\n";
 
 
     byte buffer[105];
-    File file = SPIFFS.open(mGlobals.uploadFileName, "r");
+    File file = SPIFFS.open(msGlobals.uploadFileName, "r");
 
     if (file)
     {
@@ -221,17 +221,17 @@ void handleFileUpload(){
   HTTPUpload& upload = server.upload();
   if(upload.status == UPLOAD_FILE_START)
   {
-    strcpy(mGlobals.uploadFileName, upload.filename.c_str());//.c_str();
+    strcpy(msGlobals.uploadFileName, upload.filename.c_str());//.c_str();
     Serial.print("upload started: ");
-    Serial.println(mGlobals.uploadFileName);
+    Serial.println(msGlobals.uploadFileName);
 
-    mGlobals.uploadFile = SPIFFS.open(mGlobals.uploadFileName, "w");
+    msGlobals.uploadFile = SPIFFS.open(msGlobals.uploadFileName, "w");
 
-    if (!mGlobals.uploadFile)
+    if (!msGlobals.uploadFile)
       Serial.println("ERROR: COULD NOT open file!!!");
 
     //if(SD.exists((char *)upload.filename.c_str())) SD.remove((char *)upload.filename.c_str());
-    //mGlobals.uploadFile = SD.open(upload.filename.c_str(), FILE_WRITE);
+    //msGlobals.uploadFile = SD.open(upload.filename.c_str(), FILE_WRITE);
     //DBG_OUTPUT_PORT.print("Upload: START, filename: "); DBG_OUTPUT_PORT.println(upload.filename);
 
   }
@@ -239,9 +239,9 @@ void handleFileUpload(){
   {
 
     bool result;
-    if(mGlobals.uploadFile)
+    if(msGlobals.uploadFile)
     {
-      result = mGlobals.uploadFile.write(upload.buf, upload.currentSize);
+      result = msGlobals.uploadFile.write(upload.buf, upload.currentSize);
       if (!result) Serial.println("ERROR: could not write!");
     }
     Serial.print("Upload: WRITE, Bytes: ");
@@ -249,14 +249,14 @@ void handleFileUpload(){
   }
   else if(upload.status == UPLOAD_FILE_END)
   {
-    magicMode.setActiveFile(mGlobals.uploadFileName);
+    magicMode.setActiveFile(msGlobals.uploadFileName);
 
-    saveString(mGlobals.uploadFileName, FILENAME_LENGTH);
-    if(mGlobals.uploadFile)
+    saveString(msGlobals.uploadFileName, FILENAME_LENGTH);
+    if(msGlobals.uploadFile)
     {
       //bool result;
       //result =
-      mGlobals.uploadFile.close();
+      msGlobals.uploadFile.close();
       //if (!result) Serial.println("ERROR: could not close!");
     }
     Serial.print("Upload: END, Size: ");

@@ -2,7 +2,7 @@
 #ifndef __MAGICGLOBALS_H
 #define __MAGICGLOBALS_H
 
-class CMagicGlobals {
+class MagicShifterGlobals {
 
 public:
   int DEBUG_LEVEL = VERBOSE;
