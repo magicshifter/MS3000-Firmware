@@ -26,7 +26,9 @@ public:
   // make it larger to be on the save side when base64 decoding
   byte web_rgb_buffer[RGB_BUFFER_SIZE + 4];
 
-  char uploadname[];
+  char uploadFileName[];
+  File uploadFile;
+
 };
 
 
