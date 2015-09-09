@@ -113,10 +113,9 @@ void setup()
     // msSystem.logln("SPIFFS not begin .. :(");
   }
 
-
-  #ifndef DISABLE_ACCEL
+#ifndef DISABLE_ACCEL
   InitMMA8452(); //Test and intialize the MMA8452
-  #endif
+#endif
 
   StartWebServer();
 
@@ -141,7 +140,8 @@ void setup()
   //saveBuffer(msGlobals.web_rgb_buffer);
   //*/
 
-#if 0
+#if 0 
+// TEST CODE
 while (0)
 {
   float voltage = msSystem.getBatteryVoltage();
@@ -177,10 +177,8 @@ while (0)
     delay(20);
     msGlobals.msSystem.getBatteryVoltage();
   }
-  
 }
  // delay(1000)
-#endif 
 
 while (1)
 {
@@ -199,36 +197,33 @@ while (1)
     }
 }
   
+while (0)
+{
+  MSImage activeImage = MSImage(msGlobals.uploadFileName);
+  // msSystem.log("loaded: ");
+  // msSystem.logln(msGlobals.uploadFileName);
 
-#if 0
-  while (0)
+  // msSystem.log("width: ");
+  // msSystem.logln(activeImage.getWidth());
+
+  for (int i = 0; i < activeImage.getWidth(); i++)
   {
-    MSImage activeImage = MSImage(msGlobals.uploadFileName);
-    // msSystem.log("loaded: ");
-    // msSystem.logln(msGlobals.uploadFileName);
+    byte povData[RGB_BUFFER_SIZE];
+    activeImage.readFrame(i, povData, RGB_BUFFER_SIZE);
+    loadBuffer(povData);
+    updatePixels();
+    delay(1);
+  }
+  activeImage.close();
+} 
 
-    // msSystem.log("width: ");
-    // msSystem.logln(activeImage.getWidth());
-
-    for (int i = 0; i < activeImage.getWidth(); i++)
-    {
-      byte povData[RGB_BUFFER_SIZE];
-      activeImage.readFrame(i, povData, RGB_BUFFER_SIZE);
-      loadBuffer(povData);
-      updatePixels();
-      delay(1);
-    }
-
-    activeImage.close();
-    
-  } 
 #endif
 }
 
 void loop()
 {
   pinMode(PIN_BUTTON_B, INPUT);
-  
+
   msSystem.loop();
 
   HandleWebServer();
