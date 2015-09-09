@@ -47,7 +47,10 @@ public:
   }
 
   void start()
-  {} // todo: startActiveFile() with a default filename
+  {
+    setActiveFile(msGlobals.uploadFileName);
+    
+  } // todo: startActiveFile() with a default filename
 
   void stop()
   {}
@@ -72,13 +75,7 @@ public:
     }
     // !J! TODO: give modes an event queue ..
     if (msGlobals.setActiveFile == 1) {
-      activeImage.close();
-      safeStrncpy(activeFilename, msGlobals.uploadFileName, FILENAME_SIZE);
-      activeImage = MSImage(activeFilename);
-      int w = activeImage.getWidth() * FRAME_MULTIPLY;
-      shakeSync.setFrames(w);
-      // msSystem.log("set frames to: ");
-      // msSystem.logln(w);
+      setActiveFile(msGlobals.uploadFileName);
       msGlobals.setActiveFile = 0;
     }
   }

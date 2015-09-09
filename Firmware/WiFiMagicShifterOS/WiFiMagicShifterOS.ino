@@ -31,6 +31,7 @@
  * TODO:
       !J! Make execution environment changes (i.e. main_loop() -> app_loop())
       !J! Port existing MagicShifter UI/MIDI apps to new app_loop() and API
+      !J! Test syslog/debugging.
       */
 
 //#include <Ticker.h>
@@ -114,6 +115,7 @@ void setup()
 
   StartWebServer();
 
+  // start Modes as necessary ..
   loadString(msGlobals.uploadFileName, FILENAME_LENGTH);
   if (!SPIFFS.exists(msGlobals.uploadFileName))
   {
@@ -121,21 +123,21 @@ void setup()
     // msSystem.logln(msGlobals.uploadFileName);
     // strcpy(msGlobals.uploadFileName, "big_smile_gif.magicBitmap");
   }
+  else {
   // msSystem.log("using POV file: ");
   // msSystem.logln(msGlobals.uploadFileName);
-  msShakeMode.start();
-  msShakeMode.setActiveFile(msGlobals.uploadFileName);
+    msShakeMode.start();
+  }
 
-  ///*
+  // debug output so we know we're alive in case a mode dies ..
   for (byte idx = 0; idx < LEDS; idx++)
   {
     setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
   }
   updatePixels();
-  //saveBuffer(msGlobals.web_rgb_buffer);
-  //*/
 
 #if 0 
+//saveBuffer(msGlobals.web_rgb_buffer);
 // TEST CODE
 while (0)
 {
