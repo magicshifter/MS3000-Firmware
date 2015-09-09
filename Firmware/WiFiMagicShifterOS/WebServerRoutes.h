@@ -45,8 +45,8 @@ void handleReadFile()
   fillPixels(0, 0, 1, 0x1F);
   updatePixels();
 
-  Serial.print("Free heap: ");
-  Serial.println(ESP.getFreeHeap());
+  // msSystem.log("Free heap: ");
+  // msSystem.logln(ESP.getFreeHeap());
 
   String message = "ReadFile:\n";
 
@@ -70,19 +70,19 @@ void handleReadFile()
     if (file)
     {
       int fileLen = file.available();
-      Serial.print("file available: ");
-      Serial.println(fileLen);
+      // msSystem.log("file available: ");
+      // msSystem.logln(fileLen);
 
       if (fileLen > 0)
       {
         if (fileLen > 100) fileLen = 100 ;
-        Serial.println("reading: ");
-        Serial.println(file.read(buffer, fileLen));
+        // msSystem.logln("reading: ");
+        // msSystem.logln(file.read(buffer, fileLen));
 
-        Serial.println("buffer: ");
+        // msSystem.logln("buffer: ");
 
         for (int i = 0; i < fileLen; i++) {
-          Serial.print((char)buffer[i]);
+          // msSystem.log((char)buffer[i]);
           message += (char)buffer[i];
         }
       }
@@ -91,13 +91,13 @@ void handleReadFile()
     }
     else
     {
-      Serial.println("file not found");
+      // msSystem.logln("file not found");
       message += " file not found!";
     }
   }
   else
   {
-    Serial.println("arg missing");
+    // msSystem.logln("arg missing");
     message += "argument missing!";
   }
 
@@ -216,19 +216,20 @@ void handleFileListJson() {
 */
 
 void handleFileUpload(){
-  Serial.println("handle upload!");
+  // msSystem.logln("handle upload!");
   //if(server.uri() != "/upload") return;
   HTTPUpload& upload = server.upload();
   if(upload.status == UPLOAD_FILE_START)
   {
     strcpy(msGlobals.uploadFileName, upload.filename.c_str());//.c_str();
-    Serial.print("upload started: ");
-    Serial.println(msGlobals.uploadFileName);
+    // msSystem.log("upload started: ");
+    // msSystem.logln(msGlobals.uploadFileName);
 
     msGlobals.uploadFile = SPIFFS.open(msGlobals.uploadFileName, "w");
 
-    if (!msGlobals.uploadFile)
-      Serial.println("ERROR: COULD NOT open file!!!");
+    if (!msGlobals.uploadFile) {
+      // msSystem.logln("ERROR: COULD NOT open file!!!");
+    }
 
     //if(SD.exists((char *)upload.filename.c_str())) SD.remove((char *)upload.filename.c_str());
     //msGlobals.uploadFile = SD.open(upload.filename.c_str(), FILE_WRITE);
@@ -242,10 +243,13 @@ void handleFileUpload(){
     if(msGlobals.uploadFile)
     {
       result = msGlobals.uploadFile.write(upload.buf, upload.currentSize);
-      if (!result) Serial.println("ERROR: could not write!");
+      if (!result) 
+      {
+      // msSystem.logln("ERROR: could not write!");
+      }
     }
-    Serial.print("Upload: WRITE, Bytes: ");
-    Serial.println(upload.currentSize);
+    // msSystem.log("Upload: WRITE, Bytes: ");
+    // msSystem.logln(upload.currentSize);
   }
   else if(upload.status == UPLOAD_FILE_END)
   {
@@ -257,9 +261,9 @@ void handleFileUpload(){
       //bool result;
       //result =
       msGlobals.uploadFile.close();
-      //if (!result) Serial.println("ERROR: could not close!");
+      //if (!result) // msSystem.logln("ERROR: could not close!");
     }
-    Serial.print("Upload: END, Size: ");
-    Serial.println(upload.totalSize);
+    // msSystem.log("Upload: END, Size: ");
+    // msSystem.logln(upload.totalSize);
   }
 }

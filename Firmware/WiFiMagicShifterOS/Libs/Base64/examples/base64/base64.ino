@@ -21,7 +21,7 @@ void setup()
     ; // wait for serial port to connect. Needed for Leonardo only
   }
   
-  Serial.println("Base64 example");
+  // msSystem.logln("Base64 example");
   
   
   
@@ -32,12 +32,12 @@ void setup()
   int encodedLen = base64_enc_len(inputLen);
   char encoded[encodedLen];
   
-  Serial.print(input); Serial.print(" = ");
+  // msSystem.log(input); // msSystem.log(" = ");
   
   // note input is consumed in this step: it will be empty afterwards
   base64_encode(encoded, input, inputLen); 
   
-  Serial.println(encoded);
+  // msSystem.logln(encoded);
   
   
   
@@ -50,7 +50,7 @@ void setup()
   
   base64_decode(decoded, input2, input2Len);
   
-  Serial.print(input2); Serial.print(" = "); Serial.println(decoded);
+  // msSystem.log(input2); // msSystem.log(" = "); // msSystem.logln(decoded);
 }
 
 

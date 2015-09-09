@@ -52,8 +52,8 @@ bool streamFile(String path){
   }
   else
   {
-    Serial.print("streamFile fail:");
-    Serial.println(path.c_str());
+    // msSystem.log("streamFile fail:");
+    // msSystem.logln(path.c_str());
   }
   
   return false;
@@ -68,13 +68,13 @@ void StartWebServer(void)
 {
   while (!AutoConnect())
   {
-    Serial.println("ARGL: WHY U no WLAN!? :( retrying...");
+    // msSystem.logln("ARGL: WHY U no WLAN!? :( retrying...");
     delay(100);
   }
 #ifdef USE_MDNS
   if (mdns.begin("magicshifter", WiFi.localIP()))
   {
-    Serial.println( "MDNS responder started" );
+    // msSystem.logln( "MDNS responder started" );
   }
 #endif
   server.on("/restart", []() {
@@ -142,7 +142,7 @@ void StartWebServer(void)
 
   server.onNotFound ( handleNotFound );
   server.begin();
-  Serial.println ( "HTTP server started" );
+  // msSystem.logln ( "HTTP server started" );
 }
 
 

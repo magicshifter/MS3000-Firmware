@@ -4,10 +4,10 @@
 
 void ReportJsonLocation(struct jsonparse_state *jsonStatePtr)
 {
-  Serial.print("at position: ");
-  Serial.print(jsonStatePtr->pos);
-  Serial.print(" of text: ");
-  Serial.println(jsonStatePtr->json);
+  // msSystem.log("at position: ");
+  // msSystem.log(jsonStatePtr->pos);
+  // msSystem.log(" of text: ");
+  // msSystem.logln(jsonStatePtr->json);
 }
 
 bool AssertParseNext(struct jsonparse_state *jsonStatePtr, byte expectedType)
@@ -16,10 +16,10 @@ bool AssertParseNext(struct jsonparse_state *jsonStatePtr, byte expectedType)
 
   if ((type = jsonparse_next(jsonStatePtr) != expectedType))
   {
-    Serial.print("AssertParseNext failed! Expected: ");
-    Serial.print(expectedType);
-    Serial.print(" but found: ");
-    Serial.println(type);
+    // msSystem.log("AssertParseNext failed! Expected: ");
+    // msSystem.log(expectedType);
+    // msSystem.log(" but found: ");
+    // msSystem.logln(type);
     ReportJsonLocation(jsonStatePtr);
     return false;
   }
@@ -33,14 +33,14 @@ int AssertParseNextMultiple(struct jsonparse_state *jsonStatePtr, byte typeA, by
   if (type == typeA) return 0;
   if (type == typeB) return 1;
 
-  Serial.print("AssertParseNext failed! Expected one of: ");
+  // msSystem.log("AssertParseNext failed! Expected one of: ");
 
-  Serial.print(typeA);
-  Serial.print(" or ");
-  Serial.print(typeB);
+  // msSystem.log(typeA);
+  // msSystem.log(" or ");
+  // msSystem.log(typeB);
 
-  Serial.print(" but found: ");
-  Serial.println(type);
+  // msSystem.log(" but found: ");
+  // msSystem.logln(type);
   ReportJsonLocation(jsonStatePtr);
   return -1;
 }
@@ -80,8 +80,8 @@ bool ParseAPInfo(struct APInfo *apInfo, struct jsonparse_state *jsonState)
       // TODO: improve skipping of unnecessary fields
       char key[20];
       jsonparse_copy_value(jsonState, key, 20);
-      Serial.print("ignoring unknown key: ");
-      Serial.println(key);
+      // msSystem.log("ignoring unknown key: ");
+      // msSystem.logln(key);
       ReportJsonLocation(jsonState);
       if (!AssertParseNext(jsonState, JSON_TYPE_PAIR)) return false;
       if (!AssertParseNext(jsonState, JSON_TYPE_STRING)) return false;
@@ -90,8 +90,8 @@ bool ParseAPInfo(struct APInfo *apInfo, struct jsonparse_state *jsonState)
 
   if (type != JSON_TYPE_OBJECT_END)
   {
-    Serial.print("Expected end of object '}' but got: ");
-    Serial.println(type);
+    // msSystem.log("Expected end of object '}' but got: ");
+    // msSystem.logln(type);
     ReportJsonLocation(jsonState);
     return false;
   }

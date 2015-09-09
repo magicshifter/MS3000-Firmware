@@ -23,15 +23,15 @@ public:
 
         if (size % frameSize != 0)
         {
-          Serial.print("File is no multiple of LED count: ");
-          Serial.println(fileName);
+          // msSystem.log("File is no multiple of LED count: ");
+          // msSystem.logln(fileName);
         }
         width = size / frameSize;
       }
       else
       {
-        Serial.print("File could not be opened: ");
-        Serial.println(fileName);
+        // msSystem.log("File could not be opened: ");
+        // msSystem.logln(fileName);
         width = 0;
         height = LEDS;
       }

@@ -35,7 +35,38 @@ class MagicShifterSystem
 private:
   bool accelNeedsRefresh = true;
   bool adNeedsRefresh = true;
+
 public:
+
+  void log(String msg, int level = ERROR)
+  {
+    if (msGlobals.DEBUG_LEVEL <= level)
+    {
+      #ifdef DEBUG_SERIAL
+      // msSystem.log(msg)
+      #endif
+
+  // !J!
+  #define DEBUG_SYSLOG 0
+  #ifdef DEBUG_SYSLOG
+  WiFiUDP udp;
+  #define __SYSLOG_PORT 514
+      // udp.beginPacket("192.168.43.151", __SYSLOG_PORT); //NTP requests are to port 123
+      udp.beginPacket("192.168.0.24", __SYSLOG_PORT); //NTP requests are to port 123
+      udp.print(msg);
+      udp.endPacket();
+      #endif
+    }
+  }
+
+  void logln(String msg, int level = ERROR)
+  {
+    // if (msGlobals.DEBUG_LEVEL <= level)
+    // msSystem.logln(msg);
+  }
+
+
+
   void setup()
   {
     pinMode(PWMGT_PIN, INPUT);
@@ -48,7 +79,7 @@ public:
     enableLeds();   // we need this for MIDI optocouplers!!
 
     Serial.begin(115200);
-    Serial.println("\r\nMagicShifter 3000 OS V0.24");
+    // msSystem.logln("\r\nMagicShifter 3000 OS V0.24");
 
     EEPROM.begin(512);
     // accel
@@ -163,12 +194,12 @@ public:
       if (m_enableLongClicks && buttonAPressedTime >= MIN_TIME_LONG_CLICK)
       {
         longClickedButtonA = true;
-        // log("longClickedButtonA", INFO);
+        // msSystem.log("longClickedButtonA", INFO);
       }
       else if (buttonAPressedTime >= MIN_TIME_CLICK)
       {
         clickedButtonA = true;
-        // log("clickedButtonA", INFO);
+        // msSystem.log("clickedButtonA", INFO);
       }
 
       buttonAPressedTime = 0;
@@ -189,13 +220,13 @@ public:
       if (m_enableLongClicks && buttonBPressedTime >= MIN_TIME_LONG_CLICK)
       {
         longClickedButtonB = true;
-        // log("longClickedButtonB", INFO);
+        // msSystem.log("longClickedButtonB", INFO);
 
       }
       else if (buttonBPressedTime >= MIN_TIME_CLICK)
       {
         clickedButtonB = true;
-        // log("clickedButtonB", INFO);
+        // msSystem.log("clickedButtonB", INFO);
       }
 
       buttonBPressedTime = 0;

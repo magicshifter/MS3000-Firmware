@@ -30,9 +30,10 @@
 
  * TODO:
       !J! Construct msGlobals &etc.
+      !J! Add single MagicShifterSystem:: API: LEDs, MIDI, Web-UI, Files, etc.
       !J! Make execution environment changes (i.e. main_loop() -> app_loop())
-      !J! Add single MagicShifter:: API: LEDs, MIDI, Web-UI, Files, etc.
-      !J! Port existing MagicShifter UI apps to new app_loop() and API
+      !J! Port existing MagicShifter UI/MIDI apps to new app_loop() and API
+      !J! Global logging
       */
 
 //#include <Ticker.h>
@@ -96,35 +97,7 @@ POVShakeSyncDummy shakeSync;
 //CircleBall aBouncingBall(600);
 BouncingBall aBouncingBall(600);
 
-
-void log(String msg, int level = ERROR)
-{
-  if (msGlobals.DEBUG_LEVEL <= level)
-  {
-    #ifdef DEBUG_SERIAL
-    Serial.print(msg)
-    #endif
-
-// !J!
-#define DEBUG_SYSLOG 0
-#ifdef DEBUG_SYSLOG
-WiFiUDP udp;
-#define __SYSLOG_PORT 514
-    // udp.beginPacket("192.168.43.151", __SYSLOG_PORT); //NTP requests are to port 123
-    udp.beginPacket("192.168.0.24", __SYSLOG_PORT); //NTP requests are to port 123
-    udp.print(msg);
-    udp.endPacket();
-    #endif
-  }
-}
-
-void logln(String msg, int level = ERROR)
-{
-  if (msGlobals.DEBUG_LEVEL <= level)
-  Serial.println(msg);
-}
-
-
+#if 0
 void TEST_SPIFFS_bug()
 {
 
@@ -133,103 +106,98 @@ void TEST_SPIFFS_bug()
   uint8_t readBuffer[] = {0,0,0,0};
   //File file = SPIFFS.open((char *)debugPath.c_str(), "w");
   
-  Serial.print("openin for w: ");
-  Serial.println(debugPath);
+  // msSystem.log("openin for w: ");
+  // msSystem.logln(debugPath);
   
   File file = SPIFFS.open(debugPath, "w");
 
-  Serial.print("opended for w: ");
-  Serial.println((bool)file);
+  // msSystem.log("opended for w: ");
+  // msSystem.logln((bool)file);
 
-  Serial.print("writin: ");
-  Serial.println(testVals[1]);
+  // msSystem.log("writin: ");
+  // msSystem.logln(testVals[1]);
 
   file.write((uint8_t *)testVals, sizeof testVals);
   file.close();
 
-  Serial.print("openin for r: ");
-  Serial.println(debugPath);
+  // msSystem.log("openin for r: ");
+  // msSystem.logln(debugPath);
   
   File fileR = SPIFFS.open(debugPath, "r");
 
-  Serial.print("opended for r: ");
-  Serial.println((bool)fileR);
+  // msSystem.log("opended for r: ");
+  // msSystem.logln((bool)fileR);
 
-  Serial.print("readin: ");
+  // msSystem.log("readin: ");
 
   fileR.read((uint8_t *)readBuffer, sizeof readBuffer);
   fileR.close();
 
-  Serial.print("readback: ");
-  Serial.println(readBuffer[1]);
-
+  // msSystem.log("readback: ");
+  // msSystem.logln(readBuffer[1]);
 }
+#endif
 
 void setup()
 {
   msSystem.setup();
-  
-
-
   msGlobals.bootTime = millis();
 
-
   // DUMP sysinfo
-  Serial.print("Vcc: ");
-  Serial.println(ESP.getVcc());
-  Serial.print("Free heap: ");
-  Serial.println(ESP.getFreeHeap());
-  Serial.print("Chip ID: ");
-  Serial.println(ESP.getChipId());
-  Serial.print("SDK version: ");
-  Serial.println(ESP.getSdkVersion());
-  Serial.print("Boot version: ");
-  Serial.println(ESP.getBootVersion());
-  Serial.print("Boot mode: ");
-  Serial.println(ESP.getBootMode());
-  Serial.print("CPU freq.: ");
-  Serial.println(ESP.getCpuFreqMHz());
-  Serial.print("Flash chip ID: ");
-  Serial.println(ESP.getFlashChipId(), HEX);
+  // msSystem.log("Vcc: ");
+  // msSystem.logln(ESP.getVcc());
+  // msSystem.log("Free heap: ");
+  // msSystem.logln(ESP.getFreeHeap());
+  // msSystem.log("Chip ID: ");
+  // msSystem.logln(ESP.getChipId());
+  // msSystem.log("SDK version: ");
+  // msSystem.logln(ESP.getSdkVersion());
+  // msSystem.log("Boot version: ");
+  // msSystem.logln(ESP.getBootVersion());
+  // msSystem.log("Boot mode: ");
+  // msSystem.logln(ESP.getBootMode());
+  // msSystem.log("CPU freq.: ");
+  // msSystem.logln(ESP.getCpuFreqMHz());
+  // msSystem.log("Flash chip ID: ");
+  // msSystem.logln(ESP.getFlashChipId(), HEX);
   //gets the actual chip size based on the flash id
-  Serial.print("Flash real size: ");
-  Serial.println(ESP.getFlashChipRealSize());
-  Serial.print("Flash real size (method b): ");
-  Serial.println(ESP.getFlashChipSizeByChipId());
+  // msSystem.log("Flash real size: ");
+  // msSystem.logln(ESP.getFlashChipRealSize());
+  // msSystem.log("Flash real size (method b): ");
+  // msSystem.logln(ESP.getFlashChipSizeByChipId());
   //gets the size of the flash as set by the compiler
-  Serial.print("flash configured size: ");
-  Serial.println(ESP.getFlashChipSize());
-  if (ESP.getFlashChipSize() != ESP.getFlashChipRealSize())
-  {
-    Serial.println("WARNING: configured flash size does not match real flash size!");
-  }
-  Serial.print("flash speed: ");
-  Serial.println(ESP.getFlashChipSpeed());
-  Serial.print("flash mode: ");
-  Serial.println(ESP.getFlashChipMode());
-  Serial.print("Sketch size: ");
-  Serial.println(ESP.getSketchSize());
-  Serial.print("Free sketch space: ");
-  Serial.println(ESP.getFreeSketchSpace());
-  Serial.print("Reset info: ");
-  Serial.println(ESP.getResetInfo());
+  // msSystem.log("flash configured size: ");
+  // msSystem.logln(ESP.getFlashChipSize());
+  // if (ESP.getFlashChipSize() != ESP.getFlashChipRealSize())
+  // {
+  //   // msSystem.logln("WARNING: configured flash size does not match real flash size!");
+  // }
+  // msSystem.log("flash speed: ");
+  // msSystem.logln(ESP.getFlashChipSpeed());
+  // msSystem.log("flash mode: ");
+  // msSystem.logln(ESP.getFlashChipMode());
+  // msSystem.log("Sketch size: ");
+  // msSystem.logln(ESP.getSketchSize());
+  // msSystem.log("Free sketch space: ");
+  // msSystem.logln(ESP.getFreeSketchSpace());
+  // msSystem.log("Reset info: ");
+  // msSystem.logln(ESP.getResetInfo());
 
-  if (SPIFFS.begin()) 
-  Serial.println("SPIFFS begin!");
-  else
-  Serial.println("SPIFFS not begin .. :(");
+    if (SPIFFS.begin()) {
+      // msSystem.logln("SPIFFS begin!");
+    }
+    else
+    {
+      // msSystem.logln("SPIFFS not begin .. :(");
+      // TEST_SPIFFS_bug();
+    }
 
-// TEST_SPIFFS_bug();
-
-
-
-  //Serial.print("FS mount: ");
-  //Serial.println(FS.mount() ? "OK" : "ERROR!");
+  //// msSystem.log("FS mount: ");
+  //// msSystem.logln(FS.mount() ? "OK" : "ERROR!");
   
   // chercking crashes the ESP so its disabled atm
-  //Serial.print("FS check: ");
-  //Serial.println(FS.check() ? "OK" : "ERROR!");
-
+  //// msSystem.log("FS check: ");
+  //// msSystem.logln(FS.check() ? "OK" : "ERROR!");
 
   #ifndef DISABLE_ACCEL
   InitMMA8452(); //Test and intialize the MMA8452
@@ -238,32 +206,33 @@ void setup()
   StartWebServer();
 
   loadString(msGlobals.uploadFileName, FILENAME_LENGTH);
-  //if (!FS.exists(msGlobals.uploadFileName))
+  if (!SPIFFS.exists(msGlobals.uploadFileName))
   {
-    Serial.print("could not find: ");
-    Serial.println(msGlobals.uploadFileName);
-    strcpy(msGlobals.uploadFileName, "big_smile_gif.magicBitmap");
+    // msSystem.log("could not find: ");
+    // msSystem.logln(msGlobals.uploadFileName);
+    // strcpy(msGlobals.uploadFileName, "big_smile_gif.magicBitmap");
   }
-  Serial.print("using POV file: ");
-  Serial.println(msGlobals.uploadFileName);
+  // msSystem.log("using POV file: ");
+  // msSystem.logln(msGlobals.uploadFileName);
   magicMode.start(&msSystem);
   magicMode.setActiveFile(msGlobals.uploadFileName);
 
-///*
-for (byte idx = 0; idx < LEDS; idx++)
-{
-  setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
-}
-updatePixels();
+  ///*
+  for (byte idx = 0; idx < LEDS; idx++)
+  {
+    setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
+  }
+  updatePixels();
   //saveBuffer(msGlobals.web_rgb_buffer);
-//*/
+  //*/
 
+#if 0
 while (0)
 {
   float voltage = msSystem.getBatteryVoltage();
 
-  Serial.print(voltage);
-  Serial.println("V");
+  // msSystem.log(voltage);
+  // msSystem.logln("V");
 
   for (int i = 0; i < 10; i ++)
   {
@@ -285,50 +254,46 @@ while (0)
 
   delay(1);
 
-/*
-     // swipe colors
+   // swipe colors
+  for (byte idx = 0; idx < LEDS; idx++)
+  {
+    setPixel(idx, (idx & 1) ? bbb : 0, (idx & 2) ? bbb : 0, (idx & 4) ? bbb : 0, 0);
+    updatePixels();
+    delay(20);
+    msGlobals.msSystem.getBatteryVoltage();
+  }
+  
+}
+ // delay(1000)
+#endif 
+
+while (1)
+{
+  // swipe colors
     for (byte idx = 0; idx < LEDS; idx++)
     {
-      setPixel(idx, (idx & 1) ? bbb : 0, (idx & 2) ? bbb : 0, (idx & 4) ? bbb : 0, 0);
+      setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, msGlobals.GLOBAL_GS);
       updatePixels();
-      delay(20);
-      msGlobals.msSystem.getBatteryVoltage();
+      delay(30);
     }
-    */  
-
-  }
-  /*
-
-
-
- // delay(1000)
-
-// while (1)
-// {
-//   // swipe colors
-//     for (byte idx = 0; idx < LEDS; idx++)
-//     {
-//       setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, msGlobals.GLOBAL_GS);
-//       updatePixels();
-//       delay(30);
-//     }
-//     for (byte idx = 0; idx < LEDS; idx++)
-//     {
-//       setPixel(idx, 0, 0, 0, 1);
-//       updatePixels();
-//       delay(30);
-//     }
-// }
+    for (byte idx = 0; idx < LEDS; idx++)
+    {
+      setPixel(idx, 0, 0, 0, 1);
+      updatePixels();
+      delay(30);
+    }
+}
   
 
+#if 0
   while (0)
   {
     MSImage activeImage = MSImage(msGlobals.uploadFileName);
-    Serial.print("loaded: ");
-    Serial.println(msGlobals.uploadFileName);
+    // msSystem.log("loaded: ");
+    // msSystem.logln(msGlobals.uploadFileName);
 
-    Serial.print("width: ");
-    Serial.println(activeImage.getWidth());
+    // msSystem.log("width: ");
+    // msSystem.logln(activeImage.getWidth());
 
     for (int i = 0; i < activeImage.getWidth(); i++)
     {
@@ -342,7 +307,7 @@ while (0)
     activeImage.close();
     
   } 
-  */
+#endif
 }
 
 void loop()
@@ -360,7 +325,7 @@ void loop()
 
   if (msGlobals.loops % 1000 == 0)
   {
-    Serial.print("_");
+    // msSystem.log("_");
   }
 
   if (msGlobals.lastFrameMicros + msGlobals.speedMicros < msGlobals.currentMicros)
@@ -389,7 +354,7 @@ void loop()
           }
           */
 
-         // int msGlobals.bright = 1;
+         //  msGlobals.bright = 1;
           //scale *= 10;
           //setPixel(idx, (msGlobals.currentFrame & 1) ? msGlobals.bright*scale : 0, (msGlobals.currentFrame & 2) ? msGlobals.bright*scale : 0, (msGlobals.currentFrame & 4) ? msGlobals.bright*scale : 0, msGlobals.gs);
           
@@ -423,14 +388,14 @@ void loop()
     }
   }
 
-  #ifndef DISABLE_ACCEL
+#ifndef DISABLE_ACCEL
   readAccelData(msGlobals.accelCount);
 
   for (int i = 0 ; i < 3 ; i++)
   {
     msGlobals.accelG[i] = (float) msGlobals.accelCount[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set
   }
-  #endif
+#endif
 
   float fX = msGlobals.accelG[0];
   float fY = msGlobals.accelG[1];

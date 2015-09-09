@@ -323,33 +323,33 @@ void envDump()
 {
 	int c;
 
-	Serial.println("Current Dump:");
+	// msSystem.logln("Current Dump:");
 
-	Serial.print(" T: ");
-	Serial.print(anEnvelope.timer, DEC);
+	// msSystem.log(" T: ");
+	// msSystem.log(anEnvelope.timer, DEC);
 
-	Serial.print(" L: ");
-	Serial.print(anEnvelope.level, DEC);
+	// msSystem.log(" L: ");
+	// msSystem.log(anEnvelope.level, DEC);
 
-	Serial.print(" C: ");
-	Serial.print((unsigned int)anEnvelope.current, HEX);
+	// msSystem.log(" C: ");
+	// msSystem.log((unsigned int)anEnvelope.current, HEX);
 
-	Serial.print(" IDLE: ");
-	Serial.println(anEnvelope.is_idle, DEC);
+	// msSystem.log(" IDLE: ");
+	// msSystem.logln(anEnvelope.is_idle, DEC);
 
-	Serial.println("Envelope Dump:");
+	// msSystem.logln("Envelope Dump:");
 
 	for (c=0;c<=ENV_RELEASE;c++){
-		Serial.print("Stage:");
-		Serial.print((unsigned int)&anEnvelope.stages[c], HEX);
-		Serial.print(" ");
-		Serial.print(c, DEC);
-		Serial.print(" L:");
-		Serial.print(anEnvelope.stages[c].level, DEC);
-		Serial.print(" / D:");
-		Serial.print(anEnvelope.stages[c].duration, DEC);
-		Serial.print(" @ C:");
-		Serial.println(anEnvelope.stages[c].coeff, DEC);
+		// msSystem.log("Stage:");
+		// msSystem.log((unsigned int)&anEnvelope.stages[c], HEX);
+		// msSystem.log(" ");
+		// msSystem.log(c, DEC);
+		// msSystem.log(" L:");
+		// msSystem.log(anEnvelope.stages[c].level, DEC);
+		// msSystem.log(" / D:");
+		// msSystem.log(anEnvelope.stages[c].duration, DEC);
+		// msSystem.log(" @ C:");
+		// msSystem.logln(anEnvelope.stages[c].coeff, DEC);
 
 	}
 }
@@ -420,12 +420,12 @@ void envFrame()
       if (m_enableLongClicks && buttonAPressedTime >= MIN_TIME_LONG_CLICK)
       {
         longClickedButtonA = true;
-        // log("longClickedButtonA", INFO);
+        // msSystem.log("longClickedButtonA", INFO);
       }
       else if (buttonAPressedTime >= MIN_TIME_CLICK)
       {
         clickedButtonA = true;
-        // log("clickedButtonA", INFO);
+        // msSystem.log("clickedButtonA", INFO);
       }
 
       buttonAPressedTime = 0;
@@ -446,13 +446,13 @@ void envFrame()
       if (m_enableLongClicks && buttonBPressedTime >= MIN_TIME_LONG_CLICK)
       {
         longClickedButtonB = true;
-        // log("longClickedButtonB", INFO);
+        // msSystem.log("longClickedButtonB", INFO);
 
       }
       else if (buttonBPressedTime >= MIN_TIME_CLICK)
       {
         clickedButtonB = true;
-        // log("clickedButtonB", INFO);
+        // msSystem.log("clickedButtonB", INFO);
       }
 
       buttonBPressedTime = 0;

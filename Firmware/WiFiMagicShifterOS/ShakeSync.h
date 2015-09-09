@@ -192,17 +192,17 @@ public:
 				if (dDiff < 0) dDiff = -dDiff;
 				if (dSame <= dDiff)
 				{
-					Serial.println("same");
+					// msSystem.logln("same");
 					sameCount++;
 				}
 				else
 				{
-					Serial.println("diff");
+					// msSystem.logln("diff");
 					diffCount++;
 				}
-				Serial.println(sameCount-diffCount);
-				//Serial.println(dDiff);
-				//Serial.println(activeMin.g);
+				// msSystem.logln(sameCount-diffCount);
+				//// msSystem.logln(dDiff);
+				//// msSystem.logln(activeMin.g);
 
 				// reset max
 				activeMax.g = g;

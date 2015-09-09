@@ -95,7 +95,7 @@ uint16_t midi_frame = 0;
 static uint16_t MIDIPut(uint8_t * data, uint16_t cnt)
 {
 	// setPixel(15, 100, 100, 0);
-	// Serial.print(data[ret], HEX);
+	// // msSystem.log(data[ret], HEX);
 	// blink(STAT2, d_period);
 // setPixel(15, 0, 100, 0);
 // delay(10);
@@ -108,7 +108,7 @@ static uint16_t MIDIGet(uint8_t * data, uint16_t cnt)
 	uint16_t ret;
 	ret = 0;
 	while ((cnt > 0) && (data[ret] = Serial1.read()) != -1) {
-// Serial.println(data[ret], HEX);
+// // msSystem.logln(data[ret], HEX);
 		ret++;
 		cnt--;
 	}

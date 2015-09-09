@@ -75,8 +75,8 @@ public:
     }
     else 
     {
-      Serial.print("File doesn't exist:");
-      Serial.println((char * )path.c_str());
+      // msSystem.log("File doesn't exist:");
+      // msSystem.logln((char * )path.c_str());
     }
 
     safeStrncpy(config->hostname, "magicshifter", sizeof(config->hostname));
@@ -109,8 +109,8 @@ public:
     }
     else
     {
-      Serial.print("AP config missing:");
-      Serial.println((char *)path.c_str());
+      // msSystem.log("AP config missing:");
+      // msSystem.logln((char *)path.c_str());
     }
 
     safeStrncpy(config->ssid, "MS3000", sizeof(config->ssid));
@@ -127,8 +127,8 @@ public:
     file.write((uint8_t *)config, sizeof(*config));
     file.close();
 
-    // logln("saved:");
-    // logln(config->ssid);
+    // msSystem.logln("saved:");
+    // msSystem.logln(config->ssid);
     
   }
 
@@ -177,8 +177,8 @@ public:
     {
       if (strcmp(apInfoDummy.ssid, ssid) == 0)
       {
-        // log("deleting wifi:", VERBOSE);
-        // logln(ssid, VERBOSE);
+        // msSystem.log("deleting wifi:", VERBOSE);
+        // msSystem.logln(ssid, VERBOSE);
 
         apInfoDummy.clear();
         int calcPos = apListIndex * requiredBytes;
@@ -220,14 +220,14 @@ public:
 
     if (firstFreePos >= 0)
     {
-      // logln("found hole!");
-      // logln(String(firstFreePos));
+      // msSystem.logln("found hole!");
+      // msSystem.logln(String(firstFreePos));
       apListFile = SPIFFS.open((char *)path.c_str(), "a+");
       apListFile.seek(firstFreePos, SeekSet);
     }
     else
     {
-      // logln("appendiong at end");
+      // msSystem.logln("appendiong at end");
       apListFile = SPIFFS.open((char *)path.c_str(), "a");
     }
     apListFile.write((uint8_t *)apInfo, requiredBytes);
@@ -287,7 +287,7 @@ SettingsManager Settings;
 
 void handleGETAbout(void)
 {
-  // logln("handleGETAbout");
+  // msSystem.logln("handleGETAbout");
 
   String response = "{\"type\":\"MagicShifter3000\",\"format\":\"BGRA\",\"version\":" + String(VERSION) +
     ",\"leds\":" + String(LEDS) + ",\"id\":" + String(ESP.getChipId()) + ",\"flashid\":" + String(ESP.getFlashChipId()) + ",\"flashsize\":" + String(ESP.getFlashChipSize()) + "}";
@@ -296,7 +296,7 @@ void handleGETAbout(void)
 
 void handleGETStatus(void)
 {
-  // logln("handleGETStatus");
+  // msSystem.logln("handleGETStatus");
 
   int adValue = analogRead(A0);
 
@@ -330,11 +330,11 @@ bool parseAPInfoFromServerArgs(APInfo &apInfo)
   bool success = true;
   for (int i = 0; i < server.args(); i++)
   {
-    // logln("argName: ", VERBOSE);
-    // logln(server.argName(i), VERBOSE);
+    // msSystem.logln("argName: ", VERBOSE);
+    // msSystem.logln(server.argName(i), VERBOSE);
 
-    // logln("arg: ", VERBOSE);
-    // logln(server.arg(i), VERBOSE);
+    // msSystem.logln("arg: ", VERBOSE);
+    // msSystem.logln(server.arg(i), VERBOSE);
 
     if (strcmp(server.argName(i).c_str(), "ssid") == 0)
     {
@@ -346,7 +346,7 @@ bool parseAPInfoFromServerArgs(APInfo &apInfo)
     }
     else
     {
-      // logln("arg is not known!", VERBOSE);
+      // msSystem.logln("arg is not known!", VERBOSE);
       success = false;
     }
   }
@@ -355,7 +355,7 @@ bool parseAPInfoFromServerArgs(APInfo &apInfo)
 
 void handleGETServerSettings(void)
 {
-  // logln("handleGETServerSettings", INFO);
+  // msSystem.logln("handleGETServerSettings", INFO);
 
   ServerConfig config;
   Settings.getServerConfig(&config);
@@ -374,7 +374,7 @@ void handleGETServerSettings(void)
 
 void handlePOSTServerSettings(void)
 {
-  // logln("handlePOSTServerSettings", INFO);
+  // msSystem.logln("handlePOSTServerSettings", INFO);
   if (server.args() >= 2)
   {
     ServerConfig config;
@@ -383,11 +383,11 @@ void handlePOSTServerSettings(void)
     bool success = true;
     for (int i = 0; i < server.args(); i++)
     {
-      // logln("argName: ", VERBOSE);
-      // logln(server.argName(i), VERBOSE);
+      // msSystem.logln("argName: ", VERBOSE);
+      // msSystem.logln(server.argName(i), VERBOSE);
 
-      // logln("arg: ", VERBOSE);
-      // logln(server.arg(i), VERBOSE);
+      // msSystem.logln("arg: ", VERBOSE);
+      // msSystem.logln(server.arg(i), VERBOSE);
 
       if (strcmp(server.argName(i).c_str(), "host") == 0)
       {
@@ -421,7 +421,7 @@ void handlePOSTServerSettings(void)
 
 void handleGETAPSettings(void)
 {
-  // logln("handleGETAPSettings");
+  // msSystem.logln("handleGETAPSettings");
 
   APInfo apInfo;
   Settings.getAPConfig(&apInfo);
@@ -440,7 +440,7 @@ void handleGETAPSettings(void)
 
 void handlePOSTAPSettings(void)
 {
-  // logln("handlePOSTAPSettings", INFO);
+  // msSystem.logln("handlePOSTAPSettings", INFO);
 
   if (server.args() >= 2)
   {
@@ -450,7 +450,7 @@ void handlePOSTAPSettings(void)
 
     if (parseAPInfoFromServerArgs(apInfo))
     {
-      // logln("saving setAPConfig");
+      // msSystem.logln("saving setAPConfig");
       Settings.setAPConfig(&apInfo);
       server.send (200, "text/plain", "OK");
     }
@@ -468,7 +468,7 @@ void handlePOSTAPSettings(void)
 
 void handleGETPreferdAPSettings(void)
 {
-  // logln("handleGETPreferdAPSettings", INFO);
+  // msSystem.logln("handleGETPreferdAPSettings", INFO);
 
   APInfo apInfo;
   Settings.getPreferedAP(&apInfo);
@@ -487,7 +487,7 @@ void handleGETPreferdAPSettings(void)
 
 void handlePOSTPreferedAPSettings(void)
 {
-  // logln("handlePOSTPreferedAPSettings", INFO);
+  // msSystem.logln("handlePOSTPreferedAPSettings", INFO);
 
   if (server.args() >= 2)
   {
@@ -496,7 +496,7 @@ void handlePOSTPreferedAPSettings(void)
 
     if (parseAPInfoFromServerArgs(apInfo))
     {
-      // logln("saving setAPConfig");
+      // msSystem.logln("saving setAPConfig");
       Settings.setPreferedAP(&apInfo);
       server.send (200, "text/plain", "OK");
     }
@@ -517,7 +517,7 @@ void handlePOSTPreferedAPSettings(void)
 
 void handleGETAPList(void)
 {
-  // logln("handleGETAPList", INFO);
+  // msSystem.logln("handleGETAPList", INFO);
 
   APInfo apInfo;
   Settings.getPreferedAP(&apInfo);
@@ -551,7 +551,7 @@ void handleGETAPList(void)
 
 void handleGETWLANList(void)
 {
-  // logln("handleGETWLANList", INFO);
+  // msSystem.logln("handleGETWLANList", INFO);
 
   if (msGlobals.apMode)
   {
@@ -562,13 +562,14 @@ void handleGETWLANList(void)
   String response = "[";
 
   int n = WiFi.scanNetworks();
-  Serial.println("scan done");
-  if (n == 0)
-    Serial.println("\"no networks found\"");
+  // msSystem.logln("scan done");
+  if (n == 0){
+    // msSystem.logln("\"no networks found\"");
+  }
   else
   {
-    //Serial.print(n);
-    Serial.println(" networks found");
+    //// msSystem.log(n);
+    // msSystem.logln(" networks found");
     bool firstAP = true;
     for (int i = 0; i < n; ++i)
     {
@@ -601,7 +602,7 @@ void handleGETWLANList(void)
 
 void handlePOSTAPListAdd(void)
 {
-  // logln("handlePOSTAPListAdd", INFO);
+  // msSystem.logln("handlePOSTAPListAdd", INFO);
 
   if (server.args() >= 2)
   {
@@ -613,7 +614,7 @@ void handlePOSTAPListAdd(void)
     {
       if (!strcmp(apInfo.ssid, "") == 0)
       {
-        // logln("adding wifi");
+        // msSystem.logln("adding wifi");
         Settings.addAP(&apInfo);
       }
       server.send (200, "text/plain", "OK");
@@ -631,7 +632,7 @@ void handlePOSTAPListAdd(void)
 
 void handlePOSTAPListDelete(void)
 {
-  // logln("handlePOSTAPListDelete", INFO);
+  // msSystem.logln("handlePOSTAPListDelete", INFO);
 
   if (server.args() >= 1)
   {
@@ -643,7 +644,7 @@ void handlePOSTAPListDelete(void)
     {
       if (!strcmp(apInfo.ssid, "") == 0)
       {
-        // logln("deleting wifi");
+        // msSystem.logln("deleting wifi");
         Settings.deleteAP(apInfo.ssid);
       }
       server.send (200, "text/plain", "OK");
@@ -662,7 +663,7 @@ void handlePOSTAPListDelete(void)
 
 void handleSetMode(void)
 {
-  // logln("handleSetMode", INFO);
+  // msSystem.logln("handleSetMode", INFO);
   if (server.args() == 1)
   {
     ServerConfig config;
@@ -671,11 +672,11 @@ void handleSetMode(void)
     bool success = true;
     for (int i = 0; i < server.args(); i++)
     {
-      // logln("argName: ", VERBOSE);
-      // logln(server.argName(i), VERBOSE);
+      // msSystem.logln("argName: ", VERBOSE);
+      // msSystem.logln(server.argName(i), VERBOSE);
 
-      // logln("arg: ", VERBOSE);
-      // logln(server.arg(i), VERBOSE);
+      // msSystem.logln("arg: ", VERBOSE);
+      // msSystem.logln(server.arg(i), VERBOSE);
 
       msGlobals.shifterMode = atoi(server.arg(i).c_str());
     }
@@ -712,13 +713,13 @@ void handleLedSet()
   {
     const char* input = server.arg(0).c_str();
     unsigned int inputLen =  (int)server.arg(0).length();
-    Serial.print("inputLen: ");
-    Serial.println(inputLen);
+    // msSystem.log("inputLen: ");
+    // msSystem.logln(inputLen);
 
     if (inputLen > sizeof(ledData))
       inputLen = sizeof(ledData);
 
-    Serial.println(inputLen);
+    // msSystem.logln(inputLen);
 
     unsigned int dataLen = base64_decode((char *)ledData, input, inputLen);
 
@@ -726,11 +727,11 @@ void handleLedSet()
     {
       //setPixel(ledData[i], ledData[i+1], ledData[i+2], ledData[i+3], ledData[i+4]);
       byte idx = ledData[i];
-      Serial.print("idx: ");
-      Serial.println((int)idx);
+      // msSystem.log("idx: ");
+      // msSystem.logln((int)idx);
       if (idx >= LEDS) continue;
-      Serial.print("data+1: ");
-      Serial.println((int)ledData[i+1]);
+      // msSystem.log("data+1: ");
+      // msSystem.logln((int)ledData[i+1]);
 
       msGlobals.web_rgb_buffer[idx*4] = ledData[i+1];
       msGlobals.web_rgb_buffer[idx*4+1] = ledData[i+2];
@@ -748,7 +749,7 @@ void handleLedSet()
 
 void handleLedsSet()
 {
-  // logln("handleLedsSet", INFO);
+  // msSystem.logln("handleLedsSet", INFO);
   
   String message = "LedsSet\n\n";
 
