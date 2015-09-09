@@ -29,11 +29,8 @@
 
 
  * TODO:
-      !J! Construct msGlobals &etc.
-      !J! Add single MagicShifterSystem:: API: LEDs, MIDI, Web-UI, Files, etc.
       !J! Make execution environment changes (i.e. main_loop() -> app_loop())
       !J! Port existing MagicShifter UI/MIDI apps to new app_loop() and API
-      !J! Global logging
       */
 
 //#include <Ticker.h>
@@ -82,20 +79,18 @@ extern "C" {
 MagicShifterGlobals msGlobals;
 MagicShifterSystem msSystem;
 
-#include "MagicMode.h"
-
+// mode modules 
 #ifdef MIDISHIFTER
-#include "MidiShifter/MidiShifter.h"
+#include "MidiShifter/MidiShifterModes.h"
 #endif
+#include "BouncingBallMode.h"
+BouncingBallMode msBouncingBallMode(600);
+#include "MagicShakeMode.h"
 
-#include "CircleBall.h"
+MagicShakeMode msShakeMode;
+//POVShakeSync msPOVShakeSyncMode;
+POVShakeSyncDummyMode msPOVShakeSyncMode;
 
-MagicMode magicMode;
-DebugMode debugMode;
-//POVShakeSync shakeSync;
-POVShakeSyncDummy shakeSync;
-//CircleBall aBouncingBall(600);
-BouncingBall aBouncingBall(600);
 
 void setup()
 {
@@ -128,8 +123,8 @@ void setup()
   }
   // msSystem.log("using POV file: ");
   // msSystem.logln(msGlobals.uploadFileName);
-  magicMode.start(&msSystem);
-  magicMode.setActiveFile(msGlobals.uploadFileName);
+  msShakeMode.start();
+  msShakeMode.setActiveFile(msGlobals.uploadFileName);
 
   ///*
   for (byte idx = 0; idx < LEDS; idx++)
@@ -232,7 +227,7 @@ void loop()
   msGlobals.currentMicros = micros();
   msGlobals.loops++;
 
-  shakeSync.setFrames(32);
+  msPOVShakeSyncMode.setFrames(32);
 
   if (msGlobals.loops % 1000 == 0)
   {
@@ -244,20 +239,18 @@ void loop()
     msGlobals.lastFrameMicros = msGlobals.currentMicros;
     msGlobals.currentFrame++;
 
-    // pov aBouncingBall mode
+    // pov msBouncingBallMode mode
     if (msGlobals.shifterMode == 0)
     {
       {
         for (byte idx = 0; idx < LEDS; idx++)
         {
-          float scale = aBouncingBall.getLedBright(idx, LEDS);
+          float scale = msBouncingBallMode.getLedBright(idx, LEDS);
 
           scale *= 0.5;
 
-          /*if (aBouncingBall.allowFlash && aBouncingBall.smoothLanding)
+          /*if (msBouncingBallMode.allowFlash && msBouncingBallMode.smoothLanding)
           {
-
-
           }
           else
           {
@@ -269,9 +262,9 @@ void loop()
           //scale *= 10;
           //setPixel(idx, (msGlobals.currentFrame & 1) ? msGlobals.bright*scale : 0, (msGlobals.currentFrame & 2) ? msGlobals.bright*scale : 0, (msGlobals.currentFrame & 4) ? msGlobals.bright*scale : 0, msGlobals.gs);
           
-          if (aBouncingBall.allowFlash)
+          if (msBouncingBallMode.allowFlash)
           {
-            if (aBouncingBall.smoothLanding)
+            if (msBouncingBallMode.smoothLanding)
             {
               setPixel(idx, 0, msGlobals.bright * scale, 0, msGlobals.GLOBAL_GS);
             }
@@ -295,7 +288,7 @@ void loop()
     }
     else if (msGlobals.shifterMode == 2)
     {
-      magicMode.loop();
+      msShakeMode.step();
     }
   }
 
@@ -311,6 +304,6 @@ void loop()
   float fX = msGlobals.accelG[0];
   float fY = msGlobals.accelG[1];
 
-  //aBouncingBall.applyForce((msGlobals.currentMicros - msGlobals.lastMicros) / 1000.0, fX, fY);
-  aBouncingBall.applyForce((msGlobals.currentMicros - msGlobals.lastMicros) / 1000.0, fX);
+  //msBouncingBallMode.applyForce((msGlobals.currentMicros - msGlobals.lastMicros) / 1000.0, fX, fY);
+  msBouncingBallMode.applyForce((msGlobals.currentMicros - msGlobals.lastMicros) / 1000.0, fX);
 }

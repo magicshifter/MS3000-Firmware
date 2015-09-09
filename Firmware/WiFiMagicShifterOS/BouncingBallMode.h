@@ -107,14 +107,14 @@ class CircleBall
 };
 
 
-class BouncingBall
+class BouncingBallMode
 {
   public:
   float pos = 0.5;
   float vel = 0;
 
   public:
-  BouncingBall(float r)
+  BouncingBallMode(float r)
   {
   }
 

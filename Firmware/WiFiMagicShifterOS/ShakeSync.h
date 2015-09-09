@@ -4,7 +4,7 @@
 extern MagicShifterGlobals msGlobals;
 
 
-class POVShakeSyncDummy
+class POVShakeSyncDummyMode
 {
   int frames = 16;
   int frameIndex = 0;
@@ -17,7 +17,7 @@ class POVShakeSyncDummy
 
 public:
   // sensitivity is the min distance between min and max to start poving
-  POVShakeSyncDummy(void)
+  POVShakeSyncDummyMode(void)
   {
   }
 

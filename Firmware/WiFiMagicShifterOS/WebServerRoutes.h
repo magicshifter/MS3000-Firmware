@@ -3,8 +3,8 @@
 #include "MagicShifterGlobals.h"
 extern MagicShifterGlobals msGlobals;
 
-#include "MagicMode.h"
-extern MagicMode magicMode;
+#include "MagicShakeMode.h"
+extern MagicShakeMode msMagicShakeMode;
 
 
 void handleNotFound() {
@@ -253,7 +253,7 @@ void handleFileUpload(){
   }
   else if(upload.status == UPLOAD_FILE_END)
   {
-    magicMode.setActiveFile(msGlobals.uploadFileName);
+    msGlobals.setActiveFile = 1;
 
     saveString(msGlobals.uploadFileName, FILENAME_LENGTH);
     if(msGlobals.uploadFile)

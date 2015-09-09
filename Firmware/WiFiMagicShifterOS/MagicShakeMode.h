@@ -1,9 +1,12 @@
-#ifndef __MAGICMODE_H
-#define __MAGICMODE_H
+#ifndef __MAGICSHAKEMODE_H
+#define __MAGICSHAKEMODE_H
 
 #include "tools.h"
 
 #include "MagicShifterGlobals.h"
+#include "MagicShifterSystem.h"
+
+#include "MagicShifterBaseMode.h"
 
 extern MagicShifterGlobals msGlobals;
 
@@ -14,47 +17,16 @@ extern MagicShifterGlobals msGlobals;
 #define FRAME_MULTIPLY 4
 
 
-class IMode
-{
-public:
-  void start(MagicShifterSystem *msSystem);
-  void stop(void);
-  void loop();
-};
-
-class BaseMode : public IMode
-{
-private:
-  MagicShifterSystem *m_msSystem;
-
-  public:
-    void start(MagicShifterSystem *msSystem)
-    {
-      m_msSystem = msSystem;
-    }
-
-    void stop(void)
-    {
-      m_msSystem = NULL;
-    }
-
-    /*
-    void loop()
-    {
-    }
-    */
-};
-
 // make it larger to be on the save side when base64 decoding
 /*
-class RGBLightMode :MagicMS_Globals.shifterMode
+class RGBLightMode : .. shiftermode
 {
 private:
   loadBuffer(msGlobals.web_rgb_buffer);
   updatePixels();
 
 public:
-  void loop(void)
+  void step(void)
   {
     loadBuffer(msGlobals.web_rgb_buffer);
     updatePixels();
@@ -62,23 +34,25 @@ public:
 }
 */
 
-class DebugMode : public BaseMode
-{};
-
-class MagicMode : public BaseMode
+class MagicShakeMode : public MagicShifterBaseMode
 {
 private:
   char activeFilename[FILENAME_SIZE];
   MSImage activeImage;
-  POVShakeSyncDummy shakeSync;
+  POVShakeSyncDummyMode shakeSync;
 
 public:
-  MagicMode()
+  MagicShakeMode()
   {
-
   }
 
-  void loop()
+  void start()
+  {} // todo: startActiveFile() with a default filename
+
+  void stop()
+  {}
+
+  void step()
   {
     if (shakeSync.update(msGlobals.accelG[2]))
     {
@@ -96,6 +70,17 @@ public:
         //delay(10);
       }
     }
+    // !J! TODO: give modes an event queue ..
+    if (msGlobals.setActiveFile == 1) {
+      activeImage.close();
+      safeStrncpy(activeFilename, msGlobals.uploadFileName, FILENAME_SIZE);
+      activeImage = MSImage(activeFilename);
+      int w = activeImage.getWidth() * FRAME_MULTIPLY;
+      shakeSync.setFrames(w);
+      // msSystem.log("set frames to: ");
+      // msSystem.logln(w);
+      msGlobals.setActiveFile = 0;
+    }
   }
 
   void setActiveFile(char *filename)
@@ -110,6 +95,4 @@ public:
     // msSystem.logln(w);
   }
 };
-
-
 #endif
