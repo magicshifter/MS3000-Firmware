@@ -24,7 +24,8 @@ bool TryConnect(struct APInfo &apInfo, int timeoutMs)
     }
     updatePixels();
     frame++;
-    if (frame%50 == 0) {
+    if (frame%50 == 0)
+    {
       // msSystem.log(".");
     }
     if (WiFi.status() == WL_NO_SSID_AVAIL || WiFi.status() == WL_CONNECT_FAILED || millis() > startTime + timeoutMs)
