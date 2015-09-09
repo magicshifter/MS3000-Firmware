@@ -66,6 +66,96 @@ public:
   }
 
 
+void TEST_SPIFFS_bug()
+{
+
+  const char* debugPath = "XXXXX";
+  uint8_t testVals[] = {1,23, 3, 7};
+  uint8_t readBuffer[] = {0,0,0,0};
+  //File file = SPIFFS.open((char *)debugPath.c_str(), "w");
+  
+  // msSystem.log("openin for w: ");
+  // msSystem.logln(debugPath);
+  
+  File file = SPIFFS.open(debugPath, "w");
+
+  // msSystem.log("opended for w: ");
+  // msSystem.logln((bool)file);
+
+  // msSystem.log("writin: ");
+  // msSystem.logln(testVals[1]);
+
+  file.write((uint8_t *)testVals, sizeof testVals);
+  file.close();
+
+  // msSystem.log("openin for r: ");
+  // msSystem.logln(debugPath);
+  
+  File fileR = SPIFFS.open(debugPath, "r");
+
+  // msSystem.log("opended for r: ");
+  // msSystem.logln((bool)fileR);
+
+  // msSystem.log("readin: ");
+
+  fileR.read((uint8_t *)readBuffer, sizeof readBuffer);
+  fileR.close();
+
+  // msSystem.log("readback: ");
+  // msSystem.logln(readBuffer[1]);
+}
+
+
+void logSysInfo()
+{
+  // // DUMP sysinfo
+  // msSystem.log("Vcc: ");
+  // msSystem.logln(ESP.getVcc());
+  // msSystem.log("Free heap: ");
+  // msSystem.logln(ESP.getFreeHeap());
+  // msSystem.log("Chip ID: ");
+  // msSystem.logln(ESP.getChipId());
+  // msSystem.log("SDK version: ");
+  // msSystem.logln(ESP.getSdkVersion());
+  // msSystem.log("Boot version: ");
+  // msSystem.logln(ESP.getBootVersion());
+  // msSystem.log("Boot mode: ");
+  // msSystem.logln(ESP.getBootMode());
+  // msSystem.log("CPU freq.: ");
+  // msSystem.logln(ESP.getCpuFreqMHz());
+  // msSystem.log("Flash chip ID: ");
+  // msSystem.logln(ESP.getFlashChipId(), HEX);
+  // // gets the actual chip size based on the flash id
+  // msSystem.log("Flash real size: ");
+  // msSystem.logln(ESP.getFlashChipRealSize());
+  // msSystem.log("Flash real size (method b): ");
+  // msSystem.logln(ESP.getFlashChipSizeByChipId());
+  // // gets the size of the flash as set by the compiler
+  // msSystem.log("flash configured size: ");
+  // msSystem.logln(ESP.getFlashChipSize());
+  // if (ESP.getFlashChipSize() != ESP.getFlashChipRealSize())
+  // {
+  //   // msSystem.logln("WARNING: configured flash size does not match real flash size!");
+  // }
+  // msSystem.log("flash speed: ");
+  // msSystem.logln(ESP.getFlashChipSpeed());
+  // msSystem.log("flash mode: ");
+  // msSystem.logln(ESP.getFlashChipMode());
+  // msSystem.log("Sketch size: ");
+  // msSystem.logln(ESP.getSketchSize());
+  // msSystem.log("Free sketch space: ");
+  // msSystem.logln(ESP.getFreeSketchSpace());
+  // msSystem.log("Reset info: ");
+  // msSystem.logln(ESP.getResetInfo());
+  //// msSystem.log("FS mount: ");
+  //// msSystem.logln(FS.mount() ? "OK" : "ERROR!");
+  
+  // chercking crashes the ESP so its disabled atm
+  //// msSystem.log("FS check: ");
+  //// msSystem.logln(FS.check() ? "OK" : "ERROR!");
+
+}
+
 
   void setup()
   {
