@@ -1,5 +1,6 @@
 /* NOTES
 
+<<<<<<< HEAD
  * This is the MIDIShifter branch, which is set up to add full MIDI
    capabilities to the MagicShifter.  We use MagicShifter3000 modules,
    but will proceed rapidly to tighten/tidy things up a bit..
