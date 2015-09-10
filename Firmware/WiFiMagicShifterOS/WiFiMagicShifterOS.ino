@@ -101,12 +101,12 @@ void setup()
   msSystem.logSysInfo();
 
   if (SPIFFS.begin()) {
-    // msSystem.logln("SPIFFS begin!");
+    msSystem.logln("SPIFFS begin!");
   }
   else
   {
     msSystem.TEST_SPIFFS_bug();
-    // msSystem.logln("SPIFFS not begin .. :(");
+    msSystem.logln("SPIFFS not begin .. :(");
   }
 
 #ifndef DISABLE_ACCEL
@@ -119,13 +119,13 @@ void setup()
   loadString(msGlobals.uploadFileName, FILENAME_LENGTH);
   if (!SPIFFS.exists(msGlobals.uploadFileName))
   {
-    // msSystem.log("could not find: ");
-    // msSystem.logln(msGlobals.uploadFileName);
+    msSystem.log("could not find: ");
+    msSystem.logln(msGlobals.uploadFileName);
     // strcpy(msGlobals.uploadFileName, "big_smile_gif.magicBitmap");
   }
   else {
-  // msSystem.log("using POV file: ");
-  // msSystem.logln(msGlobals.uploadFileName);
+  msSystem.log("using POV file: ");
+  msSystem.logln(msGlobals.uploadFileName);
     msShakeMode.start();
   }
 
@@ -143,8 +143,8 @@ while (0)
 {
   float voltage = msSystem.getBatteryVoltage();
 
-  // msSystem.log(voltage);
-  // msSystem.logln("V");
+  msSystem.log(voltage);
+  msSystem.logln("V");
 
   for (int i = 0; i < 10; i ++)
   {
@@ -197,11 +197,11 @@ while (1)
 while (0)
 {
   MSImage activeImage = MSImage(msGlobals.uploadFileName);
-  // msSystem.log("loaded: ");
-  // msSystem.logln(msGlobals.uploadFileName);
+  msSystem.log("loaded: ");
+  msSystem.logln(msGlobals.uploadFileName);
 
-  // msSystem.log("width: ");
-  // msSystem.logln(activeImage.getWidth());
+  msSystem.log("width: ");
+  msSystem.logln(activeImage.getWidth());
 
   for (int i = 0; i < activeImage.getWidth(); i++)
   {
@@ -219,21 +219,21 @@ while (0)
 
 void loop()
 {
+  msGlobals.lastMicros = msGlobals.currentMicros;
+  msGlobals.currentMicros = micros();
+  msGlobals.loops++;
+
   pinMode(PIN_BUTTON_B, INPUT);
 
   msSystem.loop();
 
   HandleWebServer();
 
-  msGlobals.lastMicros = msGlobals.currentMicros;
-  msGlobals.currentMicros = micros();
-  msGlobals.loops++;
-
   msPOVShakeSyncMode.setFrames(32);
 
   if (msGlobals.loops % 1000 == 0)
   {
-    // msSystem.log("_");
+    msSystem.log("_");
   }
 
   if (msGlobals.lastFrameMicros + msGlobals.speedMicros < msGlobals.currentMicros)
@@ -244,7 +244,7 @@ void loop()
     // pov msBouncingBallMode mode
     if (msGlobals.shifterMode == 0)
     {
-      {
+      { 
         for (byte idx = 0; idx < LEDS; idx++)
         {
           float scale = msBouncingBallMode.getLedBright(idx, LEDS);

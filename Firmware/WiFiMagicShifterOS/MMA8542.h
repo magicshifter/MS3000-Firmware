@@ -11,8 +11,6 @@
 #define GSCALE 8 // Sets full-scale range to +/-2, 4, or 8g. Used to calc real g values.
 
 
-
-
 void InitI2C()
 {
   //Wire.pins(PIN_I2C_DATA, PIN_I2C_CLOCK);
@@ -128,9 +126,9 @@ void InitMMA8452()
     else
     {
       // msSystem.log("Could not connect to MMA8452Q: expected 0x");
-      // msSystem.log(MMA8452_ID, HEX);
+      // msSystem.log(String(MMA8452_ID, HEX));
       // msSystem.log(" but received 0x");
-      // msSystem.logln(c, HEX);
+      // msSystem.logln(String(c, HEX));
       delay(10);
     }
     /* code */

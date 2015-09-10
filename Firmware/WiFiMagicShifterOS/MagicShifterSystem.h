@@ -4,6 +4,7 @@
 #include "Config.h"
 
 #include "MagicShifterGlobals.h"
+extern MagicShifterGlobals msGlobals;
 
 class Accelerometer
 {
@@ -33,37 +34,64 @@ class Leds
 class MagicShifterSystem
 {
 private:
-  bool accelNeedsRefresh = true;
-  bool adNeedsRefresh = true;
+
+public:
+  int bFrame = 0;
+
+// TODO: private state
+// state for button timing
+  int buttonAPressedTime = 0;
+  int buttonPowerPressedTime = 0;
+  int buttonBPressedTime = 0;
+
+// state for double click timing
+  int timeToLastClickedButtonA = 0;
+  int timeToLastClickedButtonPower = 0;
+  int timeToLastClickedButtonB = 0;
+
+  bool m_enableLongClicks = true;
+
+// todo public properties? Logic for consuming buttons?
+// events for consumers true/false;
+  bool clickedButtonA = false;
+  bool clickedButtonPower = false;
+  bool clickedButtonB = false;
+
+  bool longClickedButtonA = false;
+  bool longClickedButtonPower = false;
+  bool longClickedButtonB = false;
+  
+  bool doubleClickedButtonA = false;
+  bool doubleClickedButtonPower = false;
+  bool doubleClickedButtonB = false;
 
 public:
 
-  void log(String msg, int level = ERROR)
-  {
-    if (msGlobals.DEBUG_LEVEL <= level)
-    {
-      #ifdef DEBUG_SERIAL
-      // msSystem.log(msg)
-      #endif
 
-  // !J!
-  #define DEBUG_SYSLOG 0
-  #ifdef DEBUG_SYSLOG
-  WiFiUDP udp;
-  #define __SYSLOG_PORT 514
-      // udp.beginPacket("192.168.43.151", __SYSLOG_PORT); //NTP requests are to port 123
-      udp.beginPacket("192.168.0.24", __SYSLOG_PORT); //NTP requests are to port 123
-      udp.print(msg);
-      udp.endPacket();
-      #endif
-    }
+  void log(bool b)
+  {
+    log(String(b));
   }
 
-  void logln(String msg, int level = ERROR)
+  void log(String msg)
   {
-    // if (msGlobals.DEBUG_LEVEL <= level)
-    // msSystem.logln(msg);
-  }
+#undef DEBUG_SYSLOG
+#ifdef DEBUG_SYSLOG
+    WiFiUDP udp;
+    // udp.beginPacket("192.168.43.151", __SYSLOG_PORT);
+    udp.beginPacket("192.168.4.2", 514); // wks port for syslog
+    udp.print(msg);
+    udp.endPacket();
+#else
+    Serial.print(msg);
+#endif
+  };
+
+  void logln(String msg)
+  {
+    log(msg);
+    log("\n");
+  };
 
 
   void TEST_SPIFFS_bug()
@@ -74,87 +102,106 @@ public:
     uint8_t readBuffer[] = {0,0,0,0};
     //File file = SPIFFS.open((char *)debugPath.c_str(), "w");
     
-    // msSystem.log("openin for w: ");
-    // msSystem.logln(debugPath);
+    log("openin for w: ");
+    logln(String(debugPath));
     
     File file = SPIFFS.open(debugPath, "w");
 
-    // msSystem.log("opended for w: ");
-    // msSystem.logln((bool)file);
+    log("opended for w: ");
+    logln(String((bool)file));
 
-    // msSystem.log("writin: ");
-    // msSystem.logln(testVals[1]);
+    log("writin: ");
+    logln(String(testVals[1]));
 
     file.write((uint8_t *)testVals, sizeof testVals);
     file.close();
 
-    // msSystem.log("openin for r: ");
-    // msSystem.logln(debugPath);
+    log("openin for r: ");
+    logln(String(debugPath));
     
     File fileR = SPIFFS.open(debugPath, "r");
 
-    // msSystem.log("opended for r: ");
-    // msSystem.logln((bool)fileR);
+    log("opended for r: ");
+    logln(String((bool)fileR));
 
-    // msSystem.log("readin: ");
+    log("readin: ");
 
     fileR.read((uint8_t *)readBuffer, sizeof readBuffer);
     fileR.close();
 
-    // msSystem.log("readback: ");
-    // msSystem.logln(readBuffer[1]);
-  }
+    log("readback: ");
+    logln(String(readBuffer[1]));
+  };
 
 
   void logSysInfo()
   {
     // // DUMP sysinfo
-    // msSystem.log("Vcc: ");
-    // msSystem.logln(ESP.getVcc());
-    // msSystem.log("Free heap: ");
-    // msSystem.logln(ESP.getFreeHeap());
-    // msSystem.log("Chip ID: ");
-    // msSystem.logln(ESP.getChipId());
-    // msSystem.log("SDK version: ");
-    // msSystem.logln(ESP.getSdkVersion());
-    // msSystem.log("Boot version: ");
-    // msSystem.logln(ESP.getBootVersion());
-    // msSystem.log("Boot mode: ");
-    // msSystem.logln(ESP.getBootMode());
-    // msSystem.log("CPU freq.: ");
-    // msSystem.logln(ESP.getCpuFreqMHz());
-    // msSystem.log("Flash chip ID: ");
-    // msSystem.logln(ESP.getFlashChipId(), HEX);
+    log("Vcc: ");
+    logln(String(ESP.getVcc()));
+    log("Free heap: ");
+    logln(String(ESP.getFreeHeap()));
+    log("Chip ID: ");
+    logln(String(ESP.getChipId()));
+    log("SDK version: ");
+    logln(String(ESP.getSdkVersion()));
+    log("Boot version: ");
+    logln(String(ESP.getBootVersion()));
+    log("Boot mode: ");
+    logln(String(ESP.getBootMode()));
+    log("CPU freq.: ");
+    logln(String(ESP.getCpuFreqMHz()));
+    log("Flash chip ID: ");
+    logln(String(ESP.getFlashChipId(), HEX));
     // // gets the actual chip size based on the flash id
-    // msSystem.log("Flash real size: ");
-    // msSystem.logln(ESP.getFlashChipRealSize());
-    // msSystem.log("Flash real size (method b): ");
-    // msSystem.logln(ESP.getFlashChipSizeByChipId());
+    log("Flash real size: ");
+    logln(String(ESP.getFlashChipRealSize()));
+    log("Flash real size (method b): ");
+    logln(String(ESP.getFlashChipSizeByChipId()));
     // // gets the size of the flash as set by the compiler
-    // msSystem.log("flash configured size: ");
-    // msSystem.logln(ESP.getFlashChipSize());
+    log("flash configured size: ");
+    logln(String(ESP.getFlashChipSize()));
     // if (ESP.getFlashChipSize() != ESP.getFlashChipRealSize())
     // {
-    //   // msSystem.logln("WARNING: configured flash size does not match real flash size!");
+    //   logln(String("WARNING: configured flash size does not match real flash size!"));
     // }
-    // msSystem.log("flash speed: ");
-    // msSystem.logln(ESP.getFlashChipSpeed());
-    // msSystem.log("flash mode: ");
-    // msSystem.logln(ESP.getFlashChipMode());
-    // msSystem.log("Sketch size: ");
-    // msSystem.logln(ESP.getSketchSize());
-    // msSystem.log("Free sketch space: ");
-    // msSystem.logln(ESP.getFreeSketchSpace());
-    // msSystem.log("Reset info: ");
-    // msSystem.logln(ESP.getResetInfo());
-    //// msSystem.log("FS mount: ");
-    //// msSystem.logln(FS.mount() ? "OK" : "ERROR!");
+    log("flash speed: ");
+    logln(String(ESP.getFlashChipSpeed()));
+    log("flash mode: ");
+    logln(String(ESP.getFlashChipMode()));
+    log("Sketch size: ");
+    logln(String(ESP.getSketchSize()));
+    log("Free sketch space: ");
+    logln(String(ESP.getFreeSketchSpace()));
+    log("Reset info: ");
+    logln(String(ESP.getResetInfo()));
+    //log("FS mount: ");
+    //logln(String(FS.mount() ? "OK" : "ERROR!"));
     
-    // chercking crashes the ESP so its disabled atm
-    //// msSystem.log("FS check: ");
-    //// msSystem.logln(FS.check() ? "OK" : "ERROR!");
+    logln(String());
+    
+#if 0
+    log(F("Heap: ")); 
+    logln(String(system_get_free_heap_size()));
+    log(F("Boot Vers: ")); 
+    logln(String(system_get_boot_version()));
+    log(F("CPU: ")); 
+    logln(String(system_get_cpu_freq()));
+    log(F("SDK: ")); 
+    logln(String(system_get_sdk_version()));
+    log(F("Chip ID: ")); 
+    logln(String(system_get_chip_id()));
+    log(F("Flash ID: ")); 
+    logln(String(spi_flash_get_id()));
+    log(F("Vcc: ")); 
+    logln(String(readvdd33()));
+#endif
 
-  }
+    // chercking crashes the ESP so its disabled atm
+    //log("FS check: ");
+    //logln(String(FS.check() ? "OK" : "ERROR!"));
+
+  };
 
   void setup()
   {
@@ -168,7 +215,7 @@ public:
     enableLeds();   // we need this for MIDI optocouplers!!
 
     Serial.begin(115200);
-    // msSystem.logln("\r\nMagicShifter 3000 OS V0.24");
+    logln(String("\r\nMagicShifter 3000 OS V0.24"));
 
     EEPROM.begin(512);
     // accel
@@ -221,51 +268,15 @@ public:
     pinMode(PIN_LED_ENABLE, INPUT);
   }
 
-  int currentTimeStamp = 0;
-  int lastTimeStamp = 0;
-  int microsSinceLast = 0;
 
   void loop()
   {
-    //delay(0);
-    lastTimeStamp = currentTimeStamp;
-    currentTimeStamp = micros();
-    microsSinceLast = currentTimeStamp - lastTimeStamp;
 
-    accelNeedsRefresh = true;
-    adNeedsRefresh = true;
     handleButtons();
     //delay(0);
   }
 
-  int bFrame = 0;
 
-// TODO: private state
-// state for button timing
-  int buttonAPressedTime = 0;
-  int buttonPowerPressedTime = 0;
-  int buttonBPressedTime = 0;
-
-// state for double click timing
-  int timeToLastClickedButtonA = 0;
-  int timeToLastClickedButtonPower = 0;
-  int timeToLastClickedButtonB = 0;
-
-  bool m_enableLongClicks = true;
-
-// todo public properties? Logic for consuming buttons?
-// events for consumers true/false;
-  bool clickedButtonA = false;
-  bool clickedButtonPower = false;
-  bool clickedButtonB = false;
-
-  bool longClickedButtonA = false;
-  bool longClickedButtonPower = false;
-  bool longClickedButtonB = false;
-  
-  bool doubleClickedButtonA = false;
-  bool doubleClickedButtonPower = false;
-  bool doubleClickedButtonB = false;
 
   void handleButtons()
   {
@@ -274,7 +285,7 @@ public:
     if (!digitalRead(PIN_BUTTON_A))
     {
       if (buttonAPressedTime)
-        buttonAPressedTime += microsSinceLast;
+        buttonAPressedTime += msGlobals.lastMicros;
       else
         buttonAPressedTime = 1;
     }
@@ -283,24 +294,23 @@ public:
       if (m_enableLongClicks && buttonAPressedTime >= MIN_TIME_LONG_CLICK)
       {
         longClickedButtonA = true;
-        // msSystem.log("longClickedButtonA", INFO);
+        log("longClickedButtonA");
       }
       else if (buttonAPressedTime >= MIN_TIME_CLICK)
       {
         clickedButtonA = true;
-        // msSystem.log("clickedButtonA", INFO);
+        log("clickedButtonA");
       }
 
       buttonAPressedTime = 0;
     }
-
 
     // reset public btton state
     clickedButtonB = longClickedButtonB = false;
     if (!digitalRead(PIN_BUTTON_B))
     {
       if (buttonBPressedTime)
-        buttonBPressedTime += microsSinceLast;
+        buttonBPressedTime += msGlobals.lastMicros;
       else
         buttonBPressedTime = 1;
     }
@@ -309,13 +319,13 @@ public:
       if (m_enableLongClicks && buttonBPressedTime >= MIN_TIME_LONG_CLICK)
       {
         longClickedButtonB = true;
-        // msSystem.log("longClickedButtonB", INFO);
+        log("longClickedButtonB");
 
       }
       else if (buttonBPressedTime >= MIN_TIME_CLICK)
       {
         clickedButtonB = true;
-        // msSystem.log("clickedButtonB", INFO);
+        log("clickedButtonB");
       }
 
       buttonBPressedTime = 0;
@@ -329,7 +339,7 @@ public:
     if (powerButtonPressed())
     {
       if (buttonPowerPressedTime)
-        buttonPowerPressedTime += microsSinceLast;
+        buttonPowerPressedTime += msGlobals.lastMicros;
       else
         buttonPowerPressedTime = 1;
     }
@@ -386,14 +396,12 @@ public:
     return analogRead(A0);
   }
 
-  float avg = 3.2;
 
   float getBatteryVoltage(void)
   {
     int adValue = getADValue();
     int ad1V = 1023;
-
-
+    float avg = 3.2;
 
     //float r1 = 180, r2 = 390, r3 = 330; // gamma??? or (not beta)
     float r1 = 270, r2 = 1000, r3 = 0; // alpha

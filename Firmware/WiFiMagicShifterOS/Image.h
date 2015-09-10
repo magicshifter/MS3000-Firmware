@@ -23,15 +23,15 @@ public:
 
         if (size % frameSize != 0)
         {
-          // msSystem.log("File is no multiple of LED count: ");
-          // msSystem.logln(fileName);
+          msSystem.log("File is no multiple of LED count: ");
+          msSystem.logln(String(fileName));
         }
         width = size / frameSize;
       }
       else
       {
-        // msSystem.log("File could not be opened: ");
-        // msSystem.logln(fileName);
+        msSystem.log("File could not be opened: ");
+        msSystem.logln(String(fileName));
         width = 0;
         height = LEDS;
       }

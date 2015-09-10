@@ -45,8 +45,8 @@ void handleReadFile()
   fillPixels(0, 0, 1, 0x1F);
   updatePixels();
 
-  // msSystem.log("Free heap: ");
-  // msSystem.logln(ESP.getFreeHeap());
+  msSystem.log("Free heap: ");
+  msSystem.logln(String(ESP.getFreeHeap()));
 
   String message = "ReadFile:\n";
 
@@ -70,19 +70,19 @@ void handleReadFile()
     if (file)
     {
       int fileLen = file.available();
-      // msSystem.log("file available: ");
-      // msSystem.logln(fileLen);
+      msSystem.log("file available: ");
+      msSystem.logln(String(fileLen));
 
       if (fileLen > 0)
       {
         if (fileLen > 100) fileLen = 100 ;
-        // msSystem.logln("reading: ");
-        // msSystem.logln(file.read(buffer, fileLen));
+        msSystem.logln("reading: ");
+        msSystem.logln(String(file.read(buffer, fileLen)));
 
-        // msSystem.logln("buffer: ");
+        msSystem.logln("buffer: ");
 
         for (int i = 0; i < fileLen; i++) {
-          // msSystem.log((char)buffer[i]);
+          msSystem.log((char)buffer[i]);
           message += (char)buffer[i];
         }
       }
@@ -91,13 +91,13 @@ void handleReadFile()
     }
     else
     {
-      // msSystem.logln("file not found");
+      msSystem.logln("file not found");
       message += " file not found!";
     }
   }
   else
   {
-    // msSystem.logln("arg missing");
+    msSystem.logln("arg missing");
     message += "argument missing!";
   }
 
@@ -216,19 +216,19 @@ void handleFileListJson() {
 */
 
 void handleFileUpload(){
-  // msSystem.logln("handle upload!");
+  msSystem.logln("handle upload!");
   //if(server.uri() != "/upload") return;
   HTTPUpload& upload = server.upload();
   if(upload.status == UPLOAD_FILE_START)
   {
     strcpy(msGlobals.uploadFileName, upload.filename.c_str());//.c_str();
-    // msSystem.log("upload started: ");
-    // msSystem.logln(msGlobals.uploadFileName);
+    msSystem.log("upload started: ");
+    msSystem.logln(msGlobals.uploadFileName);
 
     msGlobals.uploadFile = SPIFFS.open(msGlobals.uploadFileName, "w");
 
     if (!msGlobals.uploadFile) {
-      // msSystem.logln("ERROR: COULD NOT open file!!!");
+      msSystem.logln("ERROR: COULD NOT open file!!!");
     }
 
     //if(SD.exists((char *)upload.filename.c_str())) SD.remove((char *)upload.filename.c_str());
@@ -245,11 +245,11 @@ void handleFileUpload(){
       result = msGlobals.uploadFile.write(upload.buf, upload.currentSize);
       if (!result) 
       {
-      // msSystem.logln("ERROR: could not write!");
+      msSystem.logln("ERROR: could not write!");
       }
     }
-    // msSystem.log("Upload: WRITE, Bytes: ");
-    // msSystem.logln(upload.currentSize);
+    msSystem.log("Upload: WRITE, Bytes: ");
+    msSystem.logln(String(upload.currentSize));
   }
   else if(upload.status == UPLOAD_FILE_END)
   {
@@ -261,9 +261,9 @@ void handleFileUpload(){
       //bool result;
       //result =
       msGlobals.uploadFile.close();
-      //if (!result) // msSystem.logln("ERROR: could not close!");
+      //if (!result) msSystem.logln("ERROR: could not close!");
     }
-    // msSystem.log("Upload: END, Size: ");
-    // msSystem.logln(upload.totalSize);
+    msSystem.log("Upload: END, Size: ");
+    msSystem.logln(String(upload.totalSize));
   }
 }

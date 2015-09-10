@@ -5,7 +5,6 @@
 class MagicShifterGlobals {
 
 public:
-  int DEBUG_LEVEL = VERBOSE;
   
   // state
 

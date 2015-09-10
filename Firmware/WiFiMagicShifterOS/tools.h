@@ -3,13 +3,6 @@
 
 #define BASE64_ENC_LEN(n) (((n) + 2 - (((n) + 2) % 3)) / 3 * 4)
 
-enum { 
-  VERBOSE = 0,
-  INFO = 5,
-  WARNING = 10,
-  ERROR = 15
-};
-
 bool memcmpByte(const byte *data, byte referenceValue, int len)
 {
   for (int i = 0; i < len; i++)

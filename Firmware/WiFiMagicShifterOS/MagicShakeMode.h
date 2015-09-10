@@ -62,7 +62,7 @@ public:
       int index = shakeSync.getFrameIndex();
       if (index > 0)
       {
-        //// msSystem.logln(index);
+        //msSystem.logln(index);
         byte povData[RGB_BUFFER_SIZE];
         activeImage.readFrame(index / FRAME_MULTIPLY, povData, RGB_BUFFER_SIZE);
         loadBuffer(povData);
@@ -88,8 +88,8 @@ public:
     activeImage = MSImage(activeFilename);
     int w = activeImage.getWidth() * FRAME_MULTIPLY;
     shakeSync.setFrames(w);
-    // msSystem.log("set frames to: ");
-    // msSystem.logln(w);
+    msSystem.log("set frames to: ");
+    msSystem.logln(String(w));
   }
 };
 #endif
