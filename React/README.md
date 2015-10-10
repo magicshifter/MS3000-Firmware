@@ -18,6 +18,10 @@
 - `gulp -p` run app in production mode
 - `gulp test`
 
+## Standalone App
+- nodewebkit starts a standalone desktop app,
+- `sudo npm i -g nodewebkit`
+
 made by the [MagicShifter Team](http://magicshifter.net),
 originally based on lots of hard work by
 Daniel Steigerwald, [twitter/steida](https://twitter.com/steida)
