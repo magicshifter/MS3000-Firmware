@@ -11,5 +11,4 @@
   (om/component
    (html
     [:ul.leds {:list-style "none"}
-     (for [led-item (-> data :leds)]
-       (led/component data led-item))])))
+     (map (fn [led-item] (led/component data led-item)) (:leds data))])))
