@@ -15,4 +15,5 @@
 
 (defn on-js-reload []
   ;; optionally touch the app-state to force rerendering
+  ; (swap! app/app-state update-in [:__figwheel_counter] inc)
   )
