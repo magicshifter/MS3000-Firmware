@@ -5,6 +5,7 @@
 
 extern int DEBUG_LEVEL;
 
+// TODO: enum this
 const int VERBOSE = 0;
 const int INFO = 5;
 const int WARNING = 10;
@@ -13,7 +14,22 @@ const int ERROR = 15;
 void log(String msg, int level = ERROR)
 {
   if (DEBUG_LEVEL <= level)
-    Serial.print(msg);
+  {
+#ifdef DEBUG_SERIAL
+    Serial.print(msg)
+#endif
+
+// !J!
+#define DEBUG_SYSLOG 0
+#ifdef DEBUG_SYSLOG
+    WiFiUDP udp;
+#define __SYSLOG_PORT 514
+    // udp.beginPacket("192.168.43.151", __SYSLOG_PORT); //NTP requests are to port 123
+    udp.beginPacket("192.168.0.24", __SYSLOG_PORT); //NTP requests are to port 123
+    udp.print(msg);
+    udp.endPacket();
+#endif
+  }
 }
 
 void logln(String msg, int level = ERROR)

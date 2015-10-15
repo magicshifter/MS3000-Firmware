@@ -3,13 +3,18 @@
 
 int GLOBAL_GS = 5;
 
+
+//#define MIDISHIFTER 1
 // v1 == breadboard pcb
 // 2 == 0.9 pcb :)
 #define HWVERSION 2
+#define VERSION 0.1
 
 // remove define to enable ;)
 //#define DISABLE_ACCEL
-#define USE_MDNS
+
+//crashes on new esp aruino toolchain :\
+//#define USE_MDNS
 
 #define MODES 3
 
@@ -47,15 +52,26 @@ const char *jsonAPList = "{\"list\": [\
 const char *jsonSoftAP = "{\"ssid\":\"MagicShifter3000\", \"pwd\":\"\"}";
 */
 
+#define LED_TYPE_APA102 1 
+#define LED_TYPE_WS2801 2
+#define LED_TYPE LED_TYPE_APA102
+
+
+
 #define CONNECTION_TIMEOUT 30000
 
-#define SPI_FREQUENCY 20000000
+#if (LED_TYPE == LED_TYPE_APA102)
+	#define SPI_FREQUENCY 20000000
+#else
+	#define SPI_FREQUENCY 500000
+#endif
+
 #define POV_TIME_MICROSECONDS 1
 
-#define VERSION 0.1
 
-//#define LEDS 48
+
 #define LEDS 16
+//#define LEDS 160
 
 
 #define PIN_LED_ENABLE 15

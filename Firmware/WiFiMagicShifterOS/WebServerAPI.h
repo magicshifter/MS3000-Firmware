@@ -57,93 +57,121 @@ private:
 
   // used in resetAPList & getNextAP
   int apListIndex = -1;
-  FSFile apListFile;
+  File apListFile;
 
 public:
   bool getServerConfig(struct ServerConfig *config)
   {
+    
     String path = apServerConfigPath;
-    if(FS.exists((char *)path.c_str()))
+    if(SPIFFS.exists((char *)path.c_str()))
     {
-      FSFile file = FS.open((char *)path.c_str());
-      file.read(config, sizeof(*config));
+      File file = SPIFFS.open((char *)path.c_str(), "r");
+      file.read((uint8_t *)config, sizeof(*config));
       file.close();
       return true;
     }
+    else 
+    {
+      Serial.print("File doesn't exist:");
+      Serial.println((char * )path.c_str());
+    }
+
     safeStrncpy(config->hostname, "magicshifter", sizeof(config->hostname));
     config->port = 80;
+    
     return false;
   }
 
   void setServerConfig(struct ServerConfig *config)
   {
+    
     String path = apServerConfigPath;
-    FSFile file = FS.open((char *)path.c_str(), FSFILE_OVERWRITE);
+    File file = SPIFFS.open((char *)path.c_str(), "w");
     file.write((uint8_t *)config, sizeof(*config));
+    
     file.close();
+  
   }
 
   bool getAPConfig(struct APInfo *config)
   {
+    
     String path = apConfigPath;
-    if(FS.exists((char *)path.c_str()))
+    if(SPIFFS.exists((char *)path.c_str()))
     {
-      FSFile file = FS.open((char *)path.c_str());
-      file.read(config, sizeof(*config));
+      File file = SPIFFS.open((char *)path.c_str(), "r");
+      file.read((uint8_t *)config, sizeof(*config));
       file.close();
       return true;
     }
+    else
+    {
+      Serial.print("AP config missing:");
+      Serial.println((char *)path.c_str());
+    }
+
     safeStrncpy(config->ssid, "MS3000", sizeof(config->ssid));
     safeStrncpy(config->password, "", sizeof(config->password));
+    
     return false;
   }
 
   void setAPConfig(struct APInfo *config)
   {
+    
     String path = apConfigPath;
-    FSFile file = FS.open((char *)path.c_str(), FSFILE_OVERWRITE);
+    File file = SPIFFS.open((char *)path.c_str(), "w");
     file.write((uint8_t *)config, sizeof(*config));
     file.close();
 
     logln("saved:");
     logln(config->ssid);
+    
   }
 
   bool getPreferedAP(struct APInfo *config)
   {
+    
     String path = preferedAPConfigPath;
-    if(FS.exists((char *)path.c_str()))
+    if(SPIFFS.exists((char *)path.c_str()))
     {
-      FSFile file = FS.open((char *)path.c_str());
-      file.read(config, sizeof(*config));
+      File file = SPIFFS.open((char *)path.c_str(), "r");
+      file.read((uint8_t *)config, sizeof(*config));
       file.close();
       return true;
     }
     safeStrncpy(config->ssid, "", sizeof(config->ssid));
     safeStrncpy(config->password, "", sizeof(config->password));
     return false;
+    
   }
 
   void setPreferedAP(struct APInfo *config)
   {
+    
     String path = preferedAPConfigPath;
-    FSFile file = FS.open((char *)path.c_str(), FSFILE_OVERWRITE);
+    File file = SPIFFS.open((char *)path.c_str(), "w");
     file.write((uint8_t *)config, sizeof(*config));
     file.close();
+    
   }
 
   void deleteAP(char *ssid)
   {
+    
     String path = apListConfigPath;
     // bug in FS WRITE define!!!!
-    FSFile apListFile = FS.open((char *)path.c_str(), (SPIFFS_RDONLY | SPIFFS_WRONLY | SPIFFS_CREAT));
+    //FSFile apListFile = FS.open((char *)path.c_str(), (SPIFFS_RDONLY | SPIFFS_WRONLY | SPIFFS_CREAT));
+    File apListFile = SPIFFS.open((char *)path.c_str(), "a+");
+
     APInfo apInfoDummy;
     const int requiredBytes = sizeof(apInfoDummy);
     int apListIndex = 0;
 
     int lastPos = apListFile.position();
 
-    while (apListFile.read(&apInfoDummy, requiredBytes) == requiredBytes)
+    while (apListFile.read((uint8_t *)&apInfoDummy, requiredBytes) == requiredBytes)
     {
       if (strcmp(apInfoDummy.ssid, ssid) == 0)
       {
@@ -152,7 +180,7 @@ public:
 
         apInfoDummy.clear();
         int calcPos = apListIndex * requiredBytes;
-        apListFile.seek(calcPos);
+        apListFile.seek(calcPos, SeekSet);
         apListFile.write((uint8_t *)&apInfoDummy, requiredBytes);
         break;
       }
@@ -160,18 +188,20 @@ public:
       lastPos = apListFile.position();
     }
     apListFile.close();
+    
   }
 
   void addAP(struct APInfo *apInfo)
   {
+    
     String path = apListConfigPath;
-    FSFile apListFile = FS.open((char *)path.c_str(), FSFILE_READ);
+    File apListFile = SPIFFS.open((char *)path.c_str(), "r");
     const int requiredBytes = sizeof(*apInfo);
     APInfo apInfoDummy;
     int apListIndex = 0;
     int firstFreePos = -1;
 
-    while (apListFile.read(&apInfoDummy, requiredBytes) == requiredBytes)
+    while (apListFile.read((uint8_t *)&apInfoDummy, requiredBytes) == requiredBytes)
     {
       if (firstFreePos < 0 && memcmpByte((byte *)&apInfoDummy, 0, requiredBytes))
       {
@@ -190,32 +220,36 @@ public:
     {
       logln("found hole!");
       logln(String(firstFreePos));
-      apListFile = FS.open((char *)path.c_str(), (SPIFFS_RDONLY | SPIFFS_WRONLY | SPIFFS_CREAT));
-      apListFile.seek(firstFreePos);
+      apListFile = SPIFFS.open((char *)path.c_str(), "a+");
+      apListFile.seek(firstFreePos, SeekSet);
     }
     else
     {
       logln("appendiong at end");
-      apListFile = FS.open((char *)path.c_str(), FSFILE_WRITE);
+      apListFile = SPIFFS.open((char *)path.c_str(), "a");
     }
     apListFile.write((uint8_t *)apInfo, requiredBytes);
     apListFile.close();
+    
   }
 
   void resetAPList()
   {
+    
       apListIndex = -1;
       apListFile.close();
+      
   }
 
   bool getNextAP(struct APInfo *apInfo)
   {
+    
     if (apListIndex < 0)
     {
       String path = apListConfigPath;
-      if(FS.exists((char *)path.c_str()))
+      if(SPIFFS.exists((char *)path.c_str()))
       {
-        apListFile = FS.open((char *)path.c_str());
+        //apListFile = SPIFFS.open((char *)path.c_str(), "r");
         apListIndex = 0;
       }
     }
@@ -225,7 +259,7 @@ public:
       const int requiredBytes = sizeof(*apInfo);
       do
       {
-        if (apListFile.read(apInfo, requiredBytes) == requiredBytes)
+        if (apListFile.read((uint8_t *)apInfo, requiredBytes) == requiredBytes)
         {
           apListIndex++;
           if (!memcmpByte((byte *)apInfo, 0, requiredBytes))
@@ -241,6 +275,10 @@ public:
     {
       return false;
     }
+    
+
+    ///hack
+    return false;
   }
 };
 SettingsManager Settings;

@@ -4,12 +4,50 @@ prevent restarts: Make sure GPIO 2 is not connected, i.e. float.
 from https://github.com/esp8266/Arduino/issues/373
 */
 
+
+
+
+/*
+// FS hack in FS.h/FS.c
+//////////////////////////////////////
+// hacked by wizard23
+bool FS::exists(const String& path) {
+    return exists(path.c_str());
+} 
+
+bool FS::exists(const char* path) {
+   File f = open(path, "r");
+   if (f)
+   {
+    return true;
+   }
+   else
+   {
+    return false;
+   }
+}
+
+/// for h
+  bool exists(const String& path);
+  bool exists(const char* path);
+  
+////////////////////////////////////////
+*/
+
+
+
+
+
+
+
+
+
 #include "SPI.h"
 //#include <Ticker.h>
 #include <math.h>
 #include <Wire.h> // Used for I2C
 #include <Arduino.h>
-#include <FileSystem.h>
+#include <FS.h>
 #include <Esp.h>
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
@@ -60,6 +98,10 @@ extern "C" {
 
 #include "WebServer.h"
 
+#ifdef MIDISHIFTER
+#include "MidiShifter/MidiShifter.h"
+#endif
+
 
 // state
 MagicShifter shifter;
@@ -92,6 +134,46 @@ bool apMode = false;
 byte web_rgb_buffer[RGB_BUFFER_SIZE + 4];
 
 extern char uploadname[];
+
+void TEST_SPIFFS_bug()
+{
+
+  const char* debugPath = "XXXXX";
+  uint8_t testVals[] = {1,23, 3, 7};
+  uint8_t readBuffer[] = {0,0,0,0};
+  //File file = SPIFFS.open((char *)debugPath.c_str(), "w");
+  
+  Serial.print("openin for w: ");
+  Serial.println(debugPath);
+  
+  File file = SPIFFS.open(debugPath, "w");
+
+  Serial.print("opended for w: ");
+  Serial.println((bool)file);
+
+  Serial.print("writin: ");
+  Serial.println(testVals[1]);
+
+  file.write((uint8_t *)testVals, sizeof testVals);
+  file.close();
+
+  Serial.print("openin for r: ");
+  Serial.println(debugPath);
+  
+  File fileR = SPIFFS.open(debugPath, "r");
+
+  Serial.print("opended for r: ");
+  Serial.println((bool)fileR);
+
+  Serial.print("readin: ");
+
+  fileR.read((uint8_t *)readBuffer, sizeof readBuffer);
+  fileR.close();
+
+  Serial.print("readback: ");
+  Serial.println(readBuffer[1]);
+
+}
 
 void setup()
 {
@@ -142,8 +224,18 @@ void setup()
   Serial.print("Reset info: ");
   Serial.println(ESP.getResetInfo());
 
-  Serial.print("FS mount: ");
-  Serial.println(FS.mount() ? "OK" : "ERROR!");
+  if (SPIFFS.begin()) 
+    Serial.println("SPIFFS begin!");
+  else
+    Serial.println("SPIFFS not begin .. :(");
+
+// TEST_SPIFFS_bug();
+
+
+
+  //Serial.print("FS mount: ");
+  //Serial.println(FS.mount() ? "OK" : "ERROR!");
+  
   // chercking crashes the ESP so its disabled atm
   //Serial.print("FS check: ");
   //Serial.println(FS.check() ? "OK" : "ERROR!");
@@ -167,12 +259,77 @@ void setup()
   magicMode.start(&shifter);
   magicMode.setActiveFile(uploadname);
 
+///*
   for (byte idx = 0; idx < LEDS; idx++)
   {
     setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
   }
   updatePixels();
   //saveBuffer(web_rgb_buffer);
+//*/
+
+  while (0)
+  {
+    float voltage = shifter.getBatteryVoltage();
+
+    Serial.print(voltage);
+    Serial.println("V");
+
+    for (int i = 0; i < 10; i ++)
+    {
+      shifter.getBatteryVoltage();
+      delay(1); 
+    }
+
+    int bbb = 255;
+
+    for (byte idx = 0; idx < LEDS; idx++)
+    {
+      setPixel(idx, ((idx % 3)  == 0) ? bbb : 0, ((idx  % 3) == 1 ) ? bbb : 0, ((idx %  3) == 2) ? bbb : 0, 0);
+
+      setPixel((LEDS + idx - 16)%LEDS, 0, 0, 0, 0);
+      updatePixels();
+      delay(100);
+      shifter.getBatteryVoltage();
+    }
+
+    delay(1);
+
+/*
+     // swipe colors
+    for (byte idx = 0; idx < LEDS; idx++)
+    {
+      setPixel(idx, (idx & 1) ? bbb : 0, (idx & 2) ? bbb : 0, (idx & 4) ? bbb : 0, 0);
+      updatePixels();
+      delay(20);
+      shifter.getBatteryVoltage();
+    }
+  */  
+   
+  }
+  /*
+
+
+
+ // delay(1000)
+
+// while (1)
+// {
+//   // swipe colors
+//     for (byte idx = 0; idx < LEDS; idx++)
+//     {
+//       setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, GLOBAL_GS);
+//       updatePixels();
+//       delay(30);
+//     }
+//     for (byte idx = 0; idx < LEDS; idx++)
+//     {
+//       setPixel(idx, 0, 0, 0, 1);
+//       updatePixels();
+//       delay(30);
+//     }
+// }
+  
 
   while (0)
   {
@@ -193,12 +350,14 @@ void setup()
     }
 
     activeImage.close();
+    
   } 
+  */
 }
 
 void loop()
 {
-   pinMode(PIN_BUTTON_B, INPUT);
+  pinMode(PIN_BUTTON_B, INPUT);
   shifter.loop();
 
   HandleWebServer();
