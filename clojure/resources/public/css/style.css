@@ -1,2 +1,9 @@
 /* some style */
 
+ul.leds li.led {
+  float: left;
+  display: inline-block;
+  border: 1px solid;
+  height: 20px;
+  width: 20px;
+}

@@ -1,6 +1,6 @@
 # ms3000
 
-FIXME: MagicShifter 3000 clojurescript ui
+MagicShifter 3000 clojurescript ui
 
 ## Setup
 
