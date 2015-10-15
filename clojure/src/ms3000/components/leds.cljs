@@ -7,7 +7,7 @@
    [sablono.core :as html :refer-macros [html]]
    [ms3000.components.led :as led]))
 
-(defn component [data]
+(defn component [data owner]
   (om/component
    (html
     [:ul.leds {:list-style "none"}

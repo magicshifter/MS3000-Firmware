@@ -4,7 +4,7 @@
    [om.dom :as omdom :include-macros true]
    [sablono.core :as html :refer-macros [html]]))
 
-(defn component [data]
+(defn component [data owner]
   (om/component
    (html
     [:div
