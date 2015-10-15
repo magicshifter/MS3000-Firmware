@@ -5,7 +5,21 @@
   "scripts": {
     "postinstall": "gulp build --production",
     "start": "NODE_ENV=production node src/server",
-    "test": "gulp test"
+    "test": "gulp test",
+    "app": "nwbuild --run ."
+  },
+  "webkit": {
+    "plugin": false
+  },
+  "main": "build/index.html",
+  "window": {
+    "icon": "assets/img/icon.png",
+    "toolbar": false,
+    "frame": true,
+    "width": 800,
+    "height": 600,
+    "position": "center",
+    "resizable": true
   },
   "engines": {
     "iojs": "3.0.x",
@@ -95,5 +109,9 @@
     "webpack": "^1.9.5",
     "webpack-dev-server": "^1.7.0",
     "yargs": "^3.3.1"
+  },
+  "devDependencies": {
+    "nw-builder": "^2.0.2",
+    "nwbuild": "0.0.5"
   }
 }
