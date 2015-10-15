@@ -6,11 +6,20 @@
    [cljs.core.async :refer [put! chan <! alts!]]
    [sablono.core :as html :refer-macros [html]]))
 
-(defn on-click [data led-item event]
-  (println "clicked led item:" led-item))
+(defn toggle-boolean [bool]
+  (= bool false))
+
+(defn on-click [data id event]
+  (om/transact! data [:leds id :active] toggle-boolean))
+
+(defn calculate-border-color [is-active?]
+  (if (= true is-active?)
+    "#ffffff"
+    "#000000"))
 
 (defn component [data led-item]
-   (html
-    [:li.led {:key (str 'led- (-> led-item :id))
-              :on-click #(on-click data led-item %1)
-              :style {:background-color (-> led-item :color)}}]))
+  (html
+   [:li.led {:key (str (-> led-item :id))
+             :on-click #(on-click data (-> led-item :id) %1)
+             :style {:background-color (-> led-item :color)
+                     :border-color (calculate-border-color (-> led-item :active))}}]))
