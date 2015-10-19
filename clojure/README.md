@@ -7,6 +7,7 @@ MagicShifter 3000 clojurescript ui
 To get an interactive development environment run:
 
     lein figwheel
+    xdg-open localhost:3449
 
 and open your browser at [localhost:3449](http://localhost:3449/).
 This will auto compile and send all changes to the browser without the
@@ -28,3 +29,8 @@ To create a production build run:
 And open your browser in `resources/public/index.html`. You will not
 get live reloading, nor a REPL.
 
+
+To start a first version of the api server:
+
+    lein ring server
+    xdg-open localhost:3000
