@@ -7,10 +7,18 @@
                  [org.clojure/clojurescript "1.7.122"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [sablono "0.3.6"]
+                 [clj-time "0.9.0"] ; required due to bug in lein-ring
+                 [metosin/compojure-api "0.22.0"]
+                 [ring-cors "0.1.7"]
                  [org.omcljs/om "0.9.0"]]
 
   :plugins [[lein-cljsbuild "1.1.0"]
             [lein-figwheel "0.4.1"]]
+
+  :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
+                                  [cheshire "5.3.1"]
+                                  [ring-mock "0.1.5"]]
+                   :plugins [[lein-ring "0.9.6"]]}}
 
   :source-paths ["src"]
 
@@ -31,6 +39,9 @@
                                     :main ms3000.core
                                     :optimizations :advanced
                                     :pretty-print false}}]}
+
+  :ring {:handler server.core/app}
+  :uberjar-name "server.jar"
 
   :figwheel {
              ;; :http-server-root "public" ;; default and assumes "resources"

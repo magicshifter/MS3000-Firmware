@@ -1,12 +1,15 @@
-ul.leds {
+ul, ul ul {
   display: inline-block;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-ul.leds li.led {
+ul li.col {
   float: left;
+}
+
+ul.leds li.led {
   border: 1px solid;
   height: 20px;
   width: 20px;
