@@ -1,5 +1,4 @@
 
-# MIDIShifter Branch of:
 # MagicShifter3000
 
 ##### /Firmware
