@@ -3,8 +3,6 @@
 
 #include "msSystem.h"
 
-
-
 // A MagicShifter mode can be activated by the user through system-events, i.e. buttons, shaking, etc.
 // start happens when the user selects the mode
 // stop happens when the user switches to another mode, before any other modes are started
@@ -13,7 +11,7 @@ class IMode
 {
 public:
   // start the mode
-  void start(MidiShifterSystem *msSystem);
+  void start(MagicShifterSystem *msSystem);
   // stop the mode
   void stop(void);
   // step through an event frame of the mode
@@ -23,11 +21,11 @@ public:
 class MagicShifterBaseMode : public IMode
 {
 private:
-  MidiShifterSystem *m_msSystem;
+  MagicShifterSystem *m_msSystem;
 
   public:
     // start the mode
-    void start(MidiShifterSystem *msSystem)
+    void start(MagicShifterSystem *msSystem)
     {
       m_msSystem = msSystem;
     }

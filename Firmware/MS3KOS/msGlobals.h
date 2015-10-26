@@ -2,7 +2,7 @@
 #define __MAGICGLOBALS_H
 
 
-class MidiShifterGlobals {
+class MagicShifterGlobals {
 
 public:
   
@@ -32,5 +32,5 @@ public:
 };
 
 #else
-extern MidiShifterGlobals msGlobals;
+extern MagicShifterGlobals msGlobals;
 #endif

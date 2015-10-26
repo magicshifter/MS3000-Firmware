@@ -36,7 +36,7 @@ class Leds
 
 // TODO: all init and all sensors and leds in here :)
 // (accelerometer wuld also be a class but the MAgicShifter object has one ;)
-class MidiShifterSystem
+class MagicShifterSystem
 {
 private:
 
@@ -432,5 +432,5 @@ public:
 };
 
 #else
-extern MidiShifterSystem msSystem;
+extern MagicShifterSystem msSystem;
 #endif

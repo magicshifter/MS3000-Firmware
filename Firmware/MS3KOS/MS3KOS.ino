@@ -46,8 +46,8 @@ extern "C" {
 #include "msGlobals.h"
 #include "msSystem.h"
 
-MidiShifterGlobals msGlobals;
-MidiShifterSystem msSystem;
+MagicShifterGlobals msGlobals;
+MagicShifterSystem msSystem;
 
 // mode modules 
 #ifdef ENABLE_MIDI
