@@ -17,6 +17,21 @@
 #define PIN_I2C_DATA 5 // 5 //blau // labeled 5 on esp12E!!!
 #define PIN_I2C_CLOCK 4 //lila
 
+// TODO : Flesh this out?
+class Accelerometer
+{
+  bool update();
+
+  void setConfig();
+  void getConfig();
+  void defaulConfig(); // free running mode :)
+  void getValues(float *accel); // 3 values
+  void getValues(int *accel); // 3 values (fixed point almost raw data from sensor);
+
+  void getAverage(int *accel);
+};
+
+
 
 void initAccelerometer()
 {

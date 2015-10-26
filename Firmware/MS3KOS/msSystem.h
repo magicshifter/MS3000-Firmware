@@ -7,32 +7,8 @@
 
 #include "Hardware/LEDHardware.h"
 #include "Hardware/Accelerometer.h"
+#include "Hardware/System.h"
 
-#define PWMGT_PIN 16
-
-
-class Accelerometer
-{
-  bool update();
-
-  void setConfig();
-  void getConfig();
-  void defaulConfig(); // free running mode :)
-  void getValues(float *accel); // 3 values
-  void getValues(int *accel); // 3 values (fixed point almost raw data from sensor);
-
-  void getAverage(int *accel);
-};
-
-class Leds
-{
-  void setPixelsHighRes();
-  void setPixel();
-  void update();
-  void fastClear();
-  void fastPulse(int microsShort, int microsLong);
-  void getPixels();
-};
 
 // TODO: all init and all sensors and leds in here :)
 // (accelerometer wuld also be a class but the MAgicShifter object has one ;)
@@ -229,7 +205,7 @@ public:
   void setup()
   {
     // all engines turn on
-    pinMode(PWMGT_PIN, INPUT);
+    pinMode(PIN_PWR_MGT, INPUT);
     pinMode(PIN_LED_ENABLE, INPUT);
 
     // init pin modes
@@ -256,9 +232,9 @@ public:
   void powerDown()
   {
     // works even with pulldown but output seems to make more sense
-    //pinMode(PWMGT_PIN, INPUT_PULLDOWN);
-    pinMode(PWMGT_PIN, OUTPUT);
-    digitalWrite(PWMGT_PIN, LOW);
+    //pinMode(PIN_PWR_MGT, INPUT_PULLDOWN);
+    pinMode(PIN_PWR_MGT, OUTPUT);
+    digitalWrite(PIN_PWR_MGT, LOW);
     // now sleep forever...
     delay(1000);
   }

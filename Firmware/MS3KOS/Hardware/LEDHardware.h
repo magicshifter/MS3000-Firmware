@@ -26,12 +26,17 @@
 #define PIN_LED_DATA  13
 #define PIN_LED_CLOCK 14
 
-// double features as bootloader button
-#define PIN_BUTTON_A  0
-#define PIN_BUTTON_B 12
 
-
-
+// TODO : Flesh this out?
+class Leds
+{
+  void setPixelsHighRes();
+  void setPixel();
+  void update();
+  void fastClear();
+  void fastPulse(int microsShort, int microsLong);
+  void getPixels();
+};
 
 
 
