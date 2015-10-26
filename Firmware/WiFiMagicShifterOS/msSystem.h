@@ -233,7 +233,7 @@ public:
     pinMode(PIN_BUTTON_A, INPUT);
     pinMode(PIN_BUTTON_B, INPUT);
 
-#ifndef MIDISHIFTER
+#ifndef ENABLE_MIDI
     Serial.begin(115200);
 #endif
 

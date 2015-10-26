@@ -21,7 +21,7 @@ void initAccelerometer()
   Wire.setClock(500000); // crashes if > 200000
 }
 
-#ifdef DISABLE_ACCEL
+#ifndef ENABLE_ACCEL
   void resetAccelerometer() {};
   void readAccelData(int *destination) {};
 #else

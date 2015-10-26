@@ -2,16 +2,15 @@
 #define MS_CONFIG_H
 
 
-// MIDIShifter sub-module enable/disable
-//#define MIDISHIFTER 1
 
 // v1 == breadboard pcb
 // 2 == 0.9 pcb :)
 #define VERSION 0.1
 
-
-// remove define to enable ;)
-// #define DISABLE_ACCEL
+// MIDI enabled?
+#undef ENABLE_MIDI
+// Accelerometer enabled?
+#define ENABLE_ACCEL
 
 //crashes on new esp aruino toolchain :\
 //#define USE_MDNS
