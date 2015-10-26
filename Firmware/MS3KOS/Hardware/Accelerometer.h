@@ -1,4 +1,3 @@
-
 //
 // Accelerometer modules - written specifically for MMA8452
 //
@@ -17,6 +16,10 @@
 #define PIN_I2C_DATA 5 // 5 //blau // labeled 5 on esp12E!!!
 #define PIN_I2C_CLOCK 4 //lila
 
+//#define MMA8452_ADDRESS 0x1D  // 0x1D if SA0 is high, 0x1C if low
+#define MMA8452_ADDRESS 0x1C
+#define MMA8452_ID 0x2A 
+
 // TODO : Flesh this out?
 class Accelerometer
 {
@@ -30,8 +33,6 @@ class Accelerometer
 
   void getAverage(int *accel);
 };
-
-
 
 void initAccelerometer()
 {

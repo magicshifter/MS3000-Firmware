@@ -24,16 +24,8 @@
 #define MAX_LEDS 16
 //#define MAX_LEDS 160
 
-
 #define MIN_TIME_CLICK 10000
-//#define MIN_TIME_LONG_CLICK 500000
-//const int MIN_TIME_CLICK = 10000;
-const int MIN_TIME_LONG_CLICK = 500000;
-
-//#define MMA8452_ADDRESS 0x1D  // 0x1D if SA0 is high, 0x1C if low
-#define MMA8452_ADDRESS 0x1C
-
-#define MMA8452_ID 0x2A 
+#define MIN_TIME_LONG_CLICK 500000
 
 #define FILENAME_SIZE 40
 
