@@ -290,7 +290,7 @@ void handleGETAbout(void)
   msSystem.logln("handleGETAbout");
 
   String response = "{\"type\":\"MagicShifter3000\",\"format\":\"BGRA\",\"version\":" + String(VERSION) +
-    ",\"leds\":" + String(LEDS) + ",\"id\":" + String(ESP.getChipId()) + ",\"flashid\":" + String(ESP.getFlashChipId()) + ",\"flashsize\":" + String(ESP.getFlashChipSize()) + "}";
+    ",\"leds\":" + String(MAX_LEDS) + ",\"id\":" + String(ESP.getChipId()) + ",\"flashid\":" + String(ESP.getFlashChipId()) + ",\"flashsize\":" + String(ESP.getFlashChipSize()) + "}";
   server.send(200, "text/plain", response);
 }
 
@@ -302,7 +302,14 @@ void handleGETStatus(void)
 
   int ad1V = 1023;
 
-  //float r1 = 180, r2 = 390, r3 = 330;
+/*
+// Metalab wih Flo (Gamma)
+#define R601_VAL 200
+#define R602_VAL 820
+*/
+// with jqVic (Alpha, Beta)
+#define R601_VAL 270
+#define R602_VAL 1000
 
   float r1 = R601_VAL, r2 = R602_VAL, r3 = 0;
 
@@ -705,7 +712,7 @@ void handleSetMode(void)
 
 void handleLedSet()
 {
-  byte ledData[LEDS*5];
+  byte ledData[MAX_LEDS*5];
 
   String message = "LedSet\n\n";
 
@@ -729,7 +736,7 @@ void handleLedSet()
       byte idx = ledData[i];
       msSystem.log("idx: ");
       msSystem.logln(String((int)idx));
-      if (idx >= LEDS) continue;
+      if (idx >= MAX_LEDS) continue;
       msSystem.log("data+1: ");
       msSystem.logln(String((int)ledData[i+1]));
 

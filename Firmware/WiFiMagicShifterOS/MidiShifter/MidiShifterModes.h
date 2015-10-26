@@ -499,7 +499,7 @@ void envFrame()
         msGlobals.GLOBAL_GS = 31;
       }
 
-      //msGlobals.shifterMode = (msGlobals.shifterMode+1)%MODES;
+      //msGlobals.shifterMode = (msGlobals.shifterMode+1)%NUM_MS_MODES;
     }
     if (longClickedButtonB)
     {
@@ -509,7 +509,7 @@ void envFrame()
         msGlobals.GLOBAL_GS = 1;
       }
 
-      //msGlobals.shifterMode = (msGlobals.shifterMode+1)%MODES;
+      //msGlobals.shifterMode = (msGlobals.shifterMode+1)%NUM_MS_MODES;
     }
   }
 

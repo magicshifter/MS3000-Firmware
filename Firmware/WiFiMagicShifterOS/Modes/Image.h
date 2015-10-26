@@ -17,7 +17,7 @@ public:
       if (file)
       {
         // TODO: real file format
-        height = LEDS;
+        height = MAX_LEDS;
         int size = file.size();
         int frameSize = height * BYTESPERPIXEL;
 
@@ -33,7 +33,7 @@ public:
         msSystem.log("File could not be opened: ");
         msSystem.logln(String(fileName));
         width = 0;
-        height = LEDS;
+        height = MAX_LEDS;
       }
   }
 

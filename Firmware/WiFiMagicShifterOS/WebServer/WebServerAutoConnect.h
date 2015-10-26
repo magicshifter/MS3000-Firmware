@@ -15,9 +15,9 @@ bool TryConnect(struct APInfo &apInfo, int timeoutMs)
   long startTime = millis();
 
   while ( WiFi.status() != WL_CONNECTED ) {
-    for (int i = 0; i < LEDS; i++)
+    for (int i = 0; i < MAX_LEDS; i++)
     {
-      if (i < frame % LEDS)
+      if (i < frame % MAX_LEDS)
         setPixel(i, 5, 5, 5, 0x10);
       else
         setPixel(i, 0, 0, 0, 0);

@@ -11,7 +11,21 @@
 #include "msGlobals.h"
 
 #include "msSystem.h"
- // !J!
+
+/*
+const char *jsonLastAP =
+//"{\"ssid\":\"PACIFIC\", \"pwd\":\"AllesR0ger\"}";
+//"{\"ssid\":\"wizard23\", \"pwd\":\"lolinternets\"}";
+"{\"ssid\":\"wizme\", \"pwd\":\"lolinternets\"}";
+
+const char *jsonAPList = "{\"list\": [\
+{\"ssid\":\"metalab\", \"pwd\":\"\"},\
+{\"ssid\":\"wizard23\", \"pwd\":\"lolinternets\"},\
+{\"ssid\":\"wizme\", \"pwd\":\"lolinternets\"}\
+]}";
+
+const char *jsonSoftAP = "{\"ssid\":\"MagicShifter3000\", \"pwd\":\"\"}";
+*/
 
 MDNSResponder mdns;
 ESP8266WebServer server (80);

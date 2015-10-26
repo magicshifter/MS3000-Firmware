@@ -8,6 +8,9 @@
 #include "Hardware/LEDHardware.h"
 #include "Hardware/Accelerometer.h"
 
+#define PWMGT_PIN 16
+
+
 class Accelerometer
 {
   bool update();
@@ -100,13 +103,13 @@ public:
   {
 
     // swipe colors
-    for (byte idx = 0; idx < LEDS; idx++)
+    for (byte idx = 0; idx < MAX_LEDS; idx++)
     {
       setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, msGlobals.GLOBAL_GS);
       updatePixels();
       delay(30);
     }
-    for (byte idx = 0; idx < LEDS; idx++)
+    for (byte idx = 0; idx < MAX_LEDS; idx++)
     {
       setPixel(idx, 0, 0, 0, 1);
       updatePixels();
@@ -366,7 +369,7 @@ public:
         msGlobals.GLOBAL_GS = 31;
       }
 
-      //msGlobals.shifterMode = (msGlobals.shifterMode+1)%MODES;
+      //msGlobals.shifterMode = (msGlobals.shifterMode+1)%NUM_MS_MODES;
     }
     if (longClickedButtonB)
     {
@@ -376,7 +379,7 @@ public:
         msGlobals.GLOBAL_GS = 1;
       }
 
-      //msGlobals.shifterMode = (msGlobals.shifterMode+1)%MODES;
+      //msGlobals.shifterMode = (msGlobals.shifterMode+1)%NUM_MS_MODES;
     }
   }
 

@@ -6,12 +6,36 @@
 #define LEDHARDWARE_H
 
 #define USE_HW_SPI
-
 #ifdef USE_HW_SPI
   #include <SPI.h>
 #endif
 
-#define RGB_BUFFER_SIZE (4*LEDS)
+#define LED_TYPE_APA102 1 
+#define LED_TYPE_WS2801 2
+#define LED_TYPE LED_TYPE_APA102
+
+#if (LED_TYPE == LED_TYPE_APA102)
+  #define SPI_FREQUENCY 20000000
+#else
+  #define SPI_FREQUENCY 500000
+#endif
+
+#define PIN_LED_ENABLE 15
+
+// PIN_LED_DATA an PIN_LED_CLOCK can not be changed since we use the hardware SPI
+#define PIN_LED_DATA  13
+#define PIN_LED_CLOCK 14
+
+// double features as bootloader button
+#define PIN_BUTTON_A  0
+#define PIN_BUTTON_B 12
+
+
+
+
+
+
+#define RGB_BUFFER_SIZE (4*MAX_LEDS)
 byte ledBuffer[RGB_BUFFER_SIZE + 8];
 byte clearBuffer[RGB_BUFFER_SIZE + 8];
 
@@ -99,7 +123,7 @@ void setPixel(int index, byte r, byte g, byte b, byte gs = 0x1F)
 
 void fillPixels(byte r, byte g, byte b, byte gs = 0x1F)
 {
-  for (int idx = 0; idx < LEDS; idx++)
+  for (int idx = 0; idx < MAX_LEDS; idx++)
   {
     setPixel(idx, r, g, b, gs);
   }

@@ -102,7 +102,7 @@ void setup()
   }
 
   // debug output so we know we're alive in case a mode dies ..
-  for (byte idx = 0; idx < LEDS; idx++)
+  for (byte idx = 0; idx < MAX_LEDS; idx++)
   {
     setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
   }
@@ -139,9 +139,9 @@ void loop()
     if (msGlobals.shifterMode == 0)
     {
       { 
-        for (byte idx = 0; idx < LEDS; idx++)
+        for (byte idx = 0; idx < MAX_LEDS; idx++)
         {
-          float scale = msBouncingBallMode.getLedBright(idx, LEDS);
+          float scale = msBouncingBallMode.getLedBright(idx, MAX_LEDS);
 
           scale *= 0.5;
 

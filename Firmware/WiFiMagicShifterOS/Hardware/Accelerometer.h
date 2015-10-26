@@ -14,6 +14,10 @@
 
 #define GSCALE 8 // Sets full-scale range to +/-2, 4, or 8g. Used to calc real g values.
 
+#define PIN_I2C_DATA 5 // 5 //blau // labeled 5 on esp12E!!!
+#define PIN_I2C_CLOCK 4 //lila
+
+
 void initAccelerometer()
 {
   //Wire.pins(PIN_I2C_DATA, PIN_I2C_CLOCK);

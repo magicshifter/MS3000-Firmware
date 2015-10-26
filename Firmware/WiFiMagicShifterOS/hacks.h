@@ -19,11 +19,11 @@ while (0)
 
   int bbb = 255;
 
-  for (byte idx = 0; idx < LEDS; idx++)
+  for (byte idx = 0; idx < MAX_LEDS; idx++)
   {
     setPixel(idx, ((idx % 3)  == 0) ? bbb : 0, ((idx  % 3) == 1 ) ? bbb : 0, ((idx %  3) == 2) ? bbb : 0, 0);
 
-    setPixel((LEDS + idx - 16)%LEDS, 0, 0, 0, 0);
+    setPixel((MAX_LEDS + idx - 16)%MAX_LEDS, 0, 0, 0, 0);
     updatePixels();
     delay(100);
     msSystem.getBatteryVoltage();
@@ -32,7 +32,7 @@ while (0)
   delay(1);
 
    // swipe colors
-  for (byte idx = 0; idx < LEDS; idx++)
+  for (byte idx = 0; idx < MAX_LEDS; idx++)
   {
     setPixel(idx, (idx & 1) ? bbb : 0, (idx & 2) ? bbb : 0, (idx & 4) ? bbb : 0, 0);
     updatePixels();
@@ -45,13 +45,13 @@ while (0)
 while (1)
 {
   // swipe colors
-    for (byte idx = 0; idx < LEDS; idx++)
+    for (byte idx = 0; idx < MAX_LEDS; idx++)
     {
       setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, msGlobals.GLOBAL_GS);
       updatePixels();
       delay(30);
     }
-    for (byte idx = 0; idx < LEDS; idx++)
+    for (byte idx = 0; idx < MAX_LEDS; idx++)
     {
       setPixel(idx, 0, 0, 0, 1);
       updatePixels();
