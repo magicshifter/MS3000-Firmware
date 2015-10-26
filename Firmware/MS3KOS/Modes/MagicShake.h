@@ -1,10 +1,10 @@
 #ifndef __MAGICSHAKEMODE_H
 #define __MAGICSHAKEMODE_H
 
-#include "Util/StringURL.h"
+// #include "Util/StringURL.h"
 
-#include "msGlobals.h"
-#include "msSystem.h"
+// #include "msGlobals.h"
+// #include "msSystem.h"
 
 #include "BaseMode.h"
 #include "Image.h"
@@ -33,7 +33,7 @@ public:
 class MagicShakeMode : public MagicShifterBaseMode
 {
 private:
-  char activeFilename[FILENAME_SIZE];
+  char activeFilename[MAX_FILENAME_LENGTH];
   MSImage activeImage;
   POVShakeSyncDummyMode shakeSync;
 
@@ -80,7 +80,7 @@ public:
   {
     activeImage.close();
 
-    safeStrncpy(activeFilename, filename, FILENAME_SIZE);
+    safeStrncpy(activeFilename, filename, MAX_FILENAME_LENGTH);
     activeImage = MSImage(activeFilename);
     int w = activeImage.getWidth() * FRAME_MULTIPLY;
     shakeSync.setFrames(w);

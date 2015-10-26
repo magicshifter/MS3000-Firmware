@@ -1,9 +1,5 @@
-
-#include "msGlobals.h"
-#include "msSystem.h"
-
-
-
+#ifndef _WEBSERVERAPI_H
+#define _WEBSERVERAPI_H
 
 #define MAX_AP_LEN 48
 struct APInfo
@@ -775,4 +771,6 @@ void handleLedsSet()
   }
   server.send ( 200, "text/plain",message );
 }
+
+#endif
 

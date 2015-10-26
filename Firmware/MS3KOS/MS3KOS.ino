@@ -1,6 +1,9 @@
 /*
- * MagicShifter3000 OS
- * Copyright (c) wizards@Work
+ * MagicShifter3000 OS, Copyright (c) wizards@Work
+ * Authors: wizard23(pt), seclorum(jv)
+ * Notes: 
+ *          All code is conflated to headers (.h):w
+ *          per-device in msConfig.h
  */
 
 #include <math.h>
@@ -8,10 +11,12 @@
 #include <Arduino.h>
 #include <FS.h>
 #include <Esp.h>
+
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
+
 #include <Base64.h>
 #include <EEPROM.h>
 #include <SPI.h>
@@ -32,36 +37,39 @@
 
 //compiler.c.elf.libs=-lm -lgcc -lhal -lphy -lnet80211 -llwip -lwpa -lmain -lpp -lsmartconfig -lc -ljson
 extern "C" {
-  #include "json/json.h"
+  #include <json/json.h>
   #include <json/jsonparse.h>
   #include <json/jsontree.h>
+  #include "Util/StringURL.h"
 }
 
-#include "Util/StringURL.h"
-
+// note: local configuration, globals, and system objects get created now.
 #include "msConfig.h"
 
-#include "WebServer/WebServer.h"
-
 #include "msGlobals.h"
-#include "msSystem.h"
-
 MagicShifterGlobals msGlobals;
+// note: beyond this point, please consider the above globals.
+
+#include "msSystem.h"
 MagicShifterSystem msSystem;
 
-// mode modules 
+MDNSResponder mdns;
+ESP8266WebServer server (80);
+
+// note: WebServer and msSystem are in love
+#include "WebServer/WebServer.h" 
+
+// MIDI can be configured on or off 
 #ifdef ENABLE_MIDI
-#include "MidiShifter/MidiShifterModes.h"
+#include "MidiShifter/MidiShifter.h"
 #endif
-#include "Modes/BouncingBall.h"
+
+// GUI modes, well actually .. modes are more of an 'app' ..
+#include "Modes/Modes.h"
+
 BouncingBallMode msBouncingBallMode(600);
-
-#include "Modes/MagicShake.h"
 MagicShakeMode msShakeMode;
-
-//POVShakeSync msPOVShakeSyncMode;
 POVShakeSyncDummyMode msPOVShakeSyncMode;
-
 
 void setup()
 {
@@ -87,7 +95,7 @@ void setup()
   StartWebServer();
 
   // start Modes as necessary ..
-  loadString(msGlobals.uploadFileName, FILENAME_LENGTH);
+  loadString(msGlobals.uploadFileName, MAX_FILENAME_LENGTH);
   if (!SPIFFS.exists(msGlobals.uploadFileName))
   {
     msSystem.log("could not find: ");

@@ -1,11 +1,5 @@
-#define FILENAME_LENGTH 100
-
-#include "msGlobals.h"
-
-
-// #include "MagicShakeMode.h"
-// extern MagicShakeMode msMagicShakeMode;
-
+#ifndef _WEBSERVER_ROUTES_H
+#define _WEBSERVER_ROUTES_H
 
 void handleNotFound() {
   if (server.uri() != "/upload")
@@ -56,7 +50,7 @@ void handleReadFile()
     String args = server.arg(0);
 
     strcpy(msGlobals.uploadFileName, args.c_str());
-    saveString(msGlobals.uploadFileName, FILENAME_LENGTH);
+    saveString(msGlobals.uploadFileName, MAX_FILENAME_LENGTH);
 
 
     message += "file name: \"" + args /* String(filename)*/ + "\"\n";
@@ -255,7 +249,7 @@ void handleFileUpload(){
   {
     msGlobals.setActiveFile = 1;
 
-    saveString(msGlobals.uploadFileName, FILENAME_LENGTH);
+    saveString(msGlobals.uploadFileName, MAX_FILENAME_LENGTH);
     if(msGlobals.uploadFile)
     {
       //bool result;
@@ -267,3 +261,6 @@ void handleFileUpload(){
     msSystem.logln(String(upload.totalSize));
   }
 }
+
+#endif
+//_WEBSERVER_ROUTES_H

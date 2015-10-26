@@ -1,8 +1,9 @@
+#ifndef _SHAKESYNC_H
+#define _SHAKESYNC_H
+
 #define PREDICT_SAME_DIRECTION true
 
 #include "msGlobals.h"
-
-
 
 class POVShakeSyncDummyMode
 {
@@ -273,3 +274,6 @@ public:
     return isActive;
 	}
 };
+
+#endif
+

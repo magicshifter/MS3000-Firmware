@@ -1,13 +1,9 @@
-#ifndef __MAGICGLOBALS_H
-#define __MAGICGLOBALS_H
-
+#ifndef _MSGLOBALS_H
+#define _MSGLOBALS_H
 
 class MagicShifterGlobals {
-
 public:
-  
-  // state
-
+  // state !J! TODO: clean all this up 
   int GLOBAL_GS = 5;
   float accelG[3];  // Stores the real accel value in g's
   int shifterMode = 0;
@@ -22,13 +18,11 @@ public:
   int loops = 0;
   long bootTime = 0;
   bool apMode = false;
-  // make it larger to be on the save side when base64 decoding
+  // make it larger to be on the safe side when base64 decoding
   byte web_rgb_buffer[RGB_BUFFER_SIZE + 4];
-
   int setActiveFile = 0; // is there a new file to activate?
   char uploadFileName[];
   File uploadFile;
-
 };
 
 #else
