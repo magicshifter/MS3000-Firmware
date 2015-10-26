@@ -25,6 +25,6 @@ public:
   File uploadFile;
 };
 
-#else
-extern MagicShifterGlobals msGlobals;
+// #else
+// extern MagicShifterGlobals msGlobals;
 #endif

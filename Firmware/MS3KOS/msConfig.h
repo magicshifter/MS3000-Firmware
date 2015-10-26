@@ -12,9 +12,9 @@
 #define VERSION 0.1
 
 // MIDI enabled?
-#undef ENABLE_MIDI
+#undef CONFIG_ENABLE_MIDI
 // Accelerometer enabled?
-#define ENABLE_ACCEL
+#define CONFIG_ENABLE_ACCEL
 //crashes on new esp aruino toolchain :\
 //#define USE_MDNS
 #define NUM_MS_MODES 3
@@ -35,7 +35,7 @@
 #define MAX_FILENAME_LENGTH 32
 
 // which MMA is in use
-#define CONFIG_MMA_NORMAL
+#define CONFIG_NORMAL_MMA
 // #define CONFIG_MMA_FSOX
 
 // Use pre-configured AP list

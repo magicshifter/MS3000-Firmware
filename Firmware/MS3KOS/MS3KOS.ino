@@ -42,7 +42,7 @@ MagicShifterSystem msSystem;
 #include "WebServer/WebServer.h" 
 
 // MIDI can be configured on or off 
-#ifdef ENABLE_MIDI
+#ifdef CONFIG_ENABLE_MIDI
 #include "MidiShifter/MidiShifter.h"
 #endif
 
@@ -74,7 +74,7 @@ void setup()
     msSystem.logln("SPIFFS not begin .. :(");
   }
 
-#ifdef ENABLE_ACCEL
+#ifdef CONFIG_ENABLE_ACCEL
   resetAccelerometer(); //Test and intialize the MMA8452
 #endif
 
@@ -182,7 +182,7 @@ void loop()
     }
   }
 
-#ifdef ENABLE_ACCEL
+#ifdef CONFIG_ENABLE_ACCEL
   readAccelData(msGlobals.accelCount);
 
   for (int i = 0 ; i < 3 ; i++)

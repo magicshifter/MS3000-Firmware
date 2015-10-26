@@ -1,10 +1,3 @@
-#ifndef __MAGICSHAKEMODE_H
-#define __MAGICSHAKEMODE_H
-
-// #include "Util/StringURL.h"
-
-// #include "msGlobals.h"
-// #include "msSystem.h"
 
 #include "BaseMode.h"
 #include "Image.h"
@@ -88,4 +81,3 @@ public:
     msSystem.logln(String(w));
   }
 };
-#endif

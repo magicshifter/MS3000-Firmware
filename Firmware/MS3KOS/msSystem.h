@@ -22,7 +22,6 @@
 #include "Hardware/System.h"
 
 
-
 // TODO: all init and all sensors and leds in here :)
 // (accelerometer wuld also be a class but the MAgicShifter object has one ;)
 class MagicShifterSystem
@@ -228,7 +227,7 @@ public:
     pinMode(PIN_BUTTON_A, INPUT);
     pinMode(PIN_BUTTON_B, INPUT);
 
-#ifndef ENABLE_MIDI
+#ifndef CONFIG_ENABLE_MIDI
     Serial.begin(115200);
 #endif
 
