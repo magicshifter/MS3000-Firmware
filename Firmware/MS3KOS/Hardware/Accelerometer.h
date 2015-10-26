@@ -17,14 +17,19 @@
 #define PIN_I2C_CLOCK 4 //lila
 
 // normal MMA 
-#ifdef CONFIG_NORMAL_MMA
-#define MMA8452_ADDRESS 0x1D  // 0x1D if SA0 is high, 0x1C if low
-#define MMA8452_ID 0x2A
+#ifdef CONFIG_MMA_NORMAL
+  #define MMA8452_ADDRESS 0x1C
+  #define MMA8452_ID 0x2A
 #else
+  #ifdef CONFIG_MMA_OTHER
+    #define MMA8452_ADDRESS 0x1C
+    #define MMA8452_ID 0x2A
+  #else
 // CONFIG_MMA_FSOX
 // magnet sensor version
-#define MMA8452_ADDRESS 0x1E
-#define MMA8452_ID 0x2A
+    #define MMA8452_ADDRESS 0x1E
+    #define MMA8452_ID 0x2A
+  #endif
 #endif
 
 // TODO : Flesh this out?
