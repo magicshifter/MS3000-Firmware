@@ -1,13 +1,14 @@
 //#include "os_type.h"
-#ifndef APA102_H
-#define APA102_H
+
+// LED Buffer functional interface to APA102 LED controller
+
+#ifndef LEDHARDWARE_H
+#define LEDHARDWARE_H
 
 #define USE_HW_SPI
 
 #ifdef USE_HW_SPI
-  #include "SPI.h"
-#else
-
+  #include <SPI.h>
 #endif
 
 #define RGB_BUFFER_SIZE (4*LEDS)
@@ -33,8 +34,17 @@ void loadBuffer(byte *buffer)
   }
 }
 
-void InitSPI()
+void disableLEDHardware()
 {
+  pinMode(PIN_LED_ENABLE, INPUT);
+}
+
+
+void initLEDHardware()
+{
+  pinMode(PIN_LED_ENABLE, OUTPUT);
+  digitalWrite(PIN_LED_ENABLE, HIGH);
+
   #ifdef USE_HW_SPI
     SPI.begin();
     SPI.setFrequency(SPI_FREQUENCY);
@@ -46,7 +56,7 @@ void InitSPI()
 
 void fillPixels(byte r, byte g, byte b, byte gs);
 
-void InitAPA102() {
+void initLEDBuffer() {
   ledBuffer[0] = 0;
   ledBuffer[1] = 0;
   ledBuffer[2] = 0;
@@ -108,4 +118,6 @@ void fastClear()
 {
   SPI.writeBytes(clearBuffer, RGB_BUFFER_SIZE + 8);
 }
+
 #endif
+// LEDHARDWARE_H

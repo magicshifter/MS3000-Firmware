@@ -1,10 +1,10 @@
 #define FILENAME_LENGTH 100
 
-#include "MagicShifterGlobals.h"
-extern MagicShifterGlobals msGlobals;
+#include "msGlobals.h"
+extern MidiShifterGlobals msGlobals;
 
-#include "MagicShakeMode.h"
-extern MagicShakeMode msMagicShakeMode;
+// #include "MagicShakeMode.h"
+// extern MagicShakeMode msMagicShakeMode;
 
 
 void handleNotFound() {

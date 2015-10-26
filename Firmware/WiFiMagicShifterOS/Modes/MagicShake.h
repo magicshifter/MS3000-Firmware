@@ -1,14 +1,14 @@
 #ifndef __MAGICSHAKEMODE_H
 #define __MAGICSHAKEMODE_H
 
-#include "tools.h"
+#include "Util/StringURL.h"
 
-#include "MagicShifterGlobals.h"
-#include "MagicShifterSystem.h"
+#include "msGlobals.h"
+#include "msSystem.h"
 
-#include "MagicShifterBaseMode.h"
+#include "Basic.h"
 
-extern MagicShifterGlobals msGlobals;
+extern MidiShifterGlobals msGlobals;
 
 #include "Image.h"
 

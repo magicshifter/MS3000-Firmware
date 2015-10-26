@@ -1,40 +1,8 @@
-/* NOTES
+/*
+ * MagicShifter3000 OS
+ * Copyright (c) wizards@Work
+ */
 
- * This is the MIDIShifter branch, which is set up to add full MIDI
-   capabilities to the MagicShifter.  We use MagicShifter3000 modules,
-   but will proceed rapidly to tighten/tidy things up a bit..
-
- * At the moment, we depend on a hack to FS.h/FS.cpp, which is not 
-    upstream .. hacked by wizard23
-
-    The hack is:
-  bool FS::exists(const String& path) {
-      return exists(path.c_str());
-  } 
-
-  bool FS::exists(const char* path) {
-     File f = open(path, "r");
-     if (f)
-     {
-      return true;
-     }
-     else
-     {
-      return false;
-     }
-  }
-
- * To prevent restarts: Make sure GPIO 2 is not connected, i.e. float.
-      from https://github.com/esp8266/Arduino/issues/373
-
-
- * TODO:
-      !J! Make execution environment changes (i.e. main_loop() -> app_loop())
-      !J! Port existing MagicShifter UI/MIDI apps to new app_loop() and API
-      !J! Test syslog/debugging.
-      */
-
-//#include <Ticker.h>
 #include <math.h>
 #include <Wire.h> // Used for I2C
 #include <Arduino.h>
@@ -46,6 +14,7 @@
 #include <ESP8266mDNS.h>
 #include <Base64.h>
 #include <EEPROM.h>
+#include <SPI.h>
 
 #include <stdbool.h>
 #include <ctype.h>
@@ -68,27 +37,31 @@ extern "C" {
   #include <json/jsontree.h>
 }
 
-#include "tools.h"
+#include "Util/StringURL.h"
+
 #include "Config.h"
-#include "APA102.h"
-#include "MMA8542.h"
-#include "WebServer.h"
 
-#include "MagicShifterGlobals.h"
-#include "MagicShifterSystem.h"
+#include "Hardware/LEDHardware.h"
+#include "Hardware/Accelerometer.h"
 
-MagicShifterGlobals msGlobals;
-MagicShifterSystem msSystem;
+#include "WebServer/WebServer.h"
+
+#include "msGlobals.h"
+#include "msSystem.h"
+
+MidiShifterGlobals msGlobals;
+MidiShifterSystem msSystem;
 
 // mode modules 
 #ifdef MIDISHIFTER
 #include "MidiShifter/MidiShifterModes.h"
 #endif
-#include "BouncingBallMode.h"
+#include "Modes/BouncingBall.h"
 BouncingBallMode msBouncingBallMode(600);
-#include "MagicShakeMode.h"
 
+#include "Modes/MagicShake.h"
 MagicShakeMode msShakeMode;
+
 //POVShakeSync msPOVShakeSyncMode;
 POVShakeSyncDummyMode msPOVShakeSyncMode;
 
@@ -110,7 +83,7 @@ void setup()
   }
 
 #ifndef DISABLE_ACCEL
-  InitMMA8452(); //Test and intialize the MMA8452
+  resetAccelerometer(); //Test and intialize the MMA8452
 #endif
 
   StartWebServer();

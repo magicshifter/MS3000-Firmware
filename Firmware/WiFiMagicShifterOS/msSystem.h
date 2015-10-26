@@ -3,8 +3,8 @@
 
 #include "Config.h"
 
-#include "MagicShifterGlobals.h"
-extern MagicShifterGlobals msGlobals;
+#include "msGlobals.h"
+extern MidiShifterGlobals msGlobals;
 
 class Accelerometer
 {
@@ -31,7 +31,7 @@ class Leds
 
 // TODO: all init and all sensors and leds in here :)
 // (accelerometer wuld also be a class but the MAgicShifter object has one ;)
-class MagicShifterSystem
+class MidiShifterSystem
 {
 private:
 
@@ -93,6 +93,24 @@ public:
     log("\n");
   };
 
+
+  void  do_debug_swipe()
+  {
+
+    // swipe colors
+    for (byte idx = 0; idx < LEDS; idx++)
+    {
+      setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, msGlobals.GLOBAL_GS);
+      updatePixels();
+      delay(30);
+    }
+    for (byte idx = 0; idx < LEDS; idx++)
+    {
+      setPixel(idx, 0, 0, 0, 1);
+      updatePixels();
+      delay(30);
+    }
+  }
 
   void TEST_SPIFFS_bug()
   {
@@ -205,41 +223,29 @@ public:
 
   void setup()
   {
+    // all engines turn on
     pinMode(PWMGT_PIN, INPUT);
     pinMode(PIN_LED_ENABLE, INPUT);
 
-      // init pinmodes
+    // init pin modes
     pinMode(PIN_BUTTON_A, INPUT);
     pinMode(PIN_BUTTON_B, INPUT);
 
-    enableLeds();   // we need this for MIDI optocouplers!!
-
+#ifndef MIDISHIFTER
     Serial.begin(115200);
-    logln(String("\r\nMagicShifter 3000 OS V0.24"));
+#endif
 
     EEPROM.begin(512);
-    // accel
-    InitI2C();
-      // leds
-    InitSPI();
-    // init components
-    InitAPA102();
 
-/*
-    // swipe colors
-    for (byte idx = 0; idx < LEDS; idx++)
-    {
-      setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, msGlobals.GLOBAL_GS);
-      updatePixels();
-      delay(30);
-    }
-    for (byte idx = 0; idx < LEDS; idx++)
-    {
-      setPixel(idx, 0, 0, 0, 1);
-      updatePixels();
-      delay(30);
-    }
-    */
+    // accelerometer 
+    initAccelerometer();
+    resetAccelerometer();
+
+    // led controllers and buffer
+    initLEDHardware();
+    initLEDBuffer();
+
+    logln(String("\r\nMagicShifter 3000 OS V0.24"));
   }
 
   void powerDown()
@@ -257,26 +263,12 @@ public:
     ESP.restart();
   }
 
-  void enableLeds()
-  {
-    pinMode(PIN_LED_ENABLE, OUTPUT);
-    digitalWrite(PIN_LED_ENABLE, HIGH);
-  }
-
-  void disableLeds()
-  {
-    pinMode(PIN_LED_ENABLE, INPUT);
-  }
-
-
   void loop()
   {
 
     handleButtons();
     //delay(0);
   }
-
-
 
   void handleButtons()
   {

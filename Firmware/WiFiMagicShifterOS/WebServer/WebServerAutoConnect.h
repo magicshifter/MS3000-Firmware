@@ -1,8 +1,8 @@
 #include "Config.h"
 
-#include "MagicShifterGlobals.h"
+#include "msGlobals.h"
 
-extern MagicShifterGlobals msGlobals;
+extern MidiShifterGlobals msGlobals;
 
 bool TryConnect(struct APInfo &apInfo, int timeoutMs)
 {

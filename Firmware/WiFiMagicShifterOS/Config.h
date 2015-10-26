@@ -2,15 +2,16 @@
 #define CONFIG_H
 
 
-
+// MIDIShifter sub-module enable/disable
 //#define MIDISHIFTER 1
+
 // v1 == breadboard pcb
 // 2 == 0.9 pcb :)
-#define HWVERSION 2
 #define VERSION 0.1
 
+
 // remove define to enable ;)
-//#define DISABLE_ACCEL
+// #define DISABLE_ACCEL
 
 //crashes on new esp aruino toolchain :\
 //#define USE_MDNS
@@ -85,15 +86,7 @@ const char *jsonSoftAP = "{\"ssid\":\"MagicShifter3000\", \"pwd\":\"\"}";
 #define PIN_I2C_CLOCK 4 //lila
 
 
-#if (HWVERSION >= 2)
-  //#define PIN_I2C_DATA 4 // 5 //blau // labeled 5 on esp12E!!!
-  //#define PIN_I2C_CLOCK 5 //lila
-
-  #define PWMGT_PIN 16
-#else
-  //#define PIN_I2C_DATA 4 // 5 //blau // labeled 5 on esp12E!!!
-  //#define PIN_I2C_CLOCK 2 //lila
-#endif
+#define PWMGT_PIN 16
 
 #define MIN_TIME_CLICK 10000
 //#define MIN_TIME_LONG_CLICK 500000

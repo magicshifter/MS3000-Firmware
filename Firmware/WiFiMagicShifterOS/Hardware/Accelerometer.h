@@ -1,3 +1,7 @@
+
+//
+// Accelerometer modules - written specifically for MMA8452
+//
 #include <Wire.h> // Used for I2C
 #include <math.h>
 #include <Wire.h> // Used for I2C
@@ -10,8 +14,7 @@
 
 #define GSCALE 8 // Sets full-scale range to +/-2, 4, or 8g. Used to calc real g values.
 
-
-void InitI2C()
+void initAccelerometer()
 {
   //Wire.pins(PIN_I2C_DATA, PIN_I2C_CLOCK);
   Wire.begin(PIN_I2C_DATA, PIN_I2C_CLOCK); //Join the bus as a master
@@ -19,10 +22,9 @@ void InitI2C()
 }
 
 #ifdef DISABLE_ACCEL
-  void InitMMA8452() {};
+  void resetAccelerometer() {};
   void readAccelData(int *destination) {};
 #else
-
 
 // Read bytesToRead sequentially, starting at addressToRead into the dest byte array
 void readRegisters(byte addressToRead, int bytesToRead, byte * dest)
@@ -112,7 +114,7 @@ void readAccelData(int *destination)
 // Initialize the MMA8452 registers
 // See the many application notes for more info on setting all of these registers:
 // http://www.freescale.com/webapp/sps/site/prod_summary.jsp?code=MMA8452Q
-void InitMMA8452()
+void resetAccelerometer()
 {
   byte success = 0;
 
@@ -132,7 +134,7 @@ void InitMMA8452()
       delay(10);
     }
     /* code */
-} while(0); //while(!success);
+  } while(0); //while(!success);
 
   MMA8452Standby();  // Must be in standby to change registers
 

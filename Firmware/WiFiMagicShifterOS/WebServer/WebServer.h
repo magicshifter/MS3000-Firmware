@@ -6,13 +6,13 @@
 #include <Base64.h>
 
 #include "Config.h"
-#include "APA102.h"
+#include "Hardware/LEDHardware.h"
 
-#include "MagicShifterGlobals.h"
-extern MagicShifterGlobals msGlobals;
+#include "msGlobals.h"
+extern MidiShifterGlobals msGlobals;
 
-#include "MagicShifterSystem.h"
-extern MagicShifterSystem msSystem; // !J!
+#include "msSystem.h"
+extern MidiShifterSystem msSystem; // !J!
 
 MDNSResponder mdns;
 ESP8266WebServer server (80);

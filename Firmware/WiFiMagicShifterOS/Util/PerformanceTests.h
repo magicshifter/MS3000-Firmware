@@ -1,4 +1,4 @@
-#include "APA102.h"
+#include "LEDHardware.h"
 
 void TestLedTiming() {
 long frequ = 0;

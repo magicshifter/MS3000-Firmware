@@ -1,7 +1,7 @@
 #define PREDICT_SAME_DIRECTION true
 
-#include "MagicShifterGlobals.h"
-extern MagicShifterGlobals msGlobals;
+#include "msGlobals.h"
+extern MidiShifterGlobals msGlobals;
 
 
 class POVShakeSyncDummyMode
