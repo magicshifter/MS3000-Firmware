@@ -39,8 +39,6 @@ class Leds
 };
 
 
-
-#define RGB_BUFFER_SIZE (4*MAX_LEDS)
 byte ledBuffer[RGB_BUFFER_SIZE + 8];
 byte clearBuffer[RGB_BUFFER_SIZE + 8];
 

@@ -1,5 +1,5 @@
-#ifndef __TOOLS_H
-#define __TOOLS_H
+#ifndef _STRING_URL_H
+#define _STRING_URL_H
 
 #define BASE64_ENC_LEN(n) (((n) + 2 - (((n) + 2) % 3)) / 3 * 4)
 

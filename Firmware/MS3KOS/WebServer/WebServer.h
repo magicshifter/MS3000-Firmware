@@ -1,18 +1,12 @@
+//
+// Web services 
+//
 
-#include <ESP8266WiFi.h>
-#include <WiFiClient.h>
-#include <ESP8266WebServer.h>
-#include <ESP8266mDNS.h>
-#include <Base64.h>
+#include "WebServerAPI.h"
+#include "WebServerAutoConnect.h"
+#include "WebServerRoutes.h"
 
-#include "msConfig.h"
-#include "Hardware/LEDHardware.h"
-
-#include "msGlobals.h"
-
-#include "msSystem.h"
-
-/*
+#ifdef CONFIG_USE_DEBUG_AP
 const char *jsonLastAP =
 //"{\"ssid\":\"PACIFIC\", \"pwd\":\"AllesR0ger\"}";
 //"{\"ssid\":\"wizard23\", \"pwd\":\"lolinternets\"}";
@@ -23,16 +17,8 @@ const char *jsonAPList = "{\"list\": [\
 {\"ssid\":\"wizard23\", \"pwd\":\"lolinternets\"},\
 {\"ssid\":\"wizme\", \"pwd\":\"lolinternets\"}\
 ]}";
-
 const char *jsonSoftAP = "{\"ssid\":\"MagicShifter3000\", \"pwd\":\"\"}";
-*/
-
-MDNSResponder mdns;
-ESP8266WebServer server (80);
-
-#include "WebServerAPI.h"
-#include "WebServerAutoConnect.h"
-#include "WebServerRoutes.h"
+#endif
 
 String getContentType(String filename){
   if(server.hasArg("download")) return "application/octet-stream";
@@ -125,9 +111,6 @@ void StartWebServer(void)
   server.on("/mode", handleSetMode);
 
   server.on("/listwlans", HTTP_GET, handleGETWLANList);
-  
-
-
 
   server.on("/download",  []() {
     if(!server.hasArg("file")) {

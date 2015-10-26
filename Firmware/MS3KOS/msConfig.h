@@ -1,7 +1,9 @@
+//
+// msConfig.h - basic, build oriented configuration options
+//
+
 #ifndef MS_CONFIG_H
 #define MS_CONFIG_H
-
-
 
 // v1 == breadboard pcb
 // 2 == 0.9 pcb :)
@@ -23,14 +25,18 @@
 
 #define MAX_LEDS 16
 //#define MAX_LEDS 160
+#define RGB_BUFFER_SIZE (4*MAX_LEDS)
 
 #define MIN_TIME_CLICK 10000
 #define MIN_TIME_LONG_CLICK 500000
 
-#define FILENAME_SIZE 40
+#define MAX_FILENAME_LENGTH 32
 
 // which MMA is in use
-#undef CONFIG_MMA_NORMAL
-#define CONFIG_MMA_FSOX
+#define CONFIG_MMA_NORMAL
+// #define CONFIG_MMA_FSOX
+
+// Use pre-configured AP list
+#undef CONFIG_USE_DEBUG_AP
 
 #endif

@@ -1,14 +1,9 @@
-#ifndef __MAGICSHIFTER_H
-#define __MAGICSHIFTER_H
-
-#include "msConfig.h"
-
-#include "msGlobals.h"
+#ifndef _MS_SYSTEM_H
+#define _MS_SYSTEM_H
 
 #include "Hardware/LEDHardware.h"
 #include "Hardware/Accelerometer.h"
 #include "Hardware/System.h"
-
 
 // TODO: all init and all sensors and leds in here :)
 // (accelerometer wuld also be a class but the MAgicShifter object has one ;)

@@ -1,3 +1,6 @@
+#ifndef _IMAGE_H
+#define _IMAGE_H
+
 #define BYTESPERPIXEL 4
 
 class MSImage {
@@ -71,3 +74,6 @@ public:
       file.close();
   }
 };
+
+#endif
+
