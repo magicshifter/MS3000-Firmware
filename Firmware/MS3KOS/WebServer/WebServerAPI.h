@@ -287,7 +287,7 @@ void handleGETAbout(void)
 
   String response = "{\"type\":\"MagicShifter3000\",\"format\":\"BGRA\",\"version\":" + String(VERSION) +
     ",\"leds\":" + String(MAX_LEDS) + ",\"id\":" + String(ESP.getChipId()) + ",\"flashid\":" + String(ESP.getFlashChipId()) + ",\"flashsize\":" + String(ESP.getFlashChipSize()) + "}";
-  msServer.send(200, "text/plain", response);
+  msSystem.msServer.send(200, "text/plain", response);
 }
 
 void handleGETStatus(void)
@@ -325,27 +325,27 @@ void handleGETStatus(void)
   String(millis() - msGlobals.bootTime) + ",\"adValue\":" + adValue + ",\"voltage\":" + voltage +
   "\",accelRaw\":[" + msGlobals.accelCount[0] + "," + msGlobals.accelCount[1] + "," + msGlobals.accelCount[2] + "],\"msGlobals.accelG\":[" + msGlobals.accelG[0] + "," + msGlobals.accelG[1] + ","+ msGlobals.accelG[2] + 
     "],\"ip\":\"" + (0xFF & (ip>>0)) + "."  + (0xFF & (ip>>8)) + "."  + (0xFF & (ip>>16)) + "."  + (0xFF & (ip>>24)) + "\"}";
-  msServer.send(200, "text/plain", response);
+  msSystem.msServer.send(200, "text/plain", response);
 }
 
 bool parseAPInfoFromServerArgs(APInfo &apInfo)
 {
   bool success = true;
-  for (int i = 0; i < msServer.args(); i++)
+  for (int i = 0; i < msSystem.msServer.args(); i++)
   {
     msSystem.logln("argName: ");
-    msSystem.logln(msServer.argName(i));
+    msSystem.logln(msSystem.msServer.argName(i));
 
     msSystem.logln("arg: ");
-    msSystem.logln(msServer.arg(i));
+    msSystem.logln(msSystem.msServer.arg(i));
 
-    if (strcmp(msServer.argName(i).c_str(), "ssid") == 0)
+    if (strcmp(msSystem.msServer.argName(i).c_str(), "ssid") == 0)
     {
-      safeStrncpy(apInfo.ssid, msServer.arg(i).c_str(), sizeof(apInfo.ssid));
+      safeStrncpy(apInfo.ssid, msSystem.msServer.arg(i).c_str(), sizeof(apInfo.ssid));
     }
-    else if (strcmp(msServer.argName(i).c_str(), "pwd") == 0)
+    else if (strcmp(msSystem.msServer.argName(i).c_str(), "pwd") == 0)
     {
-      safeStrncpy(apInfo.password, msServer.arg(i).c_str(), sizeof(apInfo.password));
+      safeStrncpy(apInfo.password, msSystem.msServer.arg(i).c_str(), sizeof(apInfo.password));
     }
     else
     {
@@ -372,33 +372,33 @@ void handleGETServerSettings(void)
   response += "\"port\":";
   response += config.port;
   response += "}";
-  msServer.send(200, "text/plain", response);
+  msSystem.msServer.send(200, "text/plain", response);
 }
 
 void handlePOSTServerSettings(void)
 {
   msSystem.logln("handlePOSTServerSettings");
-  if (msServer.args() >= 2)
+  if (msSystem.msServer.args() >= 2)
   {
     ServerConfig config;
     Settings.getServerConfig(&config);
 
     bool success = true;
-    for (int i = 0; i < msServer.args(); i++)
+    for (int i = 0; i < msSystem.msServer.args(); i++)
     {
       msSystem.logln("argName: ");
-      msSystem.logln(msServer.argName(i));
+      msSystem.logln(msSystem.msServer.argName(i));
 
       msSystem.logln("arg: ");
-      msSystem.logln(msServer.arg(i));
+      msSystem.logln(msSystem.msServer.arg(i));
 
-      if (strcmp(msServer.argName(i).c_str(), "host") == 0)
+      if (strcmp(msSystem.msServer.argName(i).c_str(), "host") == 0)
       {
-        safeStrncpy(config.hostname, msServer.arg(i).c_str(), sizeof(config.hostname));
+        safeStrncpy(config.hostname, msSystem.msServer.arg(i).c_str(), sizeof(config.hostname));
       }
-      else if (strcmp(msServer.argName(i).c_str(), "port") == 0)
+      else if (strcmp(msSystem.msServer.argName(i).c_str(), "port") == 0)
       {
-        config.port = atoi(msServer.arg(i).c_str());
+        config.port = atoi(msSystem.msServer.arg(i).c_str());
       }
       else
       {
@@ -409,16 +409,16 @@ void handlePOSTServerSettings(void)
     if (success)
     {
       Settings.setServerConfig(&config);
-      msServer.send (200, "text/plain", "OK");
+      msSystem.msServer.send (200, "text/plain", "OK");
     }
     else
     {
-      msServer.send(500, "text/plain", "invalid args!");
+      msSystem.msServer.send(500, "text/plain", "invalid args!");
     }
   }
   else
   {
-    msServer.send ( 500, "text/plain", "argument missing!");
+    msSystem.msServer.send ( 500, "text/plain", "argument missing!");
   }
 }
 
@@ -438,14 +438,14 @@ void handleGETAPSettings(void)
   //response += "\"pwd\":";
   //response += "\"" + apInfo.pwd + "\"";
   response += "}";
-  msServer.send(200, "text/plain", response);
+  msSystem.msServer.send(200, "text/plain", response);
 }
 
 void handlePOSTAPSettings(void)
 {
   msSystem.logln("handlePOSTAPSettings");
 
-  if (msServer.args() >= 2)
+  if (msSystem.msServer.args() >= 2)
   {
     // load old settings
     APInfo apInfo;
@@ -455,16 +455,16 @@ void handlePOSTAPSettings(void)
     {
       msSystem.logln("saving setAPConfig");
       Settings.setAPConfig(&apInfo);
-      msServer.send (200, "text/plain", "OK");
+      msSystem.msServer.send (200, "text/plain", "OK");
     }
     else
     {
-      msServer.send(500, "text/plain", "unknown args!");
+      msSystem.msServer.send(500, "text/plain", "unknown args!");
     }
   }
   else
   {
-    msServer.send ( 500, "text/plain", "argument missing!");
+    msSystem.msServer.send ( 500, "text/plain", "argument missing!");
   }
 }
 
@@ -485,14 +485,14 @@ void handleGETPreferdAPSettings(void)
   //response += "\"pwd\":";
   //response += "\"" + apInfo.pwd + "\"";
   response += "}";
-  msServer.send(200, "text/plain", response);
+  msSystem.msServer.send(200, "text/plain", response);
 }
 
 void handlePOSTPreferedAPSettings(void)
 {
   msSystem.logln("handlePOSTPreferedAPSettings");
 
-  if (msServer.args() >= 2)
+  if (msSystem.msServer.args() >= 2)
   {
     APInfo apInfo;
     Settings.getPreferedAP(&apInfo);
@@ -501,16 +501,16 @@ void handlePOSTPreferedAPSettings(void)
     {
       msSystem.logln("saving setAPConfig");
       Settings.setPreferedAP(&apInfo);
-      msServer.send (200, "text/plain", "OK");
+      msSystem.msServer.send (200, "text/plain", "OK");
     }
     else
     {
-      msServer.send(500, "text/plain", "unknown args!");
+      msSystem.msServer.send(500, "text/plain", "unknown args!");
     }
   }
   else
   {
-    msServer.send ( 500, "text/plain", "argument missing!");
+    msSystem.msServer.send ( 500, "text/plain", "argument missing!");
   }
 }
 
@@ -549,7 +549,7 @@ void handleGETAPList(void)
   response += "]";
   Settings.resetAPList();
 
-  msServer.send(200, "text/plain", response);
+  msSystem.msServer.send(200, "text/plain", response);
 }
 
 void handleGETWLANList(void)
@@ -558,7 +558,7 @@ void handleGETWLANList(void)
 
   if (msGlobals.apMode)
   {
-    msServer.send(200, "text/plain", "crash in AP mode...so diusabled for now");
+    msSystem.msServer.send(200, "text/plain", "crash in AP mode...so diusabled for now");
     return;
   }
 
@@ -600,14 +600,14 @@ void handleGETWLANList(void)
   response += "]";
   Settings.resetAPList();
 
-  msServer.send(200, "text/plain", response);
+  msSystem.msServer.send(200, "text/plain", response);
 }
 
 void handlePOSTAPListAdd(void)
 {
   msSystem.logln("handlePOSTAPListAdd");
 
-  if (msServer.args() >= 2)
+  if (msSystem.msServer.args() >= 2)
   {
     APInfo apInfo;
     memset(apInfo.ssid, 0, sizeof(apInfo.ssid));
@@ -620,16 +620,16 @@ void handlePOSTAPListAdd(void)
         msSystem.logln("adding wifi");
         Settings.addAP(&apInfo);
       }
-      msServer.send (200, "text/plain", "OK");
+      msSystem.msServer.send (200, "text/plain", "OK");
     }
     else
     {
-      msServer.send(500, "text/plain", "invalid args!");
+      msSystem.msServer.send(500, "text/plain", "invalid args!");
     }
   }
   else
   {
-    msServer.send(500, "text/plain", "args missing!");
+    msSystem.msServer.send(500, "text/plain", "args missing!");
   }
 }
 
@@ -637,7 +637,7 @@ void handlePOSTAPListDelete(void)
 {
   msSystem.logln("handlePOSTAPListDelete");
 
-  if (msServer.args() >= 1)
+  if (msSystem.msServer.args() >= 1)
   {
     APInfo apInfo;
     strcpy(apInfo.ssid, "");
@@ -650,16 +650,16 @@ void handlePOSTAPListDelete(void)
         msSystem.logln("deleting wifi");
         Settings.deleteAP(apInfo.ssid);
       }
-      msServer.send (200, "text/plain", "OK");
+      msSystem.msServer.send (200, "text/plain", "OK");
     }
     else
     {
-      msServer.send(500, "text/plain", "invalid args!");
+      msSystem.msServer.send(500, "text/plain", "invalid args!");
     }
   }
   else
   {
-    msServer.send(500, "text/plain", "args missing!");
+    msSystem.msServer.send(500, "text/plain", "args missing!");
   }
 }
 
@@ -667,21 +667,21 @@ void handlePOSTAPListDelete(void)
 void handleSetMode(void)
 {
   msSystem.logln("handleSetMode");
-  if (msServer.args() == 1)
+  if (msSystem.msServer.args() == 1)
   {
     ServerConfig config;
     Settings.getServerConfig(&config);
 
     bool success = true;
-    for (int i = 0; i < msServer.args(); i++)
+    for (int i = 0; i < msSystem.msServer.args(); i++)
     {
       msSystem.logln("argName: ");
-      msSystem.logln(msServer.argName(i));
+      msSystem.logln(msSystem.msServer.argName(i));
 
       msSystem.logln("arg: ");
-      msSystem.logln(msServer.arg(i));
+      msSystem.logln(msSystem.msServer.arg(i));
 
-      msGlobals.shifterMode = atoi(msServer.arg(i).c_str());
+      msGlobals.shifterMode = atoi(msSystem.msServer.arg(i).c_str());
     }
 
     if (success)
@@ -692,16 +692,16 @@ void handleSetMode(void)
       response += msGlobals.shifterMode;
       response += "\"";
       response += "}";
-      msServer.send(200, "text/plain", response);
+      msSystem.msServer.send(200, "text/plain", response);
     }
     else
     {
-      msServer.send(500, "text/plain", "invalid args!");
+      msSystem.msServer.send(500, "text/plain", "invalid args!");
     }
   }
   else
   {
-    msServer.send ( 500, "text/plain", "argument missing!");
+    msSystem.msServer.send ( 500, "text/plain", "argument missing!");
   }
 }
 
@@ -712,10 +712,10 @@ void handleLedSet()
 
   String message = "LedSet\n\n";
 
-  if (msServer.args() == 1)
+  if (msSystem.msServer.args() == 1)
   {
-    const char* input = msServer.arg(0).c_str();
-    unsigned int inputLen =  (int)msServer.arg(0).length();
+    const char* input = msSystem.msServer.arg(0).c_str();
+    unsigned int inputLen =  (int)msSystem.msServer.arg(0).length();
     msSystem.log("inputLen: ");
     msSystem.logln(String(inputLen));
 
@@ -746,7 +746,7 @@ void handleLedSet()
   {
     message += "argument missing or too many arguments!";
   }
-  msServer.send ( 200, "text/plain",message );
+  msSystem.msServer.send ( 200, "text/plain",message );
 }
 
 
@@ -756,9 +756,9 @@ void handleLedsSet()
   
   String message = "LedsSet\n\n";
 
-  if (msServer.args() >= 1)
+  if (msSystem.msServer.args() >= 1)
   {
-    const char* input = msServer.arg(0).c_str();
+    const char* input = msSystem.msServer.arg(0).c_str();
     int inputLen = BASE64_ENC_LEN(RGB_BUFFER_SIZE);
 
     base64_decode((char *)msGlobals.web_rgb_buffer, input, inputLen);
@@ -769,7 +769,7 @@ void handleLedsSet()
   {
     message += "argument missing!";
   }
-  msServer.send ( 200, "text/plain",message );
+  msSystem.msServer.send ( 200, "text/plain",message );
 }
 
 #endif

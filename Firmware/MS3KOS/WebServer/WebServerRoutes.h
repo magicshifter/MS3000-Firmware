@@ -2,22 +2,22 @@
 #define _WEBSERVER_ROUTES_H
 
 void handleNotFound() {
-  if (msServer.uri() != "/upload")
+  if (msSystem.msServer.uri() != "/upload")
   {
     String message = "MS Command Not Found\n\n";
     message += "URI: ";
-    message += msServer.uri();
+    message += msSystem.msServer.uri();
     message += "\nMethod: ";
-    message += ( msServer.method() == HTTP_GET ) ? "GET" : "POST";
+    message += ( msSystem.msServer.method() == HTTP_GET ) ? "GET" : "POST";
     message += "\nArguments: ";
-    message += msServer.args();
+    message += msSystem.msServer.args();
     message += "\n";
 
-    for ( uint8_t i = 0; i < msServer.args(); i++ ) {
-      message += " " + msServer.argName ( i ) + ": " + msServer.arg ( i ) + "\n";
+    for ( uint8_t i = 0; i < msSystem.msServer.args(); i++ ) {
+      message += " " + msSystem.msServer.argName ( i ) + ": " + msSystem.msServer.arg ( i ) + "\n";
     }
 
-    msServer.send ( 404, "text/plain", message );
+    msSystem.msServer.send ( 404, "text/plain", message );
   }
   else
   {
@@ -29,7 +29,7 @@ void handleNotFound() {
       <body>\
         <h1>Upload of " + String(msGlobals.uploadFileName) + " done</h1><a href=\"/list?dir=\">list</a><br><a href=\"\">index.html</a></body></html>";
 
-    msServer.send ( 200, "text/html", message );
+    msSystem.msServer.send ( 200, "text/html", message );
 
   }
 }
@@ -45,9 +45,9 @@ void handleReadFile()
   String message = "ReadFile:\n";
 
 
-  if (msServer.args() >= 1)
+  if (msSystem.msServer.args() >= 1)
   {
-    String args = msServer.arg(0);
+    String args = msSystem.msServer.arg(0);
 
     strcpy(msGlobals.uploadFileName, args.c_str());
     saveString(msGlobals.uploadFileName, MAX_FILENAME_LENGTH);
@@ -95,7 +95,7 @@ void handleReadFile()
     message += "argument missing!";
   }
 
-  msServer.send ( 200, "text/html", message );
+  msSystem.msServer.send ( 200, "text/html", message );
 }
 
 
@@ -103,11 +103,11 @@ void handleReadFile()
 
 
 void handleFileList() {
-  if(!msServer.hasArg("dir")) {
-    msServer.send(500, "text/plain", "BAD ARGS, missing dir=");
+  if(!msSystem.msServer.hasArg("dir")) {
+    msSystem.msServer.send(500, "text/plain", "BAD ARGS, missing dir=");
     return;
   }
-  String path = msServer.arg("dir");
+  String path = msSystem.msServer.arg("dir");
 
   //File entry;
   Dir dir = SPIFFS.openDir((char *)path.c_str());
@@ -116,7 +116,7 @@ void handleFileList() {
 /*
   if(!dir.isDirectory()){
     dir.close();
-    msServer.send(500, "text/plain", "NOT DIR");
+    msSystem.msServer.send(500, "text/plain", "NOT DIR");
     return;
   }
   */
@@ -155,17 +155,17 @@ void handleFileList() {
 
     output += "</body>\
 </html>";
-	msServer.send ( 200, "text/html", output );
+	msSystem.msServer.send ( 200, "text/html", output );
 }
 
 
 /*
 void handleFileListJson() {
-  if(!msServer.hasArg("dir")) {
-    msServer.send(500, "text/plain", "BAD ARGS, missing dir=");
+  if(!msSystem.msServer.hasArg("dir")) {
+    msSystem.msServer.send(500, "text/plain", "BAD ARGS, missing dir=");
     return;
   }
-  String path = msServer.arg("dir");
+  String path = msSystem.msServer.arg("dir");
 
   File entry;
   File dir = FS.open((char *)path.c_str());
@@ -173,7 +173,7 @@ void handleFileListJson() {
 
   if(!dir.isDirectory()){
     dir.close();
-    msServer.send(500, "text/plain", "NOT DIR");
+    msSystem.msServer.send(500, "text/plain", "NOT DIR");
     return;
   }
   dir.rewindDirectory();
@@ -205,14 +205,14 @@ void handleFileListJson() {
   dir.close();
 
   output += "]";
-  msServer.send(200, "text/json", output);
+  msSystem.msServer.send(200, "text/json", output);
 }
 */
 
 void handleFileUpload(){
   msSystem.logln("handle upload!");
-  //if(msServer.uri() != "/upload") return;
-  HTTPUpload& upload = msServer.upload();
+  //if(msSystem.msServer.uri() != "/upload") return;
+  HTTPUpload& upload = msSystem.msServer.upload();
   if(upload.status == UPLOAD_FILE_START)
   {
     strcpy(msGlobals.uploadFileName, upload.filename.c_str());//.c_str();

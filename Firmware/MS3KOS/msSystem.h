@@ -1,9 +1,27 @@
 #ifndef _MS_SYSTEM_H
 #define _MS_SYSTEM_H
 
+#include <math.h>
+#include <Wire.h> // Used for I2C
+#include <Arduino.h>
+#include <Esp.h>
+
+#include <ESP8266WiFi.h>
+#include <WiFiClient.h>
+#include <ESP8266WebServer.h>
+#include <ESP8266mDNS.h>
+
+#include <Base64.h>
+#include <EEPROM.h>
+#include <SPI.h>
+
+#include "Util/StringURL.h"
+
 #include "Hardware/LEDHardware.h"
 #include "Hardware/Accelerometer.h"
 #include "Hardware/System.h"
+
+
 
 // TODO: all init and all sensors and leds in here :)
 // (accelerometer wuld also be a class but the MAgicShifter object has one ;)
@@ -40,6 +58,9 @@ public:
   bool doubleClickedButtonA = false;
   bool doubleClickedButtonPower = false;
   bool doubleClickedButtonB = false;
+
+  MDNSResponder msDNS;
+  ESP8266WebServer msServer;
 
 public:
 

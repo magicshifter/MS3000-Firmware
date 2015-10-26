@@ -6,21 +6,6 @@
  *          Code prefix- is ms*, as in msConfig, msSystem, etc.
  */
 
-#include <math.h>
-#include <Wire.h> // Used for I2C
-#include <Arduino.h>
-#include <FS.h>
-#include <Esp.h>
-
-#include <ESP8266WiFi.h>
-#include <WiFiClient.h>
-#include <ESP8266WebServer.h>
-#include <ESP8266mDNS.h>
-
-#include <Base64.h>
-#include <EEPROM.h>
-#include <SPI.h>
-
 #include <stdbool.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -40,8 +25,9 @@ extern "C" {
   #include <json/json.h>
   #include <json/jsonparse.h>
   #include <json/jsontree.h>
-  #include "Util/StringURL.h"
 }
+
+#include <FS.h>
 
 // note: local configuration, globals, and system objects get created now.
 #include "msConfig.h"
@@ -52,10 +38,6 @@ MagicShifterGlobals msGlobals;
 
 #include "msSystem.h"
 MagicShifterSystem msSystem;
-
-MDNSResponder msDNS;
-ESP8266WebServer msServer (80);
-
 // note: WebServer and msSystem are in love
 #include "WebServer/WebServer.h" 
 
@@ -71,12 +53,16 @@ BouncingBallMode msBouncingBallMode(600);
 MagicShakeMode msShakeMode;
 POVShakeSyncDummyMode msPOVShakeSyncMode;
 
+
+// Begin MagicShifter3000 operation
 void setup()
 {
   msSystem.setup();
   msGlobals.bootTime = millis();
 
+#ifdef DEBUG_OUTPUT
   msSystem.logSysInfo();
+#endif
 
   if (SPIFFS.begin()) 
   {

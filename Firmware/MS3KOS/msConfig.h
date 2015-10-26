@@ -5,6 +5,8 @@
 #ifndef MS_CONFIG_H
 #define MS_CONFIG_H
 
+#undef DEBUG_OUTPUT
+
 // v1 == breadboard pcb
 // 2 == 0.9 pcb :)
 #define VERSION 0.1
