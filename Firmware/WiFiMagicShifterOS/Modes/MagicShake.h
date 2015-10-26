@@ -8,7 +8,7 @@
 
 #include "Basic.h"
 
-extern MidiShifterGlobals msGlobals;
+
 
 #include "Image.h"
 

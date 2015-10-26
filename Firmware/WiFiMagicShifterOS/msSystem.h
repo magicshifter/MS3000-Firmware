@@ -4,7 +4,7 @@
 #include "Config.h"
 
 #include "msGlobals.h"
-extern MidiShifterGlobals msGlobals;
+
 
 class Accelerometer
 {
@@ -425,4 +425,7 @@ public:
     }
   }
 };
+
+#else
+extern MidiShifterSystem msSystem;
 #endif

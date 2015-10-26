@@ -9,10 +9,10 @@
 #include "Hardware/LEDHardware.h"
 
 #include "msGlobals.h"
-extern MidiShifterGlobals msGlobals;
+
 
 #include "msSystem.h"
-extern MidiShifterSystem msSystem; // !J!
+ // !J!
 
 MDNSResponder mdns;
 ESP8266WebServer server (80);

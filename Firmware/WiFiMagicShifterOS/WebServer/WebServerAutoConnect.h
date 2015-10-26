@@ -2,7 +2,7 @@
 
 #include "msGlobals.h"
 
-extern MidiShifterGlobals msGlobals;
+
 
 bool TryConnect(struct APInfo &apInfo, int timeoutMs)
 {

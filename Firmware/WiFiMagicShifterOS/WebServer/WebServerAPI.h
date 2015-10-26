@@ -2,8 +2,8 @@
 #include "msGlobals.h"
 #include "msSystem.h"
 
-extern MidiShifterGlobals msGlobals;
-extern MidiShifterSystem msSystem;
+
+
 
 #define MAX_AP_LEN 48
 struct APInfo

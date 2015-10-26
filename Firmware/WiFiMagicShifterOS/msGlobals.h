@@ -31,7 +31,6 @@ public:
 
 };
 
-
-
-
+#else
+extern MidiShifterGlobals msGlobals;
 #endif

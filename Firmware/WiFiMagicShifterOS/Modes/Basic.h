@@ -2,7 +2,7 @@
 #define _MAGICSHIFTERBASEMODE_H
 
 #include "msSystem.h"
-extern MidiShifterSystem msSystem;
+
 
 
 // A MagicShifter mode can be activated by the user through system-events, i.e. buttons, shaking, etc.
