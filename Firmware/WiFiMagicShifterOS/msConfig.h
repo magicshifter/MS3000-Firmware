@@ -1,5 +1,5 @@
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef MS_CONFIG_H
+#define MS_CONFIG_H
 
 
 // MIDIShifter sub-module enable/disable

@@ -1,4 +1,4 @@
-#include "Config.h"
+#include "msConfig.h"
 
 #include "msGlobals.h"
 

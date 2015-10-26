@@ -5,7 +5,7 @@
 #include <ESP8266mDNS.h>
 #include <Base64.h>
 
-#include "Config.h"
+#include "msConfig.h"
 #include "Hardware/LEDHardware.h"
 
 #include "msGlobals.h"

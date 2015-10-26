@@ -1,7 +1,7 @@
 #ifndef __MAGICSHIFTER_H
 #define __MAGICSHIFTER_H
 
-#include "Config.h"
+#include "msConfig.h"
 
 #include "msGlobals.h"
 

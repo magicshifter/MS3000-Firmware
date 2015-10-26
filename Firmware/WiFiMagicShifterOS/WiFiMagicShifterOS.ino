@@ -39,7 +39,7 @@ extern "C" {
 
 #include "Util/StringURL.h"
 
-#include "Config.h"
+#include "msConfig.h"
 
 #include "Hardware/LEDHardware.h"
 #include "Hardware/Accelerometer.h"
