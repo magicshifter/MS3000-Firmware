@@ -6,12 +6,8 @@
 #include "msGlobals.h"
 #include "msSystem.h"
 
-#include "Basic.h"
-
-
-
+#include "BaseMode.h"
 #include "Image.h"
-
 #include "ShakeSync.h"
 
 #define FRAME_MULTIPLY 4
