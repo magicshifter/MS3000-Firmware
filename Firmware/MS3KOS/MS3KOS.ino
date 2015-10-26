@@ -58,24 +58,11 @@ POVShakeSyncDummyMode msPOVShakeSyncMode;
 void setup()
 {
   msSystem.setup();
+
   msGlobals.bootTime = millis();
 
 #ifdef DEBUG_OUTPUT
   msSystem.logSysInfo();
-#endif
-
-  if (SPIFFS.begin()) 
-  {
-    msSystem.logln("SPIFFS begin!");
-  }
-  else
-  {
-    msSystem.TEST_SPIFFS_bug();
-    msSystem.logln("SPIFFS not begin .. :(");
-  }
-
-#ifdef CONFIG_ENABLE_ACCEL
-  resetAccelerometer(); //Test and intialize the MMA8452
 #endif
 
   StartWebServer();
