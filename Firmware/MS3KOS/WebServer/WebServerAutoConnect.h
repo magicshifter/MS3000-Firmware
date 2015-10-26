@@ -126,7 +126,7 @@ bool AutoConnect()
     {
       for (int i = 0; i < n; i++)
       {
-        if (strcmp(WiFi.SSID(i), apInfo.ssid) == 0)
+        if (strcmp(WiFi.SSID(i).c_str(), apInfo.ssid) == 0)
         {
           if (TryConnect(apInfo, CONNECTION_TIMEOUT))
           {
