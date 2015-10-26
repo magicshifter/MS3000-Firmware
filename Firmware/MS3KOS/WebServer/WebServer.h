@@ -21,7 +21,7 @@ const char *jsonSoftAP = "{\"ssid\":\"MagicShifter3000\", \"pwd\":\"\"}";
 #endif
 
 String getContentType(String filename){
-  if(server.hasArg("download")) return "application/octet-stream";
+  if(msServer.hasArg("download")) return "application/octet-stream";
   else if(filename.endsWith(".htm")) return "text/html";
   else if(filename.endsWith(".html")) return "text/html";
   else if(filename.endsWith(".css")) return "text/css";
@@ -45,7 +45,7 @@ bool streamFile(String path){
     if(SPIFFS.exists((char *)(path+".gz").c_str()))
       path += ".gz";
     File file = SPIFFS.open((char *)path.c_str(), "r");
-    server.streamFile(file, contentType);
+    msServer.streamFile(file, contentType);
     file.close();
     return true;
   }
@@ -60,7 +60,7 @@ bool streamFile(String path){
 
 void HandleServeStaticFile(String path)
 {
-  if(!streamFile(path)) server.send(404, "text/plain", "FileNotFound");
+  if(!streamFile(path)) msServer.send(404, "text/plain", "FileNotFound");
 }
 
 void StartWebServer(void)
@@ -71,81 +71,81 @@ void StartWebServer(void)
     delay(100);
   }
 #ifdef USE_MDNS
-  if (mdns.begin("magicshifter", WiFi.localIP()))
+  if (msDNS.begin("magicshifter", WiFi.localIP()))
   {
     msSystem.logln( "MDNS responder started" );
   }
 #endif
-  server.on("/restart", []() {
-    server.send(200, "text/plain", "going down for restarts now!");
+  msServer.on("/restart", []() {
+    msServer.send(200, "text/plain", "going down for restarts now!");
     delay(1000);
     msSystem.restart();
   } );
-  server.on("/kill", []() {
-    server.send(200, "text/plain", "powering down now!");
+  msServer.on("/kill", []() {
+    msServer.send(200, "text/plain", "powering down now!");
     delay(1000);
     msSystem.powerDown();
   } );
-  server.on("/info/about", HTTP_GET, handleGETAbout);
-  server.on("/info/status", HTTP_GET, handleGETStatus);
+  msServer.on("/info/about", HTTP_GET, handleGETAbout);
+  msServer.on("/info/status", HTTP_GET, handleGETStatus);
 
-  server.on("/settings/ap", HTTP_GET, handleGETAPSettings);
-  server.on("/settings/ap/set", handlePOSTAPSettings);
+  msServer.on("/settings/ap", HTTP_GET, handleGETAPSettings);
+  msServer.on("/settings/ap/set", handlePOSTAPSettings);
 
-  server.on("/settings/server", HTTP_GET, handleGETServerSettings);
-  server.on("/settings/server/set", handlePOSTServerSettings);
+  msServer.on("/settings/msServer", HTTP_GET, handleGETServerSettings);
+  msServer.on("/settings/msServer/set", handlePOSTServerSettings);
 
-  server.on("/settings/wifi/prefered", HTTP_GET, handleGETPreferdAPSettings);
-  server.on("/settings/wifi/prefered/set", handlePOSTPreferedAPSettings);
+  msServer.on("/settings/wifi/prefered", HTTP_GET, handleGETPreferdAPSettings);
+  msServer.on("/settings/wifi/prefered/set", handlePOSTPreferedAPSettings);
 
-  server.on("/settings/wifi/list", HTTP_GET, handleGETAPList);
-  server.on("/settings/wifi/add", handlePOSTAPListAdd);
-  server.on("/settings/wifi/delete", handlePOSTAPListDelete);
+  msServer.on("/settings/wifi/list", HTTP_GET, handleGETAPList);
+  msServer.on("/settings/wifi/add", handlePOSTAPListAdd);
+  msServer.on("/settings/wifi/delete", handlePOSTAPListDelete);
 
-  server.on("/list", HTTP_GET, handleFileList);
-  server.on("/leds", handleLedsSet);
-  server.on("/read", handleReadFile);
+  msServer.on("/list", HTTP_GET, handleFileList);
+  msServer.on("/leds", handleLedsSet);
+  msServer.on("/read", handleReadFile);
 
-  server.on("/led", handleLedSet);
+  msServer.on("/led", handleLedSet);
 
-  server.on("/mode", handleSetMode);
+  msServer.on("/mode", handleSetMode);
 
-  server.on("/listwlans", HTTP_GET, handleGETWLANList);
+  msServer.on("/listwlans", HTTP_GET, handleGETWLANList);
 
-  server.on("/download",  []() {
-    if(!server.hasArg("file")) {
-      server.send(500, "text/plain", "BAD ARGS, missing file=");
+  msServer.on("/download",  []() {
+    if(!msServer.hasArg("file")) {
+      msServer.send(500, "text/plain", "BAD ARGS, missing file=");
       return;
     }
-    String path = server.arg("file");
+    String path = msServer.arg("file");
 
     HandleServeStaticFile(path);
   });
 
-  server.on("/",  []() {
+  msServer.on("/",  []() {
     HandleServeStaticFile("index.html");
   });
-  //server.on("favicon.gif", HandleServeStaticFile("favicon.gif"));
-  //server.on("manifest.appcache", HandleServeStaticFile("manifest.appcache"));
+  //msServer.on("favicon.gif", HandleServeStaticFile("favicon.gif"));
+  //msServer.on("manifest.appcache", HandleServeStaticFile("manifest.appcache"));
 
-  server.onFileUpload(handleFileUpload);
+  msServer.onFileUpload(handleFileUpload);
 
-  server.on ( "/format", []() {
+  msServer.on ( "/format", []() {
     String message = "formatin DISABLED cos of FS change, TODO: implement!!!11";
     //FS.format();
-    server.send ( 200, "text/plain", "formated" );
+    msServer.send ( 200, "text/plain", "formated" );
   } );
 
-  server.onNotFound ( handleNotFound );
-  server.begin();
-  msSystem.logln ( "HTTP server started" );
+  msServer.onNotFound ( handleNotFound );
+  msServer.begin();
+  msSystem.logln ( "HTTP msServer started" );
 }
 
 
 void HandleWebServer ( void ) {
 #ifdef USE_MDNS
   // CRASHES in new toolchain 
-  mdns.update();
+  msDNS.update();
 #endif
-  server.handleClient();
+  msServer.handleClient();
 }

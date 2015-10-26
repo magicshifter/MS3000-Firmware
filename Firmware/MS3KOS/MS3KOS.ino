@@ -2,8 +2,8 @@
  * MagicShifter3000 OS, Copyright (c) wizards@Work
  * Authors: wizard23(pt), seclorum(jv)
  * Notes: 
- *          All code is conflated to headers (.h):w
- *          per-device in msConfig.h
+ *          All code is conflated by headers (.h):w
+ *          Code prefix- is ms*, as in msConfig, msSystem, etc.
  */
 
 #include <math.h>
@@ -53,8 +53,8 @@ MagicShifterGlobals msGlobals;
 #include "msSystem.h"
 MagicShifterSystem msSystem;
 
-MDNSResponder mdns;
-ESP8266WebServer server (80);
+MDNSResponder msDNS;
+ESP8266WebServer msServer (80);
 
 // note: WebServer and msSystem are in love
 #include "WebServer/WebServer.h" 
