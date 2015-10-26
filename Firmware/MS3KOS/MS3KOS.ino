@@ -2,24 +2,9 @@
  * MagicShifter3000 OS, Copyright (c) wizards@Work
  * Authors: wizard23(pt), seclorum(jv)
  * Notes: 
- *          All code is conflated to headers (.h):w
- *          per-device in msConfig.h
+ *          All code is conflated by headers (.h):w
+ *          Code prefix- is ms*, as in msConfig, msSystem, etc.
  */
-
-#include <math.h>
-#include <Wire.h> // Used for I2C
-#include <Arduino.h>
-#include <FS.h>
-#include <Esp.h>
-
-#include <ESP8266WiFi.h>
-#include <WiFiClient.h>
-#include <ESP8266WebServer.h>
-#include <ESP8266mDNS.h>
-
-#include <Base64.h>
-#include <EEPROM.h>
-#include <SPI.h>
 
 #include <stdbool.h>
 #include <ctype.h>
@@ -40,8 +25,9 @@ extern "C" {
   #include <json/json.h>
   #include <json/jsonparse.h>
   #include <json/jsontree.h>
-  #include "Util/StringURL.h"
 }
+
+#include <FS.h>
 
 // note: local configuration, globals, and system objects get created now.
 #include "msConfig.h"
@@ -52,15 +38,11 @@ MagicShifterGlobals msGlobals;
 
 #include "msSystem.h"
 MagicShifterSystem msSystem;
-
-MDNSResponder mdns;
-ESP8266WebServer server (80);
-
 // note: WebServer and msSystem are in love
 #include "WebServer/WebServer.h" 
 
 // MIDI can be configured on or off 
-#ifdef ENABLE_MIDI
+#ifdef CONFIG_ENABLE_MIDI
 #include "MidiShifter/MidiShifter.h"
 #endif
 
@@ -71,12 +53,16 @@ BouncingBallMode msBouncingBallMode(600);
 MagicShakeMode msShakeMode;
 POVShakeSyncDummyMode msPOVShakeSyncMode;
 
+
+// Begin MagicShifter3000 operation
 void setup()
 {
   msSystem.setup();
   msGlobals.bootTime = millis();
 
+#ifdef DEBUG_OUTPUT
   msSystem.logSysInfo();
+#endif
 
   if (SPIFFS.begin()) 
   {
@@ -88,7 +74,7 @@ void setup()
     msSystem.logln("SPIFFS not begin .. :(");
   }
 
-#ifdef ENABLE_ACCEL
+#ifdef CONFIG_ENABLE_ACCEL
   resetAccelerometer(); //Test and intialize the MMA8452
 #endif
 
@@ -196,7 +182,7 @@ void loop()
     }
   }
 
-#ifdef ENABLE_ACCEL
+#ifdef CONFIG_ENABLE_ACCEL
   readAccelData(msGlobals.accelCount);
 
   for (int i = 0 ; i < 3 ; i++)
