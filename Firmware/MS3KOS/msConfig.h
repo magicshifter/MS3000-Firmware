@@ -29,4 +29,8 @@
 
 #define FILENAME_SIZE 40
 
+// which MMA is in use
+#undef CONFIG_MMA_NORMAL
+#define CONFIG_MMA_FSOX
+
 #endif

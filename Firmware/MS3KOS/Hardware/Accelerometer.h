@@ -16,9 +16,16 @@
 #define PIN_I2C_DATA 5 // 5 //blau // labeled 5 on esp12E!!!
 #define PIN_I2C_CLOCK 4 //lila
 
-//#define MMA8452_ADDRESS 0x1D  // 0x1D if SA0 is high, 0x1C if low
-#define MMA8452_ADDRESS 0x1C
-#define MMA8452_ID 0x2A 
+// normal MMA 
+#ifdef CONFIG_NORMAL_MMA
+#define MMA8452_ADDRESS 0x1D  // 0x1D if SA0 is high, 0x1C if low
+#define MMA8452_ID 0x2A
+#else
+// CONFIG_MMA_FSOX
+// magnet sensor version
+#define MMA8452_ADDRESS 0x1E
+#define MMA8452_ID 0x2A
+#endif
 
 // TODO : Flesh this out?
 class Accelerometer
