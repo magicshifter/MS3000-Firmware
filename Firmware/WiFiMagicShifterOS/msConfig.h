@@ -18,7 +18,8 @@
 #define MODES 3
 
 // 192.168.4.1 is the IP it always has in softAP mode
-const bool forceAPMode = true;
+#define FORCE_APMODE 1
+// const bool forceAPMode = true;
 
 
 // with jqVic (Alpha, Beta)

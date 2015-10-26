@@ -80,7 +80,8 @@ bool AutoConnect()
   struct jsonparse_state jsonState;
   struct APInfo apInfo;
 
-  if (!forceAPMode)
+#ifndef FORCE_AP_MODE
+  // if (!forceAPMode)
   {
     if (Settings.getPreferedAP(&apInfo))
     {
@@ -139,6 +140,7 @@ bool AutoConnect()
     msSystem.logln("None of the stored WiFi APs was found!");
     false;
   }
+#endif
 
   msSystem.logln("fallback to standalone access point...");
 
