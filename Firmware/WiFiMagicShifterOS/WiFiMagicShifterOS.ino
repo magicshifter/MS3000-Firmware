@@ -41,9 +41,6 @@ extern "C" {
 
 #include "msConfig.h"
 
-#include "Hardware/LEDHardware.h"
-#include "Hardware/Accelerometer.h"
-
 #include "WebServer/WebServer.h"
 
 #include "msGlobals.h"

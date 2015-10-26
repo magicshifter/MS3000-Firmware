@@ -1,6 +1,6 @@
-
 #ifndef __MAGICGLOBALS_H
 #define __MAGICGLOBALS_H
+
 
 class MidiShifterGlobals {
 

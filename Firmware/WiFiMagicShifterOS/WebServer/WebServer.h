@@ -10,7 +10,6 @@
 
 #include "msGlobals.h"
 
-
 #include "msSystem.h"
  // !J!
 

@@ -5,6 +5,8 @@
 
 #include "msGlobals.h"
 
+#include "Hardware/LEDHardware.h"
+#include "Hardware/Accelerometer.h"
 
 class Accelerometer
 {
