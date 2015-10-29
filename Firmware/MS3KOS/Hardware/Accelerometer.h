@@ -26,11 +26,7 @@ void readAccelData(int *destination) {};
   #define MMA8452_ADDRESS 0x1C
   #define MMA8452_ID 0x2A
 #else
-  #ifdef CONFIG_MMA_OTHER
-    #define MMA8452_ADDRESS 0x1C
-    #define MMA8452_ID 0x2A
-  #else
-// CONFIG_MMA_FSOX
+#ifdef CONFIG_MMA_FSOX
 // magnet sensor version
     #define MMA8452_ADDRESS 0x1E
     #define MMA8452_ID 0x2A

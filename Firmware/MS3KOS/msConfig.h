@@ -35,9 +35,8 @@
 #define MAX_FILENAME_LENGTH 32
 
 // which MMA is in use
-#define CONFIG_MMA_NORMAL
-// #define CONFIG_MMA_OTHER
-// #define CONFIG_MMA_FSOX
+// #define CONFIG_MMA_NORMAL
+#define CONFIG_MMA_FSOX
 
 // Use pre-configured AP list
 #undef CONFIG_USE_DEBUG_AP

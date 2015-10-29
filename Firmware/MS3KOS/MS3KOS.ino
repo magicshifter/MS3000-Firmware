@@ -57,9 +57,9 @@ POVShakeSyncDummyMode msPOVShakeSyncMode;
 // Begin MagicShifter3000 operation
 void setup()
 {
-  msSystem.setup();
-
   msGlobals.bootTime = millis();
+  msSystem.setup();
+  msSystem.do_debug_swipe();
 
 #ifdef DEBUG_OUTPUT
   msSystem.logSysInfo();
@@ -82,11 +82,11 @@ void setup()
     msShakeMode.start();
   }
 
-  // debug output so we know we're alive in case a mode dies ..
-  for (byte idx = 0; idx < MAX_LEDS; idx++)
-  {
-    setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
-  }
+  // // debug output so we know we're alive in case a mode dies ..
+  // for (byte idx = 0; idx < MAX_LEDS; idx++)
+  // {
+  //   setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
+  // }
 
   updatePixels();
 
@@ -98,7 +98,7 @@ void loop()
   msGlobals.currentMicros = micros();
   msGlobals.loops++;
 
-  pinMode(PIN_BUTTON_B, INPUT);
+  // pinMode(PIN_BUTTON_B, INPUT);
 
   msSystem.loop();
 
