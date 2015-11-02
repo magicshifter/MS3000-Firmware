@@ -9,7 +9,7 @@
 #                   the examples ..
 #
 # Note: we can turn off compiling if we want to investigate this Makefile.
-SHOULD_COMPILE=true
+SHOULD_COMPILE=false
 
 # The location of the build-directory, where all products are composed
 MS3KOS_BUILD_DIR = /tmp/MS3KOS_BUILD
@@ -25,16 +25,20 @@ MS3KOS_BIN_FILE = ${MS3KOS_BUILD_DIR}/MS3KOS.bin
 #ESP8266COM_TOOL_DIR = <location of the ESP8266 TOOLCHAIN /tool directory>
 #MS3KOS_BASE_DIR = <location of the MS3KOS Project Base Directory {should be where this Makefile lives}
 
+ifeq (${USER},wizard23)
 # e.g. wizard23
-#ESP8266COM_BASEDIR = /home/wizard23/software/arduino-1.6.6_ESP/hardware/esp8266com/esp8266
-#ESP8266COM_BIN_DIR = ${ESP8266COM_BASEDIR}/tools/xtensa-lx106-elf/bin
-#MS3KOS_BASE_DIR = /home/wizard23/Documents/wizards_at_work/MagicShifter3000/Firmware/MSKOS
+ESP8266COM_BASEDIR = /home/wizard23/Desktop/arduino_builds/arduino-1.6.6/hardware/esp8266com/esp8266
+MS3KOS_BASE_DIR = /home/wizard23/Dropbox/projects2015/MagicShifter3000/git/MagicShifter3000/Firmware/MS3KOS
+endif
 
 # e.g. seclorum
+ifeq (${USER},j)
 ESP8266COM_BASEDIR = /Applications/Arduino/1.6.6/Arduino.app/Contents/java/hardware/esp8266com/esp8266
+MS3KOS_BASE_DIR = /Users/j/Documents/wizards_at_work/MagicShifter3000/Firmware/MS3KOS
+endif
+
 ESP8266COM_BIN_DIR = ${ESP8266COM_BASEDIR}/tools/xtensa-lx106-elf/bin
 ESP8266COM_TOOLS_DIR=${ESP8266COM_BASEDIR}/tools/
-MS3KOS_BASE_DIR = /Users/j/Documents/wizards_at_work/MagicShifter3000/Firmware/MS3KOS
 
 #TODO: pre-flight qualify the toolchain {check for version file, etc.}
 
@@ -66,11 +70,11 @@ MS3KOS_BASELIBS = -lm -lgcc -lhal -lphy -lnet80211 \
 
 
 # Source Include paths for the project 
-MS3KOS_INCLUDES = -I${MS3KOS_BASE_DIR}/ \
+MS3KOS_INCLUDES := -I${MS3KOS_BASE_DIR}/ \
 -I${MS3KOS_BASE_DIR}/Libs/Base64
 
 # Source Include paths for the ESP8266 SDK components
-ESP8266COM_INCLUDES = -I${ESP8266COM_BASEDIR}/cores/esp8266 \
+ESP8266COM_INCLUDES := -I${ESP8266COM_BASEDIR}/cores/esp8266 \
 -I${ESP8266COM_BASEDIR}/cores/esp8266/spiffs/ \
 -I${ESP8266COM_BASEDIR}/tools/sdk/include \
 -I${ESP8266COM_BASEDIR}/variants/generic \
@@ -82,7 +86,7 @@ ESP8266COM_INCLUDES = -I${ESP8266COM_BASEDIR}/cores/esp8266 \
 -I${ESP8266COM_BASEDIR}/libraries/SPI 
 
 # Source code - external dependencies, C ..
-EXTERNAL_DEPS_C = ${ESP8266COM_BASEDIR}/cores/esp8266/cont_util.c \
+EXTERNAL_DEPS_C := ${ESP8266COM_BASEDIR}/cores/esp8266/cont_util.c \
 ${ESP8266COM_BASEDIR}/cores/esp8266/core_esp8266_eboot_command.c \
 ${ESP8266COM_BASEDIR}/cores/esp8266/core_esp8266_flash_utils.c \
 ${ESP8266COM_BASEDIR}/cores/esp8266/core_esp8266_i2s.c \
@@ -105,7 +109,7 @@ ${ESP8266COM_BASEDIR}/cores/esp8266/spiffs/spiffs_hydrogen.c \
 ${ESP8266COM_BASEDIR}/cores/esp8266/spiffs/spiffs_nucleus.c
 
 # Source code - external dependencies, C++ ..
-EXTERNAL_DEPS_CPP = ${MS3KOS_BASE_DIR}/MS3KOS.cpp \
+EXTERNAL_DEPS_CPP := ${MS3KOS_BASE_DIR}/MS3KOS.cpp \
 ${MS3KOS_BASE_DIR}/Libs/Base64/Base64.cpp \
 ${ESP8266COM_BASEDIR}/libraries/Wire/Wire.cpp \
 ${ESP8266COM_BASEDIR}/libraries/ESP8266WiFi/src/ESP8266WiFi.cpp \
@@ -137,7 +141,7 @@ ${ESP8266COM_BASEDIR}/cores/esp8266/WMath.cpp \
 ${ESP8266COM_BASEDIR}/cores/esp8266/WString.cpp
 
 # Source code - external dependencies, Assembly header for our core ..
-EXTERNAL_DEPS_S = ${ESP8266COM_BASEDIR}/cores/esp8266/cont.S 
+EXTERNAL_DEPS_S := ${ESP8266COM_BASEDIR}/cores/esp8266/cont.S 
 
 
 ##
@@ -169,6 +173,7 @@ ${info "MS3KOS_BASE_DIR :::: " ${MS3KOS_BASE_DIR} }
 ${info "EXTERNAL_DEPS :::: " ${EXTERNAL_DEPS} }
 ${info "EXTERNAL_DEPS_C_OBJS :::: " ${EXTERNAL_DEPS_C_OBJS} }
 ${info "EXTERNAL_DEPS_OBJS :::: " ${EXTERNAL_DEPS_OBJS} }
+${info "MS3KOS_BUILD_DIR_TREE_LIST :::: " ${MS3KOS_BUILD_DIR_TREE_LIST} }
 endif
 
 .PHONY:  clean
@@ -180,7 +185,7 @@ all:		${MS3KOS_BUILD_DIR} ${MS3KOS_BIN_FILE}
 # Note that these are the targets for each type of file we have in the project - .S, .c, .cpp, &etc.
 # Output is computed to our BUILD_DIR before the main target.
 %.c.o:	C_OUT1 = ${subst ${ESP8266COM_BASEDIR}, ${MS3KOS_BUILD_DIR}, $@}
-%.c.o:	C_OUT = ${subst ${MS3KOS_BASE_DIR}, ${MS3KOS_BUILD_DIR}/ms3kos_project, ${C_OUT1}}
+%.c.o:	C_OUT = ${subst ${MS3KOS_BASE_DIR}, ${MS3KOS_BUILD_DIR}/MS3KOS_, ${C_OUT1}}
 %.c.o:	C_IN = ${patsubst %.c.o,%.c, $@}
 %.c.o:
 	@echo "\nMS3KOS: Compile C:" ${C_IN} " to: " ${C_OUT}
@@ -198,7 +203,7 @@ ifeq (${SHOULD_COMPILE},true)
 endif
 
 %.cpp.o:	CPP_OUT1 = ${subst ${ESP8266COM_BASEDIR}, ${MS3KOS_BUILD_DIR}, $@}
-%.cpp.o:	CPP_OUT = ${subst ${MS3KOS_BASE_DIR}, ${MS3KOS_BUILD_DIR}/ms3kos_project, ${CPP_OUT1}}
+%.cpp.o:	CPP_OUT = ${subst ${MS3KOS_BASE_DIR}, ${MS3KOS_BUILD_DIR}/MS3KOS_, ${CPP_OUT1}}
 %.cpp.o:	CPP_IN = ${patsubst %.cpp.o,%.cpp, $@}
 %.cpp.o:
 	@echo "\nMS3KOS: Compile CPP:" ${CPP_IN} " to: " ${CPP_OUT}
@@ -215,7 +220,7 @@ ifeq (${SHOULD_COMPILE},true)
 	${ESP8266COM_BIN_DIR}/xtensa-lx106-elf-ar cru ${MS3KOS_AR_FILE} ${CPP_OUT}
 endif
 
-%.S.o:	S_OUT1 = ${subst ${ESP8266COM_BASEDIR}, ${MS3KOS_BUILD_DIR}, $@}
+%.S.o:	S_OUT1 = ${subst ${ESP8266COM_BASEDIR}, ${MS3KOS_BUILD_DIR}/MS3KOS_, $@}
 %.S.o:	S_OUT = ${subst ${MS3KOS_BASE_DIR}, ${MS3KOS_BUILD_DIR}, ${S_OUT1}}
 %.S.o:	S_IN = ${patsubst %.S.o,%.S, $@}
 %.S.o:
@@ -234,8 +239,7 @@ ifeq (${SHOULD_COMPILE},true)
 endif
 
 # Produce the ELF file
-${MS3KOS_ELF_FILE}: ${EXTERNAL_DEPS_OBJS} 
-	#${EXTERNAL_DEPS_CPP_OBJS} ${EXTERNAL_DEPS_S_OBJS} 
+${MS3KOS_ELF_FILE}: ${EXTERNAL_DEPS_OBJS}
 	@echo "\nMS3KOS: Create ${ELF_FILE} "
 ifeq (${SHOULD_COMPILE},true)
 	${ESP8266COM_BIN_DIR}/xtensa-lx106-elf-gcc  \
@@ -243,7 +247,7 @@ ifeq (${SHOULD_COMPILE},true)
 	-L${ESP8266COM_BASEDIR}/tools/sdk/lib \
 	-L${ESP8266COM_BASEDIR}/tools/sdk/ld \
 	-o $@ \
-	-Wl,--start-group "${MS3KOS_BUILD_DIR}/ms3kos_project/MS3KOS.cpp.o" \
+	-Wl,--start-group "${MS3KOS_BUILD_DIR}/MS3KOS.cpp.o" \
 	${MS3KOS_AR_FILE} \
 	-lm -lgcc -lhal -lphy -lnet80211 \
 	-llwip -lwpa -lmain -lpp -lsmartconfig -lwps -lcrypto -laxtls \
@@ -254,20 +258,29 @@ endif
 # Produce a BIN file
 ${MS3KOS_BIN_FILE}: ${MS3KOS_ELF_FILE}
 	@echo "\nMS3KOS: Create ${BIN_FILE}"
+ifeq (${SHOULD_COMPILE},true)
 	${ESP8266COM_TOOLS_DIR}/esptool \
 	-eo ${ESP8266COM_BASEDIR}/bootloaders/eboot/eboot.elf \
 	-bo ${MS3KOS_BIN_FILE} -bm dio -bf 40 -bz 4M -bs \
 	.text -bp 4096 -ec -eo ${MS3KOS_ELF_FILE} -bs \
 	.irom0.text -bs .text -bs .data -bs .rodata -bc -ec
+endif
 
 ${MS3KOS_BUILD_DIR}:	NEW_TREE1 := ${subst ${ESP8266COM_BASEDIR}, ${MS3KOS_BUILD_DIR}, ${MS3KOS_BUILD_DIR_TREE_LIST}}
-${MS3KOS_BUILD_DIR}:	NEW_TREE := ${subst ${MS3KOS_BASE_DIR}, ${MS3KOS_BUILD_DIR}/ms3kos_project, ${NEW_TREE1}}
+${MS3KOS_BUILD_DIR}:	NEW_TREE := ${subst ${MS3KOS_BASE_DIR}, ${MS3KOS_BUILD_DIR}/MS3KOS_, ${NEW_TREE1}}
 ${MS3KOS_BUILD_DIR}:
-	(mkdir -p ${MS3KOS_BUILD_DIR} && cd ${MS3KOS_BUILD_DIR} && (for newOutDir in ${sort ${NEW_TREE}}; do mkdir -p $$newOutDir;  done))
+ifeq (${SHOULD_COMPILE},true)
+	(mkdir -p ${MS3KOS_BUILD_DIR} && cd ${MS3KOS_BUILD_DIR} && \
+		(for newOutDir in ${sort ${NEW_TREE}}; do mkdir -p $$newOutDir;  done))
+else
+		(for newOutDir in ${sort ${NEW_TREE}}; do echo "WOULD mkdir " $$newOutDir ".. ";  done)
+
+endif
 
 flashit:	${MS3KOS_BIN_FILE}
 	python ../esptool/esptool.py -p /dev/tty.SLAB_USBtoUART write_flash 0x00 /tmp/MS3KOS_BUILD/MS3KOS.bin
 
 clean:
 	rm -rf ${MS3KOS_BUILD_DIR} ${MS3KOS_ELF_FILE} ${MS3KOS_BIN_FILE}
+
 
