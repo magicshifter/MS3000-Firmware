@@ -9,7 +9,7 @@
 #                   the examples ..
 #
 # Note: we can turn off compiling if we want to investigate this Makefile.
-SHOULD_COMPILE=false
+SHOULD_COMPILE=true
 
 # The location of the build-directory, where all products are composed
 MS3KOS_BUILD_DIR = /tmp/MS3KOS_BUILD
@@ -185,7 +185,7 @@ all:		${MS3KOS_BUILD_DIR} ${MS3KOS_BIN_FILE}
 # Note that these are the targets for each type of file we have in the project - .S, .c, .cpp, &etc.
 # Output is computed to our BUILD_DIR before the main target.
 %.c.o:	C_OUT1 = ${subst ${ESP8266COM_BASEDIR}, ${MS3KOS_BUILD_DIR}, $@}
-%.c.o:	C_OUT = ${subst ${MS3KOS_BASE_DIR}, ${MS3KOS_BUILD_DIR}/MS3KOS_, ${C_OUT1}}
+%.c.o:	C_OUT = ${subst ${MS3KOS_BASE_DIR}, ${MS3KOS_BUILD_DIR}/ms3kos_base, ${C_OUT1}}
 %.c.o:	C_IN = ${patsubst %.c.o,%.c, $@}
 %.c.o:
 	@echo "\nMS3KOS: Compile C:" ${C_IN} " to: " ${C_OUT}
@@ -203,7 +203,7 @@ ifeq (${SHOULD_COMPILE},true)
 endif
 
 %.cpp.o:	CPP_OUT1 = ${subst ${ESP8266COM_BASEDIR}, ${MS3KOS_BUILD_DIR}, $@}
-%.cpp.o:	CPP_OUT = ${subst ${MS3KOS_BASE_DIR}, ${MS3KOS_BUILD_DIR}/MS3KOS_, ${CPP_OUT1}}
+%.cpp.o:	CPP_OUT = ${subst ${MS3KOS_BASE_DIR}, ${MS3KOS_BUILD_DIR}/ms3kos_base, ${CPP_OUT1}}
 %.cpp.o:	CPP_IN = ${patsubst %.cpp.o,%.cpp, $@}
 %.cpp.o:
 	@echo "\nMS3KOS: Compile CPP:" ${CPP_IN} " to: " ${CPP_OUT}
@@ -220,8 +220,8 @@ ifeq (${SHOULD_COMPILE},true)
 	${ESP8266COM_BIN_DIR}/xtensa-lx106-elf-ar cru ${MS3KOS_AR_FILE} ${CPP_OUT}
 endif
 
-%.S.o:	S_OUT1 = ${subst ${ESP8266COM_BASEDIR}, ${MS3KOS_BUILD_DIR}/MS3KOS_, $@}
-%.S.o:	S_OUT = ${subst ${MS3KOS_BASE_DIR}, ${MS3KOS_BUILD_DIR}, ${S_OUT1}}
+%.S.o:	S_OUT1 = ${subst ${ESP8266COM_BASEDIR}, ${MS3KOS_BUILD_DIR}, $@}
+%.S.o:	S_OUT = ${subst ${MS3KOS_BASE_DIR}, ${MS3KOS_BUILD_DIR}/ms3kos_base, ${S_OUT1}}
 %.S.o:	S_IN = ${patsubst %.S.o,%.S, $@}
 %.S.o:
 	@echo "\nMS3KOS: Assemble S:" ${S_IN} " to: " ${S_OUT}
@@ -247,7 +247,7 @@ ifeq (${SHOULD_COMPILE},true)
 	-L${ESP8266COM_BASEDIR}/tools/sdk/lib \
 	-L${ESP8266COM_BASEDIR}/tools/sdk/ld \
 	-o $@ \
-	-Wl,--start-group "${MS3KOS_BUILD_DIR}/MS3KOS.cpp.o" \
+	-Wl,--start-group "${MS3KOS_BUILD_DIR}/ms3kos_base/MS3KOS.cpp.o" \
 	${MS3KOS_AR_FILE} \
 	-lm -lgcc -lhal -lphy -lnet80211 \
 	-llwip -lwpa -lmain -lpp -lsmartconfig -lwps -lcrypto -laxtls \
@@ -267,7 +267,7 @@ ifeq (${SHOULD_COMPILE},true)
 endif
 
 ${MS3KOS_BUILD_DIR}:	NEW_TREE1 := ${subst ${ESP8266COM_BASEDIR}, ${MS3KOS_BUILD_DIR}, ${MS3KOS_BUILD_DIR_TREE_LIST}}
-${MS3KOS_BUILD_DIR}:	NEW_TREE := ${subst ${MS3KOS_BASE_DIR}, ${MS3KOS_BUILD_DIR}/MS3KOS_, ${NEW_TREE1}}
+${MS3KOS_BUILD_DIR}:	NEW_TREE := ${subst ${MS3KOS_BASE_DIR}, ${MS3KOS_BUILD_DIR}/ms3kos_base, ${NEW_TREE1}}
 ${MS3KOS_BUILD_DIR}:
 ifeq (${SHOULD_COMPILE},true)
 	(mkdir -p ${MS3KOS_BUILD_DIR} && cd ${MS3KOS_BUILD_DIR} && \
