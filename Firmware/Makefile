@@ -33,12 +33,14 @@ ifeq (${USER},wizard23)
 # e.g. wizard23
 ESP8266COM_BASEDIR = /home/wizard23/Desktop/arduino_builds/arduino-1.6.6/hardware/esp8266com/esp8266
 MS3KOS_BASE_DIR = /home/wizard23/Dropbox/projects2015/MagicShifter3000/git/MagicShifter3000/Firmware/MS3KOS
+MS_DEVICE_PORT = /dev/ttyUSB0
 endif
 
 # e.g. seclorum
 ifeq (${USER},j)
 ESP8266COM_BASEDIR = /Applications/Arduino/1.6.6/Arduino.app/Contents/java/hardware/esp8266com/esp8266
 MS3KOS_BASE_DIR = /Users/j/Documents/wizards_at_work/MagicShifter3000/Firmware/MS3KOS
+MS_DEVICE_PORT = /dev/tty.SLAB_USBtoUART
 endif
 
 ESP8266COM_BIN_DIR = ${ESP8266COM_BASEDIR}/tools/xtensa-lx106-elf/bin
@@ -282,7 +284,7 @@ else
 endif
 
 flashit:	${MS3KOS_BIN_FILE}
-	python ../../esptool/esptool.py -p /dev/ttyUSB0 write_flash 0x00 /tmp/MS3KOS_BUILD/MS3KOS.bin
+	python ../../esptool/esptool.py -p ${MS_DEVICE_PORT} write_flash 0x00 ${MS3KOS_BIN_FILE}
 
 clean:
 	rm -rf ${MS3KOS_BUILD_DIR} ${MS3KOS_ELF_FILE} ${MS3KOS_BIN_FILE}
