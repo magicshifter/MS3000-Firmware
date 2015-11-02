@@ -25,7 +25,7 @@
 
 #define POV_TIME_MICROSECONDS 1
 
-#define MAX_LEDS 16
+#define MAX_LEDS 160
 //#define MAX_LEDS 160
 #define RGB_BUFFER_SIZE (4*MAX_LEDS)
 
@@ -35,9 +35,9 @@
 #define MAX_FILENAME_LENGTH 32
 
 // which MMA is in use
-#define CONFIG_MMA_NORMAL
+// #define CONFIG_MMA_NORMAL
 // #define CONFIG_MMA_OTHER
-// #define CONFIG_MMA_FSOX
+#define CONFIG_MMA_FSOX
 
 // Use pre-configured AP list
 #undef CONFIG_USE_DEBUG_AP
