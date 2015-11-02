@@ -16,12 +16,7 @@
 SHOULD_COMPILE=true
 
 # The location of the build-directory, where all products are composed
-MS3KOS_BUILD_DIR = /tmp/MS3KOS_BUILD
-
-# Intended outputs
-MS3KOS_AR_FILE = ${MS3KOS_BUILD_DIR}/MS3KOS_core.a
-MS3KOS_ELF_FILE = ${MS3KOS_BUILD_DIR}/MS3KOS.elf
-MS3KOS_BIN_FILE = ${MS3KOS_BUILD_DIR}/MS3KOS.bin
+MS3KOS_BUILD_DIR ?= /tmp/MS3KOS_BUILD
 
 # These three basic env VARS need to be set
 #ESP8266COM_BASEDIR = <location of the ESP8266com/esp8266 SDK directory>
@@ -31,22 +26,27 @@ MS3KOS_BIN_FILE = ${MS3KOS_BUILD_DIR}/MS3KOS.bin
 
 ifeq (${USER},wizard23)
 # e.g. wizard23
-ESP8266COM_BASEDIR = /home/wizard23/Desktop/arduino_builds/arduino-1.6.6/hardware/esp8266com/esp8266
-MS3KOS_BASE_DIR = /home/wizard23/Dropbox/projects2015/MagicShifter3000/git/MagicShifter3000/Firmware/MS3KOS
-MS_DEVICE_PORT = /dev/ttyUSB0
+ESP8266COM_BASEDIR ?= /home/wizard23/Desktop/arduino_builds/arduino-1.6.6/hardware/esp8266com/esp8266
+MS3KOS_BASE_DIR ?= /home/wizard23/Dropbox/projects2015/MagicShifter3000/git/MagicShifter3000/Firmware/MS3KOS
+MS_DEVICE_PORT ?= /dev/ttyUSB0
 endif
 
 # e.g. seclorum
 ifeq (${USER},j)
-ESP8266COM_BASEDIR = /Applications/Arduino/1.6.6/Arduino.app/Contents/java/hardware/esp8266com/esp8266
-MS3KOS_BASE_DIR = /Users/j/Documents/wizards_at_work/MagicShifter3000/Firmware/MS3KOS
-MS_DEVICE_PORT = /dev/tty.SLAB_USBtoUART
+ESP8266COM_BASEDIR ?= /Applications/Arduino/1.6.6/Arduino.app/Contents/java/hardware/esp8266com/esp8266
+MS3KOS_BASE_DIR ?= /Users/j/Documents/wizards_at_work/MagicShifter3000/Firmware/MS3KOS
+MS_DEVICE_PORT ?= /dev/tty.SLAB_USBtoUART
 endif
 
+# Now we should be able to find the toolchain
 ESP8266COM_BIN_DIR = ${ESP8266COM_BASEDIR}/tools/xtensa-lx106-elf/bin
 ESP8266COM_TOOLS_DIR=${ESP8266COM_BASEDIR}/tools/
-
 #TODO: pre-flight qualify the toolchain {check for version file, etc.}
+
+# Intended outputs
+MS3KOS_AR_FILE = ${MS3KOS_BUILD_DIR}/MS3KOS_core.a
+MS3KOS_ELF_FILE = ${MS3KOS_BUILD_DIR}/MS3KOS.elf
+MS3KOS_BIN_FILE = ${MS3KOS_BUILD_DIR}/MS3KOS.bin
 
 # Platform Defs for the ESP8266 rig
 MS3KOS_PLATFORM_DEFS = -D__ets__ -DICACHE_FLASH -U__STRICT_ANSI__ \
@@ -151,7 +151,7 @@ EXTERNAL_DEPS_S := ${ESP8266COM_BASEDIR}/cores/esp8266/cont.S
 
 
 ##
-## Warning: from this point on, it is assumed 
+## Warning: from this point on, automation is assumed
 ##
 
 # Combine the  Deps to one
@@ -185,8 +185,6 @@ endif
 .PHONY:  clean
 
 all:		${MS3KOS_BUILD_DIR} ${MS3KOS_BIN_FILE} 
-
-
 
 # Note that these are the targets for each type of file we have in the project - .S, .c, .cpp, &etc.
 # Output is computed to our BUILD_DIR before the main target.
@@ -246,7 +244,7 @@ endif
 
 # Produce the ELF file
 ${MS3KOS_ELF_FILE}: ${EXTERNAL_DEPS_OBJS}
-	@echo "\nMS3KOS: Create ${ELF_FILE} "
+	@echo "\nMS3KOS: Create ${MS3KOS_ELF_FILE} "
 ifeq (${SHOULD_COMPILE},true)
 	${ESP8266COM_BIN_DIR}/xtensa-lx106-elf-gcc  \
 	${MS3KOS_LINK_FLAGS} \
@@ -263,7 +261,7 @@ endif
 
 # Produce a BIN file
 ${MS3KOS_BIN_FILE}: ${MS3KOS_ELF_FILE}
-	@echo "\nMS3KOS: Create ${BIN_FILE}"
+	@echo "\nMS3KOS: Create ${MS3KOS_BIN_FILE}"
 ifeq (${SHOULD_COMPILE},true)
 	${ESP8266COM_TOOLS_DIR}/esptool \
 	-eo ${ESP8266COM_BASEDIR}/bootloaders/eboot/eboot.elf \
@@ -272,6 +270,8 @@ ifeq (${SHOULD_COMPILE},true)
 	.irom0.text -bs .text -bs .data -bs .rodata -bc -ec
 endif
 
+# Build directory is set up to contain the external deps and the project local libs independently.
+# Note the use of ms3kos_base/ to affect this offset.
 ${MS3KOS_BUILD_DIR}:	NEW_TREE1 := ${subst ${ESP8266COM_BASEDIR}, ${MS3KOS_BUILD_DIR}, ${MS3KOS_BUILD_DIR_TREE_LIST}}
 ${MS3KOS_BUILD_DIR}:	NEW_TREE := ${subst ${MS3KOS_BASE_DIR}, ${MS3KOS_BUILD_DIR}/ms3kos_base, ${NEW_TREE1}}
 ${MS3KOS_BUILD_DIR}:
@@ -283,7 +283,8 @@ else
 
 endif
 
-flashit:	${MS3KOS_BIN_FILE}
+flashit:	${MS3KOS_BUILD_DIR} ${MS3KOS_BIN_FILE}
+	echo "\nMS3KOS: Flash ${MS3KOS_BIN_FILE}"
 	python ../../esptool/esptool.py -p ${MS_DEVICE_PORT} write_flash 0x00 ${MS3KOS_BIN_FILE}
 
 clean:
