@@ -7,6 +7,10 @@
 #                   find the esp8266com/esp8266 dir, 
 #                   and set it to your BASEDIR as per 
 #                   the examples ..
+#                   
+# Also needs esptool:
+#
+# git clone  https://github.com/themadinventor/esptool.git ../../esptool
 #
 # Note: we can turn off compiling if we want to investigate this Makefile.
 SHOULD_COMPILE=true
