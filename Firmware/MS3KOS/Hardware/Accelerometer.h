@@ -16,16 +16,17 @@
 #define PIN_I2C_DATA 5 // 5 //blau // labeled 5 on esp12E!!!
 #define PIN_I2C_CLOCK 4 //lila
 
+#ifndef CONFIG_ENABLE_ACCEL
+void resetAccelerometer() {};
+void readAccelData(int *destination) {};
+#endif
+
 // normal MMA 
 #ifdef CONFIG_MMA_NORMAL
   #define MMA8452_ADDRESS 0x1C
   #define MMA8452_ID 0x2A
 #else
-  #ifdef CONFIG_MMA_OTHER
-    #define MMA8452_ADDRESS 0x1C
-    #define MMA8452_ID 0x2A
-  #else
-// CONFIG_MMA_FSOX
+#ifdef CONFIG_MMA_FSOX
 // magnet sensor version
     #define MMA8452_ADDRESS 0x1E
     #define MMA8452_ID 0x2A
@@ -53,11 +54,8 @@ void initAccelerometer()
   Wire.setClock(500000); // crashes if > 200000
 }
 
-#ifndef CONFIG_ENABLE_ACCEL
-  void resetAccelerometer() {};
-  void readAccelData(int *destination) {};
-#else
 
+#ifdef CONFIG_ENABLE_ACCEL
 // Read bytesToRead sequentially, starting at addressToRead into the dest byte array
 void readRegisters(byte addressToRead, int bytesToRead, byte * dest)
 {

@@ -12,7 +12,7 @@
 #define VERSION 0.1
 
 // MIDI enabled?
-#undef CONFIG_ENABLE_MIDI
+#define CONFIG_ENABLE_MIDI
 // Accelerometer enabled?
 #define CONFIG_ENABLE_ACCEL
 //crashes on new esp aruino toolchain :\

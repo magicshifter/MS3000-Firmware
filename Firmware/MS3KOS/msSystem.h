@@ -63,6 +63,13 @@ public:
 
 public:
 
+void log(int&, int) {}
+void log(uint16_t&, int) {} 
+void log(unsigned int, int) {} 
+void logln(bool&, int) {}
+void logln(int8_t&, int) {}
+void logln(uint16_t&, int) {}
+void logln(unsigned int, int) {}
 
   void log(bool b)
   {
@@ -219,6 +226,17 @@ public:
 
   void setup()
   {
+    // wake up filesystem
+    if (SPIFFS.begin()) 
+    {
+      logln("SPIFFS begin!");
+    }
+    else
+    {
+      TEST_SPIFFS_bug();
+      logln("SPIFFS not begin .. :(");
+    }
+
     // all engines turn on
     pinMode(PIN_PWR_MGT, INPUT);
     pinMode(PIN_LED_ENABLE, INPUT);
@@ -233,9 +251,11 @@ public:
 
     EEPROM.begin(512);
 
+#ifdef CONFIG_ENABLE_ACCEL
     // accelerometer 
     initAccelerometer();
-    resetAccelerometer();
+    resetAccelerometer(); //Test and intialize the MMA8452
+#endif
 
     // led controllers and buffer
     initLEDHardware();
