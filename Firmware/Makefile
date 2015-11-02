@@ -278,7 +278,7 @@ else
 endif
 
 flashit:	${MS3KOS_BIN_FILE}
-	python ../esptool/esptool.py -p /dev/tty.SLAB_USBtoUART write_flash 0x00 /tmp/MS3KOS_BUILD/MS3KOS.bin
+	python ../../esptool/esptool.py -p /dev/ttyUSB0 write_flash 0x00 /tmp/MS3KOS_BUILD/MS3KOS.bin
 
 clean:
 	rm -rf ${MS3KOS_BUILD_DIR} ${MS3KOS_ELF_FILE} ${MS3KOS_BIN_FILE}
