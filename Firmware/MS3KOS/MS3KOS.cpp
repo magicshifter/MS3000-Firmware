@@ -18,7 +18,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <time.h>
-#include <math.h>	/* for HUGE_VAL */
+#include <math.h> /* for HUGE_VAL */
 
 //compiler.c.elf.libs=-lm -lgcc -lhal -lphy -lnet80211 -llwip -lwpa -lmain -lpp -lsmartconfig -lc -ljson
 extern "C" {
@@ -64,6 +64,22 @@ void setup()
 #ifdef DEBUG_OUTPUT
   msSystem.logSysInfo();
 #endif
+
+  if (SPIFFS.begin()) 
+  {
+    msSystem.logln("SPIFFS begin!");
+  }
+  else
+  {
+    msSystem.TEST_SPIFFS_bug();
+    msSystem.logln("SPIFFS not begin .. :(");
+  }
+
+#ifdef CONFIG_ENABLE_ACCEL
+  resetAccelerometer(); //Test and intialize the MMA8452
+#endif
+
+  //msSystem.do_debug_swipe();
 
   StartWebServer();
 
@@ -166,6 +182,37 @@ void loop()
     else if (msGlobals.shifterMode == 2)
     {
       msShakeMode.step();
+    }
+    else if (msGlobals.shifterMode == 3)
+    {
+      #define _MOD_LED(m,x) random(m,x)
+      int rRed = _MOD_LED(0,255);
+      int rGreen = _MOD_LED(0,255);
+      int rBlue = _MOD_LED(0,255);
+      int pause = random(1, 10000);
+
+      if (random(0,100) < 60) {
+        switch(random(0,3)) 
+        {
+          case 0 : rRed = 0; break;
+          case 1 : rGreen = 0; break;
+          case 2 : rBlue = 0; break;
+        }
+      }
+
+      for (byte idx = 0; idx < MAX_LEDS; idx++)
+      {
+        for (byte idx2 = 0; idx2 < MAX_LEDS; idx2++) 
+        {
+          if (idx == idx2) 
+            setPixel(idx2, rRed, rGreen, rBlue, 255);
+          else
+            setPixel(idx2, 0,0,0,0);
+        }
+        delay(1);
+        delayMicroseconds(pause);
+        updatePixels();
+      }
     }
   }
 
