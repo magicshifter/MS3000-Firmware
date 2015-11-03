@@ -19,7 +19,7 @@
 
 // Neil Johnsons' tight MIDI Byte parser:
 // #include "miby.h"
-#include "miby.cc"	// included like this because Arduino
+#include "miby.cpp"	// included like this because Arduino
 
 // NOTE: the configuration for the miby callbacks is done in MidiModeMibyConfig.h
 // .. which refers to functions declared in this module.  -D is used at build

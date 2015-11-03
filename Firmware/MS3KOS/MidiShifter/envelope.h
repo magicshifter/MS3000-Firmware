@@ -2,6 +2,11 @@
 #define __ENVELOPE_H
 // #include "../firmware.h"
 
+#include <math.h>
+#include <Wire.h> // Used for I2C
+#include <Arduino.h>
+#include <Esp.h>
+
 typedef struct estage estage;
 
 // Stages of the Envelope

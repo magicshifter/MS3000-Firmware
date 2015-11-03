@@ -15,7 +15,7 @@
 // MIDI-specific definitions
 #include "midi_defs.h"
 
-#include "miby.cc"
+// #include "miby.cc"
 
 // LAB/HAK ZONE:
 #define SEQ_LEN 10

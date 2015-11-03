@@ -120,6 +120,7 @@ ${ESP8266COM_BASEDIR}/cores/esp8266/spiffs/spiffs_nucleus.c
 # Source code - external dependencies, C++ ..
 EXTERNAL_DEPS_CPP := ${MS3KOS_BASE_DIR}/MS3KOS.cpp \
 ${MS3KOS_BASE_DIR}/Libs/Base64/Base64.cpp \
+${MS3KOS_BASE_DIR}/MidiShifter/miby.cpp \
 ${ESP8266COM_BASEDIR}/libraries/Wire/Wire.cpp \
 ${ESP8266COM_BASEDIR}/libraries/ESP8266WiFi/src/ESP8266WiFi.cpp \
 ${ESP8266COM_BASEDIR}/libraries/ESP8266WiFi/src/ESP8266WiFiMulti.cpp \
