@@ -13,7 +13,7 @@
 #define HW_ID_RING   		3		// on the wall
 
 // TODO: pass this default from the Makefile
-#define HW_ID HW_ID_MS3000_FSOX8700CQ
+//#define HW_ID HW_ID_MS3000_FSOX8700CQ
 //#define HW_ID HW_ID_MS3000_MMA8452Q
 
 // set of LED types
@@ -54,12 +54,15 @@
 #undef CONFIG_USE_DEBUG_AP
 
 #if(HW_ID==HW_ID_MS3000_FSOX8700CQ)
+#warning "HW ID :  HW_ID_MS3000_FSOX8700CQ "
 #define MAX_LEDS 16
 #define CONFIG_MMA_FSOX
 #elif(HW_ID==HW_ID_MS3000_MMA8452Q)
+#warning "HW ID :  HW_ID_MS3000_MMA8452Q "
 #define MAX_LEDS 16
 #define CONFIG_MMA_NORMAL
 #elif(HW_ID==HW_ID_RING)
+#warning "HW ID :  HW_ID_RING "
 #define MAX_LEDS 160
 #define CONFIG_MMA_NONE
 #define LED_TYPE LED_TYPE_WS2801

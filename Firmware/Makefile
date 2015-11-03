@@ -29,6 +29,7 @@ ifeq (${USER},wizard23)
 ESP8266COM_BASEDIR ?= /home/wizard23/Desktop/arduino_builds/arduino-1.6.6/hardware/esp8266com/esp8266
 MS3KOS_BASE_DIR ?= /home/wizard23/Dropbox/projects2015/MagicShifter3000/git/MagicShifter3000/Firmware/MS3KOS
 MS_DEVICE_PORT ?= /dev/ttyUSB0
+HW_ID ?= HW_ID_MS3000_FSOX8700CQ
 endif
 
 # e.g. seclorum
@@ -36,6 +37,7 @@ ifeq (${USER},j)
 ESP8266COM_BASEDIR ?= /Applications/Arduino/1.6.6/Arduino.app/Contents/java/hardware/esp8266com/esp8266
 MS3KOS_BASE_DIR ?= /Users/j/Documents/wizards_at_work/MagicShifter3000/Firmware/MS3KOS
 MS_DEVICE_PORT ?= /dev/tty.SLAB_USBtoUART
+HW_ID ?= HW_ID_MS3000_MMA8452Q
 endif
 
 # Now we should be able to find the toolchain
@@ -51,7 +53,8 @@ MS3KOS_BIN_FILE = ${MS3KOS_BUILD_DIR}/MS3KOS.bin
 # Platform Defs for the ESP8266 rig
 MS3KOS_PLATFORM_DEFS = -D__ets__ -DICACHE_FLASH -U__STRICT_ANSI__ \
 -DF_CPU=80000000L -DARDUINO=166 \
--DARDUINO_ESP8266_ESP01 -DARDUINO_ARCH_ESP8266  -DESP8266
+-DARDUINO_ESP8266_ESP01 -DARDUINO_ARCH_ESP8266  -DESP8266 \
+-DHW_ID=${HW_ID}
 
 # Warning: C flags are different to CPP flags
 MS3KOS_BUILD_CFLAGS = -c -Os -g -Wpointer-arith -Wno-implicit-function-declaration -Wl,-EL \
