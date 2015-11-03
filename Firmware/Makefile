@@ -182,7 +182,7 @@ ${info "EXTERNAL_DEPS_OBJS :::: " ${EXTERNAL_DEPS_OBJS} }
 ${info "MS3KOS_BUILD_DIR_TREE_LIST :::: " ${MS3KOS_BUILD_DIR_TREE_LIST} }
 endif
 
-.PHONY:  clean
+.PHONY:  clean 
 
 all:		${MS3KOS_BUILD_DIR} ${MS3KOS_BIN_FILE} 
 
