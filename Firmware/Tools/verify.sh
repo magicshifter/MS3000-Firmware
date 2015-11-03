@@ -1,0 +1,1 @@
+./arduino.sh verify
