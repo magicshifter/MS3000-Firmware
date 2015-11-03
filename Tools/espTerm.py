@@ -4,7 +4,7 @@ import serial
 import curses
 import time
 
-portName = "/dev/ttyUSB1"
+portName = "/dev/ttyUSB0"
 baudRate = 57600 * 2
 #baudRate = 76800 # 38400 # bootloader baudreate
 

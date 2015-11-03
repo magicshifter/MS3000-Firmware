@@ -7,6 +7,11 @@
 
 #undef DEBUG_OUTPUT
 
+#define HW_ID_MS3000 0x01
+#define HW_ID_RING 0x02
+
+#define HW_ID HW_ID_MS3000
+
 // v1 == breadboard pcb
 // 2 == 0.9 pcb :)
 #define VERSION 0.1
@@ -25,7 +30,8 @@
 
 #define POV_TIME_MICROSECONDS 1
 
-#define MAX_LEDS 160
+#define MAX_LEDS 16
+
 //#define MAX_LEDS 160
 #define RGB_BUFFER_SIZE (4*MAX_LEDS)
 
@@ -36,10 +42,18 @@
 
 // which MMA is in use
 // #define CONFIG_MMA_NORMAL
-// #define CONFIG_MMA_OTHER
+// #define CONFIG_MMA_NONE
 #define CONFIG_MMA_FSOX
 
 // Use pre-configured AP list
 #undef CONFIG_USE_DEBUG_AP
+
+#if(HW_ID==HW_ID_RING)
+#define MAX_LEDS 160
+#undef CONFIG_MMA_FSOX
+#define CONFIG_MMA_NONE
+#endif
+
+
 
 #endif
