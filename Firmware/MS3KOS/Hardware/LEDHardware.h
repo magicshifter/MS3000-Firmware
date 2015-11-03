@@ -10,15 +10,6 @@
   #include <SPI.h>
 #endif
 
-#define LED_TYPE_APA102 1 
-#define LED_TYPE_WS2801 2
-
-#define LED_TYPE LED_TYPE_APA102
-
-#if(HW_ID==HW_ID_RING)
-	#define LED_TYPE LED_TYPE_WS2801
-#endif
-
 #if (LED_TYPE == LED_TYPE_APA102)
   #define SPI_FREQUENCY 20000000
 #else

@@ -6,7 +6,7 @@ public:
   // state !J! TODO: clean all this up 
   int GLOBAL_GS = 5;
   float accelG[3];  // Stores the real accel value in g's
-  int shifterMode = 3;
+  int shifterMode = 0;
   int accelCount[3];  // Stores the 12-bit signed value
   int oldButton1State = 0;
   int currentMicros = 0, lastMicros = 0;

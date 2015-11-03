@@ -7,10 +7,19 @@
 
 #undef DEBUG_OUTPUT
 
-#define HW_ID_MS3000 0x01
-#define HW_ID_RING 0x02
+// set of Hw configurations
+#define HW_ID_MS3000_FSOX8700CQ 1	// magnetometer+accel
+#define HW_ID_MS3000_MMA8452Q 	2	// accel
+#define HW_ID_RING   		3		// on the wall
 
-#define HW_ID HW_ID_MS3000
+// TODO: pass this default from the Makefile
+#define HW_ID HW_ID_MS3000_FSOX8700CQ
+//#define HW_ID HW_ID_MS3000_MMA8452Q
+
+// set of LED types
+#define LED_TYPE_APA102 1 
+#define LED_TYPE_WS2801 2
+#define LED_TYPE LED_TYPE_APA102
 
 // v1 == breadboard pcb
 // 2 == 0.9 pcb :)
@@ -30,7 +39,6 @@
 
 #define POV_TIME_MICROSECONDS 1
 
-#define MAX_LEDS 16
 
 //#define MAX_LEDS 160
 #define RGB_BUFFER_SIZE (4*MAX_LEDS)
@@ -41,18 +49,28 @@
 #define MAX_FILENAME_LENGTH 32
 
 // which MMA is in use
-// #define CONFIG_MMA_NORMAL
-// #define CONFIG_MMA_NONE
-#define CONFIG_MMA_FSOX
 
 // Use pre-configured AP list
 #undef CONFIG_USE_DEBUG_AP
 
-#if(HW_ID==HW_ID_RING)
+#if(HW_ID==HW_ID_MS3000_FSOX8700CQ)
+#define MAX_LEDS 16
+#define CONFIG_MMA_FSOX
+#elif(HW_ID==HW_ID_MS3000_MMA8452Q)
+#define MAX_LEDS 16
+#define CONFIG_MMA_NORMAL
+#elif(HW_ID==HW_ID_RING)
 #define MAX_LEDS 160
-#undef CONFIG_MMA_FSOX
 #define CONFIG_MMA_NONE
+#define LED_TYPE LED_TYPE_WS2801
+#else
+#error "No HW_ID configured! abort!"
 #endif
+
+
+#if(HW_ID==HW_ID_RING)
+#endif
+
 
 
 
