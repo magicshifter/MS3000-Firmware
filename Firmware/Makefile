@@ -32,13 +32,21 @@ MS_DEVICE_PORT ?= /dev/ttyUSB0
 HW_ID ?= HW_ID_MS3000_FSOX8700CQ
 endif
 
-# e.g. seclorum
+# e.g. jascha
 ifeq (${USER},j)
-ESP8266COM_BASEDIR ?= /Applications/Arduino/1.6.6/Arduino.app/Contents/java/hardware/esp8266com/esp8266
-MS3KOS_BASE_DIR ?= /Users/j/Documents/wizards_at_work/MagicShifter3000/Firmware/MS3KOS
-MS_DEVICE_PORT ?= /dev/tty.SLAB_USBtoUART
+ESP8266COM_BASEDIR ?= /home/j/apps/Arduino/
+MS3KOS_BASE_DIR ?= /home/j/magicshifter/ms3k/Firmware/MS3KOS
+MS_DEVICE_PORT ?= /dev/ttyUSB0
 HW_ID ?= HW_ID_MS3000_MMA8452Q
 endif
+
+# e.g. seclorum
+#ifeq (${USER},j)
+#ESP8266COM_BASEDIR ?= /Applications/Arduino/1.6.6/Arduino.app/Contents/java/hardware/esp8266com/esp8266
+#MS3KOS_BASE_DIR ?= /Users/j/Documents/wizards_at_work/MagicShifter3000/Firmware/MS3KOS
+#MS_DEVICE_PORT ?= /dev/tty.SLAB_USBtoUART
+#HW_ID ?= HW_ID_MS3000_MMA8452Q
+#endif
 
 # Now we should be able to find the toolchain
 ESP8266COM_BIN_DIR = ${ESP8266COM_BASEDIR}/tools/xtensa-lx106-elf/bin
