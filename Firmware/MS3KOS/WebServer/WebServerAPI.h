@@ -287,18 +287,18 @@ void handleGETInfo(void)
   msSystem.logln("handleGETInfo");
 
   String response = "{";
-    response += "\"api\": {";
-      response += "\"versions\": [1],";
-      response += "\"prefix\": \"v\"";
+    response += "\"api\":{";
+      response += "\"versions\":[1],";
+      response += "\"prefix\":\"v\"";
     response += "},";
     response += "\"init\": {";
-      response += "\"settings\": [";
+      response += "\"settings\":[";
         response += "\"server\",";
         response += "\"ap\",";
         response += "\"wifi/list\",";
         response += "\"wifi/prefered\"";
       response += "],";
-      response += "\"info\": [";
+      response += "\"info\":[";
         response += "\"about\",";
         response += "\"status\"";
       response += "]";
@@ -312,8 +312,15 @@ void handleGETAbout(void)
 {
   msSystem.logln("handleGETAbout");
 
-  String response = "{\"type\":\"MagicShifter3000\",\"format\":\"BGRA\",\"version\":" + String(VERSION) +
-    ",\"leds\":" + String(MAX_LEDS) + ",\"id\":" + String(ESP.getChipId()) + ",\"flashid\":" + String(ESP.getFlashChipId()) + ",\"flashsize\":" + String(ESP.getFlashChipSize()) + "}";
+  String response = "{";
+    response += "\"type\":\"MagicShifter3000\",";
+    response += "\"format\":\"BGRA\",";
+    response += "\"version\":" + String(VERSION) + ",";
+    response += "\"leds\":" + String(MAX_LEDS) + ",";
+    response += "\"id\":" + String(ESP.getChipId()) + ",";
+    response += "\"flashid\":" + String(ESP.getFlashChipId()) + ",";
+    response += "\"flashsize\":" + String(ESP.getFlashChipSize());
+  response += "}";
   msSystem.msServer.send(200, "text/plain", response);
 }
 
@@ -348,10 +355,28 @@ void handleGETStatus(void)
 
   uint32_t ip = (uint32_t)msSystem.getIP();
 
-  String response = "{\"id\":" + String(ESP.getChipId()) + ",\"uptime\":" +
-  String(millis() - msGlobals.bootTime) + ",\"adValue\":" + adValue + ",\"voltage\":" + voltage +
-  "\",accelRaw\":[" + msGlobals.accelCount[0] + "," + msGlobals.accelCount[1] + "," + msGlobals.accelCount[2] + "],\"msGlobals.accelG\":[" + msGlobals.accelG[0] + "," + msGlobals.accelG[1] + ","+ msGlobals.accelG[2] + 
-    "],\"ip\":\"" + (0xFF & (ip>>0)) + "."  + (0xFF & (ip>>8)) + "."  + (0xFF & (ip>>16)) + "."  + (0xFF & (ip>>24)) + "\"}";
+
+  String response = "{";
+    response += "\"id\":" + String(ESP.getChipId()) + ",";
+    response += "\"uptime\":" + String(millis() - msGlobals.bootTime) + ",";
+    response += "\"adValue\":" + String(adValue) + ",";
+    response += "\"voltage\":" + String(voltage) + ",";
+    response += "\"accelRaw\":[";
+      response += String(msGlobals.accelCount[0]) + ",";
+      response += String(msGlobals.accelCount[1]) + ",";
+      response += String(msGlobals.accelCount[2]);
+    response += "],";
+    response += "\"msGlobals.accelG\":[";
+      response += String(msGlobals.accelG[0]) + ",";
+      response += String(msGlobals.accelG[1]) + ",";
+      response += String(msGlobals.accelG[2]);
+    response += "],";
+    response += "\"ip\":\"";
+    response += String(0xFF & (ip>>0)) + ".";
+    response += String(0xFF & (ip>>8)) + ".";
+    response += String(0xFF & (ip>>16)) + ".";
+    response += String(0xFF & (ip>>24)) + "\"";
+  response += "}";
   msSystem.msServer.send(200, "text/plain", response);
 }
 
@@ -391,13 +416,13 @@ void handleGETServerSettings(void)
   Settings.getServerConfig(&config);
 
   String response = "{";
-  response += "\"host\":";
-  response += "\"";
-  response += config.hostname;
-  response += "\"";
-  response += ",";
-  response += "\"port\":";
-  response += config.port;
+    response += "\"host\":";
+    response += "\"";
+    response += config.hostname;
+    response += "\"";
+    response += ",";
+    response += "\"port\":";
+    response += config.port;
   response += "}";
   msSystem.msServer.send(200, "text/plain", response);
 }
@@ -457,13 +482,13 @@ void handleGETAPSettings(void)
   Settings.getAPConfig(&apInfo);
 
   String response = "{";
-  response += "\"ssid\":";
-  response += "\"";
-  response += apInfo.ssid;
-  response += "\"";
-  //response += ",";
-  //response += "\"pwd\":";
-  //response += "\"" + apInfo.pwd + "\"";
+    response += "\"ssid\":";
+    response += "\"";
+    response += apInfo.ssid;
+    response += "\"";
+    //response += ",";
+    //response += "\"pwd\":";
+    //response += "\"" + apInfo.pwd + "\"";
   response += "}";
   msSystem.msServer.send(200, "text/plain", response);
 }
@@ -504,13 +529,13 @@ void handleGETPreferdAPSettings(void)
   Settings.getPreferedAP(&apInfo);
 
   String response = "{";
-  response += "\"ssid\":";
-  response += "\"";
-  response += apInfo.ssid;
-  response += "\"";
-  //response += ",";
-  //response += "\"pwd\":";
-  //response += "\"" + apInfo.pwd + "\"";
+    response += "\"ssid\":";
+    response += "\"";
+    response += apInfo.ssid;
+    response += "\"";
+    //response += ",";
+    //response += "\"pwd\":";
+    //response += "\"" + apInfo.pwd + "\"";
   response += "}";
   msSystem.msServer.send(200, "text/plain", response);
 }
