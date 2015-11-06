@@ -120,6 +120,9 @@ void StartWebServer(void)
 
   msSystem.msServer.on("/mode", handleSetMode);
 
+  msSystem.msServer.on("/time", HTTP_GET, handleGETTime);
+  msSystem.msServer.on("/time", HTTP_POST, handlePOSTTime);
+
   msSystem.msServer.on("/listwlans", HTTP_GET, handleGETWLANList);
 
   msSystem.msServer.on("/download",  []() {

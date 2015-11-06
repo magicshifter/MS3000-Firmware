@@ -785,6 +785,37 @@ void handleSetMode(void)
   }
 }
 
+void respondREQTime()
+{
+  int currentTime = msGlobals.time + (millis() - msGlobals.timePostedAt);
+
+  String response = "{";
+    response += "\"time\":" + String(currentTime) + ",";
+    response += "\"postedAt\":" + String(msGlobals.timePostedAt);
+  response += "}";
+
+  msSystem.msServer.send ( 200, "text/plain", response);
+}
+
+void handleGETTime()
+{
+  msSystem.logln("handleGETTime");
+
+  respondREQTime();
+}
+
+void handlePOSTTime()
+{
+  msSystem.logln("handlePOSTTime");
+
+  if (msSystem.msServer.argName(0) == "t")
+  {
+    msGlobals.time = atoi(msSystem.msServer.arg(0).c_str());
+    msGlobals.timePostedAt = millis();
+  }
+
+  respondREQTime();
+}
 
 void handleLedSet()
 {

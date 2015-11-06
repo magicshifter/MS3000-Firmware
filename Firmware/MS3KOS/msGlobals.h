@@ -23,6 +23,8 @@ public:
   int setActiveFile = 0; // is there a new file to activate?
   char uploadFileName[];
   File uploadFile;
+  int time = 0;
+  int timePostedAt = 0;
 };
 
 // #else
