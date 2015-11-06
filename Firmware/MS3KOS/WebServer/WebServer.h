@@ -21,7 +21,7 @@ const char *jsonSoftAP = "{\"ssid\":\"MagicShifter3000\", \"pwd\":\"\"}";
 #endif
 
 String getContentType(String filename){
-  if(msSystem.msServer.hasArg("download")) return "application/octet-stream";
+  if (msSystem.msServer.hasArg("download")) return "application/octet-stream";
   else if(filename.endsWith(".htm")) return "text/html";
   else if(filename.endsWith(".html")) return "text/html";
   else if(filename.endsWith(".css")) return "text/css";
@@ -39,11 +39,14 @@ String getContentType(String filename){
 
 bool streamFile(String path){
   
-  if(path.endsWith("/")) path += "index.htm";
+  if (path.endsWith("/")) {
+    path += "index.htm";
+  }
   String contentType = getContentType(path);
-  if(SPIFFS.exists((char *)(path+".gz").c_str()) || SPIFFS.exists((char *)path.c_str())){
-    if(SPIFFS.exists((char *)(path+".gz").c_str()))
+  if (SPIFFS.exists((char *)(path+".gz").c_str()) || SPIFFS.exists((char *)path.c_str())){
+    if (SPIFFS.exists((char *)(path+".gz").c_str())) {
       path += ".gz";
+    }
     File file = SPIFFS.open((char *)path.c_str(), "r");
     msSystem.msServer.streamFile(file, contentType);
     file.close();
@@ -60,7 +63,9 @@ bool streamFile(String path){
 
 void HandleServeStaticFile(String path)
 {
-  if(!streamFile(path)) msSystem.msServer.send(404, "text/plain", "FileNotFound");
+  if (!streamFile(path)) {
+    msSystem.msServer.send(404, "text/plain", "FileNotFound");
+  }
 }
 
 void StartWebServer(void)
@@ -116,7 +121,7 @@ void StartWebServer(void)
   msSystem.msServer.on("/listwlans", HTTP_GET, handleGETWLANList);
 
   msSystem.msServer.on("/download",  []() {
-    if(!msSystem.msServer.hasArg("file")) {
+    if (!msSystem.msServer.hasArg("file")) {
       msSystem.msServer.send(500, "text/plain", "BAD ARGS, missing file=");
       return;
     }

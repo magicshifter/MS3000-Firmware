@@ -103,7 +103,7 @@ void handleReadFile()
 
 
 void handleFileList() {
-  if(!msSystem.msServer.hasArg("dir")) {
+  if (!msSystem.msServer.hasArg("dir")) {
     msSystem.msServer.send(500, "text/plain", "BAD ARGS, missing dir=");
     return;
   }
@@ -114,7 +114,7 @@ void handleFileList() {
   path = String();
  
 /*
-  if(!dir.isDirectory()){
+  if (!dir.isDirectory()){
     dir.close();
     msSystem.msServer.send(500, "text/plain", "NOT DIR");
     return;
@@ -135,7 +135,7 @@ void handleFileList() {
       break;
 
 /*
-    if(!FS.exists(entry.name())){
+    if (!FS.exists(entry.name())){
       os_printf("Entry[%s] Not Exists!\n", entry.name());
       entry.remove();
       entry.close();
@@ -161,7 +161,7 @@ void handleFileList() {
 
 /*
 void handleFileListJson() {
-  if(!msSystem.msServer.hasArg("dir")) {
+  if (!msSystem.msServer.hasArg("dir")) {
     msSystem.msServer.send(500, "text/plain", "BAD ARGS, missing dir=");
     return;
   }
@@ -171,7 +171,7 @@ void handleFileListJson() {
   File dir = FS.open((char *)path.c_str());
   path = String();
 
-  if(!dir.isDirectory()){
+  if (!dir.isDirectory()){
     dir.close();
     msSystem.msServer.send(500, "text/plain", "NOT DIR");
     return;
@@ -184,14 +184,14 @@ void handleFileListJson() {
     if (!entry)
       break;
 
-    if(!FS.exists(entry.name())){
+    if (!FS.exists(entry.name())){
       os_printf("Entry[%s] Not Exists!\n", entry.name());
       entry.remove();
       entry.close();
       continue;
     }
 
-    if(output != "[")
+    if (output != "[")
       output += ',';
     output += "{\"type\":\"";
     output += (entry.isDirectory())?"dir":"file";
@@ -211,9 +211,9 @@ void handleFileListJson() {
 
 void handleFileUpload(){
   msSystem.logln("handle upload!");
-  //if(msSystem.msServer.uri() != "/upload") return;
+  //if (msSystem.msServer.uri() != "/upload") return;
   HTTPUpload& upload = msSystem.msServer.upload();
-  if(upload.status == UPLOAD_FILE_START)
+  if (upload.status == UPLOAD_FILE_START)
   {
     strcpy(msGlobals.uploadFileName, upload.filename.c_str());//.c_str();
     msSystem.log("upload started: ");
@@ -225,16 +225,16 @@ void handleFileUpload(){
       msSystem.logln("ERROR: COULD NOT open file!!!");
     }
 
-    //if(SD.exists((char *)upload.filename.c_str())) SD.remove((char *)upload.filename.c_str());
+    //if (SD.exists((char *)upload.filename.c_str())) SD.remove((char *)upload.filename.c_str());
     //msGlobals.uploadFile = SD.open(upload.filename.c_str(), FILE_WRITE);
     //DBG_OUTPUT_PORT.print("Upload: START, filename: "); DBG_OUTPUT_PORT.println(upload.filename);
 
   }
-  else if(upload.status == UPLOAD_FILE_WRITE)
+  else if (upload.status == UPLOAD_FILE_WRITE)
   {
 
     bool result;
-    if(msGlobals.uploadFile)
+    if (msGlobals.uploadFile)
     {
       result = msGlobals.uploadFile.write(upload.buf, upload.currentSize);
       if (!result) 
@@ -245,12 +245,12 @@ void handleFileUpload(){
     msSystem.log("Upload: WRITE, Bytes: ");
     msSystem.logln(String(upload.currentSize));
   }
-  else if(upload.status == UPLOAD_FILE_END)
+  else if (upload.status == UPLOAD_FILE_END)
   {
     msGlobals.setActiveFile = 1;
 
     saveString(msGlobals.uploadFileName, MAX_FILENAME_LENGTH);
-    if(msGlobals.uploadFile)
+    if (msGlobals.uploadFile)
     {
       //bool result;
       //result =

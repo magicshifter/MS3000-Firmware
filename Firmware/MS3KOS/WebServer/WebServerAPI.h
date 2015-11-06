@@ -62,7 +62,7 @@ public:
   {
     
     String path = apServerConfigPath;
-    if(SPIFFS.exists((char *)path.c_str()))
+    if (SPIFFS.exists((char *)path.c_str()))
     {
       File file = SPIFFS.open((char *)path.c_str(), "r");
       file.read((uint8_t *)config, sizeof(*config));
@@ -96,7 +96,7 @@ public:
   {
     
     String path = apConfigPath;
-    if(SPIFFS.exists((char *)path.c_str()))
+    if (SPIFFS.exists((char *)path.c_str()))
     {
       File file = SPIFFS.open((char *)path.c_str(), "r");
       file.read((uint8_t *)config, sizeof(*config));
@@ -132,7 +132,7 @@ public:
   {
     
     String path = preferedAPConfigPath;
-    if(SPIFFS.exists((char *)path.c_str()))
+    if (SPIFFS.exists((char *)path.c_str()))
     {
       File file = SPIFFS.open((char *)path.c_str(), "r");
       file.read((uint8_t *)config, sizeof(*config));
@@ -245,7 +245,7 @@ public:
     if (apListIndex < 0)
     {
       String path = apListConfigPath;
-      if(SPIFFS.exists((char *)path.c_str()))
+      if (SPIFFS.exists((char *)path.c_str()))
       {
         //apListFile = SPIFFS.open((char *)path.c_str(), "r");
         apListIndex = 0;
@@ -618,7 +618,8 @@ void handleGETWLANList(void)
 
   int n = WiFi.scanNetworks();
   msSystem.logln("scan done");
-  if (n == 0){
+  if (n == 0)
+  {
     msSystem.logln("\"no networks found\"");
   }
   else
