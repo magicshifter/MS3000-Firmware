@@ -1,6 +1,6 @@
 Firmware/build/*
 
-.idea/*
+.idea
 Firmware/esptool.py
 trsh/*
 
