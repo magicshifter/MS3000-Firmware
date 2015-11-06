@@ -97,6 +97,8 @@ void StartWebServer(void)
   msSystem.msServer.on("/info/about", HTTP_GET, handleGETAbout);
   msSystem.msServer.on("/info/status", HTTP_GET, handleGETStatus);
 
+  msSystem.msServer.on("/settings", HTTP_GET, handleGetSettings);
+
   msSystem.msServer.on("/settings/ap", HTTP_GET, handleGETAPSettings);
   msSystem.msServer.on("/settings/ap/set", handlePOSTAPSettings);
 

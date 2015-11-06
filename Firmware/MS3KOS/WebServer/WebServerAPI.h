@@ -408,6 +408,33 @@ bool parseAPInfoFromServerArgs(APInfo &apInfo)
   return success;
 }
 
+void handleGetSettings(void)
+{
+  msSystem.logln("handleGetSettings");
+
+  ServerConfig config;
+  Settings.getServerConfig(&config);
+
+  String response = "<!DOCTYPE html><html><head></head><body>";;
+    response += "<h3>Urls</h3>";
+    response += "<ul>";
+      response += "<li><a href=\"/settings\">this page (/settings)</a></li>";
+      response += "<li><a href=\"/settings/server\">server settings (/settings/server)</a></li>";
+      response += "<li><a href=\"/settings/ap\">accesspoint settings (/settings/ap)</a></li>";
+
+      response += "<li><a href=\"/info\">the schema page (/info)</a></li>";
+
+      response += "<li><a href=\"/info/about\">about info page (/info/about)</a></li>";
+      response += "<li><a href=\"/info/status\">status output page (/info/status)</a></li>";
+
+      response += "<li><a href=\"/settings/wifi/list\">list of saved wifis (/settings/wifi/list)</a></li>";
+      response += "<li><a href=\"/settings/wifi/preferred\">preferred wifi (/settings/wifi/preferred)</a></li>";
+
+    response += "</ul>";
+  response += "</body></html>";
+  msSystem.msServer.send(200, "text/html", response);
+}
+
 void handleGETServerSettings(void)
 {
   msSystem.logln("handleGETServerSettings");
