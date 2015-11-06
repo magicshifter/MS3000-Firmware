@@ -51,7 +51,7 @@ private:
   const String apConfigPath = "settings/ap.bin";
   const String apServerConfigPath = "settings/server1.bin";
   const String apListConfigPath = "settings/aplist1.bin";
-  const String preferedAPConfigPath = "settings/preferedap.bin";
+  const String preferredAPConfigPath = "settings/preferredap.bin";
 
   // used in resetAPList & getNextAP
   int apListIndex = -1;
@@ -128,10 +128,10 @@ public:
     
   }
 
-  bool getPreferedAP(struct APInfo *config)
+  bool getPreferredAP(struct APInfo *config)
   {
     
-    String path = preferedAPConfigPath;
+    String path = preferredAPConfigPath;
     if (SPIFFS.exists((char *)path.c_str()))
     {
       File file = SPIFFS.open((char *)path.c_str(), "r");
@@ -145,10 +145,10 @@ public:
     
   }
 
-  void setPreferedAP(struct APInfo *config)
+  void setPreferredAP(struct APInfo *config)
   {
     
-    String path = preferedAPConfigPath;
+    String path = preferredAPConfigPath;
     File file = SPIFFS.open((char *)path.c_str(), "w");
     file.write((uint8_t *)config, sizeof(*config));
     file.close();
@@ -296,7 +296,7 @@ void handleGETInfo(void)
         response += "\"server\",";
         response += "\"ap\",";
         response += "\"wifi/list\",";
-        response += "\"wifi/prefered\"";
+        response += "\"wifi/preferred\"";
       response += "],";
       response += "\"info\":[";
         response += "\"about\",";
@@ -521,12 +521,12 @@ void handlePOSTAPSettings(void)
 }
 
 
-void handleGETPreferdAPSettings(void)
+void handleGETPreferredAPSettings(void)
 {
-  msSystem.logln("handleGETPreferdAPSettings");
+  msSystem.logln("handleGETPreferredAPSettings");
 
   APInfo apInfo;
-  Settings.getPreferedAP(&apInfo);
+  Settings.getPreferredAP(&apInfo);
 
   String response = "{";
     response += "\"ssid\":";
@@ -540,19 +540,19 @@ void handleGETPreferdAPSettings(void)
   msSystem.msServer.send(200, "text/plain", response);
 }
 
-void handlePOSTPreferedAPSettings(void)
+void handlePOSTPreferredAPSettings(void)
 {
-  msSystem.logln("handlePOSTPreferedAPSettings");
+  msSystem.logln("handlePOSTPreferredAPSettings");
 
   if (msSystem.msServer.args() >= 2)
   {
     APInfo apInfo;
-    Settings.getPreferedAP(&apInfo);
+    Settings.getPreferredAP(&apInfo);
 
     if (parseAPInfoFromServerArgs(apInfo))
     {
       msSystem.logln("saving setAPConfig");
-      Settings.setPreferedAP(&apInfo);
+      Settings.setPreferredAP(&apInfo);
       msSystem.msServer.send (200, "text/plain", "OK");
     }
     else
@@ -575,7 +575,7 @@ void handleGETAPList(void)
   msSystem.logln("handleGETAPList");
 
   APInfo apInfo;
-  Settings.getPreferedAP(&apInfo);
+  Settings.getPreferredAP(&apInfo);
 
   String response = "[";
 

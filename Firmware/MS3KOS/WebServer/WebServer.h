@@ -103,8 +103,8 @@ void StartWebServer(void)
   msSystem.msServer.on("/settings/server", HTTP_GET, handleGETServerSettings);
   msSystem.msServer.on("/settings/server/set", handlePOSTServerSettings);
 
-  msSystem.msServer.on("/settings/wifi/prefered", HTTP_GET, handleGETPreferdAPSettings);
-  msSystem.msServer.on("/settings/wifi/prefered/set", handlePOSTPreferedAPSettings);
+  msSystem.msServer.on("/settings/wifi/preferred", HTTP_GET, handleGETPreferredAPSettings);
+  msSystem.msServer.on("/settings/wifi/preferred/set", handlePOSTPreferredAPSettings);
 
   msSystem.msServer.on("/settings/wifi/list", HTTP_GET, handleGETAPList);
   msSystem.msServer.on("/settings/wifi/add", handlePOSTAPListAdd);
