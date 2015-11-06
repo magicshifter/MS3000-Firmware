@@ -1,55 +1,57 @@
-(defproject ms3000 "0.1.0-SNAPSHOT"
-  :description "A prototype for the MagicShifter3000 UserInterface, written in ClojureScript"
-  :url "http://github.com/magicshifter/onboard-ui"
-  :license {:name "AGPL v3.0"}
+(defproject ms3kui "0.0.1-SNAPSHOT"
+  :description "MagicShifter 3000 User Interface"
+  :author "Wizards@Work"
+  :license {:name "Affero General Public License"
+            :url "https://gnu.org/licenses/agpl.html"
+            :distribution "https://github.com/hackerspaceshop/MagicShifter3000"
+            :comments "cooperate, innovate, celebrate"}
 
   :dependencies [[org.clojure/clojure "1.7.0"]
-                 [org.clojure/clojurescript "1.7.122"]
-                 [org.clojure/core.async "0.1.346.0-17112a-alpha"]
+                 [org.clojure/clojurescript "1.7.145"]
+                 [org.omcljs/om "1.0.0-alpha9"]
+                 [figwheel-sidecar "0.4.1" :scope "provided"]
                  [sablono "0.3.6"]
-                 [clj-time "0.9.0"] ; required due to bug in lein-ring
-                 [metosin/compojure-api "0.22.0"]
-                 [ring-cors "0.1.7"]
-                 [org.omcljs/om "0.9.0"]]
+                 [cljs-http "0.1.37"]
+                 [hiccup "1.0.5"]
+                 [medley "0.7.0"]
+                 [prismatic/schema "1.0.3"]]
 
-  :plugins [[lein-cljsbuild "1.1.0"]
-            [lein-figwheel "0.4.1"]]
+  :plugins [[hiccup-watch "0.1.1"]
+            [lein-garden "0.2.6"]
+            [lein-cljsbuild "1.1.0"]]
 
-  :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
-                                  [cheshire "5.3.1"]
-                                  [ring-mock "0.1.5"]]
-                   :plugins [[lein-ring "0.9.6"]]}}
+  :hiccup-watch {:input-dir "resources/hiccup"
+                 :output-dir "resources/public"}
 
-  :source-paths ["src"]
+  :aliases {"dev" ["run" "-m" "clojure.main" "script/figwheel.clj"]}
 
-  :clean-targets ^{:protect false} ["resources/public/js/compiled" "target" "resources/public/css/bundle.css"]
+  :garden {:builds [{:id "dev"
+                     ;; Source paths where the stylesheet source code is
+                     :source-paths ["resources/css"]
+                     ;; The var containing your stylesheet:
+                     :stylesheet css.core/screen
+                     ;; Compiler flags passed to `garden.core/css`:
+                     :compiler {;; Where to save the file:
+                                :output-to "resources/public/css/screen.css"
+                                ;; Compress the output?
+                                :pretty-print? true}}
 
-  :cljsbuild {:builds [ {:id "app"
+                    {:id "min"
+                     :source-paths ["resources/css"]
+                     :stylesheet css.core/screen
+                     :compiler {:output-to "resources/public/css/screen.css"
+                                :pretty-print? false}}]}
+
+  :cljsbuild { :builds [{:id "min"
                          :source-paths ["src"]
-                         :figwheel {:on-jsload "ms3000.core/on-js-reload"}
-                         :compiler {:main ms3000.core
-                                    :asset-path "js/compiled/out"
-                                    :output-to "resources/public/js/compiled/ui.js"
-                                    :output-dir "resources/public/js/compiled/out"
-                                    :source-map-timestamp true}}
-                        {:id "min"
-                         :source-paths ["src"]
 
-                         :compiler {:output-to "resources/public/js/compiled/ui.js"
-                                    :main ms3000.core
+                         :compiler {:output-to "resources/public/js/main.min.js"
+                                    :main ms3kui.core
                                     :optimizations :advanced
                                     :pretty-print false}}]}
 
-  :ring {:handler server.core/app}
-  :uberjar-name "server.jar"
-
-  :figwheel {
-             ;; :http-server-root "public" ;; default and assumes "resources"
-             ;; :server-port 3449 ;; default
-             ;; :server-ip "127.0.0.1"
-
-             :css-dirs ["resources/public/css"] ;; watch and update CSS
-
-             ;; Start an nREPL server into the running figwheel process
-             ;; :nrepl-port 7888
-             })
+  :clean-targets ^{:protect false} ["resources/public/js"
+                                    "resources/public/css"
+                                    "resources/public/index.html"
+                                    "figwheel_server.log"
+                                    "target"])
