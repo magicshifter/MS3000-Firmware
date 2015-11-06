@@ -86,6 +86,9 @@ void StartWebServer(void)
     delay(1000);
     msSystem.powerDown();
   } );
+
+  msSystem.msServer.on("/info", HTTP_GET, handleGETInfo);
+
   msSystem.msServer.on("/info/about", HTTP_GET, handleGETAbout);
   msSystem.msServer.on("/info/status", HTTP_GET, handleGETStatus);
 

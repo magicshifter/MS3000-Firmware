@@ -281,6 +281,33 @@ public:
 };
 SettingsManager Settings;
 
+
+void handleGETInfo(void)
+{
+  msSystem.logln("handleGETInfo");
+
+  String response = "{";
+    response += "\"api\": {";
+      response += "\"versions\": [1],";
+      response += "\"prefix\": \"v\"";
+    response += "},";
+    response += "\"init\": {";
+      response += "\"settings\": [";
+        response += "\"server\",";
+        response += "\"ap\",";
+        response += "\"wifi/list\",";
+        response += "\"wifi/prefered\"";
+      response += "],";
+      response += "\"info\": [";
+        response += "\"about\",";
+        response += "\"status\"";
+      response += "]";
+    response += "}";
+  response += "}";
+  msSystem.msServer.send(200, "text/plain", response);
+}
+
+
 void handleGETAbout(void)
 {
   msSystem.logln("handleGETAbout");
