@@ -1,10 +1,10 @@
-(ns ms3kui.components.root
+(ns magic-ring.components.root
   (:require
     [om.next :as om :refer-macros [defui]]
     [goog.dom :as gdom]
     [sablono.core :as html :refer-macros [html]]
-    [ms3kui.appstate :as app]
-    [ms3kui.components.clock :as clock]))
+    [magic-ring.appstate :as app]
+    [magic-ring.components.clock :as clock]))
 
 (defn read [{:keys [state] :as env} key params]
   (let [st @state]

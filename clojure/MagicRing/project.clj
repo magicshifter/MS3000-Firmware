@@ -46,7 +46,7 @@
                          :source-paths ["src"]
 
                          :compiler {:output-to "resources/public/js/main.min.js"
-                                    :main ms3kui.core
+                                    :main magic-ring.core
                                     :optimizations :advanced
                                     :pretty-print false}}]}
 

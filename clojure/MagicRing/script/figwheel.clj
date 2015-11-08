@@ -8,7 +8,7 @@
    [{:id "dev"
      :figwheel true
      :source-paths ["src"]
-     :compiler {:main 'ms3kui.core
+     :compiler {:main 'magic-ring.core
                 :asset-path "js"
                 :output-to "resources/public/js/main.js"
                 :output-dir "resources/public/js"

@@ -1,4 +1,4 @@
-(ns ms3kui.globals)
+(ns magic-ring.globals)
 
 (def settings {:client {:host "192.168.4.1"
                         :timeout 2000

@@ -1,11 +1,11 @@
-(ns ms3kui.components.clock
+(ns magic-ring.components.clock
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [goog.dom :as gdom]
             [om.next :as om :refer-macros [defui]]
             [sablono.core :as html :refer-macros [html]]
             [cljs-http.client :as http]
             [cljs.core.async :refer [<!]]
-            [ms3kui.appstate :as app]))
+            [magic-ring.appstate :as app]))
 
 (enable-console-print!)
 
