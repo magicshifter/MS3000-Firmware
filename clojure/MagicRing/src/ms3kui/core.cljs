@@ -4,4 +4,4 @@
             [sablono.core :as html :refer-macros [html]]
             [ms3kui.components.root :as root]))
 
-(om/add-root! root/reconciler root/component (gdom/getElement "app"))
+(root/init)

@@ -32,13 +32,21 @@
     (om/transact! owner `[(time/update {:time ~time})])))
 
 (defui Component
+  static om/IQuery
+  (query [this]
+    [:time :settings])
+
   Object
   (componentWillMount [this]
-    (let [{:keys [owner]} (om/props this)]
-      (js/setInterval #(swap-time owner) 1000)))
+    (let [interval (js/setInterval #(swap-time this) 1000)]
+      ;(js/clearInterval interval)
+      (js/console.log "interval" interval)))
+
+  (componentWillUnmount [this]
+    (js/console.log "unmount now"))
 
   (render [this]
-    (let [{:keys [time owner]} (om/props this)]
+    (let [{:keys [time]} (om/props this)]
       (html
         [:div
          [:span (str "Current Time: " time)]
