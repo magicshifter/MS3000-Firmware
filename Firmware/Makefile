@@ -33,20 +33,20 @@ HW_ID ?= HW_ID_MS3000_FSOX8700CQ
 endif
 
 # e.g. jascha
-ifeq (${USER},j)
+ifeq (${USER}@${HOSTNAME},j@Jaschas-Box-I-Dont-Know-But-Im-Sure-He-Does)
 ESP8266COM_BASEDIR ?= /home/j/apps/Arduino/
 MS3KOS_BASE_DIR ?= /home/j/magicshifter/ms3k/Firmware/MS3KOS
 MS_DEVICE_PORT ?= /dev/ttyUSB0
 HW_ID ?= HW_ID_MS3000_MMA8452Q
 endif
 
-# e.g. seclorum
-#ifeq (${USER},j)
-#ESP8266COM_BASEDIR ?= /Applications/Arduino/1.6.6/Arduino.app/Contents/java/hardware/esp8266com/esp8266
-#MS3KOS_BASE_DIR ?= /Users/j/Documents/wizards_at_work/MagicShifter3000/Firmware/MS3KOS
-#MS_DEVICE_PORT ?= /dev/tty.SLAB_USBtoUART
-#HW_ID ?= HW_ID_MS3000_MMA8452Q
-#endif
+# e.g. seclorum@w1x8-dev.local
+ifeq (${USER}@${HOSTNAME},j@w1x8-dev)
+ESP8266COM_BASEDIR ?= /Applications/Arduino/1.6.6/Arduino.app/Contents/java/hardware/esp8266com/esp8266
+MS3KOS_BASE_DIR ?= /Users/j/Documents/wizards_at_work/MagicShifter3000/Firmware/MS3KOS
+MS_DEVICE_PORT ?= /dev/tty.SLAB_USBtoUART
+HW_ID ?= HW_ID_MS3000_MMA8452Q
+endif
 
 # Now we should be able to find the toolchain
 ESP8266COM_BIN_DIR = ${ESP8266COM_BASEDIR}/tools/xtensa-lx106-elf/bin
@@ -185,13 +185,14 @@ EXTERNAL_DEPS_OBJS += ${EXTERNAL_DEPS_S_OBJS}
 MS3KOS_BUILD_DIR_TREE_LIST := ${foreach file, ${EXTERNAL_DEPS_OBJS}, ${dir ${file}}}
 
 ifeq (${SHOULD_COMPILE},false)
-${info "ESP8266COM_BASEDIR :::: " ${ESP8266COM_BASEDIR} }
-${info "MS3KOS_BUILD_DIR :::: " ${MS3KOS_BUILD_DIR} }
-${info "MS3KOS_BASE_DIR :::: " ${MS3KOS_BASE_DIR} }
-${info "EXTERNAL_DEPS :::: " ${EXTERNAL_DEPS} }
-${info "EXTERNAL_DEPS_C_OBJS :::: " ${EXTERNAL_DEPS_C_OBJS} }
-${info "EXTERNAL_DEPS_OBJS :::: " ${EXTERNAL_DEPS_OBJS} }
-${info "MS3KOS_BUILD_DIR_TREE_LIST :::: " ${MS3KOS_BUILD_DIR_TREE_LIST} }
+${info USER@HOSTNAME = ${USER}@${HOSTNAME} }
+${info ESP8266COM_BASEDIR = ${ESP8266COM_BASEDIR} }
+${info MS3KOS_BUILD_DIR = ${MS3KOS_BUILD_DIR} }
+${info MS3KOS_BASE_DIR = ${MS3KOS_BASE_DIR} }
+${info EXTERNAL_DEPS = ${EXTERNAL_DEPS} }
+${info EXTERNAL_DEPS_C_OBJS = ${EXTERNAL_DEPS_C_OBJS} }
+${info EXTERNAL_DEPS_OBJS = ${EXTERNAL_DEPS_OBJS} }
+${info MS3KOS_BUILD_DIR_TREE_LIST = ${MS3KOS_BUILD_DIR_TREE_LIST} }
 endif
 
 .PHONY:  clean 
