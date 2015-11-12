@@ -35,7 +35,7 @@ HW_ID ?= HW_ID_MS3000_FSOX8700CQ
 endif
 
 # e.g. jascha
-ifeq (${USER}@${HOSTNAME},j@Jaschas-Box-I-Dont-Know-But-Im-Sure-He-Does)
+ifeq (${USER}@${HOSTNAME},j@scha)
 ESP8266COM_BASEDIR ?= /home/j/apps/Arduino/
 MS3KOS_BASE_DIR ?= /home/j/magicshifter/ms3k/Firmware/MS3KOS
 MS_DEVICE_PORT ?= /dev/ttyUSB0
