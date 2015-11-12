@@ -5,9 +5,7 @@
             [sablono.core :as html :refer-macros [html]]
             [cljs-http.client :as http]
             [cljs.core.async :refer [<!]]
-            [magic-ring.appstate :as app]
-            [goog.Timer :as gTimer]
-            [goog.events :as events]))
+            [magic-ring.appstate :as app]))
 
 (enable-console-print!)
 
