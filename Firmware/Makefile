@@ -24,6 +24,8 @@ MS3KOS_BUILD_DIR ?= /tmp/MS3KOS_BUILD
 #ESP8266COM_TOOL_DIR = <location of the ESP8266 TOOLCHAIN /tool directory>
 #MS3KOS_BASE_DIR = <location of the MS3KOS Project Base Directory {should be where this Makefile lives}
 
+HOSTNAME=${shell hostname}
+
 ifeq (${USER},wizard23)
 # e.g. wizard23
 ESP8266COM_BASEDIR ?= /home/wizard23/Desktop/arduino_builds/arduino-1.6.6/hardware/esp8266com/esp8266
@@ -41,7 +43,7 @@ HW_ID ?= HW_ID_MS3000_MMA8452Q
 endif
 
 # e.g. seclorum@w1x8-dev.local
-ifeq (${USER}@${HOSTNAME},j@w1x8-dev)
+ifeq (${USER}@${HOSTNAME},j@w1x8-dev.local)
 ESP8266COM_BASEDIR ?= /Applications/Arduino/1.6.6/Arduino.app/Contents/java/hardware/esp8266com/esp8266
 MS3KOS_BASE_DIR ?= /Users/j/Documents/wizards_at_work/MagicShifter3000/Firmware/MS3KOS
 MS_DEVICE_PORT ?= /dev/tty.SLAB_USBtoUART
