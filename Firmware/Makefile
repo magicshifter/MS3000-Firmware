@@ -278,7 +278,7 @@ endif
 ${MS3KOS_BIN_FILE}: ${MS3KOS_ELF_FILE}
 	@echo "\nMS3KOS: Create ${MS3KOS_BIN_FILE}"
 ifeq (${SHOULD_COMPILE},true)
-	${ESP8266COM_TOOLS_DIR}/esptool/esptool \
+	${ESP8266COM_TOOLS_DIR}/esptool \
 	-eo ${ESP8266COM_BASEDIR}/bootloaders/eboot/eboot.elf \
 	-bo ${MS3KOS_BIN_FILE} -bm dio -bf 40 -bz 4M -bs \
 	.text -bp 4096 -ec -eo ${MS3KOS_ELF_FILE} -bs \
