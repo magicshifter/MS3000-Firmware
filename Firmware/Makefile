@@ -29,6 +29,7 @@ HOSTNAME=${shell hostname}
 ifeq (${USER},wizard23)
 # e.g. wizard23
 ESP8266COM_BASEDIR ?= /home/wizard23/Desktop/arduino_builds/arduino-1.6.6/hardware/esp8266com/esp8266
+ESPTOOL=${ESP8266COM_TOOLS_DIR}/esptool 
 MS3KOS_BASE_DIR ?= /home/wizard23/Dropbox/projects2015/MagicShifter3000/git/MagicShifter3000/Firmware/MS3KOS
 MS_DEVICE_PORT ?= /dev/ttyUSB0
 HW_ID ?= HW_ID_MS3000_FSOX8700CQ
@@ -36,6 +37,7 @@ endif
 
 # e.g. jascha
 ifeq (${USER}@${HOSTNAME},j@scha)
+ESPTOOL=${ESP8266COM_TOOLS_DIR}/esptool/esptool 
 ESP8266COM_BASEDIR ?= /home/j/apps/Arduino/
 MS3KOS_BASE_DIR ?= /home/j/magicshifter/ms3k/Firmware/MS3KOS
 MS_DEVICE_PORT ?= /dev/ttyUSB0
@@ -45,6 +47,7 @@ endif
 # e.g. seclorum@w1x8-dev.local
 ifeq (${USER}@${HOSTNAME},j@w1x8-dev.local)
 ESP8266COM_BASEDIR ?= /Applications/Arduino/1.6.6/Arduino.app/Contents/java/hardware/esp8266com/esp8266
+ESPTOOL=${ESP8266COM_TOOLS_DIR}/esptool 
 MS3KOS_BASE_DIR ?= /Users/j/Documents/wizards_at_work/MagicShifter3000/Firmware/MS3KOS
 MS_DEVICE_PORT ?= /dev/tty.SLAB_USBtoUART
 HW_ID ?= HW_ID_MS3000_MMA8452Q
@@ -278,7 +281,7 @@ endif
 ${MS3KOS_BIN_FILE}: ${MS3KOS_ELF_FILE}
 	@echo "\nMS3KOS: Create ${MS3KOS_BIN_FILE}"
 ifeq (${SHOULD_COMPILE},true)
-	${ESP8266COM_TOOLS_DIR}/esptool \
+	${ESPTOOL} \
 	-eo ${ESP8266COM_BASEDIR}/bootloaders/eboot/eboot.elf \
 	-bo ${MS3KOS_BIN_FILE} -bm dio -bf 40 -bz 4M -bs \
 	.text -bp 4096 -ec -eo ${MS3KOS_ELF_FILE} -bs \
