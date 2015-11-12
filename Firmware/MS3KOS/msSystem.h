@@ -78,16 +78,16 @@ void logln(unsigned int, int) {}
 
   void log(String msg)
   {
-#undef DEBUG_SYSLOG
-#ifdef DEBUG_SYSLOG
-    WiFiUDP udp;
-    // udp.beginPacket("192.168.43.151", __SYSLOG_PORT);
-    udp.beginPacket("192.168.4.2", 514); // wks port for syslog
-    udp.print(msg);
-    udp.endPacket();
-#else
+// #undef DEBUG_SYSLOG
+// #ifdef DEBUG_SYSLOG
+//     WiFiUDP udp;
+//     // udp.beginPacket("192.168.43.151", __SYSLOG_PORT);
+//     udp.beginPacket("192.168.4.2", 514); // wks port for syslog
+//     udp.print(msg);
+//     udp.endPacket();
+// #else
     Serial.print(msg);
-#endif
+//#endif
   };
 
   void logln(String msg)
@@ -245,9 +245,9 @@ void logln(unsigned int, int) {}
     pinMode(PIN_BUTTON_A, INPUT);
     pinMode(PIN_BUTTON_B, INPUT);
 
-#ifndef CONFIG_ENABLE_MIDI
+//#ifndef CONFIG_ENABLE_MIDI
     Serial.begin(115200);
-#endif
+//#endif
 
     EEPROM.begin(512);
 
@@ -342,8 +342,8 @@ void logln(unsigned int, int) {}
 
     // reset public btton state
     clickedButtonPower = longClickedButtonPower = false;
-/*
-    if (bFrame++ % 10 == 0)
+
+    //if (bFrame++ % 10 == 0)
     if (powerButtonPressed())
     {
       if (buttonPowerPressedTime)
@@ -380,6 +380,8 @@ void logln(unsigned int, int) {}
         msGlobals.GLOBAL_GS = 31;
       }
 
+      log("cB");
+
       //msGlobals.shifterMode = (msGlobals.shifterMode+1)%NUM_MS_MODES;
     }
     if (longClickedButtonB)
@@ -389,6 +391,8 @@ void logln(unsigned int, int) {}
       {
         msGlobals.GLOBAL_GS = 1;
       }
+
+      log("looooooong clickedB");
 
       //msGlobals.shifterMode = (msGlobals.shifterMode+1)%NUM_MS_MODES;
     }

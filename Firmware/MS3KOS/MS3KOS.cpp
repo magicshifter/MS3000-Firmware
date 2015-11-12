@@ -108,13 +108,86 @@ void setup()
 
 }
 
+double avgVal = 800;
+double avgF = 0.01;
+
+int cnt = 0;
+
+int minV = 1000;
+int maxV = 0;
+
 void loop()
 {
+  if (0)
+{
+  cnt++;
+
+  pinMode(PIN_BUTTON_A, INPUT);
+  pinMode(PIN_BUTTON_B, INPUT);
+
+
+  int adVal = msSystem.getADValue();
+
+  avgVal = avgF * adVal + (1-avgF) * avgVal; 
+
+  if (minV > adVal) minV = adVal;
+  if (maxV < adVal) maxV = adVal;
+
+if (adVal > 950 )
+  {
+    setPixel(7, 0, 10, 0, msGlobals.GLOBAL_GS);
+    setPixel(8, 0, 10, 0, msGlobals.GLOBAL_GS);
+  }
+  else
+  {
+    setPixel(7, 10, 0, 0, msGlobals.GLOBAL_GS);
+    setPixel(8, 10, 0, 0, msGlobals.GLOBAL_GS);
+  }
+
+  if (!digitalRead(PIN_BUTTON_A))
+  {
+    setPixel(9, 0, 10, 0, msGlobals.GLOBAL_GS);
+  }
+  else
+  {
+    setPixel(9, 10, 0, 0, msGlobals.GLOBAL_GS);
+  }
+
+  if (!digitalRead(PIN_BUTTON_B))
+  {
+    setPixel(6, 0, 10, 0, msGlobals.GLOBAL_GS);
+  }
+  else
+  {
+    setPixel(6, 10, 0, 0, msGlobals.GLOBAL_GS);
+  }
+  if (cnt % 300 == 550)
+  {
+    minV++;
+    maxV--;
+  }
+
+  if (cnt%40 == 0)
+  {
+    Serial.print(minV);
+    Serial.print(":");
+    Serial.print(maxV);
+    Serial.print("|");
+  Serial.print(adVal);
+  Serial.print("/");
+  Serial.println(avgVal);
+}
+  updatePixels();
+  delay(10);
+  //return;
+}
+
+
+
   msGlobals.lastMicros = msGlobals.currentMicros;
   msGlobals.currentMicros = micros();
   msGlobals.loops++;
 
-  // pinMode(PIN_BUTTON_B, INPUT);
 
   msSystem.loop();
 
@@ -125,6 +198,43 @@ void loop()
   if (msGlobals.loops % 1000 == 0)
   {
     msSystem.log("_");
+  }
+
+  if (msSystem.longClickedButtonPower)
+  {
+    setPixel(1, 0, 0, 20, 20);
+    updatePixels();
+    delay(200);
+  }
+  if (msSystem.clickedButtonPower)
+  {
+    setPixel(1, 20, 20, 0, 15);
+    updatePixels();
+    delay(200);
+  }
+  if (msSystem.longClickedButtonA)
+  {
+    setPixel(0, 20, 0, 20, 20);
+    updatePixels();
+    delay(200);
+  }
+  if (msSystem.clickedButtonA)
+  {
+    setPixel(0, 20, 20, 0, 20);
+    updatePixels();
+    delay(200);
+  }
+  if (msSystem.longClickedButtonB)
+  {
+    setPixel(2, 20, 0, 20, 20);
+    updatePixels();
+    delay(200);
+  }
+  if (msSystem.clickedButtonB)
+  {
+    setPixel(2, 20, 20, 0, 20);
+    updatePixels();
+    delay(200);
   }
 
   if (msGlobals.lastFrameMicros + msGlobals.speedMicros < msGlobals.currentMicros)

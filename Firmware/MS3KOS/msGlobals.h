@@ -4,7 +4,7 @@
 class MagicShifterGlobals {
 public:
   // state !J! TODO: clean all this up 
-  int GLOBAL_GS = 5;
+  int GLOBAL_GS = 10;
   float accelG[3];  // Stores the real accel value in g's
   int shifterMode = 0;
   int accelCount[3];  // Stores the 12-bit signed value
