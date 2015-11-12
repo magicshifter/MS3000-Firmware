@@ -1,0 +1,8 @@
+figwheel_server.log
+clojure.iml
+.idea
+target
+resources/public/css
+resources/public/*.html
+resources/public/js
+node_modules

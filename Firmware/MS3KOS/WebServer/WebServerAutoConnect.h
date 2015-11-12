@@ -83,9 +83,9 @@ bool AutoConnect()
 #ifndef FORCE_AP_MODE
   // if (!forceAPMode)
   {
-    if (Settings.getPreferedAP(&apInfo))
+    if (Settings.getPreferredAP(&apInfo))
     {
-      msSystem.logln("stored prefered wifi found.");
+      msSystem.logln("stored preferred wifi found.");
       if (TryConnect(apInfo, CONNECTION_TIMEOUT))
       {
         msGlobals.apMode = false;

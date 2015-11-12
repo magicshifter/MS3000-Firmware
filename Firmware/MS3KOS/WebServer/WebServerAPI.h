@@ -51,7 +51,7 @@ private:
   const String apConfigPath = "settings/ap.bin";
   const String apServerConfigPath = "settings/server1.bin";
   const String apListConfigPath = "settings/aplist1.bin";
-  const String preferedAPConfigPath = "settings/preferedap.bin";
+  const String preferredAPConfigPath = "settings/preferredap.bin";
 
   // used in resetAPList & getNextAP
   int apListIndex = -1;
@@ -62,7 +62,7 @@ public:
   {
     
     String path = apServerConfigPath;
-    if(SPIFFS.exists((char *)path.c_str()))
+    if (SPIFFS.exists((char *)path.c_str()))
     {
       File file = SPIFFS.open((char *)path.c_str(), "r");
       file.read((uint8_t *)config, sizeof(*config));
@@ -96,7 +96,7 @@ public:
   {
     
     String path = apConfigPath;
-    if(SPIFFS.exists((char *)path.c_str()))
+    if (SPIFFS.exists((char *)path.c_str()))
     {
       File file = SPIFFS.open((char *)path.c_str(), "r");
       file.read((uint8_t *)config, sizeof(*config));
@@ -128,11 +128,11 @@ public:
     
   }
 
-  bool getPreferedAP(struct APInfo *config)
+  bool getPreferredAP(struct APInfo *config)
   {
     
-    String path = preferedAPConfigPath;
-    if(SPIFFS.exists((char *)path.c_str()))
+    String path = preferredAPConfigPath;
+    if (SPIFFS.exists((char *)path.c_str()))
     {
       File file = SPIFFS.open((char *)path.c_str(), "r");
       file.read((uint8_t *)config, sizeof(*config));
@@ -145,10 +145,10 @@ public:
     
   }
 
-  void setPreferedAP(struct APInfo *config)
+  void setPreferredAP(struct APInfo *config)
   {
     
-    String path = preferedAPConfigPath;
+    String path = preferredAPConfigPath;
     File file = SPIFFS.open((char *)path.c_str(), "w");
     file.write((uint8_t *)config, sizeof(*config));
     file.close();
@@ -245,7 +245,7 @@ public:
     if (apListIndex < 0)
     {
       String path = apListConfigPath;
-      if(SPIFFS.exists((char *)path.c_str()))
+      if (SPIFFS.exists((char *)path.c_str()))
       {
         //apListFile = SPIFFS.open((char *)path.c_str(), "r");
         apListIndex = 0;
@@ -281,12 +281,46 @@ public:
 };
 SettingsManager Settings;
 
+
+void handleGETInfo(void)
+{
+  msSystem.logln("handleGETInfo");
+
+  String response = "{";
+    response += "\"api\":{";
+      response += "\"versions\":[1],";
+      response += "\"prefix\":\"v\"";
+    response += "},";
+    response += "\"init\": {";
+      response += "\"settings\":[";
+        response += "\"server\",";
+        response += "\"ap\",";
+        response += "\"wifi/list\",";
+        response += "\"wifi/preferred\"";
+      response += "],";
+      response += "\"info\":[";
+        response += "\"about\",";
+        response += "\"status\"";
+      response += "]";
+    response += "}";
+  response += "}";
+  msSystem.msServer.send(200, "text/plain", response);
+}
+
+
 void handleGETAbout(void)
 {
   msSystem.logln("handleGETAbout");
 
-  String response = "{\"type\":\"MagicShifter3000\",\"format\":\"BGRA\",\"version\":" + String(VERSION) +
-    ",\"leds\":" + String(MAX_LEDS) + ",\"id\":" + String(ESP.getChipId()) + ",\"flashid\":" + String(ESP.getFlashChipId()) + ",\"flashsize\":" + String(ESP.getFlashChipSize()) + "}";
+  String response = "{";
+    response += "\"type\":\"MagicShifter3000\",";
+    response += "\"format\":\"BGRA\",";
+    response += "\"version\":" + String(VERSION) + ",";
+    response += "\"leds\":" + String(MAX_LEDS) + ",";
+    response += "\"id\":" + String(ESP.getChipId()) + ",";
+    response += "\"flashid\":" + String(ESP.getFlashChipId()) + ",";
+    response += "\"flashsize\":" + String(ESP.getFlashChipSize());
+  response += "}";
   msSystem.msServer.send(200, "text/plain", response);
 }
 
@@ -321,10 +355,28 @@ void handleGETStatus(void)
 
   uint32_t ip = (uint32_t)msSystem.getIP();
 
-  String response = "{\"id\":" + String(ESP.getChipId()) + ",\"uptime\":" +
-  String(millis() - msGlobals.bootTime) + ",\"adValue\":" + adValue + ",\"voltage\":" + voltage +
-  "\",accelRaw\":[" + msGlobals.accelCount[0] + "," + msGlobals.accelCount[1] + "," + msGlobals.accelCount[2] + "],\"msGlobals.accelG\":[" + msGlobals.accelG[0] + "," + msGlobals.accelG[1] + ","+ msGlobals.accelG[2] + 
-    "],\"ip\":\"" + (0xFF & (ip>>0)) + "."  + (0xFF & (ip>>8)) + "."  + (0xFF & (ip>>16)) + "."  + (0xFF & (ip>>24)) + "\"}";
+
+  String response = "{";
+    response += "\"id\":" + String(ESP.getChipId()) + ",";
+    response += "\"uptime\":" + String(millis() - msGlobals.bootTime) + ",";
+    response += "\"adValue\":" + String(adValue) + ",";
+    response += "\"voltage\":" + String(voltage) + ",";
+    response += "\"accelRaw\":[";
+      response += String(msGlobals.accelCount[0]) + ",";
+      response += String(msGlobals.accelCount[1]) + ",";
+      response += String(msGlobals.accelCount[2]);
+    response += "],";
+    response += "\"msGlobals.accelG\":[";
+      response += String(msGlobals.accelG[0]) + ",";
+      response += String(msGlobals.accelG[1]) + ",";
+      response += String(msGlobals.accelG[2]);
+    response += "],";
+    response += "\"ip\":\"";
+    response += String(0xFF & (ip>>0)) + ".";
+    response += String(0xFF & (ip>>8)) + ".";
+    response += String(0xFF & (ip>>16)) + ".";
+    response += String(0xFF & (ip>>24)) + "\"";
+  response += "}";
   msSystem.msServer.send(200, "text/plain", response);
 }
 
@@ -356,6 +408,33 @@ bool parseAPInfoFromServerArgs(APInfo &apInfo)
   return success;
 }
 
+void handleGetSettings(void)
+{
+  msSystem.logln("handleGetSettings");
+
+  ServerConfig config;
+  Settings.getServerConfig(&config);
+
+  String response = "<!DOCTYPE html><html><head></head><body>";;
+    response += "<h3>Urls</h3>";
+    response += "<ul>";
+      response += "<li><a href=\"/settings\">this page (/settings)</a></li>";
+      response += "<li><a href=\"/settings/server\">server settings (/settings/server)</a></li>";
+      response += "<li><a href=\"/settings/ap\">accesspoint settings (/settings/ap)</a></li>";
+
+      response += "<li><a href=\"/info\">the schema page (/info)</a></li>";
+
+      response += "<li><a href=\"/info/about\">about info page (/info/about)</a></li>";
+      response += "<li><a href=\"/info/status\">status output page (/info/status)</a></li>";
+
+      response += "<li><a href=\"/settings/wifi/list\">list of saved wifis (/settings/wifi/list)</a></li>";
+      response += "<li><a href=\"/settings/wifi/preferred\">preferred wifi (/settings/wifi/preferred)</a></li>";
+
+    response += "</ul>";
+  response += "</body></html>";
+  msSystem.msServer.send(200, "text/html", response);
+}
+
 void handleGETServerSettings(void)
 {
   msSystem.logln("handleGETServerSettings");
@@ -364,13 +443,13 @@ void handleGETServerSettings(void)
   Settings.getServerConfig(&config);
 
   String response = "{";
-  response += "\"host\":";
-  response += "\"";
-  response += config.hostname;
-  response += "\"";
-  response += ",";
-  response += "\"port\":";
-  response += config.port;
+    response += "\"host\":";
+    response += "\"";
+    response += config.hostname;
+    response += "\"";
+    response += ",";
+    response += "\"port\":";
+    response += config.port;
   response += "}";
   msSystem.msServer.send(200, "text/plain", response);
 }
@@ -430,13 +509,13 @@ void handleGETAPSettings(void)
   Settings.getAPConfig(&apInfo);
 
   String response = "{";
-  response += "\"ssid\":";
-  response += "\"";
-  response += apInfo.ssid;
-  response += "\"";
-  //response += ",";
-  //response += "\"pwd\":";
-  //response += "\"" + apInfo.pwd + "\"";
+    response += "\"ssid\":";
+    response += "\"";
+    response += apInfo.ssid;
+    response += "\"";
+    //response += ",";
+    //response += "\"pwd\":";
+    //response += "\"" + apInfo.pwd + "\"";
   response += "}";
   msSystem.msServer.send(200, "text/plain", response);
 }
@@ -469,38 +548,38 @@ void handlePOSTAPSettings(void)
 }
 
 
-void handleGETPreferdAPSettings(void)
+void handleGETPreferredAPSettings(void)
 {
-  msSystem.logln("handleGETPreferdAPSettings");
+  msSystem.logln("handleGETPreferredAPSettings");
 
   APInfo apInfo;
-  Settings.getPreferedAP(&apInfo);
+  Settings.getPreferredAP(&apInfo);
 
   String response = "{";
-  response += "\"ssid\":";
-  response += "\"";
-  response += apInfo.ssid;
-  response += "\"";
-  //response += ",";
-  //response += "\"pwd\":";
-  //response += "\"" + apInfo.pwd + "\"";
+    response += "\"ssid\":";
+    response += "\"";
+    response += apInfo.ssid;
+    response += "\"";
+    //response += ",";
+    //response += "\"pwd\":";
+    //response += "\"" + apInfo.pwd + "\"";
   response += "}";
   msSystem.msServer.send(200, "text/plain", response);
 }
 
-void handlePOSTPreferedAPSettings(void)
+void handlePOSTPreferredAPSettings(void)
 {
-  msSystem.logln("handlePOSTPreferedAPSettings");
+  msSystem.logln("handlePOSTPreferredAPSettings");
 
   if (msSystem.msServer.args() >= 2)
   {
     APInfo apInfo;
-    Settings.getPreferedAP(&apInfo);
+    Settings.getPreferredAP(&apInfo);
 
     if (parseAPInfoFromServerArgs(apInfo))
     {
       msSystem.logln("saving setAPConfig");
-      Settings.setPreferedAP(&apInfo);
+      Settings.setPreferredAP(&apInfo);
       msSystem.msServer.send (200, "text/plain", "OK");
     }
     else
@@ -523,7 +602,7 @@ void handleGETAPList(void)
   msSystem.logln("handleGETAPList");
 
   APInfo apInfo;
-  Settings.getPreferedAP(&apInfo);
+  Settings.getPreferredAP(&apInfo);
 
   String response = "[";
 
@@ -566,7 +645,8 @@ void handleGETWLANList(void)
 
   int n = WiFi.scanNetworks();
   msSystem.logln("scan done");
-  if (n == 0){
+  if (n == 0)
+  {
     msSystem.logln("\"no networks found\"");
   }
   else
@@ -705,6 +785,37 @@ void handleSetMode(void)
   }
 }
 
+void respondREQTime()
+{
+  int currentTime = msGlobals.time + (millis() - msGlobals.timePostedAt);
+
+  String response = "{";
+    response += "\"time\":" + String(currentTime) + ",";
+    response += "\"postedAt\":" + String(msGlobals.timePostedAt);
+  response += "}";
+
+  msSystem.msServer.send ( 200, "text/plain", response);
+}
+
+void handleGETTime()
+{
+  msSystem.logln("handleGETTime");
+
+  respondREQTime();
+}
+
+void handlePOSTTime()
+{
+  msSystem.logln("handlePOSTTime");
+
+  if (msSystem.msServer.argName(0) == "t")
+  {
+    msGlobals.time = atoi(msSystem.msServer.arg(0).c_str());
+    msGlobals.timePostedAt = millis();
+  }
+
+  respondREQTime();
+}
 
 void handleLedSet()
 {
