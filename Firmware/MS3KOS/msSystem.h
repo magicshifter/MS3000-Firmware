@@ -87,7 +87,7 @@ public:
     udp.print(msg);
     udp.endPacket();
 // #else
-    // Serial.print(msg);
+    Serial.print(msg);
 //#endif
   };
 
