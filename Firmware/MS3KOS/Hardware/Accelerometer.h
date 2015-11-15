@@ -33,6 +33,7 @@ void readAccelData(int *destination) {};
   #endif
 #endif
 
+
 // TODO : Flesh this out?
 class Accelerometer
 {
@@ -76,6 +77,7 @@ void readRegisters(byte addressToRead, int bytesToRead, byte * dest)
   for(int x = 0 ; x < bytesToRead ; x++)
   {
     dest[x] = Wire.read();
+    yield();
   }
 }
 

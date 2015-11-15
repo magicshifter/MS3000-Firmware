@@ -21,11 +21,11 @@
 #include <math.h> /* for HUGE_VAL */
 
 //compiler.c.elf.libs=-lm -lgcc -lhal -lphy -lnet80211 -llwip -lwpa -lmain -lpp -lsmartconfig -lc -ljson
-extern "C" {
+ extern "C" {
   #include <json/json.h>
   #include <json/jsonparse.h>
   #include <json/jsontree.h>
-}
+ }
 
 #include <FS.h>
 
@@ -33,11 +33,11 @@ extern "C" {
 #include "msConfig.h"
 
 #include "msGlobals.h"
-MagicShifterGlobals msGlobals;
+ MagicShifterGlobals msGlobals;
 // note: beyond this point, please consider the above globals.
 
 #include "msSystem.h"
-MagicShifterSystem msSystem;
+ MagicShifterSystem msSystem;
 // note: WebServer and msSystem are in love
 #include "WebServer/WebServer.h" 
 
@@ -53,6 +53,13 @@ BouncingBallMode msBouncingBallMode(600);
 MagicShakeMode msShakeMode;
 POVShakeSyncDummyMode msPOVShakeSyncMode;
 
+double avgVal = 800;
+double avgF = 0.01;
+
+int cnt = 0;
+
+int minV = 1000;
+int maxV = 0;
 
 // Begin MagicShifter3000 operation
 void setup()
@@ -61,9 +68,9 @@ void setup()
   msSystem.setup();
   msSystem.do_debug_swipe();
 
-#ifdef DEBUG_OUTPUT
+  #ifdef DEBUG_OUTPUT
   msSystem.logSysInfo();
-#endif
+  #endif
 
   if (SPIFFS.begin()) 
   {
@@ -75,13 +82,16 @@ void setup()
     msSystem.logln("SPIFFS not begin .. :(");
   }
 
-#ifdef CONFIG_ENABLE_ACCEL
+  #ifdef CONFIG_ENABLE_ACCEL
   resetAccelerometer(); //Test and intialize the MMA8452
-#endif
+  #endif
 
   //msSystem.do_debug_swipe();
 
   StartWebServer();
+
+  // todo: move to module.
+  msPOVShakeSyncMode.setFrames(32);
 
   // start Modes as necessary ..
   loadString(msGlobals.uploadFileName, MAX_FILENAME_LENGTH);
@@ -108,93 +118,51 @@ void setup()
 
 }
 
-double avgVal = 800;
-double avgF = 0.01;
 
-int cnt = 0;
-
-int minV = 1000;
-int maxV = 0;
-
-void loop()
+// do a simple bouncing ball .. 
+void simpleBouncingBall()
 {
-  if (0)
-{
-  cnt++;
-
-  pinMode(PIN_BUTTON_A, INPUT);
-  pinMode(PIN_BUTTON_B, INPUT);
-
-
-  int adVal = msSystem.getADValue();
-
-  avgVal = avgF * adVal + (1-avgF) * avgVal; 
-
-  if (minV > adVal) minV = adVal;
-  if (maxV < adVal) maxV = adVal;
-
-if (adVal > 950 )
+  for (byte idx = 0; idx < MAX_LEDS; idx++)
   {
-    setPixel(7, 0, 10, 0, msGlobals.GLOBAL_GS);
-    setPixel(8, 0, 10, 0, msGlobals.GLOBAL_GS);
+    float scale = msBouncingBallMode.getLedBright(idx, MAX_LEDS);
+
+    scale *= 0.5;
+
+    /*if (msBouncingBallMode.allowFlash && msBouncingBallMode.smoothLanding)
+    {
+    }
+    else
+    {
+    scale *= 0.25;
+    }
+    */
+
+    //  msGlobals.bright = 1;
+    //scale *= 10;
+    //setPixel(idx, (msGlobals.currentFrame & 1) ? msGlobals.bright*scale : 0, (msGlobals.currentFrame & 2) ? msGlobals.bright*scale : 0, (msGlobals.currentFrame & 4) ? msGlobals.bright*scale : 0, msGlobals.gs);
+
+    if (msBouncingBallMode.allowFlash)
+    {
+      if (msBouncingBallMode.smoothLanding)
+      {
+      setPixel(idx, 0, msGlobals.bright * scale, 0, msGlobals.GLOBAL_GS);
+      }
+      else
+      {
+        setPixel(idx, msGlobals.bright * scale, msGlobals.bright * scale, msGlobals.bright * scale, msGlobals.GLOBAL_GS);
+      }
+    }
+    else
+    {  
+      setPixel(idx, msGlobals.bright * scale, 0, 0.5 * msGlobals.bright * scale, msGlobals.GLOBAL_GS);
+    }
   }
-  else
-  {
-    setPixel(7, 10, 0, 0, msGlobals.GLOBAL_GS);
-    setPixel(8, 10, 0, 0, msGlobals.GLOBAL_GS);
-  }
-
-  if (!digitalRead(PIN_BUTTON_A))
-  {
-    setPixel(9, 0, 10, 0, msGlobals.GLOBAL_GS);
-  }
-  else
-  {
-    setPixel(9, 10, 0, 0, msGlobals.GLOBAL_GS);
-  }
-
-  if (!digitalRead(PIN_BUTTON_B))
-  {
-    setPixel(6, 0, 10, 0, msGlobals.GLOBAL_GS);
-  }
-  else
-  {
-    setPixel(6, 10, 0, 0, msGlobals.GLOBAL_GS);
-  }
-  if (cnt % 300 == 550)
-  {
-    minV++;
-    maxV--;
-  }
-
-  if (cnt%40 == 0)
-  {
-    Serial.print(minV);
-    Serial.print(":");
-    Serial.print(maxV);
-    Serial.print("|");
-  Serial.print(adVal);
-  Serial.print("/");
-  Serial.println(avgVal);
-}
   updatePixels();
-  delay(10);
-  //return;
 }
 
 
-
-  msGlobals.lastMicros = msGlobals.currentMicros;
-  msGlobals.currentMicros = micros();
-  msGlobals.loops++;
-
-
-  msSystem.loop();
-
-  HandleWebServer();
-
-  msPOVShakeSyncMode.setFrames(32);
-
+void testButtonForBOM_X()
+{
   if (msGlobals.loops % 1000 == 0)
   {
     msSystem.log("_");
@@ -236,8 +204,34 @@ if (adVal > 950 )
     updatePixels();
     delay(200);
   }
+}
 
-  if (msGlobals.lastFrameMicros + msGlobals.speedMicros < msGlobals.currentMicros)
+void delayYield()
+{
+  int nYields = 45;  // todo: fix this magic number
+  while(nYields--) {
+    yield();
+  }
+}
+
+void loop()
+{
+
+  msGlobals.lastMicros = msGlobals.currentMicros;
+  msGlobals.currentMicros = micros();
+  msGlobals.loops++;
+
+  // testButtonForBOM_X()
+
+  msSystem.loop();
+  delayYield();
+
+  HandleWebServer();
+  delayYield();
+
+  // inside time-frame
+  if (msGlobals.lastFrameMicros + msGlobals.speedMicros 
+                < msGlobals.currentMicros)
   {
     msGlobals.lastFrameMicros = msGlobals.currentMicros;
     msGlobals.currentFrame++;
@@ -245,55 +239,35 @@ if (adVal > 950 )
     // pov msBouncingBallMode mode
     if (msGlobals.shifterMode == 0)
     {
-      { 
-        for (byte idx = 0; idx < MAX_LEDS; idx++)
-        {
-          float scale = msBouncingBallMode.getLedBright(idx, MAX_LEDS);
-
-          scale *= 0.5;
-
-          /*if (msBouncingBallMode.allowFlash && msBouncingBallMode.smoothLanding)
-          {
-          }
-          else
-          {
-            scale *= 0.25;
-          }
-          */
-
-         //  msGlobals.bright = 1;
-          //scale *= 10;
-          //setPixel(idx, (msGlobals.currentFrame & 1) ? msGlobals.bright*scale : 0, (msGlobals.currentFrame & 2) ? msGlobals.bright*scale : 0, (msGlobals.currentFrame & 4) ? msGlobals.bright*scale : 0, msGlobals.gs);
-          
-          if (msBouncingBallMode.allowFlash)
-          {
-            if (msBouncingBallMode.smoothLanding)
-            {
-              setPixel(idx, 0, msGlobals.bright * scale, 0, msGlobals.GLOBAL_GS);
-            }
-            else
-            {
-              setPixel(idx, msGlobals.bright * scale, msGlobals.bright * scale, msGlobals.bright * scale, msGlobals.GLOBAL_GS);
-            }
-          }
-          else
-          {  
-            setPixel(idx, msGlobals.bright * scale, 0, 0.5 * msGlobals.bright * scale, msGlobals.GLOBAL_GS);
-          }
-        }
-      }
+      //simpleBouncingBall()
+// !J! 
+// hack to test timing..
+      static int c_loops; 
+      static int c_bright = 10; 
+      static byte c_r, c_g, c_b;
+      c_loops++;
+      c_r = c_loops & 1 ? c_bright : 0;  
+      c_g = c_loops & 2 ? c_bright : 0;  
+      c_b = c_loops & 4 ? c_bright : 0;  
+      fillPixels(c_r, c_g, c_b, 0xff);
       updatePixels();
+      delayYield();
+
+// end-of-hack
     }
-    else if (msGlobals.shifterMode == 1)
+    else 
+    if (msGlobals.shifterMode == 1)
     {
       loadBuffer(msGlobals.web_rgb_buffer);
       updatePixels();
     }
-    else if (msGlobals.shifterMode == 2)
+    else 
+    if (msGlobals.shifterMode == 2)
     {
       msShakeMode.step();
     }
-    else if (msGlobals.shifterMode == 3)
+    else 
+    if (msGlobals.shifterMode == 3)
     {
       #define _MOD_LED(m,x) random(m,x)
       int rRed = _MOD_LED(0,255);
@@ -325,19 +299,34 @@ if (adVal > 950 )
       }
     }
   }
-
-#ifdef CONFIG_ENABLE_ACCEL
-  readAccelData(msGlobals.accelCount);
-
-  for (int i = 0 ; i < 3 ; i++)
+  else 
   {
-    msGlobals.accelG[i] = (float) msGlobals.accelCount[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set
-  }
+
+
+  // outside time-frame
+#ifdef CONFIG_ENABLE_ACCEL
+    readAccelData(msGlobals.accelCount);
+    delayYield();
+
+    for (int i = 0 ; i < 3 ; i++)
+    {
+      msGlobals.accelG[i] = (float) msGlobals.accelCount[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set
+    }
 #endif
 
-  float fX = msGlobals.accelG[0];
-  float fY = msGlobals.accelG[1];
+    float fX = msGlobals.accelG[0];
+    float fY = msGlobals.accelG[1];
 
-  //msBouncingBallMode.applyForce((msGlobals.currentMicros - msGlobals.lastMicros) / 1000.0, fX, fY);
-  msBouncingBallMode.applyForce((msGlobals.currentMicros - msGlobals.lastMicros) / 1000.0, fX);
-}
+    //msBouncingBallMode.applyForce((msGlobals.currentMicros - msGlobals.lastMicros) / 1000.0, fX, fY);
+
+    msBouncingBallMode.applyForce((msGlobals.currentMicros - msGlobals.lastMicros) / 1000.0, fX);
+
+    delayYield();
+
+    // !J! hack of timing .. 
+    // delay(1); // if we lose this, we lose wifi .. grr .. 
+
+    // delayMicroseconds(500);
+  }
+
+} // end of loop()

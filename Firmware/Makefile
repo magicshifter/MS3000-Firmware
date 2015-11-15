@@ -50,7 +50,8 @@ ESP8266COM_BASEDIR ?= /Applications/Arduino/1.6.6/Arduino.app/Contents/java/hard
 ESPTOOL=${ESP8266COM_TOOLS_DIR}/esptool 
 MS3KOS_BASE_DIR ?= /Users/j/Documents/wizards_at_work/MagicShifter3000/Firmware/MS3KOS
 MS_DEVICE_PORT ?= /dev/tty.SLAB_USBtoUART
-HW_ID ?= HW_ID_MS3000_MMA8452Q
+# HW_ID ?= HW_ID_MS3000_MMA8452Q
+HW_ID ?= HW_ID_MS3000_FSOX8700CQ
 endif
 
 # Now we should be able to find the toolchain

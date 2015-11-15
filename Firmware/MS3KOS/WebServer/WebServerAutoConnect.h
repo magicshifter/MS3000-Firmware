@@ -57,6 +57,8 @@ bool TrySoftAP(struct APInfo &apInfo)
   msSystem.log(" password: ");
   msSystem.logln(apInfo.password);
 
+  WiFi.mode(WIFI_AP);
+  
 //  WiFi.softAPConfig(IPAddress(10,20,30,40), IPAddress(10,1,1,1), IPAddress(255, 255, 255, 0));
   if (strlen(apInfo.password) == 0)
   {
