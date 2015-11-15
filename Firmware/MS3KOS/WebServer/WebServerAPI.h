@@ -361,6 +361,10 @@ void handleGETStatus(void)
     response += "\"uptime\":" + String(millis() - msGlobals.bootTime) + ",";
     response += "\"adValue\":" + String(adValue) + ",";
     response += "\"voltage\":" + String(voltage) + ",";
+    response += "\"accelTime\":" + String(msGlobals.accelTime) + ",";
+    response += "\"loopFrameTime\":" + String(msGlobals.loopFrameTime) + ",";
+    response += "\"lastFrameMicros\":" + String(msGlobals.lastFrameMicros) + ",";
+    response += "\"currentMicros\":" + String(msGlobals.currentMicros) + ",";
     response += "\"accelRaw\":[";
       response += String(msGlobals.accelCount[0]) + ",";
       response += String(msGlobals.accelCount[1]) + ",";

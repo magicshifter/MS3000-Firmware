@@ -123,9 +123,12 @@ void MMA8452Active()
 
 void readAccelData(int *destination)
 {
+  long _ti = micros();
+
   byte rawData[6];  // x/y/z accel register data stored here
 
   readRegisters(OUT_X_MSB, 6, rawData);  // Read the six raw data registers into data array
+
 
   // Loop to calculate 12-bit ADC and g value for each axis
   for(int i = 0; i < 3 ; i++)
@@ -141,6 +144,8 @@ void readAccelData(int *destination)
 
     destination[i] = gCount; //Record this gCount into the 3 int array
   }
+
+  msGlobals.accelTime = micros() - _ti;
 }
 
 // Initialize the MMA8452 registers

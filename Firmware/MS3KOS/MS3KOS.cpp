@@ -208,7 +208,7 @@ void testButtonForBOM_X()
 
 void delayYield()
 {
-  int nYields = 45;  // todo: fix this magic number
+  int nYields = 100;  // todo: fix this magic number
   while(nYields--) {
     yield();
   }
@@ -233,7 +233,11 @@ void loop()
   if (msGlobals.lastFrameMicros + msGlobals.speedMicros 
                 < msGlobals.currentMicros)
   {
+    msGlobals.loopFrameTime = msGlobals.currentMicros - msGlobals.lastFrameMicros;
+
     msGlobals.lastFrameMicros = msGlobals.currentMicros;
+
+
     msGlobals.currentFrame++;
 
     // pov msBouncingBallMode mode
