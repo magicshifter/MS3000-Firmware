@@ -82,11 +82,12 @@ public:
 // #ifdef DEBUG_SYSLOG
     WiFiUDP udp;
     // udp.beginPacket("192.168.43.151", __SYSLOG_PORT);
-    udp.beginPacket("10.0.0.2", 514); // wks port for syslog
+    // when we connect to MS3000 to test, we usually get .2 ..
+    udp.beginPacket("192.168.4.2", 514); // wks port for syslog
     udp.print(msg);
     udp.endPacket();
 // #else
-    Serial.print(msg);
+    // Serial.print(msg);
 //#endif
   };
 
