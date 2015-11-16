@@ -95,7 +95,7 @@ uint16_t midi_frame = 0;
 static uint16_t MIDIPut(uint8_t * data, uint16_t cnt)
 {
 	// setPixel(15, 100, 100, 0);
-	// msSystem.log(data[ret], HEX);
+	// msSystem.logln(data[ret], HEX);
 	// blink(STAT2, d_period);
 // setPixel(15, 0, 100, 0);
 // delay(10);

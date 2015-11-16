@@ -32,7 +32,7 @@ void setup()
   int encodedLen = base64_enc_len(inputLen);
   char encoded[encodedLen];
   
-  msSystem.log(input); msSystem.log(" = ");
+  msSystem.logln(input); msSystem.logln(" = ");
   
   // note input is consumed in this step: it will be empty afterwards
   base64_encode(encoded, input, inputLen); 
@@ -50,7 +50,7 @@ void setup()
   
   base64_decode(decoded, input2, input2Len);
   
-  msSystem.log(input2); msSystem.log(" = "); msSystem.logln(decoded);
+  msSystem.logln(input2); msSystem.logln(" = "); msSystem.logln(decoded);
 }
 
 

@@ -164,9 +164,9 @@ void resetAccelerometer()
     }
     else
     {
-      // msSystem.log("Could not connect to MMA8452Q: expected 0x");
-      // msSystem.log(String(MMA8452_ID, HEX));
-      // msSystem.log(" but received 0x");
+      // msSystem.logln("Could not connect to MMA8452Q: expected 0x");
+      // msSystem.logln(String(MMA8452_ID, HEX));
+      // msSystem.logln(" but received 0x");
       // msSystem.logln(String(c, HEX));
       delay(10);
     }

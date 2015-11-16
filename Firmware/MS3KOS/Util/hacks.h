@@ -8,7 +8,7 @@ while (0)
 {
   float voltage = msSystem.getBatteryVoltage();
 
-  msSystem.log(voltage);
+  msSystem.logln(voltage);
   msSystem.logln("V");
 
   for (int i = 0; i < 10; i ++)
@@ -62,10 +62,10 @@ while (1)
 while (0)
 {
   MSImage activeImage = MSImage(msGlobals.uploadFileName);
-  msSystem.log("loaded: ");
+  msSystem.logln("loaded: ");
   msSystem.logln(msGlobals.uploadFileName);
 
-  msSystem.log("width: ");
+  msSystem.logln("width: ");
   msSystem.logln(activeImage.getWidth());
 
   for (int i = 0; i < activeImage.getWidth(); i++)

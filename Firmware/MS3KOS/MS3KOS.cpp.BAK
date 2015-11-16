@@ -83,11 +83,11 @@ setup()
 	//start Modes as necessary..
 		loadString(msGlobals.uploadFileName, MAX_FILENAME_LENGTH);
 	if (!SPIFFS.exists(msGlobals.uploadFileName)) {
-		msSystem.log("could not find: ");
+		msSystem.logln("could not find: ");
 		msSystem.logln(msGlobals.uploadFileName);
 		//strcpy(msGlobals.uploadFileName, "big_smile_gif.magicBitmap");
 	} else {
-		msSystem.log("using POV file: ");
+		msSystem.logln("using POV file: ");
 		msSystem.logln(msGlobals.uploadFileName);
 		msShakeMode.start();
 	}
@@ -183,7 +183,7 @@ loop()
 	msPOVShakeSyncMode.setFrames(32);
 
 	if (msGlobals.loops % 1000 == 0) {
-		msSystem.log("_");
+		msSystem.logln("_");
 	}
 	if (msSystem.longClickedButtonPower) {
 		setPixel(1, 0, 0, 20, 20);

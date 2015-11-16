@@ -45,7 +45,7 @@ HW_ID ?= HW_ID_MS3000_MMA8452Q
 endif
 
 # e.g. seclorum@w1x8-dev.local
-ifeq (${USER}@${HOSTNAME},j@w1x8-dev.local)
+ifeq (${USER}@${HOSTNAME},j@w1x8-dev)
 ESP8266COM_BASEDIR ?= /Applications/Arduino/1.6.6/Arduino.app/Contents/java/hardware/esp8266com/esp8266
 ESPTOOL=${ESP8266COM_TOOLS_DIR}/esptool 
 MS3KOS_BASE_DIR ?= /Users/j/Documents/wizards_at_work/MagicShifter3000/Firmware/MS3KOS

@@ -68,20 +68,6 @@ void setup()
   msSystem.setup();
   msSystem.do_debug_swipe();
 
-  #ifdef DEBUG_OUTPUT
-  msSystem.logSysInfo();
-  #endif
-
-  if (SPIFFS.begin()) 
-  {
-    msSystem.logln("SPIFFS begin!");
-  }
-  else
-  {
-    msSystem.TEST_SPIFFS_bug();
-    msSystem.logln("SPIFFS not begin .. :(");
-  }
-
   #ifdef CONFIG_ENABLE_ACCEL
   resetAccelerometer(); //Test and intialize the MMA8452
   #endif
@@ -97,13 +83,13 @@ void setup()
   loadString(msGlobals.uploadFileName, MAX_FILENAME_LENGTH);
   if (!SPIFFS.exists(msGlobals.uploadFileName))
   {
-    msSystem.log("could not find: ");
+    msSystem.logln("could not find: ");
     msSystem.logln(msGlobals.uploadFileName);
     // strcpy(msGlobals.uploadFileName, "big_smile_gif.magicBitmap");
   }
   else 
   {
-    msSystem.log("using POV file: ");
+    msSystem.logln("using POV file: ");
     msSystem.logln(msGlobals.uploadFileName);
     msShakeMode.start();
   }
@@ -165,7 +151,7 @@ void testButtonForBOM_X()
 {
   if (msGlobals.loops % 1000 == 0)
   {
-    msSystem.log("_");
+    msSystem.logln("_");
   }
 
   if (msSystem.longClickedButtonPower)

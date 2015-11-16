@@ -63,13 +63,14 @@ public:
 
 public:
 
-  void log(int&, int base) {}
-  void log(uint16_t&, int base) {} 
-  void logln(int8_t&, int base) {}
-  void log(unsigned int, int base) {} 
-  void logln(bool&, int base) {}
-  void logln(uint16_t&, int base) {}
-  void logln(unsigned int, int base) {}
+  void log(int &msg, int base) { log (String(msg)); }
+  void log(uint16_t &msg, int base) { log (String(msg)); } 
+  void logln(int8_t &msg, int base) { log (String(msg)); log("\r\n"); }
+  void log(unsigned int msg, int base) { log (String(msg)); } 
+  void logln(bool &msg, int base) { log (String(msg)); }
+  void logln(uint16_t &msg, int base) { log (String(msg)); }
+  void logln(unsigned int msg, int base) { log (String(msg)); }
+  void logln(String msg) { log(msg); log("\r\n"); };
 
   void log(bool b)
   {
@@ -87,15 +88,10 @@ public:
     udp.print(msg);
     udp.endPacket();
 // #else
-    Serial.print(msg);
+    Serial.print(String(msg));
 //#endif
   };
 
-  void logln(String msg)
-  {
-    log(msg);
-    log("\n");
-  };
 
 
   void  do_debug_swipe()
@@ -124,34 +120,34 @@ public:
     uint8_t readBuffer[] = {0,0,0,0};
     //File file = SPIFFS.open((char *)debugPath.c_str(), "w");
     
-    log("openin for w: ");
+    logln("openin for w: ");
     logln(String(debugPath));
     
     File file = SPIFFS.open(debugPath, "w");
 
-    log("opended for w: ");
+    logln("opended for w: ");
     logln(String((bool)file));
 
-    log("writin: ");
+    logln("writin: ");
     logln(String(testVals[1]));
 
     file.write((uint8_t *)testVals, sizeof testVals);
     file.close();
 
-    log("openin for r: ");
+    logln("openin for r: ");
     logln(String(debugPath));
     
     File fileR = SPIFFS.open(debugPath, "r");
 
-    log("opended for r: ");
+    logln("opended for r: ");
     logln(String((bool)fileR));
 
-    log("readin: ");
+    logln("readin: ");
 
     fileR.read((uint8_t *)readBuffer, sizeof readBuffer);
     fileR.close();
 
-    log("readback: ");
+    logln("readback: ");
     logln(String(readBuffer[1]));
   };
 
@@ -227,6 +223,15 @@ public:
 
   void setup()
   {
+
+//#ifndef CONFIG_ENABLE_MIDI
+    Serial.begin(115200);
+//#endif
+
+    EEPROM.begin(512);
+
+    logSysInfo();
+
     // wake up filesystem
     if (SPIFFS.begin()) 
     {
@@ -235,7 +240,7 @@ public:
     else
     {
       TEST_SPIFFS_bug();
-      logln("SPIFFS not begin .. :(");
+      logln("SPIFFS not begin .. :|");
     }
 
     // all engines turn on
@@ -246,11 +251,6 @@ public:
     pinMode(PIN_BUTTON_A, INPUT);
     pinMode(PIN_BUTTON_B, INPUT);
 
-//#ifndef CONFIG_ENABLE_MIDI
-    Serial.begin(115200);
-//#endif
-
-    EEPROM.begin(512);
 
 #ifdef CONFIG_ENABLE_ACCEL
     // accelerometer 

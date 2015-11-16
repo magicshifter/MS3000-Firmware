@@ -71,7 +71,7 @@ public:
     }
     else 
     {
-      msSystem.log("File doesn't exist:");
+      msSystem.logln("File doesn't exist:");
       msSystem.logln((char * )path.c_str());
     }
 
@@ -105,7 +105,7 @@ public:
     }
     else
     {
-      msSystem.log("AP config missing:");
+      msSystem.logln("AP config missing:");
       msSystem.logln((char *)path.c_str());
     }
 
@@ -173,7 +173,7 @@ public:
     {
       if (strcmp(apInfoDummy.ssid, ssid) == 0)
       {
-        msSystem.log("deleting wifi:");
+        msSystem.logln("deleting wifi:");
         msSystem.logln(ssid);
 
         apInfoDummy.clear();
@@ -655,7 +655,7 @@ void handleGETWLANList(void)
   }
   else
   {
-    //msSystem.log(n);
+    //msSystem.logln(n);
     msSystem.logln(" networks found");
     bool firstAP = true;
     for (int i = 0; i < n; ++i)
@@ -831,7 +831,7 @@ void handleLedSet()
   {
     const char* input = msSystem.msServer.arg(0).c_str();
     unsigned int inputLen =  (int)msSystem.msServer.arg(0).length();
-    msSystem.log("inputLen: ");
+    msSystem.logln("inputLen: ");
     msSystem.logln(String(inputLen));
 
     if (inputLen > sizeof(ledData))
@@ -845,10 +845,10 @@ void handleLedSet()
     {
       //setPixel(ledData[i], ledData[i+1], ledData[i+2], ledData[i+3], ledData[i+4]);
       byte idx = ledData[i];
-      msSystem.log("idx: ");
+      msSystem.logln("idx: ");
       msSystem.logln(String((int)idx));
       if (idx >= MAX_LEDS) continue;
-      msSystem.log("data+1: ");
+      msSystem.logln("data+1: ");
       msSystem.logln(String((int)ledData[i+1]));
 
       msGlobals.web_rgb_buffer[idx*4] = ledData[i+1];

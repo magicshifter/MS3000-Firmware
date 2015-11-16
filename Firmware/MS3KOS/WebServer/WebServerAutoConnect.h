@@ -6,7 +6,7 @@
 
 bool TryConnect(struct APInfo &apInfo, int timeoutMs)
 {
-  msSystem.log("trying to connect to AP: ");
+  msSystem.logln("trying to connect to AP: ");
   msSystem.logln(apInfo.ssid);
   WiFi.begin (apInfo.ssid, apInfo.password );
 
@@ -24,11 +24,11 @@ bool TryConnect(struct APInfo &apInfo, int timeoutMs)
     }
     updatePixels();
     frame++;
-    if (frame%50 == 0) msSystem.log(".");
+    if (frame%50 == 0) msSystem.logln(".");
     if (WiFi.status() == WL_NO_SSID_AVAIL || WiFi.status() == WL_CONNECT_FAILED || millis() > startTime + timeoutMs)
     {
       msSystem.logln ( "" );
-      msSystem.log ("Could NOT connect to:");
+      msSystem.logln ("Could NOT connect to:");
       msSystem.logln(apInfo.ssid);
       return false; // :(
     }
@@ -40,9 +40,9 @@ bool TryConnect(struct APInfo &apInfo, int timeoutMs)
   }
 
   msSystem.logln ( "" );
-  msSystem.log ( "Connected to: " );
+  msSystem.logln ( "Connected to: " );
   msSystem.logln ( apInfo.ssid );
-  msSystem.log ( "IP address: " );
+  msSystem.logln ( "IP address: " );
   msSystem.logln ( String(WiFi.localIP()) );
 
   return true;
@@ -52,9 +52,9 @@ bool TryConnect(struct APInfo &apInfo, int timeoutMs)
 
 bool TrySoftAP(struct APInfo &apInfo)
 {
-  msSystem.log("Configuring access point: ");
-  msSystem.log(apInfo.ssid);
-  msSystem.log(" password: ");
+  msSystem.logln("Configuring access point: ");
+  msSystem.logln(apInfo.ssid);
+  msSystem.logln(" password: ");
   msSystem.logln(apInfo.password);
 
   WiFi.mode(WIFI_AP);
@@ -69,9 +69,9 @@ bool TrySoftAP(struct APInfo &apInfo)
     WiFi.softAP(apInfo.ssid, apInfo.password);
   }
 
-  msSystem.log ( "Established acces point: " );
+  msSystem.logln ( "Established acces point: " );
   msSystem.logln ( apInfo.ssid );
-  msSystem.log("SoftAP IP: ");
+  msSystem.logln("SoftAP IP: ");
   msSystem.logln(String(WiFi.softAPIP()));
 
   return true;
@@ -104,17 +104,17 @@ bool AutoConnect()
     }
     else
     {
-      msSystem.log(n);
+      msSystem.logln(String(n));
       msSystem.logln(" networks found");
       for (int i = 0; i < n; ++i)
       {
         // Print SSID and RSSI for each network found
-        msSystem.log(i + 1);
-        msSystem.log(": ");
-        msSystem.log(WiFi.SSID(i));
-        msSystem.log(" (");
-        msSystem.log(WiFi.RSSI(i));
-        msSystem.log(")");
+        msSystem.logln(String(i + 1));
+        msSystem.logln(": ");
+        msSystem.logln(WiFi.SSID(i));
+        msSystem.logln(" (");
+        msSystem.logln(String(WiFi.RSSI(i)));
+        msSystem.logln(")");
         msSystem.logln((WiFi.encryptionType(i) == ENC_TYPE_NONE)?" ":"*");
         delay(20);
       }

@@ -54,7 +54,7 @@ bool streamFile(String path){
   }
   else
   {
-    msSystem.log("streamFile fail:");
+    msSystem.logln("streamFile fail:");
     msSystem.logln(path.c_str());
   }
   

@@ -39,7 +39,7 @@ void handleReadFile()
   fillPixels(0, 0, 1, 0x1F);
   updatePixels();
 
-  msSystem.log("Free heap: ");
+  msSystem.logln("Free heap: ");
   msSystem.logln(String(ESP.getFreeHeap()));
 
   String message = "ReadFile:\n";
@@ -64,7 +64,7 @@ void handleReadFile()
     if (file)
     {
       int fileLen = file.available();
-      msSystem.log("file available: ");
+      msSystem.logln("file available: ");
       msSystem.logln(String(fileLen));
 
       if (fileLen > 0)
@@ -76,7 +76,7 @@ void handleReadFile()
         msSystem.logln("buffer: ");
 
         for (int i = 0; i < fileLen; i++) {
-          msSystem.log((char)buffer[i]);
+          msSystem.logln(String((char)buffer[i]));
           message += (char)buffer[i];
         }
       }
@@ -216,7 +216,7 @@ void handleFileUpload(){
   if (upload.status == UPLOAD_FILE_START)
   {
     strcpy(msGlobals.uploadFileName, upload.filename.c_str());//.c_str();
-    msSystem.log("upload started: ");
+    msSystem.logln("upload started: ");
     msSystem.logln(msGlobals.uploadFileName);
 
     msGlobals.uploadFile = SPIFFS.open(msGlobals.uploadFileName, "w");
@@ -242,7 +242,7 @@ void handleFileUpload(){
       msSystem.logln("ERROR: could not write!");
       }
     }
-    msSystem.log("Upload: WRITE, Bytes: ");
+    msSystem.logln("Upload: WRITE, Bytes: ");
     msSystem.logln(String(upload.currentSize));
   }
   else if (upload.status == UPLOAD_FILE_END)
@@ -257,7 +257,7 @@ void handleFileUpload(){
       msGlobals.uploadFile.close();
       //if (!result) msSystem.logln("ERROR: could not close!");
     }
-    msSystem.log("Upload: END, Size: ");
+    msSystem.logln("Upload: END, Size: ");
     msSystem.logln(String(upload.totalSize));
   }
 }
