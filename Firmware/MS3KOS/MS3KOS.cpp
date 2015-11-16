@@ -288,6 +288,34 @@ void loop()
         updatePixels();
       }
     }
+    if (msGlobals.shifterMode == 42)
+    {
+       long currentTime = msGlobals.time + (millis() - msGlobals.timePostedAt);
+       long ms = currentTime % 86400000;
+       //int millisss = ms % 1000;
+       ms /= 1000;
+       int seconds = ms % 60;
+       ms /= 60;
+       int minutes = ms % 60;
+       ms /= 60;
+       int hours = ms;
+
+       int ledStart = 0;
+       int ledEnd = 15;
+
+       int ledLen = ledEnd - ledStart;
+
+       fillPixels(0,0,0,0);
+       setPixel(ledStart + ledLen * hours / 24., 0, 0, 50, 2);
+       setPixel(ledStart + ledLen * minutes / 60., 0, 50, 0, 2);
+       setPixel(ledStart + ledLen * seconds / 60., 50, 0, 0, 2);
+
+       updatePixels();
+
+      Serial.println(currentTime);
+       Serial.println(seconds);
+       delay(100);
+    }
   }
   else 
   {

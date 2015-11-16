@@ -8,7 +8,7 @@ public:
   float accelG[3];  // Stores the real accel value in g's
   long accelTime;
   long loopFrameTime;
-  int shifterMode = 0;
+  int shifterMode = 42;
   int accelCount[3];  // Stores the 12-bit signed value
   int oldButton1State = 0;
   int currentMicros = 0, lastMicros = 0;
@@ -25,8 +25,8 @@ public:
   int setActiveFile = 0; // is there a new file to activate?
   char uploadFileName[];
   File uploadFile;
-  int time = 0;
-  int timePostedAt = 0;
+  long time = 76500000;
+  long timePostedAt = 0;
 };
 
 // #else
