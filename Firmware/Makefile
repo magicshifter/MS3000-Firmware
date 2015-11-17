@@ -12,6 +12,10 @@
 #
 # git clone  https://github.com/themadinventor/esptool.git ../../esptool
 #
+# And mkspiffs:
+#
+# git clone https://github.com/igrr/mkspiffs.git ../mkspiffs
+#
 # Note: we can turn off compiling if we want to investigate this Makefile.
 SHOULD_COMPILE=true
 
@@ -45,14 +49,17 @@ HW_ID ?= HW_ID_MS3000_MMA8452Q
 endif
 
 # e.g. seclorum@w1x8-dev.local
-ifeq (${USER}@${HOSTNAME},j@w1x8-dev)
+ifeq (${USER}@${HOSTNAME},j@w1x8-dev.local)
 ESP8266COM_BASEDIR ?= /Applications/Arduino/1.6.6/Arduino.app/Contents/java/hardware/esp8266com/esp8266
 ESPTOOL=${ESP8266COM_TOOLS_DIR}/esptool 
+SPIFFS_TOOL=../mkspiffs/mkspiffs
 MS3KOS_BASE_DIR ?= /Users/j/Documents/wizards_at_work/MagicShifter3000/Firmware/MS3KOS
 MS_DEVICE_PORT ?= /dev/tty.SLAB_USBtoUART
 # HW_ID ?= HW_ID_MS3000_MMA8452Q
 HW_ID ?= HW_ID_MS3000_FSOX8700CQ
 endif
+#TODO: post-flight check the above user-provided variables
+
 
 # Now we should be able to find the toolchain
 ESP8266COM_BIN_DIR = ${ESP8266COM_BASEDIR}/tools/xtensa-lx106-elf/bin
@@ -63,6 +70,9 @@ ESP8266COM_TOOLS_DIR=${ESP8266COM_BASEDIR}/tools/
 MS3KOS_AR_FILE = ${MS3KOS_BUILD_DIR}/MS3KOS_core.a
 MS3KOS_ELF_FILE = ${MS3KOS_BUILD_DIR}/MS3KOS.elf
 MS3KOS_BIN_FILE = ${MS3KOS_BUILD_DIR}/MS3KOS.bin
+MS3KOS_SPIFFS_ROOT_DIR = ${MS3KOS_BUILD_DIR}/MS3KOS.spiffs.root/
+MS3KOS_SPIFFS_BIN_FILE = ${MS3KOS_BUILD_DIR}/MS3KOS.spiffs.bin
+MS3KOS_SPIFFS_FILE_LIST = ../Web_Old/index.html ../Web_Old/MagicShifter.html
 
 # Platform Defs for the ESP8266 rig
 MS3KOS_PLATFORM_DEFS = -D__ets__ -DICACHE_FLASH -U__STRICT_ANSI__ \
@@ -203,7 +213,7 @@ endif
 
 .PHONY:  clean 
 
-all:		${MS3KOS_BUILD_DIR} ${MS3KOS_BIN_FILE} 
+all:		${MS3KOS_BUILD_DIR} ${MS3KOS_BIN_FILE} ${MS3KOS_SPIFFS_BIN_FILE}
 
 # Note that these are the targets for each type of file we have in the project - .S, .c, .cpp, &etc.
 # Output is computed to our BUILD_DIR before the main target.
@@ -289,6 +299,15 @@ ifeq (${SHOULD_COMPILE},true)
 	.irom0.text -bs .text -bs .data -bs .rodata -bc -ec
 endif
 
+${MS3KOS_SPIFFS_BIN_FILE}:	${MS3KOS_SPIFFS_FILE_LIST}
+	echo "\nMS3KOS: Build SPIFFS file ${MS3KOS_SPIFFS_FILE}"
+ifeq (${SHOULD_COMPILE},true)
+	(mkdir -p ${MS3KOS_SPIFFS_ROOT_DIR} && \
+		(for spiffsMember in ${MS3KOS_SPIFFS_FILE_LIST}; do cp -rfv $$spiffsMember ${MS3KOS_SPIFFS_ROOT_DIR} ; done) && \
+		${SPIFFS_TOOL} -c ${MS3KOS_SPIFFS_ROOT_DIR} -p 256 -b 8192 -s $(shell echo "ibase=16;3FB000-300000" | bc) ${MS3KOS_SPIFFS_BIN_FILE})
+endif
+
+
 # Build directory is set up to contain the external deps and the project local libs independently.
 # Note the use of ms3kos_base/ to affect this offset.
 ${MS3KOS_BUILD_DIR}:	NEW_TREE1 := ${subst ${ESP8266COM_BASEDIR}, ${MS3KOS_BUILD_DIR}, ${MS3KOS_BUILD_DIR_TREE_LIST}}
@@ -302,11 +321,16 @@ else
 
 endif
 
-flashit:	${MS3KOS_BUILD_DIR} ${MS3KOS_BIN_FILE}
+
+flashit:	${MS3KOS_BUILD_DIR} ${MS3KOS_BIN_FILE} 
 	echo "\nMS3KOS: Flash ${MS3KOS_BIN_FILE}"
 	python ../../esptool/esptool.py -p ${MS_DEVICE_PORT} write_flash 0x00 ${MS3KOS_BIN_FILE}
 
+spiffs:		${MS3KOS_BUILD_DIR} ${MS3KOS_SPIFFS_BIN_FILE}
+	echo "\nMS3KOS: Flash SPIFFS file ${MS3KOS_SPIFFS_FILE}"
+	python ../../esptool/esptool.py -p ${MS_DEVICE_PORT} write_flash 0x300000 ${MS3KOS_SPIFFS_BIN_FILE}
+
 clean:
-	rm -rf ${MS3KOS_BUILD_DIR} ${MS3KOS_ELF_FILE} ${MS3KOS_BIN_FILE}
+	rm -rf ${MS3KOS_BUILD_DIR} ${MS3KOS_ELF_FILE} ${MS3KOS_BIN_FILE} ${MS3KOS_SPIFFS_ROOT_DIR}
 
 
