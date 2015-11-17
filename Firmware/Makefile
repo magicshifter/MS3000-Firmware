@@ -304,7 +304,7 @@ ${MS3KOS_SPIFFS_BIN_FILE}:	${MS3KOS_SPIFFS_FILE_LIST}
 ifeq (${SHOULD_COMPILE},true)
 	(mkdir -p ${MS3KOS_SPIFFS_ROOT_DIR} && \
 		(for spiffsMember in ${MS3KOS_SPIFFS_FILE_LIST}; do cp -rfv $$spiffsMember ${MS3KOS_SPIFFS_ROOT_DIR} ; done) && \
-		${SPIFFS_TOOL} -c ${MS3KOS_SPIFFS_ROOT_DIR} -p 256 -b 8192 -s $(shell echo "ibase=16;3FB000-300000" | bc) ${MS3KOS_SPIFFS_BIN_FILE})
+		${SPIFFS_TOOL} -c ${MS3KOS_SPIFFS_ROOT_DIR} -p 256 -b 8192 -s $(shell echo "ibase=16;3FB000-100000" | bc) ${MS3KOS_SPIFFS_BIN_FILE})
 endif
 
 
