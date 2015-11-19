@@ -299,6 +299,8 @@ ifeq (${SHOULD_COMPILE},true)
 	.irom0.text -bs .text -bs .data -bs .rodata -bc -ec
 endif
 
+
+# Burn the SPIFFS filesystem into the device - note the use of bc for calculating proper offset
 ${MS3KOS_SPIFFS_BIN_FILE}:	${MS3KOS_SPIFFS_FILE_LIST}
 	echo "\nMS3KOS: Build SPIFFS file ${MS3KOS_SPIFFS_FILE}"
 ifeq (${SHOULD_COMPILE},true)
@@ -321,14 +323,22 @@ else
 
 endif
 
-
-flashit:	${MS3KOS_BUILD_DIR} ${MS3KOS_BIN_FILE} 
+# Flash the firmware 
+flash_firmware:	${MS3KOS_BIN_FILE} ${MS3KOS_SPIFFS_BIN_FILE}
 	echo "\nMS3KOS: Flash ${MS3KOS_BIN_FILE}"
-	python ../../esptool/esptool.py -p ${MS_DEVICE_PORT} write_flash 0x00 ${MS3KOS_BIN_FILE}
+	#python ../../esptool/esptool.py -p ${MS_DEVICE_PORT} write_flash 0x00 ${MS3KOS_BIN_FILE}
+	${ESPTOOL} -cd ck -cb 921600 -cp ${MS_DEVICE_PORT} -ca 0x000000 -cf ${MS3KOS_BIN_FILE}
+
+# Flash both the firmware and the filesystem
+flash_all:	${MS3KOS_BIN_FILE} ${MS3KOS_SPIFFS_BIN_FILE}
+	echo "\nMS3KOS: Flash ${MS3KOS_BIN_FILE}"
+	#python ../../esptool/esptool.py -p ${MS_DEVICE_PORT} write_flash 0x00 ${MS3KOS_BIN_FILE}
+	${ESPTOOL} -cd ck -cb 921600 -cp ${MS_DEVICE_PORT} -ca 0x000000 -cf ${MS3KOS_BIN_FILE}
+	echo "\nMS3KOS: Flash SPIFFS file ${MS3KOS_SPIFFS_FILE}"
+	${ESPTOOL} -cd ck -cb 921600 -cp ${MS_DEVICE_PORT} -ca 0x300000 -cf ${MS3KOS_SPIFFS_BIN_FILE}
 
 spiffs:		${MS3KOS_BUILD_DIR} ${MS3KOS_SPIFFS_BIN_FILE}
-	echo "\nMS3KOS: Flash SPIFFS file ${MS3KOS_SPIFFS_FILE}"
-	python ../../esptool/esptool.py -p ${MS_DEVICE_PORT} write_flash 0x300000 ${MS3KOS_SPIFFS_BIN_FILE}
+	#python ../../esptool/esptool.py -p ${MS_DEVICE_PORT} -b 921600 write_flash 0x300000 ${MS3KOS_SPIFFS_BIN_FILE} -ff 40m -fm dio 
 
 clean:
 	rm -rf ${MS3KOS_BUILD_DIR} ${MS3KOS_ELF_FILE} ${MS3KOS_BIN_FILE} ${MS3KOS_SPIFFS_ROOT_DIR}
