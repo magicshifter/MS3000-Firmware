@@ -63,20 +63,7 @@ public:
 
 public:
 
-  void log(int &msg, int base) { log (String(msg)); }
-  void log(uint16_t &msg, int base) { log (String(msg)); } 
-  void logln(int8_t &msg, int base) { log (String(msg)); log("\r\n"); }
-  void log(unsigned int msg, int base) { log (String(msg)); } 
-  void logln(bool &msg, int base) { log (String(msg)); }
-  void logln(uint16_t &msg, int base) { log (String(msg)); }
-  void logln(unsigned int msg, int base) { log (String(msg)); }
-  void logln(String msg) { log(msg); log("\r\n"); };
-
-  void log(bool b)
-  {
-    log(String(b));
-  }
-
+  // wrap a logging class ..
   void log(String msg)
   {
 // #undef DEBUG_SYSLOG
@@ -92,7 +79,17 @@ public:
 //#endif
   };
 
+  void log(int8_t &msg, int base) { log(String(msg)); } 
+  void log(uint16_t &msg, int base) { log(String(msg));  }
+  void log(unsigned int msg, int base) { log(String(msg)); } 
+  void log(bool b) { log(String(b));}
 
+  void logln(String msg) { log(msg); log("\r\n");  };
+  
+  void logln(int8_t &msg, int base) { logln(String(msg)); }
+  void logln(uint16_t &msg, int base) { logln(String(msg));  }
+  void logln(unsigned int msg, int base) { logln(String(msg));  }
+  void logln(bool &msg, int base) { logln(String(msg));  }
 
   void  do_debug_swipe()
   {
@@ -239,8 +236,8 @@ public:
     }
     else
     {
-      TEST_SPIFFS_bug();
       logln("SPIFFS not begin .. :|");
+      TEST_SPIFFS_bug();
     }
 
     // all engines turn on

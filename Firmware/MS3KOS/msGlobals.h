@@ -8,7 +8,7 @@ public:
   float accelG[3];  // Stores the real accel value in g's
   long accelTime;
   long loopFrameTime;
-  int shifterMode = 42;
+  int shifterMode = 0;
   int accelCount[3];  // Stores the 12-bit signed value
   int oldButton1State = 0;
   int currentMicros = 0, lastMicros = 0;
