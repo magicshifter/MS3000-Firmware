@@ -58,6 +58,18 @@ MS_DEVICE_PORT ?= /dev/tty.SLAB_USBtoUART
 # HW_ID ?= HW_ID_MS3000_MMA8452Q
 HW_ID ?= HW_ID_MS3000_FSOX8700CQ
 endif
+# e.g. ibisum@wizard23-DevRock2
+ifeq (${USER}@${HOSTNAME},ibisum@wizard23-DevRock2)
+ESP8266COM_BASEDIR ?= /home/ibisum/Documents/arduino-1.6.6/hardware/esp8266com/esp8266
+ESPTOOL=${ESP8266COM_TOOLS_DIR}/esptool/esptool
+SPIFFS_TOOL=${ESP8266COM_TOOLS_DIR}/mkspiffs/mkspiffs
+MS3KOS_BASE_DIR ?= /home/ibisum/Documents/MagicShifter3000/Firmware/MS3KOS
+MS_DEVICE_PORT ?= /dev/ttyUSB0
+# HW_ID ?= HW_ID_MS3000_MMA8452Q
+HW_ID ?= HW_ID_MS3000_FSOX8700CQ
+MS3KOS_BUILD_DIR = /home/ibisum/Documents/builds/MagicShifter3000/MS3KOS_BUILD
+endif
+
 #TODO: post-flight check the above user-provided variables
 
 
@@ -92,7 +104,7 @@ MS3KOS_BUILD_CPPFLAGS= -c -Os -g -mlongcalls -mtext-section-literals -fno-except
 
 # CPP Flags are intended to allow us to merge C/CPP components together
 MS3KOS_LINK_FLAGS = -g -Os -nostdlib -Wl,--no-check-sections -u call_user_start -Wl,-static \
--Teagle.flash.4m.ld -Wl,--gc-sections -Wl,-wrap,system_restart_local \
+-Teagle.flash.4m1m.ld -Wl,--gc-sections -Wl,-wrap,system_restart_local \
 -Os -g -mlongcalls -mtext-section-literals -fno-exceptions \
 -fno-rtti -falign-functions=4 -std=c++11 -MMD -ffunction-sections \
 -fdata-sections \
@@ -324,7 +336,8 @@ else
 endif
 
 # Flash the firmware 
-flash_firmware:	${MS3KOS_BIN_FILE} ${MS3KOS_SPIFFS_BIN_FILE}
+#flash_firmware:	${MS3KOS_BIN_FILE} ${MS3KOS_SPIFFS_BIN_FILE}
+flash_firmware:	
 	echo "\nMS3KOS: Flash ${MS3KOS_BIN_FILE}"
 	#python ../../esptool/esptool.py -p ${MS_DEVICE_PORT} write_flash 0x00 ${MS3KOS_BIN_FILE}
 	${ESPTOOL} -cd ck -cb 921600 -cp ${MS_DEVICE_PORT} -ca 0x000000 -cf ${MS3KOS_BIN_FILE}
@@ -335,10 +348,16 @@ flash_all:	${MS3KOS_BIN_FILE} ${MS3KOS_SPIFFS_BIN_FILE}
 	#python ../../esptool/esptool.py -p ${MS_DEVICE_PORT} write_flash 0x00 ${MS3KOS_BIN_FILE}
 	${ESPTOOL} -cd ck -cb 921600 -cp ${MS_DEVICE_PORT} -ca 0x000000 -cf ${MS3KOS_BIN_FILE}
 	echo "\nMS3KOS: Flash SPIFFS file ${MS3KOS_SPIFFS_FILE}"
-	${ESPTOOL} -cd ck -cb 921600 -cp ${MS_DEVICE_PORT} -ca 0x300000 -cf ${MS3KOS_SPIFFS_BIN_FILE}
+	${ESPTOOL} -cd ck -cb 921600 -cp ${MS_DEVICE_PORT} -ca 0x100000 -cf ${MS3KOS_SPIFFS_BIN_FILE}
+
+# only the filesystem
+flash_fs:
+	echo "\nMS3KOS: Flash SPIFFS file ${MS3KOS_SPIFFS_FILE}"
+	${ESPTOOL} -cd ck -cb 921600 -cp ${MS_DEVICE_PORT} -ca 0x100000 -cf ${MS3KOS_SPIFFS_BIN_FILE}
+
 
 spiffs:		${MS3KOS_BUILD_DIR} ${MS3KOS_SPIFFS_BIN_FILE}
-	#python ../../esptool/esptool.py -p ${MS_DEVICE_PORT} -b 921600 write_flash 0x300000 ${MS3KOS_SPIFFS_BIN_FILE} -ff 40m -fm dio 
+	#python ../../esptool/esptool.py -p ${MS_DEVICE_PORT} -b 921600 write_flash 0x100000 ${MS3KOS_SPIFFS_BIN_FILE} -ff 40m -fm dio 
 
 clean:
 	rm -rf ${MS3KOS_BUILD_DIR} ${MS3KOS_ELF_FILE} ${MS3KOS_BIN_FILE} ${MS3KOS_SPIFFS_ROOT_DIR}
