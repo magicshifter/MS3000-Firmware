@@ -32,7 +32,7 @@ void readAccelData(int *destination) {};
   #ifdef CONFIG_MMA_FSOX
 // magnet sensor version
     #define MMA8452_ADDRESS 0x1E
-    #define MMA8452_ID 0x2A
+    #define MMA8452_ID 0xC7
   #endif
 #endif
 
@@ -154,16 +154,22 @@ void readAccelData(int *destination)
 // Initialize the MMA8452 registers
 // See the many application notes for more info on setting all of these registers:
 // http://www.freescale.com/webapp/sps/site/prod_summary.jsp?code=MMA8452Q
-void resetAccelerometer()
+bool resetAccelerometer()
 {
-  byte success = 0;
+  bool success = false;
 
   do {
+    Serial.print("testin accel: ");
+    Serial.println(MMA8452_ADDRESS, HEX);
+
     byte c = readRegister(WHO_AM_I);  // Read WHO_AM_I register
+    Serial.print("read: ");
+    Serial.println(c, HEX);
+
     if (c == MMA8452_ID) // WHO_AM_I should always be 0x2A
     {
       // msSystem.logln("MMA8452Q is online...");
-      success = 1;
+      success = true;
     }
     else
     {
@@ -187,5 +193,7 @@ void resetAccelerometer()
   //The default data rate is 800Hz and we don't modify it in this example code
 
   MMA8452Active();  // Set to active to start reading
+
+  return success;
 }
 #endif

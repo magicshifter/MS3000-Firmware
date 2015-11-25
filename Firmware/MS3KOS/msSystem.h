@@ -31,6 +31,8 @@ private:
 public:
   int bFrame = 0;
 
+  bool accelerometerWorking = false;
+
 // TODO: private state
 // state for button timing
   int buttonAPressedTime = 0;
@@ -231,6 +233,7 @@ public:
 
     logSysInfo();
 
+/*
     // wake up filesystem
     if (SPIFFS.begin()) 
     {
@@ -241,6 +244,7 @@ public:
       logln("SPIFFS not begin .. :|");
     }
       TEST_SPIFFS_bug();
+*/
 
     // all engines turn on
     pinMode(PIN_PWR_MGT, INPUT);
@@ -254,7 +258,7 @@ public:
 #ifdef CONFIG_ENABLE_ACCEL
     // accelerometer 
     initAccelerometer();
-    resetAccelerometer(); //Test and intialize the MMA8452
+    accelerometerWorking = resetAccelerometer(); //Test and intialize the MMA8452
 #endif
 
     // led controllers and buffer
