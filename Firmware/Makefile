@@ -84,7 +84,8 @@ MS3KOS_ELF_FILE = ${MS3KOS_BUILD_DIR}/MS3KOS.elf
 MS3KOS_BIN_FILE = ${MS3KOS_BUILD_DIR}/MS3KOS.bin
 MS3KOS_SPIFFS_ROOT_DIR = ${MS3KOS_BUILD_DIR}/MS3KOS.spiffs.root/
 MS3KOS_SPIFFS_BIN_FILE = ${MS3KOS_BUILD_DIR}/MS3KOS.spiffs.bin
-MS3KOS_SPIFFS_FILE_LIST = ../Web_Old/index.html ../Web_Old/MagicShifter.html
+MS3KOS_SPIFFS_FILE_LIST = ../Web_Old/index.html
+#../Web_Old/MagicShifter.html
 
 # Platform Defs for the ESP8266 rig
 MS3KOS_PLATFORM_DEFS = -D__ets__ -DICACHE_FLASH -U__STRICT_ANSI__ \
@@ -104,7 +105,7 @@ MS3KOS_BUILD_CPPFLAGS= -c -Os -g -mlongcalls -mtext-section-literals -fno-except
 
 # CPP Flags are intended to allow us to merge C/CPP components together
 MS3KOS_LINK_FLAGS = -g -Os -nostdlib -Wl,--no-check-sections -u call_user_start -Wl,-static \
--Teagle.flash.4m1m.ld -Wl,--gc-sections -Wl,-wrap,system_restart_local \
+-Teagle.flash.4m.ld -Wl,--gc-sections -Wl,-wrap,system_restart_local \
 -Os -g -mlongcalls -mtext-section-literals -fno-exceptions \
 -fno-rtti -falign-functions=4 -std=c++11 -MMD -ffunction-sections \
 -fdata-sections \
@@ -343,7 +344,7 @@ flash_firmware:
 	${ESPTOOL} -cd ck -cb 921600 -cp ${MS_DEVICE_PORT} -ca 0x000000 -cf ${MS3KOS_BIN_FILE}
 
 # Flash both the firmware and the filesystem
-flash_all:	${MS3KOS_BIN_FILE} ${MS3KOS_SPIFFS_BIN_FILE}
+flash_all:	
 	echo "\nMS3KOS: Flash ${MS3KOS_BIN_FILE}"
 	#python ../../esptool/esptool.py -p ${MS_DEVICE_PORT} write_flash 0x00 ${MS3KOS_BIN_FILE}
 	${ESPTOOL} -cd ck -cb 921600 -cp ${MS_DEVICE_PORT} -ca 0x000000 -cf ${MS3KOS_BIN_FILE}

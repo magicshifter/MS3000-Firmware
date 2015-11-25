@@ -76,6 +76,8 @@ public:
     udp.endPacket();
 // #else
     Serial.print(String(msg));
+    // #define DEBUGV(...) ets_printf(__VA_ARGS__)
+
 //#endif
   };
 
@@ -237,8 +239,8 @@ public:
     else
     {
       logln("SPIFFS not begin .. :|");
-      TEST_SPIFFS_bug();
     }
+      TEST_SPIFFS_bug();
 
     // all engines turn on
     pinMode(PIN_PWR_MGT, INPUT);
