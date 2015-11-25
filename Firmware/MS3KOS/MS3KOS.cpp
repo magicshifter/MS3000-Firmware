@@ -66,35 +66,11 @@ void setup()
 {
   msGlobals.bootTime = millis();
   msSystem.setup();
-  //msSystem.do_debug_swipe();
+  
+  // boot that we are alive
+  msSystem.do_debug_swipe();
 
-  #ifdef CONFIG_ENABLE_ACCEL
-  Serial.println("trying accel!");
-  resetAccelerometer(); //Test and intialize the MMA8452
-  #endif
-
-  int d = 500;
-  int b = 20;
-  while (1)
-  {
-    if (msSystem.accelerometerWorking) 
-    {
-      fillPixels(0, b, 0, 0xff);
-    }
-    else
-    {
-       fillPixels(b, 0, 0, 0xff);
-    }
-    updatePixels();
-    delay(d);
-
-    fillPixels(b, b, b, 0xff);
-    updatePixels();
-    delay(d);
-  }
-
-  //msSystem.do_debug_swipe();
-
+  // get the web interface started
   StartWebServer();
 
   // todo: move to module.
@@ -125,6 +101,31 @@ void setup()
 
 }
 
+void TestAccelerometer()
+{
+  Serial.println("trying accel!");
+  resetAccelerometer(); //Test and intialize the MMA8452
+
+  int d = 500;
+  int b = 20;
+  while (1)
+  {
+    if (msSystem.accelerometerWorking) 
+    {
+      fillPixels(0, b, 0, 0xff);
+    }
+    else
+    {
+       fillPixels(b, 0, 0, 0xff);
+    }
+    updatePixels();
+    delay(d);
+
+    fillPixels(b, b, b, 0xff);
+    updatePixels();
+    delay(d);
+  }
+}
 
 // do a simple bouncing ball .. 
 void simpleBouncingBall()
@@ -235,6 +236,11 @@ void loop()
 
   HandleWebServer();
   delayYield();
+
+  // do some tests
+#ifdef CONFIG_ENABLE_ACCEL
+  TestAccelerometer();
+#endif
 
   // inside time-frame
   if (msGlobals.lastFrameMicros + msGlobals.speedMicros 
