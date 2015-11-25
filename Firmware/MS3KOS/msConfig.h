@@ -14,7 +14,7 @@
 
 // TODO: pass this default from the Makefile
 //#define HW_ID HW_ID_MS3000_FSOX8700CQ
-#define HW_ID HW_ID_RING
+//#define HW_ID HW_ID_RING
 
 // set of LED types
 #define LED_TYPE_APA102 1 

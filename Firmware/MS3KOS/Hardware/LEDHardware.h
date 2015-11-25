@@ -104,6 +104,21 @@ void initLEDBuffer() {
   fillPixels(0,0,0, 0);
 }
 
+void setPixelChannel(int index, int channel, int value)
+{
+#if (LED_TYPE == LED_TYPE_APA102)
+    int idx = index << 2;
+    if (channel == 3)
+      RGB_COLORS[idx] = 0xE0 | channel;
+    else
+      RGB_COLORS[idx+1+channel] = value;
+#else
+    int idx = index * 3;
+    RGB_COLORS[idx+channel] = value;
+#endif
+}
+
+
 void setPixel(int index, byte r, byte g, byte b, byte gs = 0x1F)
 {
 #if (LED_TYPE == LED_TYPE_APA102)

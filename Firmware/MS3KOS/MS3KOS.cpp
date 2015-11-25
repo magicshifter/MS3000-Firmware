@@ -66,11 +66,32 @@ void setup()
 {
   msGlobals.bootTime = millis();
   msSystem.setup();
-  msSystem.do_debug_swipe();
+  //msSystem.do_debug_swipe();
 
   #ifdef CONFIG_ENABLE_ACCEL
+  Serial.println("trying accel!");
   resetAccelerometer(); //Test and intialize the MMA8452
   #endif
+
+  int d = 500;
+  int b = 20;
+  while (1)
+  {
+    if (msSystem.accelerometerWorking) 
+    {
+      fillPixels(0, b, 0, 0xff);
+    }
+    else
+    {
+       fillPixels(b, 0, 0, 0xff);
+    }
+    updatePixels();
+    delay(d);
+
+    fillPixels(b, b, b, 0xff);
+    updatePixels();
+    delay(d);
+  }
 
   //msSystem.do_debug_swipe();
 
@@ -229,21 +250,21 @@ void loop()
     // pov msBouncingBallMode mode
     if (msGlobals.shifterMode == 0)
     {
-      //simpleBouncingBall()
-// !J! 
-// hack to test timing..
-      static int c_loops; 
-      static int c_bright = 10; 
-      static byte c_r, c_g, c_b;
-      c_loops++;
-      c_r = c_loops & 1 ? c_bright : 0;  
-      c_g = c_loops & 2 ? c_bright : 0;  
-      c_b = c_loops & 4 ? c_bright : 0;  
-      fillPixels(c_r, c_g, c_b, 0xff);
-      updatePixels();
-      delayYield();
+      simpleBouncingBall();
+// // !J! 
+// // hack to test timing..
+//       static int c_loops; 
+//       static int c_bright = 10; 
+//       static byte c_r, c_g, c_b;
+//       c_loops++;
+//       c_r = c_loops & 1 ? c_bright : 0;  
+//       c_g = c_loops & 2 ? c_bright : 0;  
+//       c_b = c_loops & 4 ? c_bright : 0;  
+//       fillPixels(c_r, c_g, c_b, 0xff);
+//       updatePixels();
+//       delayYield();
 
-// end-of-hack
+// // end-of-hack
     }
     else 
     if (msGlobals.shifterMode == 1)
