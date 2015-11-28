@@ -58,8 +58,8 @@ ESP8266COM_BASEDIR ?= /Applications/Arduino/1.6.6/Arduino.app/Contents/java/hard
 ESPTOOL=${ESP8266COM_TOOLS_DIR}/esptool 
 MS3KOS_BASE_DIR ?= /Users/j/Documents/wizards_at_work/MagicShifter3000/Firmware/MS3KOS
 MS_DEVICE_PORT ?= /dev/tty.SLAB_USBtoUART
-# HW_ID ?= HW_ID_MS3000_MMA8452Q
-HW_ID ?= HW_ID_MS3000_FSOX8700CQ
+HW_ID ?= HW_ID_MS3000_MMA8452Q
+# HW_ID ?= HW_ID_MS3000_FSOX8700CQ
 endif
 # e.g. ibisum@wizard23-DevRock2
 ifeq (${USER}@${HOSTNAME},ibisum@wizard23-DevRock2)
@@ -216,7 +216,7 @@ EXTERNAL_DEPS_OBJS += ${EXTERNAL_DEPS_S_OBJS}
 # note that this is also hanging off MS3KOS_BUILD_DIR
 MS3KOS_BUILD_DIR_TREE_LIST := ${foreach file, ${EXTERNAL_DEPS_OBJS}, ${dir ${file}}}
 
-ifeq (${SHOULD_COMPILE},false)
+# ifeq (${SHOULD_COMPILE},false)
 ${info USER@HOSTNAME = ${USER}@${HOSTNAME} }
 ${info ESP8266COM_BASEDIR = ${ESP8266COM_BASEDIR} }
 ${info MS3KOS_BUILD_DIR = ${MS3KOS_BUILD_DIR} }
@@ -225,7 +225,7 @@ ${info EXTERNAL_DEPS = ${EXTERNAL_DEPS} }
 ${info EXTERNAL_DEPS_C_OBJS = ${EXTERNAL_DEPS_C_OBJS} }
 ${info EXTERNAL_DEPS_OBJS = ${EXTERNAL_DEPS_OBJS} }
 ${info MS3KOS_BUILD_DIR_TREE_LIST = ${MS3KOS_BUILD_DIR_TREE_LIST} }
-endif
+# endif
 
 .PHONY:  clean 
 
