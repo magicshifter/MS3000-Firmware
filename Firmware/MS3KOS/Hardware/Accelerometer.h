@@ -21,21 +21,6 @@ void resetAccelerometer() {};
 void readAccelData(int *destination) {};
 #endif
 
- #define MMA8452_ADDRESS 0x1C
- #define MMA8452_ID 0x2A
-
-// normal MMA 
-#ifdef CONFIG_MMA_NORMAL
-  #define MMA8452_ADDRESS 0x1C
-  #define MMA8452_ID 0x2A
-#else
-  #ifdef CONFIG_MMA_FSOX
-// magnet sensor version
-    #define MMA8452_ADDRESS 0x1E
-    #define MMA8452_ID 0xC7
-  #endif
-#endif
-
 
 // TODO : Flesh this out?
 class Accelerometer
