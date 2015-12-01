@@ -73,7 +73,7 @@ public:
   {
     activeImage.close();
 
-    safeStrncpy(activeFilename, filename, MAX_FILENAME_LENGTH);
+    msSystem.msEEPROM.safeStrncpy(activeFilename, filename, MAX_FILENAME_LENGTH);
     activeImage = MSImage(activeFilename);
     int w = activeImage.getWidth() * FRAME_MULTIPLY;
     shakeSync.setFrames(w);

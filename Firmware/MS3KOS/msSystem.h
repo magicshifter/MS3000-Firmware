@@ -15,8 +15,7 @@
 #include <EEPROM.h>
 #include <SPI.h>
 
-#include "Util/StringURL.h"
-
+#include "Hardware/EEPROMString.h"
 #include "Hardware/LEDHardware.h"
 #include "Hardware/Accelerometer.h"
 #include "Hardware/System.h"
@@ -27,12 +26,12 @@ class MagicShifterSystem
 {
 private:
 
-
 public:
 
   // todo: protect
   MagicShifterAccelerometer msAccel;
   MagicShifterLEDs msLEDs;
+  MagicShifterEEPROMString  msEEPROM;
 
   int bFrame = 0;
 

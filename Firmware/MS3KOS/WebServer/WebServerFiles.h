@@ -50,7 +50,7 @@ void handleReadFile()
     String args = msSystem.msServer.arg(0);
 
     strcpy(msGlobals.uploadFileName, args.c_str());
-    saveString(msGlobals.uploadFileName, MAX_FILENAME_LENGTH);
+    msSystem.msEEPROM.saveString(msGlobals.uploadFileName, MAX_FILENAME_LENGTH);
 
 
     message += "file name: \"" + args /* String(filename)*/ + "\"\n";
@@ -249,7 +249,7 @@ void handleFileUpload(){
   {
     msGlobals.setActiveFile = 1;
 
-    saveString(msGlobals.uploadFileName, MAX_FILENAME_LENGTH);
+    msSystem.msEEPROM.saveString(msGlobals.uploadFileName, MAX_FILENAME_LENGTH);
     if (msGlobals.uploadFile)
     {
       //bool result;

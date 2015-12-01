@@ -1,17 +1,13 @@
-#ifndef _STRING_URL_H
-#define _STRING_URL_H
+#ifndef _EEPROM_STRING_URL_H
+#define _EEPROM_STRING_URL_H
 
 #define BASE64_ENC_LEN(n) (((n) + 2 - (((n) + 2) % 3)) / 3 * 4)
 
-bool memcmpByte(const byte *data, byte referenceValue, int len)
-{
-  for (int i = 0; i < len; i++)
-  {
-    if (data[i] != referenceValue) return false;
-  }
-  return true;
-}
-// makes sure dest is \0 terminated
+
+class MagicShifterEEPROMString {
+
+public:
+  // makes sure dest is \0 terminated
 void safeStrncpy(char * dest, const char *source, int n)
 {
   strncpy(dest, source, n);
@@ -35,6 +31,18 @@ bool saveString(char * str, int len)
   }
   return EEPROM.commit();
 }
+
+
+
+bool memcmpByte(const byte *data, byte referenceValue, int len)
+{
+  for (int i = 0; i < len; i++)
+  {
+    if (data[i] != referenceValue) return false;
+  }
+  return true;
+}
+private:
 
 int hex_decode(char hex)
 {
@@ -79,5 +87,7 @@ int url_decode(char * output, const char * input, int maxLen)
 	*output = '\0';
 	return l;
 }
+
+};
 
 #endif

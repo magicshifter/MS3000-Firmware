@@ -70,7 +70,8 @@ void setup()
   msModePOVShake.setFrames(32);
 
   // start Modes as necessary ..
-  loadString(msGlobals.uploadFileName, MAX_FILENAME_LENGTH);
+  msSystem.msEEPROM.loadString(msGlobals.uploadFileName, MAX_FILENAME_LENGTH);
+  
   if (!SPIFFS.exists(msGlobals.uploadFileName))
   {
     msSystem.logln("could not find: ");
