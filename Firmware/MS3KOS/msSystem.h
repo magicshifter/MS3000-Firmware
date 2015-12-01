@@ -27,7 +27,12 @@ class MagicShifterSystem
 {
 private:
 
+
 public:
+
+  // todo: protect
+  MagicShifterAccelerometer msAccel;
+  MagicShifterLEDs msLEDs;
 
   int bFrame = 0;
 
@@ -92,14 +97,14 @@ public:
     // swipe colors
     for (byte idx = 0; idx < MAX_LEDS; idx++)
     {
-      setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 2); //msGlobals.GLOBAL_GS);
-      updatePixels();
+      msLEDs.setPixels(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 2); //msGlobals.GLOBAL_GS);
+      msLEDs.updatePixels();
       delay(30);
     }
     for (byte idx = 0; idx < MAX_LEDS; idx++)
     {
-      setPixel(idx, 0, 0, 0, 1);
-      updatePixels();
+      msLEDs.setPixels(idx, 0, 0, 0, 1);
+      msLEDs.updatePixels();
       delay(30);
     }
   }
@@ -248,13 +253,13 @@ public:
 
 #ifdef CONFIG_ENABLE_ACCEL
     // accelerometer 
-    initAccelerometer();
-    accelerometerWorking = resetAccelerometer(); //Test and intialize the MMA8452
+    msAccel.initAccelerometer();
+    accelerometerWorking = msAccel.resetAccelerometer(); //Test and intialize the MMA8452
 #endif
 
     // led controllers and buffer
-    initLEDHardware();
-    initLEDBuffer();
+    msLEDs.initLEDHardware();
+    msLEDs.initLEDBuffer();
 
     logln(String("\r\nMagicShifter 3000 OS V0.24"));
   }

@@ -94,10 +94,10 @@ uint16_t midi_frame = 0;
 // Send a MIDI message
 static uint16_t MIDIPut(uint8_t * data, uint16_t cnt)
 {
-	// setPixel(15, 100, 100, 0);
+	// msSystem.msLEDs.setPixels(15, 100, 100, 0);
 	// msSystem.logln(data[ret], HEX);
 	// blink(STAT2, d_period);
-// setPixel(15, 0, 100, 0);
+// msSystem.msLEDs.setPixels(15, 0, 100, 0);
 // delay(10);
 	return (Serial1.write(data, cnt));
 }
@@ -113,7 +113,7 @@ static uint16_t MIDIGet(uint8_t * data, uint16_t cnt)
 		cnt--;
 	}
 	// blink(STAT1, d_period);
-// setPixel(0, 100, 0, 0);
+// msSystem.msLEDs.setPixels(0, 100, 0, 0);
 // delay(10);
 	return ret;
 }
@@ -130,8 +130,8 @@ void MIDIFrame()
 
 	// pull midi_inbox
 	if (Serial1.available() > 0) {
-		setPixel(4, 100, 0, 0);
-		setPixel(5, 0,0,0);
+		msSystem.msLEDs.setPixels(4, 100, 0, 0);
+		msSystem.msLEDs.setPixels(5, 0,0,0);
 		if (midi_in_pkt->is_used == 0) {
 			midi_in_pkt->r_stat = MIDIGet(&midi_in_pkt->buffer[0], 4);
 			midi_in_pkt->pkt_time = micros();	///  time
@@ -146,8 +146,8 @@ void MIDIFrame()
 	// push midi_outbox
 	if (midi_out_pkt->pkt_time <= (micros() - curr_midiview.time_base)) {
 		if (midi_out_pkt->is_used == 1) {
-			setPixel(4, 0,0,0);
-			setPixel(5, 0, 0, 100);
+			msSystem.msLEDs.setPixels(4, 0,0,0);
+			msSystem.msLEDs.setPixels(5, 0, 0, 100);
 			midi_out_pkt->w_stat = MIDIPut(&midi_out_pkt->buffer[0], 4);
 			midi_out_pkt->is_used = 0;
 
@@ -330,7 +330,7 @@ void MIDISync()
 void MIDIMode()
 {
 	fillPixels(0, 0, 0);
-	setPixel(3, 0, 100, 0);
+	msSystem.msLEDs.setPixels(3, 0, 100, 0);
 
 	curr_midiview.time_base = DEFAULT_DIVISOR;	//knob_1 * DEFAULT_DIVISOR;
 	curr_midiview.channel = 0;
@@ -345,7 +345,7 @@ void MIDIMode()
 // MIDIPut(midi_complex, CSEQ_LEN);
 		MIDIFrame();
 		// fillPixels(0,0,0);
-		// setPixel(15, centerBtnPressed ? 100 : 0, powerBtnPressed ? 100 : 0, 0);
+		// msSystem.msLEDs.setPixels(15, centerBtnPressed ? 100 : 0, powerBtnPressed ? 100 : 0, 0);
 
 #if 0
 		// updateLedsWithBlank();		// !J! 

@@ -24,49 +24,44 @@
 
 
 // TODO : Flesh this out?
-class Leds
+class MagicShifterLEDs
 {
-  void setPixelsHighRes();
-  void setPixel();
-  void update();
-  void fastClear();
-  void fastPulse(int microsShort, int microsLong);
-  void getPixels();
-};
+
+private:
+
+  byte ledBuffer[RGB_BUFFER_SIZE + 8];
+  byte clearBuffer[RGB_BUFFER_SIZE + 8];
+
+  byte *RGB_COLORS = ledBuffer + 4;
 
 
-byte ledBuffer[RGB_BUFFER_SIZE + 8];
-byte clearBuffer[RGB_BUFFER_SIZE + 8];
-
-byte *RGB_COLORS = ledBuffer + 4;
-
-
-void saveBuffer(byte *buffer)
-{
-  for (int i = 0; i < RGB_BUFFER_SIZE ; i++)
+public:
+  void saveBuffer(byte *buffer)
   {
-    buffer[i] = RGB_COLORS[i];
+    for (int i = 0; i < RGB_BUFFER_SIZE ; i++)
+    {
+      buffer[i] = RGB_COLORS[i];
+    }
   }
-}
 
-void loadBuffer(byte *buffer)
-{
-  for (int i = 0; i < RGB_BUFFER_SIZE ; i++)
+  void loadBuffer(byte *buffer)
   {
-    RGB_COLORS[i] = buffer[i];
+    for (int i = 0; i < RGB_BUFFER_SIZE ; i++)
+    {
+      RGB_COLORS[i] = buffer[i];
+    }
   }
-}
 
-void disableLEDHardware()
-{
-  pinMode(PIN_LED_ENABLE, INPUT);
-}
+  void disableLEDHardware()
+  {
+    pinMode(PIN_LED_ENABLE, INPUT);
+  }
 
 
-void initLEDHardware()
-{
-  pinMode(PIN_LED_ENABLE, OUTPUT);
-  digitalWrite(PIN_LED_ENABLE, HIGH);
+  void initLEDHardware()
+  {
+    pinMode(PIN_LED_ENABLE, OUTPUT);
+    digitalWrite(PIN_LED_ENABLE, HIGH);
 
   #ifdef USE_HW_SPI
     SPI.begin();
@@ -75,37 +70,37 @@ void initLEDHardware()
     pinMode(PIN_LED_DATA, OUTPUT);
     pinMode(PIN_LED_CLOCK, OUTPUT);
   #endif
-}
-
-void fillPixels(byte r, byte g, byte b, byte gs);
-
-void initLEDBuffer() {
-  ledBuffer[0] = 0;
-  ledBuffer[1] = 0;
-  ledBuffer[2] = 0;
-  ledBuffer[3] = 0;
-
-
-  ledBuffer[RGB_BUFFER_SIZE + 0] = 0;
-  ledBuffer[RGB_BUFFER_SIZE + 1] = 0;
-  ledBuffer[RGB_BUFFER_SIZE + 2] = 0;
-  ledBuffer[RGB_BUFFER_SIZE + 4] = 0;
-
-
-
-  for (int i = 0; i < RGB_BUFFER_SIZE + 8; i+=4)
-  {
-    clearBuffer[i] = (i < 4 || i >= RGB_BUFFER_SIZE + 4) ? 0 : 0xFF;
-    clearBuffer[i+1] = 0;
-    clearBuffer[i+2] = 0;
-    clearBuffer[i+3] = 0;
   }
 
-  fillPixels(0,0,0, 0);
-}
+  // void fillPixels(byte r, byte g, byte b, byte gs);
 
-void setPixelChannel(int index, int channel, int value)
-{
+  void initLEDBuffer() {
+    ledBuffer[0] = 0;
+    ledBuffer[1] = 0;
+    ledBuffer[2] = 0;
+    ledBuffer[3] = 0;
+
+
+    ledBuffer[RGB_BUFFER_SIZE + 0] = 0;
+    ledBuffer[RGB_BUFFER_SIZE + 1] = 0;
+    ledBuffer[RGB_BUFFER_SIZE + 2] = 0;
+    ledBuffer[RGB_BUFFER_SIZE + 4] = 0;
+
+
+
+    for (int i = 0; i < RGB_BUFFER_SIZE + 8; i+=4)
+    {
+      clearBuffer[i] = (i < 4 || i >= RGB_BUFFER_SIZE + 4) ? 0 : 0xFF;
+      clearBuffer[i+1] = 0;
+      clearBuffer[i+2] = 0;
+      clearBuffer[i+3] = 0;
+    }
+
+    fillPixels(0,0,0, 0);
+  }
+
+  void setPixelsChannel(int index, int channel, int value)
+  {
 #if (LED_TYPE == LED_TYPE_APA102)
     int idx = index << 2;
     if (channel == 3)
@@ -116,11 +111,11 @@ void setPixelChannel(int index, int channel, int value)
     int idx = index * 3;
     RGB_COLORS[idx+channel] = value;
 #endif
-}
+  }
 
 
-void setPixel(int index, byte r, byte g, byte b, byte gs = 0x1F)
-{
+  void setPixels(int index, byte r, byte g, byte b, byte gs = 0x1F)
+  {
 #if (LED_TYPE == LED_TYPE_APA102)
     int idx = index << 2;
     RGB_COLORS[idx] = 0xE0 | gs;
@@ -133,29 +128,32 @@ void setPixel(int index, byte r, byte g, byte b, byte gs = 0x1F)
     RGB_COLORS[idx+1] = g;
     RGB_COLORS[idx+2] = r;
 #endif
-}
-
-void fillPixels(byte r, byte g, byte b, byte gs = 0x1F)
-{
-  for (int idx = 0; idx < MAX_LEDS; idx++)
-  {
-    setPixel(idx, r, g, b, gs);
   }
-}
 
-void updatePixels()
-{
+  void fillPixels(byte r, byte g, byte b, byte gs = 0x1F)
+  {
+    for (int idx = 0; idx < MAX_LEDS; idx++)
+    {
+      setPixels(idx, r, g, b, gs);
+    }
+  }
+
+  void updatePixels()
+  {
 #if (LED_TYPE == LED_TYPE_APA102)
     SPI.writeBytes(ledBuffer, RGB_BUFFER_SIZE + 8);
 #else
     SPI.writeBytes(RGB_COLORS, RGB_BUFFER_SIZE);
 #endif
-}
+  }
 
-void fastClear()
-{
-  SPI.writeBytes(clearBuffer, RGB_BUFFER_SIZE + 8);
-}
+  void fastClear()
+  {
+    SPI.writeBytes(clearBuffer, RGB_BUFFER_SIZE + 8);
+  }
+
+};
+
 
 #endif
 // LEDHARDWARE_H

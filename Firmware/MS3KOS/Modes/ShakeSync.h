@@ -150,9 +150,7 @@ public:
         isActive = true;
     }
 
-
-
-		fillPixels(0, 0, 0);
+		msSystem.msLEDs.fillPixels(0, 0, 0);
 
     activeFramesMin2Max++;
     activeFramesMax2Min++;
@@ -269,7 +267,7 @@ public:
 			}
 		}
 
-		updatePixels();
+		msSystem.msLEDs.updatePixels();
 
     return isActive;
 	}

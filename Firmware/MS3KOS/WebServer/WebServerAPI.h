@@ -346,7 +346,7 @@ void handleGETStatus(void)
   float voltage = ((float)(r1 + r2 + r3) * adValue) / (r1 * ad1V);
 
 
-  readAccelData(msGlobals.accelCount);
+  msSystem.msAccel.readAccelData(msGlobals.accelCount);
 
   for (int i = 0 ; i < 3 ; i++)
   {
@@ -843,7 +843,7 @@ void handleLedSet()
 
     for (int i = 0; i < dataLen; i += 5)
     {
-      //setPixel(ledData[i], ledData[i+1], ledData[i+2], ledData[i+3], ledData[i+4]);
+      //msSystem.msLEDs.setPixels(ledData[i], ledData[i+1], ledData[i+2], ledData[i+3], ledData[i+4]);
       byte idx = ledData[i];
       msSystem.logln("idx: ");
       msSystem.logln(String((int)idx));

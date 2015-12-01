@@ -15,11 +15,11 @@ bool TryConnect(struct APInfo &apInfo, int timeoutMs)
     for (int i = 0; i < MAX_LEDS; i++)
     {
       if (i < frame % MAX_LEDS)
-        setPixel(i, 5, 5, 5, 0x10);
+        msSystem.msLEDs.setPixels(i, 5, 5, 5, 0x10);
       else
-        setPixel(i, 0, 0, 0, 0);
+        msSystem.msLEDs.setPixels(i, 0, 0, 0, 0);
     }
-    updatePixels();
+    msSystem.msLEDs.updatePixels();
     frame++;
     if (frame%50 == 0) msSystem.logln(".");
     if (WiFi.status() == WL_NO_SSID_AVAIL || WiFi.status() == WL_CONNECT_FAILED || millis() > startTime + timeoutMs)

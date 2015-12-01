@@ -12,13 +12,13 @@ class RGBLightMode : .. shiftermode
 {
 private:
   loadBuffer(msGlobals.web_rgb_buffer);
-  updatePixels();
+  msSystem.msLEDs.updatePixels();
 
 public:
   void step(void)
   {
     loadBuffer(msGlobals.web_rgb_buffer);
-    updatePixels();
+    msSystem.msLEDs.updatePixels();
   }
 }
 */
@@ -54,11 +54,11 @@ public:
         //msSystem.logln(index);
         byte povData[RGB_BUFFER_SIZE];
         activeImage.readFrame(index / FRAME_MULTIPLY, povData, RGB_BUFFER_SIZE);
-        loadBuffer(povData);
-        updatePixels();
+        msSystem.msLEDs.loadBuffer(povData);
+        msSystem.msLEDs.updatePixels();
 
         delayMicroseconds(POV_TIME_MICROSECONDS);
-        fastClear();
+        msSystem.msLEDs.fastClear();
         //delay(10);
       }
     }

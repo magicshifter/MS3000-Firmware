@@ -21,10 +21,10 @@ while (0)
 
   for (byte idx = 0; idx < MAX_LEDS; idx++)
   {
-    setPixel(idx, ((idx % 3)  == 0) ? bbb : 0, ((idx  % 3) == 1 ) ? bbb : 0, ((idx %  3) == 2) ? bbb : 0, 0);
+    msSystem.msLEDs.setPixels(idx, ((idx % 3)  == 0) ? bbb : 0, ((idx  % 3) == 1 ) ? bbb : 0, ((idx %  3) == 2) ? bbb : 0, 0);
 
-    setPixel((MAX_LEDS + idx - 16)%MAX_LEDS, 0, 0, 0, 0);
-    updatePixels();
+    msSystem.msLEDs.setPixels((MAX_LEDS + idx - 16)%MAX_LEDS, 0, 0, 0, 0);
+    msSystem.msLEDs.updatePixels();
     delay(100);
     msSystem.getBatteryVoltage();
   }
@@ -34,8 +34,8 @@ while (0)
    // swipe colors
   for (byte idx = 0; idx < MAX_LEDS; idx++)
   {
-    setPixel(idx, (idx & 1) ? bbb : 0, (idx & 2) ? bbb : 0, (idx & 4) ? bbb : 0, 0);
-    updatePixels();
+    msSystem.msLEDs.setPixels(idx, (idx & 1) ? bbb : 0, (idx & 2) ? bbb : 0, (idx & 4) ? bbb : 0, 0);
+    msSystem.msLEDs.updatePixels();
     delay(20);
     msGlobals.msSystem.getBatteryVoltage();
   }
@@ -47,14 +47,14 @@ while (1)
   // swipe colors
     for (byte idx = 0; idx < MAX_LEDS; idx++)
     {
-      setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, msGlobals.GLOBAL_GS);
-      updatePixels();
+      msSystem.msLEDs.setPixels(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, msGlobals.GLOBAL_GS);
+      msSystem.msLEDs.updatePixels();
       delay(30);
     }
     for (byte idx = 0; idx < MAX_LEDS; idx++)
     {
-      setPixel(idx, 0, 0, 0, 1);
-      updatePixels();
+      msSystem.msLEDs.setPixels(idx, 0, 0, 0, 1);
+      msSystem.msLEDs.updatePixels();
       delay(30);
     }
 }
@@ -73,7 +73,7 @@ while (0)
     byte povData[RGB_BUFFER_SIZE];
     activeImage.readFrame(i, povData, RGB_BUFFER_SIZE);
     loadBuffer(povData);
-    updatePixels();
+    msSystem.msLEDs.updatePixels();
     delay(1);
   }
   activeImage.close();

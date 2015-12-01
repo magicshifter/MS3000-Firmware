@@ -36,8 +36,8 @@ void handleNotFound() {
 
 void handleReadFile()
 {
-  fillPixels(0, 0, 1, 0x1F);
-  updatePixels();
+  msSystem.msLEDs.fillPixels(0, 0, 1, 0x1F);
+  msSystem.msLEDs.updatePixels();
 
   msSystem.logln("Free heap: ");
   msSystem.logln(String(ESP.getFreeHeap()));

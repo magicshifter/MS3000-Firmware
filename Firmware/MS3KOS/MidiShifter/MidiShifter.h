@@ -249,7 +249,7 @@ void MIDI_Program_Change(miby_this_t a_miby)
 
 void MIDI_Control_Change(miby_this_t a_miby)
 {
-	setPixel(LED_CONTROL_CHANGE, 0, 100, 100);
+	msSystem.msLEDs.setPixels(LED_CONTROL_CHANGE, 0, 100, 100);
 	// TODO: Channel processing
 	// if (curr_midiview.midi_channel == MIBY_CHAN(a_miby)) {
 		// any controller can be used, cc#1 for now (modwheel)
@@ -263,7 +263,7 @@ void MIDI_Control_Change(miby_this_t a_miby)
 void MIDI_Note_On( miby_this_t a_miby)
 {
 	arpNoteOn(curr_midiview.midi_channel,  MIBY_ARG0(a_miby),  MIBY_ARG1(a_miby));
-	setPixel(LED_NOTE_EVENT, 0, 0, 100);
+	msSystem.msLEDs.setPixels(LED_NOTE_EVENT, 0, 0, 100);
 }
 
 void MIDI_Note_Off( miby_this_t a_miby)
@@ -275,23 +275,23 @@ void MIDI_Note_Off( miby_this_t a_miby)
 
 	MIDI_Put(note_msg, 3);
 
-	setPixel(LED_NOTE_EVENT, 0, 0, 0);
+	msSystem.msLEDs.setPixels(LED_NOTE_EVENT, 0, 0, 0);
 }
 
 void LEDFrame()
 {
 	// Blink Arpeggiator LED's
 	if (arp_frame == 0) {
-		setPixel(LED_BEAT_COUNTER, 100, 0, 0);
-		setPixel(LED_MEASURE_COUNTER, 0, 100, 0);
+		msSystem.msLEDs.setPixels(LED_BEAT_COUNTER, 100, 0, 0);
+		msSystem.msLEDs.setPixels(LED_MEASURE_COUNTER, 0, 100, 0);
 	}
 	else if ((arp_frame & 0x0F) == 0) {
-		setPixel(LED_BEAT_COUNTER, 0, 100, 0);
+		msSystem.msLEDs.setPixels(LED_BEAT_COUNTER, 0, 100, 0);
 	}
 	else { // LEDs off
-		setPixel(LED_ARP_COUNTER, 100, 0, 0);
-		setPixel(LED_BEAT_COUNTER, 0, 0, 0);
-		setPixel(LED_MEASURE_COUNTER, 0, 0, 0);
+		msSystem.msLEDs.setPixels(LED_ARP_COUNTER, 100, 0, 0);
+		msSystem.msLEDs.setPixels(LED_BEAT_COUNTER, 0, 0, 0);
+		msSystem.msLEDs.setPixels(LED_MEASURE_COUNTER, 0, 0, 0);
 	}
 
 #if 0
@@ -302,17 +302,17 @@ void LEDFrame()
 
 	// Debug:
 	if (clickedButtonA) {
-		fillPixels(100, 0, 0);
+		msSystem.msLEDs.fillPixels(100, 0, 0);
 		// updateLedsWithBlank();
 		delay(10);
-		fillPixels(0, 0, 0);
+		msSystem.msLEDs.fillPixels(0, 0, 0);
 		clickedButtonA = false;
 	}
 	if (clickedButtonB) {
-		fillPixels(0, 0, 100);
+		msSystem.msLEDs.fillPixels(0, 0, 100);
 		// updateLedsWithBlank();
 		delay(10);
-		fillPixels(0, 0, 0);
+		msSystem.msLEDs.fillPixels(0, 0, 0);
 		clickedButtonB = false;
 	}
 
@@ -518,8 +518,8 @@ void envFrame()
 void MIDIMode()
 {
 	// Debug - set an LED so we know we made it ..
-	fillPixels(0, 0, 0);
-	setPixel(0, 0, 100, 0);
+	msSystem.msLEDs.fillPixels(0, 0, 0);
+	msSystem.msLEDs.setPixels(0, 0, 100, 0);
 
 	// Initial view
 	curr_midiview.midi_channel = 0;

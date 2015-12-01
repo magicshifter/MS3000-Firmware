@@ -130,8 +130,8 @@ class BouncingBallMode
     bool stopLoop = false;
     for (byte idx = start; !stopLoop ; idx += delta)
     {
-      setPixel(idx, 255, 255, 255, msGlobals.GLOBAL_GS);
-      updatePixels();
+      msSystem.msLEDs.setPixels(idx, 255, 255, 255, msGlobals.GLOBAL_GS);
+      msSystem.msLEDs.updatePixels();
       delay(2);
 
       if (idx == end)
