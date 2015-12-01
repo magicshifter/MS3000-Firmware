@@ -4,7 +4,7 @@ import serial
 import curses
 import time
 
-portName = "/dev/tty.SLAB_USBtoUART"
+portName = "/dev/ttyUSB0"
 baudRate = 57600 * 2
 #baudRate = 76800 # 38400 # bootloader baudreate
 
@@ -63,14 +63,14 @@ def main(stdscr):
                 code = ord(s)
                 if (xx == 0):
                     stdscr.clear()
-                xx = (xx + 1) % 900
+                xx = (xx + 1) % 6000
                 if code > 13 and code <= 255:
                     try:
                         stdscr.addstr(s)
                     except:
                         pass
                 elif code == 13:
-                    stdscr.addstr("\n\r")
+                    pass #stdscr.addstr("\n\r")
                 else:
                     stdscr.addstr('?')
                 stdscr.refresh()

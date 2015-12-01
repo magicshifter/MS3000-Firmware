@@ -50,13 +50,13 @@
 // GUI modes, well actually .. modes are more of an 'app' ..
 #include "Modes/Modes.h"
 
-BouncingBallMode msModeBouncingBall(600);
-MagicShakeMode msModeShake;
-POVShakeSyncDummyMode msModePOVShake;
+ BouncingBallMode msModeBouncingBall(600);
+ MagicShakeMode msModeShake;
+ POVShakeSyncDummyMode msModePOVShake;
 
 // Begin MagicShifter3000 operation
-void setup()
-{
+ void setup()
+ {
   // record our bootup time
   msGlobals.bootTime = millis();
 
@@ -87,7 +87,6 @@ void setup()
 
   msSystem.msLEDs.bootSwipe();
 
-  msSystem.msLEDs.updatePixels();
 }
 
 
@@ -170,8 +169,80 @@ void delayYield()
   }
 }
 
+void testSimpleButtons()
+{
+
+  double avgVal = 800;
+  double avgF = 0.01;
+
+  int cnt = 0;
+
+  int minV = 1000;
+  int maxV = 0;
+
+  cnt++;
+
+  int adVal = msSystem.getADValue();
+
+  avgVal = avgF * adVal + (1-avgF) * avgVal; 
+
+  if (minV > adVal) minV = adVal;
+  if (maxV < adVal) maxV = adVal;
+
+  if (adVal > 950 )
+  {
+    msSystem.msLEDs.setPixels(7, 0, 10, 0, msGlobals.GLOBAL_GS);
+    msSystem.msLEDs.setPixels(8, 0, 10, 0, msGlobals.GLOBAL_GS);
+  }
+  else
+  {
+    msSystem.msLEDs.setPixels(7, 10, 0, 0, msGlobals.GLOBAL_GS);
+    msSystem.msLEDs.setPixels(8, 10, 0, 0, msGlobals.GLOBAL_GS);
+  }
+
+  if (!digitalRead(PIN_BUTTON_A))
+  {
+    msSystem.msLEDs.setPixels(9, 0, 10, 0, msGlobals.GLOBAL_GS);
+  }
+  else
+  {
+    msSystem.msLEDs.setPixels(9, 10, 0, 0, msGlobals.GLOBAL_GS);
+  }
+
+  if (!digitalRead(PIN_BUTTON_B))
+  {
+    msSystem.msLEDs.setPixels(6, 0, 10, 0, msGlobals.GLOBAL_GS);
+  }
+  else
+  {
+    msSystem.msLEDs.setPixels(6, 10, 0, 0, msGlobals.GLOBAL_GS);
+  }
+  if (cnt % 300 == 550)
+  {
+    minV++;
+    maxV--;
+  }
+
+  if (cnt%40 == 0)
+  {
+    Serial.print(minV);
+    Serial.print(":");
+    Serial.print(maxV);
+    Serial.print("|");
+    Serial.print(adVal);
+    Serial.print("/");
+    Serial.println(avgVal);
+  }
+  msSystem.msLEDs.updatePixels();
+  delay(10);
+  //return;
+}
+
+
 void loop()
 {
+  if (1)
+    testSimpleButtons();
 
   msGlobals.lastMicros = msGlobals.currentMicros;
   msGlobals.currentMicros = micros();
@@ -184,11 +255,8 @@ void loop()
   delayYield();
 
   // do some tests
-  // #define CONFIG_ENABLE_TESTS
-#ifdef CONFIG_ENABLE_TESTS
   // testAccelerometer();
   testButtonForBOM_X();
-#endif
 
   // inside time-frame
   if (msGlobals.lastFrameMicros + msGlobals.speedMicros 
@@ -311,20 +379,13 @@ void loop()
     float fX = msGlobals.accelG[0];
     float fY = msGlobals.accelG[1];
 
-    Serial.println("fX:");
-    Serial.println(fX);
-    Serial.println("fY:");
-    Serial.println(fY);
-
     //msModeBouncingBall.applyForce((msGlobals.currentMicros - msGlobals.lastMicros) / 1000.0, fX, fY);
-
     msModeBouncingBall.applyForce((msGlobals.currentMicros - msGlobals.lastMicros) / 1000.0, fX);
 
     delayYield();
 
     // !J! hack of timing .. 
     // delay(1); // if we lose this, we lose wifi .. grr .. 
-
     // delayMicroseconds(500);
   }
 

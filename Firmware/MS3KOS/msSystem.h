@@ -209,17 +209,12 @@ public:
   void setup()
   {
 
-    // led controllers and buffer
-    msLEDs.initLEDHardware();
-    msLEDs.initLEDBuffer();
-  // boot that we are alive
-    msLEDs.bootSwipe();
 
-#ifdef CONFIG_ENABLE_MIDI
-    Serial.begin(31250);
-#else
+// #ifdef CONFIG_ENABLE_MIDI
+//     Serial.begin(31250);
+// #else
     Serial.begin(115200);
-#endif
+// #endif
 
     EEPROM.begin(512);
 
@@ -253,6 +248,11 @@ public:
     accelerometerWorking = msAccel.resetAccelerometer(); //Test and intialize the MMA8452
 #endif
 
+    // led controllers and buffer
+    msLEDs.initLEDHardware();
+    msLEDs.initLEDBuffer();
+  // boot that we are alive
+    msLEDs.bootSwipe();
 
     logln(String("\r\nMagicShifter 3000 OS V0.24"));
   }
@@ -275,12 +275,17 @@ public:
   void loop()
   {
 
+    // logln("(LOOP)");
     // handle Buttons:
+  pinMode(PIN_BUTTON_A, INPUT);
+  pinMode(PIN_BUTTON_B, INPUT);
 
     // reset public button state
     clickedButtonA = longClickedButtonA = false;
     if (!digitalRead(PIN_BUTTON_A))
     {
+      Serial.println("A PRESSED");
+
       if (buttonAPressedTime)
         buttonAPressedTime += msGlobals.lastMicros;
       else
@@ -291,12 +296,12 @@ public:
       if (m_enableLongClicks && buttonAPressedTime >= MIN_TIME_LONG_CLICK)
       {
         longClickedButtonA = true;
-        log("longClickedButtonA");
+        Serial.println("longClickedButtonA");
       }
       else if (buttonAPressedTime >= MIN_TIME_CLICK)
       {
         clickedButtonA = true;
-        log("clickedButtonA");
+        Serial.println("clickedButtonA");
       }
 
       buttonAPressedTime = 0;
@@ -306,6 +311,8 @@ public:
     clickedButtonB = longClickedButtonB = false;
     if (!digitalRead(PIN_BUTTON_B))
     {
+      Serial.println("B PRESSED");
+
       if (buttonBPressedTime)
         buttonBPressedTime += msGlobals.lastMicros;
       else
@@ -316,13 +323,13 @@ public:
       if (m_enableLongClicks && buttonBPressedTime >= MIN_TIME_LONG_CLICK)
       {
         longClickedButtonB = true;
-        log("longClickedButtonB");
+        Serial.println("longClickedButtonB");
 
       }
       else if (buttonBPressedTime >= MIN_TIME_CLICK)
       {
         clickedButtonB = true;
-        log("clickedButtonB");
+        Serial.println("clickedButtonB");
       }
 
       buttonBPressedTime = 0;
@@ -335,6 +342,8 @@ public:
     //if (bFrame++ % 10 == 0)
     if (powerButtonPressed())
     {
+      Serial.println("POWER PRESSED");
+
       if (buttonPowerPressedTime)
         buttonPowerPressedTime += msGlobals.lastMicros;
       else
@@ -369,7 +378,7 @@ public:
         msGlobals.GLOBAL_GS = 31;
       }
 
-      log("cB");
+      Serial.println("cB");
 
       msGlobals.shifterMode = (msGlobals.shifterMode+1)%NUM_MS_MODES;
     }
@@ -381,7 +390,7 @@ public:
         msGlobals.GLOBAL_GS = 1;
       }
 
-      log("looooooong clickedB");
+      Serial.println("looooooong clickedB");
 
       msGlobals.shifterMode = (msGlobals.shifterMode+1)%NUM_MS_MODES;
     }
