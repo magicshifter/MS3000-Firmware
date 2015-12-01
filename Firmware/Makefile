@@ -69,8 +69,8 @@ ESPTOOL=${ESP8266COM_TOOLS_DIR}/esptool/esptool
 SPIFFS_TOOL=${ESP8266COM_TOOLS_DIR}/mkspiffs/mkspiffs
 MS3KOS_BASE_DIR ?= /home/ibisum/Documents/MagicShifter3000/Firmware/MS3KOS
 MS_DEVICE_PORT ?= /dev/ttyUSB0
-# HW_ID ?= HW_ID_MS3000_MMA8452Q
-HW_ID ?= HW_ID_RING
+HW_ID ?= HW_ID_MS3000_MMA8452Q
+# HW_ID ?= HW_ID_RING
 MS3KOS_BUILD_DIR = /home/ibisum/Documents/builds/MagicShifter3000/MS3KOS_BUILD
 endif
 
