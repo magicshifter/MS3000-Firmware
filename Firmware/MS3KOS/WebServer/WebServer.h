@@ -5,7 +5,7 @@
 
 #include "WebServerAPI.h"
 #include "WebServerAutoConnect.h"
-#include "WebServerRoutes.h"
+#include "WebServerFiles.h"
 
 class MagicShifterWebServer {
 
