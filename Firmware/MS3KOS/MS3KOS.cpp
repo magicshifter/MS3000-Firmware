@@ -314,7 +314,7 @@ void loop()
         updatePixels();
       }
     }
-    if (msGlobals.shifterMode == 42)
+    if (msGlobals.shifterMode == 4)
     {
        long currentTime = msGlobals.time + (millis() - msGlobals.timePostedAt);
        long ms = currentTime % 86400000;
@@ -342,10 +342,6 @@ void loop()
        Serial.println(seconds);
        delay(100);
     }
-  }
-  else 
-  {
-
 
   // outside time-frame
 #ifdef CONFIG_ENABLE_ACCEL
