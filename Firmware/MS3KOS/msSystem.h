@@ -101,7 +101,7 @@ public:
     // swipe colors
     for (byte idx = 0; idx < MAX_LEDS; idx++)
     {
-      setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, msGlobals.GLOBAL_GS);
+      setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 2); //msGlobals.GLOBAL_GS);
       updatePixels();
       delay(30);
     }
@@ -370,7 +370,7 @@ public:
     }
     //*/
 
-// internal button usage
+    // internal button usage
     if (longClickedButtonA)
     {
       powerDown();
@@ -386,7 +386,7 @@ public:
 
       log("cB");
 
-      //msGlobals.shifterMode = (msGlobals.shifterMode+1)%NUM_MS_MODES;
+      msGlobals.shifterMode = (msGlobals.shifterMode+1)%NUM_MS_MODES;
     }
     if (longClickedButtonB)
     {
@@ -398,7 +398,7 @@ public:
 
       log("looooooong clickedB");
 
-      //msGlobals.shifterMode = (msGlobals.shifterMode+1)%NUM_MS_MODES;
+      msGlobals.shifterMode = (msGlobals.shifterMode+1)%NUM_MS_MODES;
     }
   }
 

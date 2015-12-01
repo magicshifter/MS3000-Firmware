@@ -248,10 +248,9 @@ void loop()
   {
     msGlobals.loopFrameTime = msGlobals.currentMicros - msGlobals.lastFrameMicros;
 
-    msGlobals.lastFrameMicros = msGlobals.currentMicros;
-
-
     msGlobals.currentFrame++;
+
+    msGlobals.lastFrameMicros = msGlobals.currentMicros;
 
     // pov msBouncingBallMode mode
     if (msGlobals.shifterMode == 0)
@@ -328,14 +327,20 @@ void loop()
        int hours = ms;
 
        int ledStart = 0;
-       int ledEnd = 15;
+       int ledEnd = MAX_LEDS - 1;
 
+#if(HW_ID==HW_ID_RING)
+       ledStart = 33;
+       ledEnd = MAX_LEDS - 33;
+#endif
        int ledLen = ledEnd - ledStart;
 
        fillPixels(0,0,0,0);
-       setPixel(ledStart + ledLen * hours / 24., 0, 0, 50, 2);
-       setPixel(ledStart + ledLen * minutes / 60., 0, 50, 0, 2);
-       setPixel(ledStart + ledLen * seconds / 60., 50, 0, 0, 2);
+       int c = 255;
+       int b = 255;
+       setPixel(ledStart + ledLen * hours / 24., c, 0, 0, b);
+       setPixel(ledStart + ledLen * minutes / 60., 0, c, 0, b);
+       setPixel(ledStart + ledLen * seconds / 60., 0, 0, c, b);
 
        updatePixels();
 

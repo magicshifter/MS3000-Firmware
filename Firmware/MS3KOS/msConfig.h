@@ -31,7 +31,7 @@
 
 #define MAX_FILENAME_LENGTH 32
 
-#define NUM_MS_MODES 3
+#define NUM_MS_MODES 5
 
 // MIDI enabled?
 #define CONFIG_ENABLE_MIDI
@@ -60,7 +60,7 @@
 #elif(HW_ID==HW_ID_RING)
 #warning "HW ID :  HW_ID_RING "
 #define MAX_LEDS 160
-#define CONFIG_MMA_NONE
+#define CONFIG_MMA_FSOX
 #undef LED_TYPE
 #define LED_TYPE LED_TYPE_WS2801
 #elif(HW_ID==HW_ID_SABRE)
