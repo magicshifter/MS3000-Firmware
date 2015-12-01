@@ -104,7 +104,6 @@ void setup()
 void TestAccelerometer()
 {
   Serial.println("trying accel!");
-  resetAccelerometer(); //Test and intialize the MMA8452
 
   int d = 500;
   int b = 20;
@@ -238,9 +237,9 @@ void loop()
   delayYield();
 
   // do some tests
-// #ifdef CONFIG_ENABLE_ACCEL
+#ifdef CONFIG_ENABLE_ACCEL
   // TestAccelerometer();
-// #endif
+#endif
 
   // inside time-frame
   if (msGlobals.lastFrameMicros + msGlobals.speedMicros 
@@ -362,6 +361,11 @@ void loop()
 
     float fX = msGlobals.accelG[0];
     float fY = msGlobals.accelG[1];
+
+    Serial.println("fX:");
+    Serial.println(fX);
+    Serial.println("fY:");
+    Serial.println(fY);
 
     //msBouncingBallMode.applyForce((msGlobals.currentMicros - msGlobals.lastMicros) / 1000.0, fX, fY);
 

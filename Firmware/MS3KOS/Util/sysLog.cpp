@@ -1,5 +1,6 @@
 /*
  sysLog.cpp - Base class that provides log() and logln()
+ * based on printf model
  */
 
 #include <stdlib.h>
@@ -15,6 +16,22 @@ extern "C" {
 }
 
 // Public Methods //////////////////////////////////////////////////////////////
+
+
+/** 
+UDP syslog .. 
+// #undef DEBUG_SYSLOG
+// #ifdef DEBUG_SYSLOG
+    WiFiUDP udp;
+    // udp.beginPacket("192.168.43.151", __SYSLOG_PORT);
+    // when we connect to MS3000 to test, we usually get .2 ..
+    udp.beginPacket("192.168.4.2", 514); // wks port for syslog
+    udp.print(msg);
+    udp.endPacket();
+// #endif
+
+*/
+
 
 /* default implementation: may be overridden */
 size_t ICACHE_FLASH_ATTR MagicShifterSysLog::write(const uint8_t *buffer, size_t size) {
