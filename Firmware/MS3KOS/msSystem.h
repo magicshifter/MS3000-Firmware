@@ -18,7 +18,13 @@
 #include "Hardware/EEPROMString.h"
 #include "Hardware/LEDHardware.h"
 #include "Hardware/Accelerometer.h"
-#include "Hardware/System.h"
+
+// Power management
+#define PIN_PWR_MGT 16
+
+// double features as bootloader button
+#define PIN_BUTTON_A  0
+#define PIN_BUTTON_B 12
 
 // TODO: all init and all sensors and leds in here :)
 // (accelerometer wuld also be a class but the MAgicShifter object has one ;)
