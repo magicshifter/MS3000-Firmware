@@ -209,6 +209,12 @@ public:
   void setup()
   {
 
+    // led controllers and buffer
+    msLEDs.initLEDHardware();
+    msLEDs.initLEDBuffer();
+  // boot that we are alive
+    msLEDs.bootSwipe();
+
 #ifdef CONFIG_ENABLE_MIDI
     Serial.begin(31250);
 #else
@@ -246,12 +252,6 @@ public:
     msAccel.initAccelerometer();
     accelerometerWorking = msAccel.resetAccelerometer(); //Test and intialize the MMA8452
 #endif
-
-    // led controllers and buffer
-    msLEDs.initLEDHardware();
-    msLEDs.initLEDBuffer();
-  // boot that we are alive
-    msLEDs.bootSwipe();
 
 
     logln(String("\r\nMagicShifter 3000 OS V0.24"));
