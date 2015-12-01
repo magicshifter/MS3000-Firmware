@@ -37,7 +37,7 @@ public:
   // todo: protect
   MagicShifterAccelerometer msAccel;
   MagicShifterLEDs msLEDs;
-  MagicShifterEEPROMString  msEEPROM;
+  MagicShiftermsEEPROMsing  msEEPROMs;
 
   int bFrame = 0;
 
@@ -96,23 +96,6 @@ public:
   void logln(unsigned int msg, int base) { logln(String(msg));  }
   void logln(bool &msg, int base) { logln(String(msg));  }
 
-  void  do_debug_swipe()
-  {
-
-    // swipe colors
-    for (byte idx = 0; idx < MAX_LEDS; idx++)
-    {
-      msLEDs.setPixels(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 2); //msGlobals.GLOBAL_GS);
-      msLEDs.updatePixels();
-      delay(30);
-    }
-    for (byte idx = 0; idx < MAX_LEDS; idx++)
-    {
-      msLEDs.setPixels(idx, 0, 0, 0, 1);
-      msLEDs.updatePixels();
-      delay(30);
-    }
-  }
 
   void TEST_SPIFFS_bug()
   {
@@ -226,9 +209,11 @@ public:
   void setup()
   {
 
-//#ifndef CONFIG_ENABLE_MIDI
+#ifdef CONFIG_ENABLE_MIDI
+    Serial.begin(31250);
+#else
     Serial.begin(115200);
-//#endif
+#endif
 
     EEPROM.begin(512);
 
@@ -265,6 +250,9 @@ public:
     // led controllers and buffer
     msLEDs.initLEDHardware();
     msLEDs.initLEDBuffer();
+  // boot that we are alive
+    msLEDs.bootSwipe();
+
 
     logln(String("\r\nMagicShifter 3000 OS V0.24"));
   }
@@ -287,13 +275,9 @@ public:
   void loop()
   {
 
-    handleButtons();
-    //delay(0);
-  }
+    // handle Buttons:
 
-  void handleButtons()
-  {
-    // reset public btton state
+    // reset public button state
     clickedButtonA = longClickedButtonA = false;
     if (!digitalRead(PIN_BUTTON_A))
     {

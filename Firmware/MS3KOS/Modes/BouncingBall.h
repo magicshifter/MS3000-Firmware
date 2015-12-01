@@ -151,6 +151,47 @@ public:
   const float minFastPeriod = 0.00005;
   const float flashDifficulty = 1;
 
+  // do a simple bouncing ball .. 
+  void simpleBouncingBall()
+  {
+    for (byte idx = 0; idx < MAX_LEDS; idx++)
+    {
+      float scale = getLedBright(idx, MAX_LEDS);
+
+      scale *= 0.5;
+
+      /*if (allowFlash && smoothLanding)
+      {
+      }
+      else
+      {
+      scale *= 0.25;
+      }
+      */
+
+      //  msGlobals.bright = 1;
+      //scale *= 10;
+      //msSystem.msLEDs.setPixels(idx, (msGlobals.currentFrame & 1) ? msGlobals.bright*scale : 0, (msGlobals.currentFrame & 2) ? msGlobals.bright*scale : 0, (msGlobals.currentFrame & 4) ? msGlobals.bright*scale : 0, msGlobals.gs);
+
+      if (allowFlash)
+      {
+        if (smoothLanding)
+        {
+          msSystem.msLEDs.setPixels(idx, 0, msGlobals.bright * scale, 0, msGlobals.GLOBAL_GS);
+        }
+        else
+        {
+          msSystem.msLEDs.setPixels(idx, msGlobals.bright * scale, msGlobals.bright * scale, msGlobals.bright * scale, msGlobals.GLOBAL_GS);
+        }
+      }
+      else
+      {  
+        msSystem.msLEDs.setPixels(idx, msGlobals.bright * scale, 0, 0.5 * msGlobals.bright * scale, msGlobals.GLOBAL_GS);
+      }
+    }
+    msSystem.msLEDs.updatePixels();
+  }
+
   void applyForce(float sec, float g)
   {
     g = -g;

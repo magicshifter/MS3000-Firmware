@@ -4,7 +4,7 @@
 #define BASE64_ENC_LEN(n) (((n) + 2 - (((n) + 2) % 3)) / 3 * 4)
 
 
-class MagicShifterEEPROMString {
+class MagicShiftermsEEPROMsing {
 
 public:
   // makes sure dest is \0 terminated

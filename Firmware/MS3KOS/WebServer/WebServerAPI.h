@@ -75,7 +75,7 @@ public:
       msSystem.logln((char * )path.c_str());
     }
 
-    msSystem.msEEPROM.safeStrncpy(config->hostname, "magicshifter", sizeof(config->hostname));
+    msSystem.msEEPROMs.safeStrncpy(config->hostname, "magicshifter", sizeof(config->hostname));
     config->port = 80;
     
     return false;
@@ -109,8 +109,8 @@ public:
       msSystem.logln((char *)path.c_str());
     }
 
-    msSystem.msEEPROM.safeStrncpy(config->ssid, "MS3000", sizeof(config->ssid));
-    msSystem.msEEPROM.safeStrncpy(config->password, "", sizeof(config->password));
+    msSystem.msEEPROMs.safeStrncpy(config->ssid, "MS3000", sizeof(config->ssid));
+    msSystem.msEEPROMs.safeStrncpy(config->password, "", sizeof(config->password));
     
     return false;
   }
@@ -139,8 +139,8 @@ public:
       file.close();
       return true;
     }
-    msSystem.msEEPROM.safeStrncpy(config->ssid, "", sizeof(config->ssid));
-    msSystem.msEEPROM.safeStrncpy(config->password, "", sizeof(config->password));
+    msSystem.msEEPROMs.safeStrncpy(config->ssid, "", sizeof(config->ssid));
+    msSystem.msEEPROMs.safeStrncpy(config->password, "", sizeof(config->password));
     return false;
     
   }
@@ -201,7 +201,7 @@ public:
 
     while (apListFile.read((uint8_t *)&apInfoDummy, requiredBytes) == requiredBytes)
     {
-      if (firstFreePos < 0 && msSystem.msEEPROM.memcmpByte((byte *)&apInfoDummy, 0, requiredBytes))
+      if (firstFreePos < 0 && msSystem.msEEPROMs.memcmpByte((byte *)&apInfoDummy, 0, requiredBytes))
       {
         firstFreePos = apListIndex * requiredBytes;
       }
@@ -260,7 +260,7 @@ public:
         if (apListFile.read((uint8_t *)apInfo, requiredBytes) == requiredBytes)
         {
           apListIndex++;
-          if (!msSystem.msEEPROM.memcmpByte((byte *)apInfo, 0, requiredBytes))
+          if (!msSystem.msEEPROMs.memcmpByte((byte *)apInfo, 0, requiredBytes))
             return true;
         }
         else
@@ -397,11 +397,11 @@ bool parseAPInfoFromServerArgs(APInfo &apInfo)
 
     if (strcmp(msSystem.msServer.argName(i).c_str(), "ssid") == 0)
     {
-      msSystem.msEEPROM.safeStrncpy(apInfo.ssid, msSystem.msServer.arg(i).c_str(), sizeof(apInfo.ssid));
+      msSystem.msEEPROMs.safeStrncpy(apInfo.ssid, msSystem.msServer.arg(i).c_str(), sizeof(apInfo.ssid));
     }
     else if (strcmp(msSystem.msServer.argName(i).c_str(), "pwd") == 0)
     {
-      msSystem.msEEPROM.safeStrncpy(apInfo.password, msSystem.msServer.arg(i).c_str(), sizeof(apInfo.password));
+      msSystem.msEEPROMs.safeStrncpy(apInfo.password, msSystem.msServer.arg(i).c_str(), sizeof(apInfo.password));
     }
     else
     {
@@ -477,7 +477,7 @@ void handlePOSTServerSettings(void)
 
       if (strcmp(msSystem.msServer.argName(i).c_str(), "host") == 0)
       {
-        msSystem.msEEPROM.safeStrncpy(config.hostname, msSystem.msServer.arg(i).c_str(), sizeof(config.hostname));
+        msSystem.msEEPROMs.safeStrncpy(config.hostname, msSystem.msServer.arg(i).c_str(), sizeof(config.hostname));
       }
       else if (strcmp(msSystem.msServer.argName(i).c_str(), "port") == 0)
       {

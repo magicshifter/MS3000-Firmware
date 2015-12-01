@@ -33,14 +33,14 @@
 #include "msConfig.h"
 
 #include "msGlobals.h"
-MagicShifterGlobals msGlobals;
+ MagicShifterGlobals msGlobals;
 // note: beyond this point, please consider the above globals.
 
 #include "msSystem.h"
-MagicShifterSystem msSystem;
+ MagicShifterSystem msSystem;
 // note: WebServer and msSystem are in love
 #include "WebServer/WebServer.h" 
-MagicShifterWebServer msWebServer;
+ MagicShifterWebServer msWebServer;
 
 // MIDI can be configured on or off 
 #ifdef CONFIG_ENABLE_MIDI
@@ -49,53 +49,49 @@ MagicShifterWebServer msWebServer;
 
 // GUI modes, well actually .. modes are more of an 'app' ..
 #include "Modes/Modes.h"
+
 BouncingBallMode msModeBouncingBall(600);
 MagicShakeMode msModeShake;
 POVShakeSyncDummyMode msModePOVShake;
 
-
 // Begin MagicShifter3000 operation
 void setup()
 {
+  // record our bootup time
   msGlobals.bootTime = millis();
+
+  // start the system
   msSystem.setup();
-  
-  // boot that we are alive
-  msSystem.do_debug_swipe();
+  // start Modes as necessary ..
+  msSystem.msEEPROMs.loadString(msGlobals.uploadFileName, MAX_FILENAME_LENGTH);
+  msSystem.logln("upload file:");
+  msSystem.logln(msGlobals.uploadFileName);
+
+  if (SPIFFS.exists(msGlobals.uploadFileName)) {
+    msModeShake.start();
+  }
+
+  // todo: move to module start sequence.
+  msModePOVShake.setFrames(32);
 
   // get the web interface started
   msWebServer.StartWebServer();
 
-  // todo: move to module.
-  msModePOVShake.setFrames(32);
-
-  // start Modes as necessary ..
-  msSystem.msEEPROM.loadString(msGlobals.uploadFileName, MAX_FILENAME_LENGTH);
-  
-  if (!SPIFFS.exists(msGlobals.uploadFileName))
-  {
-    msSystem.logln("could not find: ");
-    msSystem.logln(msGlobals.uploadFileName);
-    // strcpy(msGlobals.uploadFileName, "big_smile_gif.magicBitmap");
-  }
-  else 
-  {
-    msSystem.logln("using POV file: ");
-    msSystem.logln(msGlobals.uploadFileName);
-    msModeShake.start();
-  }
-
+#if 0
   // // debug output so we know we're alive in case a mode dies ..
   // for (byte idx = 0; idx < MAX_LEDS; idx++)
   // {
   //   msSystem.msLEDs.setPixels(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
   // }
+#endif 
+
+  msSystem.msLEDs.bootSwipe();
 
   msSystem.msLEDs.updatePixels();
-
 }
 
-void TestAccelerometer()
+
+void testAccelerometer()
 {
   Serial.println("trying accel!");
 
@@ -109,56 +105,15 @@ void TestAccelerometer()
     }
     else
     {
-       msSystem.msLEDs.fillPixels(b, 0, 0, 0xff);
-    }
-    msSystem.msLEDs.updatePixels();
-    delay(d);
+     msSystem.msLEDs.fillPixels(b, 0, 0, 0xff);
+   }
+   msSystem.msLEDs.updatePixels();
+   delay(d);
 
-    msSystem.msLEDs.fillPixels(b, b, b, 0xff);
-    msSystem.msLEDs.updatePixels();
-    delay(d);
-  }
-}
-
-// do a simple bouncing ball .. 
-void simpleBouncingBall()
-{
-  for (byte idx = 0; idx < MAX_LEDS; idx++)
-  {
-    float scale = msModeBouncingBall.getLedBright(idx, MAX_LEDS);
-
-    scale *= 0.5;
-
-    /*if (msModeBouncingBall.allowFlash && msModeBouncingBall.smoothLanding)
-    {
-    }
-    else
-    {
-    scale *= 0.25;
-    }
-    */
-
-    //  msGlobals.bright = 1;
-    //scale *= 10;
-    //msSystem.msLEDs.setPixels(idx, (msGlobals.currentFrame & 1) ? msGlobals.bright*scale : 0, (msGlobals.currentFrame & 2) ? msGlobals.bright*scale : 0, (msGlobals.currentFrame & 4) ? msGlobals.bright*scale : 0, msGlobals.gs);
-
-    if (msModeBouncingBall.allowFlash)
-    {
-      if (msModeBouncingBall.smoothLanding)
-      {
-      msSystem.msLEDs.setPixels(idx, 0, msGlobals.bright * scale, 0, msGlobals.GLOBAL_GS);
-      }
-      else
-      {
-        msSystem.msLEDs.setPixels(idx, msGlobals.bright * scale, msGlobals.bright * scale, msGlobals.bright * scale, msGlobals.GLOBAL_GS);
-      }
-    }
-    else
-    {  
-      msSystem.msLEDs.setPixels(idx, msGlobals.bright * scale, 0, 0.5 * msGlobals.bright * scale, msGlobals.GLOBAL_GS);
-    }
-  }
-  msSystem.msLEDs.updatePixels();
+   msSystem.msLEDs.fillPixels(b, b, b, 0xff);
+   msSystem.msLEDs.updatePixels();
+   delay(d);
+ }
 }
 
 
@@ -229,12 +184,15 @@ void loop()
   delayYield();
 
   // do some tests
-#ifdef CONFIG_ENABLE_ACCEL
-  // TestAccelerometer();
+  // #define CONFIG_ENABLE_TESTS
+#ifdef CONFIG_ENABLE_TESTS
+  // testAccelerometer();
+  testButtonForBOM_X();
 #endif
+
   // inside time-frame
   if (msGlobals.lastFrameMicros + msGlobals.speedMicros 
-                < msGlobals.currentMicros)
+    < msGlobals.currentMicros)
   {
     msGlobals.loopFrameTime = msGlobals.currentMicros - msGlobals.lastFrameMicros;
 
@@ -245,7 +203,7 @@ void loop()
     // pov msModeBouncingBall mode
     if (msGlobals.shifterMode == 0)
     {
-      simpleBouncingBall();
+      msModeBouncingBall.simpleBouncingBall();
 // // !J! 
 // // hack to test timing..
 //       static int c_loops; 
@@ -262,90 +220,90 @@ void loop()
 // // end-of-hack
     }
     else 
-    if (msGlobals.shifterMode == 1)
-    {
-      msSystem.msLEDs.loadBuffer(msGlobals.web_rgb_buffer);
-      msSystem.msLEDs.updatePixels();
-    }
-    else 
-    if (msGlobals.shifterMode == 2)
-    {
-      msModeShake.step();
-    }
-    else 
-    if (msGlobals.shifterMode == 3)
-    {
-      #define _MOD_LED(m,x) random(m,x)
-      int rRed = _MOD_LED(0,255);
-      int rGreen = _MOD_LED(0,255);
-      int rBlue = _MOD_LED(0,255);
-      int pause = random(1, 10000);
-
-      if (random(0,100) < 60) {
-        switch(random(0,3)) 
-        {
-          case 0 : rRed = 0; break;
-          case 1 : rGreen = 0; break;
-          case 2 : rBlue = 0; break;
-        }
-      }
-
-      for (byte idx = 0; idx < MAX_LEDS; idx++)
+      if (msGlobals.shifterMode == 1)
       {
-        for (byte idx2 = 0; idx2 < MAX_LEDS; idx2++) 
-        {
-          if (idx == idx2) 
-            msSystem.msLEDs.setPixels(idx2, rRed, rGreen, rBlue, 255);
-          else
-            msSystem.msLEDs.setPixels(idx2, 0,0,0,0);
-        }
-        delay(1);
-        delayMicroseconds(pause);
+        msSystem.msLEDs.loadBuffer(msGlobals.web_rgb_buffer);
         msSystem.msLEDs.updatePixels();
       }
-    }
-    if (msGlobals.shifterMode == 4)
-    {
-       long currentTime = msGlobals.time + (millis() - msGlobals.timePostedAt);
-       long ms = currentTime % 86400000;
-       //int millisss = ms % 1000;
-       ms /= 1000;
-       int seconds = ms % 60;
-       ms /= 60;
-       int minutes = ms % 60;
-       ms /= 60;
-       int hours = ms;
+      else 
+        if (msGlobals.shifterMode == 2)
+        {
+          msModeShake.step();
+        }
+        else 
+          if (msGlobals.shifterMode == 3)
+          {
+      #define _MOD_LED(m,x) random(m,x)
+            int rRed = _MOD_LED(0,255);
+            int rGreen = _MOD_LED(0,255);
+            int rBlue = _MOD_LED(0,255);
+            int pause = random(1, 10000);
 
-       int ledStart = 0;
-       int ledEnd = MAX_LEDS - 1;
+            if (random(0,100) < 60) {
+              switch(random(0,3)) 
+              {
+                case 0 : rRed = 0; break;
+                case 1 : rGreen = 0; break;
+                case 2 : rBlue = 0; break;
+              }
+            }
+
+            for (byte idx = 0; idx < MAX_LEDS; idx++)
+            {
+              for (byte idx2 = 0; idx2 < MAX_LEDS; idx2++) 
+              {
+                if (idx == idx2) 
+                  msSystem.msLEDs.setPixels(idx2, rRed, rGreen, rBlue, 255);
+                else
+                  msSystem.msLEDs.setPixels(idx2, 0,0,0,0);
+              }
+              delay(1);
+              delayMicroseconds(pause);
+              msSystem.msLEDs.updatePixels();
+            }
+          }
+          if (msGlobals.shifterMode == 4)
+          {
+           long currentTime = msGlobals.time + (millis() - msGlobals.timePostedAt);
+           long ms = currentTime % 86400000;
+       //int millisss = ms % 1000;
+           ms /= 1000;
+           int seconds = ms % 60;
+           ms /= 60;
+           int minutes = ms % 60;
+           ms /= 60;
+           int hours = ms;
+
+           int ledStart = 0;
+           int ledEnd = MAX_LEDS - 1;
 
 #if(HW_ID==HW_ID_RING)
-       ledStart = 33;
-       ledEnd = MAX_LEDS - 33;
+           ledStart = 33;
+           ledEnd = MAX_LEDS - 33;
 #endif
-       int ledLen = ledEnd - ledStart;
+           int ledLen = ledEnd - ledStart;
 
-       msSystem.msLEDs.fillPixels(0,0,0,0);
-       int c = 255;
-       int b = 255;
-       msSystem.msLEDs.setPixels(ledStart + ledLen * hours / 24., c, 0, 0, b);
-       msSystem.msLEDs.setPixels(ledStart + ledLen * minutes / 60., 0, c, 0, b);
-       msSystem.msLEDs.setPixels(ledStart + ledLen * seconds / 60., 0, 0, c, b);
+           msSystem.msLEDs.fillPixels(0,0,0,0);
+           int c = 255;
+           int b = 255;
+           msSystem.msLEDs.setPixels(ledStart + ledLen * hours / 24., c, 0, 0, b);
+           msSystem.msLEDs.setPixels(ledStart + ledLen * minutes / 60., 0, c, 0, b);
+           msSystem.msLEDs.setPixels(ledStart + ledLen * seconds / 60., 0, 0, c, b);
 
-       msSystem.msLEDs.updatePixels();
+           msSystem.msLEDs.updatePixels();
 
-      Serial.println(currentTime);
-       Serial.println(seconds);
-       delay(100);
-    }
+           Serial.println(currentTime);
+           Serial.println(seconds);
+           delay(100);
+         }
 
   // outside time-frame
 #ifdef CONFIG_ENABLE_ACCEL
-    msSystem.msAccel.readAccelData(msGlobals.accelCount);
-    delayYield();
+         msSystem.msAccel.readAccelData(msGlobals.accelCount);
+         delayYield();
 
-    for (int i = 0 ; i < 3 ; i++)
-    {
+         for (int i = 0 ; i < 3 ; i++)
+         {
       msGlobals.accelG[i] = (float) msGlobals.accelCount[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set
     }
 #endif
