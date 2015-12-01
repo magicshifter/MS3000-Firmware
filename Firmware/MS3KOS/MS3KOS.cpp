@@ -37,9 +37,10 @@
 // note: beyond this point, please consider the above globals.
 
 #include "msSystem.h"
- MagicShifterSystem msSystem;
+MagicShifterSystem msSystem;
 // note: WebServer and msSystem are in love
 #include "WebServer/WebServer.h" 
+MagicShifterWebServer msWebServer;
 
 // MIDI can be configured on or off 
 #ifdef CONFIG_ENABLE_MIDI
@@ -71,7 +72,7 @@ void setup()
   msSystem.do_debug_swipe();
 
   // get the web interface started
-  StartWebServer();
+  msWebServer.StartWebServer();
 
   // todo: move to module.
   msPOVShakeSyncMode.setFrames(32);
@@ -226,21 +227,18 @@ void loop()
 
   msGlobals.lastMicros = msGlobals.currentMicros;
   msGlobals.currentMicros = micros();
-  msGlobals.loops++;
-
-  // testButtonForBOM_X()
 
   msSystem.loop();
+  
   delayYield();
 
-  HandleWebServer();
+  msWebServer.HandleWebServer();
   delayYield();
 
   // do some tests
 #ifdef CONFIG_ENABLE_ACCEL
   // TestAccelerometer();
 #endif
-
   // inside time-frame
   if (msGlobals.lastFrameMicros + msGlobals.speedMicros 
                 < msGlobals.currentMicros)

@@ -21,7 +21,6 @@
 #include "Hardware/Accelerometer.h"
 #include "Hardware/System.h"
 
-
 // TODO: all init and all sensors and leds in here :)
 // (accelerometer wuld also be a class but the MAgicShifter object has one ;)
 class MagicShifterSystem
@@ -29,6 +28,7 @@ class MagicShifterSystem
 private:
 
 public:
+
   int bFrame = 0;
 
   bool accelerometerWorking = false;

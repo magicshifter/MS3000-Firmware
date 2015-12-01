@@ -2,25 +2,31 @@
 // Web services 
 //
 
+
 #include "WebServerAPI.h"
 #include "WebServerAutoConnect.h"
 #include "WebServerRoutes.h"
 
-#ifdef CONFIG_USE_DEBUG_AP
-const char *jsonLastAP =
-//"{\"ssid\":\"PACIFIC\", \"pwd\":\"AllesR0ger\"}";
-//"{\"ssid\":\"wizard23\", \"pwd\":\"lolinternets\"}";
-"{\"ssid\":\"wizme\", \"pwd\":\"lolinternets\"}";
+class MagicShifterWebServer {
 
-const char *jsonAPList = "{\"list\": [\
-{\"ssid\":\"metalab\", \"pwd\":\"\"},\
-{\"ssid\":\"wizard23\", \"pwd\":\"lolinternets\"},\
-{\"ssid\":\"wizme\", \"pwd\":\"lolinternets\"}\
-]}";
-const char *jsonSoftAP = "{\"ssid\":\"MagicShifter3000\", \"pwd\":\"\"}";
+private:
+// TODO: sensible syslog config
+#ifdef CONFIG_USE_DEBUG_AP
+  const char *jsonLastAP =
+  //"{\"ssid\":\"PACIFIC\", \"pwd\":\"AllesR0ger\"}";
+  //"{\"ssid\":\"wizard23\", \"pwd\":\"lolinternets\"}";
+  "{\"ssid\":\"wizme\", \"pwd\":\"lolinternets\"}";
+
+  const char *jsonAPList = "{\"list\": [\
+  {\"ssid\":\"metalab\", \"pwd\":\"\"},\
+  {\"ssid\":\"wizard23\", \"pwd\":\"lolinternets\"},\
+  {\"ssid\":\"wizme\", \"pwd\":\"lolinternets\"}\
+  ]}";
+  const char *jsonSoftAP = "{\"ssid\":\"MagicShifter3000\", \"pwd\":\"\"}";
 #endif
 
-String getContentType(String filename){
+
+static String getContentType(String filename){
   if (msSystem.msServer.hasArg("download")) return "application/octet-stream";
   else if(filename.endsWith(".htm")) return "text/html";
   else if(filename.endsWith(".html")) return "text/html";
@@ -37,7 +43,7 @@ String getContentType(String filename){
   return "text/plain";
 }
 
-bool streamFile(String path){
+static bool streamFile(String path){
   
   if (path.endsWith("/")) {
     path += "index.htm";
@@ -61,12 +67,15 @@ bool streamFile(String path){
   return false;
 }
 
-void HandleServeStaticFile(String path)
+static void HandleServeStaticFile(String path)
 {
   if (!streamFile(path)) {
     msSystem.msServer.send(404, "text/plain", "FileNotFound");
   }
 }
+
+
+public:
 
 void StartWebServer(void)
 {
@@ -162,3 +171,5 @@ void HandleWebServer ( void ) {
 #endif
   msSystem.msServer.handleClient();
 }
+
+};

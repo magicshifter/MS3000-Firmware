@@ -11,13 +11,13 @@ public:
   int shifterMode = 4;
   int accelCount[3];  // Stores the 12-bit signed value
   int oldButton1State = 0;
-  int currentMicros = 0, lastMicros = 0;
+  int currentMicros = 0;
+  int lastMicros = 0;
   int speedMicros = 1000;
   long lastFrameMicros = 0;
   int currentFrame = 0;
   byte bright = 0xFF;
   byte gs = 0x1;
-  int loops = 0;
   long bootTime = 0;
   bool apMode = false;
   // make it larger to be on the safe side when base64 decoding

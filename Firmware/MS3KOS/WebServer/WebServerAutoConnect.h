@@ -1,8 +1,5 @@
-#include "msConfig.h"
-
-#include "msGlobals.h"
-
-
+#ifndef _WEBSERVERAUTOCONNECT_H
+#define _WEBSERVERAUTOCONNECT_H
 
 bool TryConnect(struct APInfo &apInfo, int timeoutMs)
 {
@@ -156,3 +153,5 @@ bool AutoConnect()
   msSystem.logln("ERROR: AutoConnect failed!");
   return false;
 }
+
+#endif
