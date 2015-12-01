@@ -69,7 +69,7 @@ SPIFFS_TOOL=${ESP8266COM_TOOLS_DIR}/mkspiffs/mkspiffs
 MS3KOS_BASE_DIR ?= /home/ibisum/Documents/MagicShifter3000/Firmware/MS3KOS
 MS_DEVICE_PORT ?= /dev/ttyUSB0
 # HW_ID ?= HW_ID_MS3000_MMA8452Q
-HW_ID ?= HW_ID_SABRE
+HW_ID ?= HW_ID_RING
 MS3KOS_BUILD_DIR = /home/ibisum/Documents/builds/MagicShifter3000/MS3KOS_BUILD
 endif
 
@@ -318,7 +318,7 @@ endif
 
 # Burn the SPIFFS filesystem into the device - note the use of bc for calculating proper offset
 ${MS3KOS_SPIFFS_BIN_FILE}:	${MS3KOS_SPIFFS_FILE_LIST}
-	echo "\nMS3KOS: Build SPIFFS file ${MS3KOS_SPIFFS_FILE}"
+	@echo "\nMS3KOS: Build SPIFFS file ${MS3KOS_SPIFFS_FILE}"
 ifeq (${SHOULD_COMPILE},true)
 	(mkdir -p ${MS3KOS_SPIFFS_ROOT_DIR} && \
 		(for spiffsMember in ${MS3KOS_SPIFFS_FILE_LIST}; do cp -rfv $$spiffsMember ${MS3KOS_SPIFFS_ROOT_DIR} ; done) && \
@@ -367,4 +367,9 @@ spiffs:		${MS3KOS_BUILD_DIR} ${MS3KOS_SPIFFS_BIN_FILE}
 clean:
 	rm -rf ${MS3KOS_BUILD_DIR} ${MS3KOS_ELF_FILE} ${MS3KOS_BIN_FILE} ${MS3KOS_SPIFFS_ROOT_DIR}
 
-
+locals:
+#${info USER@HOSTNAME = ${USER}@${HOSTNAME} }
+${info ESP8266COM_BASEDIR = ${ESP8266COM_BASEDIR} }
+${info MS3KOS_BUILD_DIR = ${MS3KOS_BUILD_DIR} }
+${info MS3KOS_BASE_DIR = ${MS3KOS_BASE_DIR} }
+#${info MS3KOS_BUILD_DIR_TREE_LIST = ${MS3KOS_BUILD_DIR_TREE_LIST} }

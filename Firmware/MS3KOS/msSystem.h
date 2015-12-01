@@ -68,15 +68,6 @@ public:
   // wrap a logging class ..
   void log(String msg)
   {
-// #undef DEBUG_SYSLOG
-// #ifdef DEBUG_SYSLOG
-    WiFiUDP udp;
-    // udp.beginPacket("192.168.43.151", __SYSLOG_PORT);
-    // when we connect to MS3000 to test, we usually get .2 ..
-    udp.beginPacket("192.168.4.2", 514); // wks port for syslog
-    udp.print(msg);
-    udp.endPacket();
-// #else
     Serial.print(String(msg));
     // #define DEBUGV(...) ets_printf(__VA_ARGS__)
 
