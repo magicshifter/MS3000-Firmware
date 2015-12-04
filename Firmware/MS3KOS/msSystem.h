@@ -11,6 +11,13 @@
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 
+extern "C" {
+#include "osapi.h"
+#include "ets_sys.h"
+#include "mem.h"
+#include "user_interface.h"
+}
+
 #include <Base64.h>
 #include <EEPROM.h>
 #include <SPI.h>
@@ -80,6 +87,8 @@ public:
   {
     Serial.print(String(msg));
     // #define DEBUGV(...) ets_printf(__VA_ARGS__)
+
+    ets_printf("This was: %s\n", "ets_printf");
 
 //#endif
   };
