@@ -230,7 +230,6 @@ Serial.print("\n------\n");
 
     logSysInfo();
 
-/*
     // wake up filesystem
     if (SPIFFS.begin()) 
     {
@@ -240,6 +239,8 @@ Serial.print("\n------\n");
     {
       logln("SPIFFS not begin .. :|");
     }
+
+/*
       TEST_SPIFFS_bug();
 */
 
