@@ -88,6 +88,7 @@ public:
     Serial.print(String(msg));
     // #define DEBUGV(...) ets_printf(__VA_ARGS__)
 
+Serial.print("\n------\n");
     ets_printf("This was: %s\n", "ets_printf");
 
 //#endif
