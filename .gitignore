@@ -42,3 +42,5 @@ trsh/*
 
 # platformio stuff:
 .pioenvs/*
+*.pioenvs*
+Firmware/platformIO/.pioenvs/*
