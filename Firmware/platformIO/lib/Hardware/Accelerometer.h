@@ -124,7 +124,7 @@ public:
       destination[i] = gCount; //Record this gCount into the 3 int array
     }
 
-    msGlobals.accelTime = micros() - _ti;
+    msGlobals.ggAccelTime = micros() - _ti;
   }
 
   // Initialize the MMA8452 registers

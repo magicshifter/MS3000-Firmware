@@ -2,7 +2,7 @@
 
 
 #if 0 
-//saveBuffer(msGlobals.web_rgb_buffer);
+//saveBuffer(msGlobals.ggRGBLEDBuf);
 // TEST CODE
 while (0)
 {
@@ -47,7 +47,7 @@ while (1)
   // swipe colors
     for (byte idx = 0; idx < MAX_LEDS; idx++)
     {
-      msSystem.msLEDs.setPixels(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, msGlobals.GLOBAL_GS);
+      msSystem.msLEDs.setPixels(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, msGlobals.ggGS);
       msSystem.msLEDs.updatePixels();
       delay(30);
     }
@@ -61,9 +61,9 @@ while (1)
   
 while (0)
 {
-  MSImage activeImage = MSImage(msGlobals.uploadFileName);
+  MSImage activeImage = MSImage(msGlobals.ggUploadFileName);
   msSystem.logln("loaded: ");
-  msSystem.logln(msGlobals.uploadFileName);
+  msSystem.logln(msGlobals.ggUploadFileName);
 
   msSystem.logln("width: ");
   msSystem.logln(activeImage.getWidth());

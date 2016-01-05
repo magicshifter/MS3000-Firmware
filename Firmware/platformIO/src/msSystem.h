@@ -39,36 +39,36 @@ public:
   MagicShifterLEDs msLEDs;
   MagicShiftermsEEPROMsing  msEEPROMs;
 
-  int bFrame = 0;
+  int msFrame = 0;
 
-  bool accelerometerWorking = false;
+  bool msAccelOK = false;
 
 // TODO: private state
 // state for button timing
   int buttonAPressedTime = 0;
-  int buttonPowerPressedTime = 0;
-  int buttonBPressedTime = 0;
+  int msBtnPwrPressTime = 0;
+  int msBtnBPressTime = 0;
 
 // state for double click timing
-  int timeToLastClickedButtonA = 0;
-  int timeToLastClickedButtonPower = 0;
-  int timeToLastClickedButtonB = 0;
+  int msBtnATTL = 0;
+  int msBtnPwrTTL = 0;
+  int msBtnBTTL = 0;
 
-  bool m_enableLongClicks = true;
+  bool msLongClickOK = true;
 
 // todo public properties? Logic for consuming buttons?
 // events for consumers true/false;
-  bool clickedButtonA = false;
-  bool clickedButtonPower = false;
-  bool clickedButtonB = false;
+  bool msBtnAHit = false;
+  bool msBtnPwrHit = false;
+  bool msBtnBHit = false;
 
-  bool longClickedButtonA = false;
-  bool longClickedButtonPower = false;
-  bool longClickedButtonB = false;
+  bool msBtnALongHit = false;
+  bool msBtnPwrLongHit = false;
+  bool msBtnBLongHit = false;
   
-  bool doubleClickedButtonA = false;
-  bool doubleClickedButtonPower = false;
-  bool doubleClickedButtonB = false;
+  bool msBtnADoubleHit = false;
+  bool msBtnPwrDoubleHit = false;
+  bool msBtnBDoubleHit = false;
 
   MDNSResponder msDNS;
   ESP8266WebServer msESPServer;
@@ -235,7 +235,7 @@ public:
 #ifdef CONFIG_ENABLE_ACCEL
     // accelerometer 
     msAccel.initAccelerometer();
-    accelerometerWorking = msAccel.resetAccelerometer(); //Test and intialize the MMA8452
+    msAccelOK = msAccel.resetAccelerometer(); //Test and intialize the MMA8452
 #endif
 
     // led controllers and buffer
@@ -271,124 +271,124 @@ public:
   pinMode(PIN_BUTTON_B, INPUT);
 
     // reset public button state
-    clickedButtonA = longClickedButtonA = false;
+    msBtnAHit = msBtnALongHit = false;
     if (!digitalRead(PIN_BUTTON_A))
     {
       Serial.println("A PRESSED");
 
       if (buttonAPressedTime)
-        buttonAPressedTime += msGlobals.lastMicros;
+        buttonAPressedTime += msGlobals.ggLastMicros;
       else
         buttonAPressedTime = 1;
     }
     else
     {
-      if (m_enableLongClicks && buttonAPressedTime >= MIN_TIME_LONG_CLICK)
+      if (msLongClickOK && buttonAPressedTime >= MIN_TIME_LONG_CLICK)
       {
-        longClickedButtonA = true;
-        Serial.println("longClickedButtonA");
+        msBtnALongHit = true;
+        Serial.println("msBtnALongHit");
       }
       else if (buttonAPressedTime >= MIN_TIME_CLICK)
       {
-        clickedButtonA = true;
-        Serial.println("clickedButtonA");
+        msBtnAHit = true;
+        Serial.println("msBtnAHit");
       }
 
       buttonAPressedTime = 0;
     }
 
     // reset public btton state
-    clickedButtonB = longClickedButtonB = false;
+    msBtnBHit = msBtnBLongHit = false;
     if (!digitalRead(PIN_BUTTON_B))
     {
       Serial.println("B PRESSED");
 
-      if (buttonBPressedTime)
-        buttonBPressedTime += msGlobals.lastMicros;
+      if (msBtnBPressTime)
+        msBtnBPressTime += msGlobals.ggLastMicros;
       else
-        buttonBPressedTime = 1;
+        msBtnBPressTime = 1;
     }
     else
     {
-      if (m_enableLongClicks && buttonBPressedTime >= MIN_TIME_LONG_CLICK)
+      if (msLongClickOK && msBtnBPressTime >= MIN_TIME_LONG_CLICK)
       {
-        longClickedButtonB = true;
-        Serial.println("longClickedButtonB");
+        msBtnBLongHit = true;
+        Serial.println("msBtnBLongHit");
 
       }
-      else if (buttonBPressedTime >= MIN_TIME_CLICK)
+      else if (msBtnBPressTime >= MIN_TIME_CLICK)
       {
-        clickedButtonB = true;
-        Serial.println("clickedButtonB");
+        msBtnBHit = true;
+        Serial.println("msBtnBHit");
       }
 
-      buttonBPressedTime = 0;
+      msBtnBPressTime = 0;
     }
 
 
     // reset public btton state
-    clickedButtonPower = longClickedButtonPower = false;
+    msBtnPwrHit = msBtnPwrLongHit = false;
 
-    //if (bFrame++ % 10 == 0)
+    //if (msFrame++ % 10 == 0)
     if (powerButtonPressed())
     {
       Serial.println("POWER PRESSED");
 
-      if (buttonPowerPressedTime)
-        buttonPowerPressedTime += msGlobals.lastMicros;
+      if (msBtnPwrPressTime)
+        msBtnPwrPressTime += msGlobals.ggLastMicros;
       else
-        buttonPowerPressedTime = 1;
+        msBtnPwrPressTime = 1;
     }
     else
     {
-      if (buttonPowerPressedTime >= MIN_TIME_LONG_CLICK)
+      if (msBtnPwrPressTime >= MIN_TIME_LONG_CLICK)
       {
-        longClickedButtonPower = true;
+        msBtnPwrLongHit = true;
       }
-      else if (buttonPowerPressedTime >= MIN_TIME_CLICK)
+      else if (msBtnPwrPressTime >= MIN_TIME_CLICK)
       {
-        clickedButtonPower = true;
+        msBtnPwrHit = true;
       }
 
-      buttonPowerPressedTime = 0;
+      msBtnPwrPressTime = 0;
     }
     //*/
 
     // internal button usage
-    if (longClickedButtonA)
+    if (msBtnALongHit)
     {
       powerDown();
     }
 
-    if (clickedButtonB)
+    if (msBtnBHit)
     {
-      msGlobals.GLOBAL_GS+=2;
-      if (msGlobals.GLOBAL_GS > 31)
+      msGlobals.ggGS+=2;
+      if (msGlobals.ggGS > 31)
       {
-        msGlobals.GLOBAL_GS = 31;
+        msGlobals.ggGS = 31;
       }
 
       Serial.println("cB");
 
-      msGlobals.shifterMode = (msGlobals.shifterMode+1)%NUM_MS_MODES;
+      msGlobals.ggCurrentMode = (msGlobals.ggCurrentMode+1)%NUM_MS_MODES;
     }
-    if (longClickedButtonB)
+    if (msBtnBLongHit)
     {
-      msGlobals.GLOBAL_GS-=6;
-      if (msGlobals.GLOBAL_GS < 1)
+      msGlobals.ggGS-=6;
+      if (msGlobals.ggGS < 1)
       {
-        msGlobals.GLOBAL_GS = 1;
+        msGlobals.ggGS = 1;
       }
 
       Serial.println("looooooong clickedB");
 
-      msGlobals.shifterMode = (msGlobals.shifterMode+1)%NUM_MS_MODES;
+      msGlobals.ggCurrentMode = (msGlobals.ggCurrentMode+1)%NUM_MS_MODES;
     }
   }
 
   void enableLongClicks(bool enable)
   {
-    m_enableLongClicks = enable;
+    msLongClickOK = enable;
   }
 
   int getADValue(void)
@@ -423,7 +423,7 @@ public:
 
   IPAddress getIP()
   {
-    if (msGlobals.apMode)
+    if (msGlobals.ggModeAP)
     {
       return WiFi.softAPIP();
     }

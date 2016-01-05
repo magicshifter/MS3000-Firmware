@@ -346,11 +346,11 @@ void handleGETStatus(void)
   float voltage = ((float)(r1 + r2 + r3) * adValue) / (r1 * ad1V);
 
 
-  msSystem.msAccel.readAccelData(msGlobals.accelCount);
+  msSystem.msAccel.readAccelData(msGlobals.ggAccelCounts);
 
   for (int i = 0 ; i < 3 ; i++)
   {
-    msGlobals.accelG[i] = (float) msGlobals.accelCount[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set
+    msGlobals.ggAccel[i] = (float) msGlobals.ggAccelCounts[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set
   }
 
   uint32_t ip = (uint32_t)msSystem.getIP();
@@ -358,22 +358,22 @@ void handleGETStatus(void)
 
   String response = "{";
     response += "\"id\":" + String(ESP.getChipId()) + ",";
-    response += "\"uptime\":" + String(millis() - msGlobals.bootTime) + ",";
+    response += "\"uptime\":" + String(millis() - msGlobals.ggBootTime) + ",";
     response += "\"adValue\":" + String(adValue) + ",";
     response += "\"voltage\":" + String(voltage) + ",";
-    response += "\"accelTime\":" + String(msGlobals.accelTime) + ",";
-    response += "\"loopFrameTime\":" + String(msGlobals.loopFrameTime) + ",";
-    response += "\"lastFrameMicros\":" + String(msGlobals.lastFrameMicros) + ",";
-    response += "\"currentMicros\":" + String(msGlobals.currentMicros) + ",";
+    response += "\"ggAccelTime\":" + String(msGlobals.ggAccelTime) + ",";
+    response += "\"ggLFrameTime\":" + String(msGlobals.ggLFrameTime) + ",";
+    response += "\"ggLastFrameMicros\":" + String(msGlobals.ggLastFrameMicros) + ",";
+    response += "\"ggCurrentMicros\":" + String(msGlobals.ggCurrentMicros) + ",";
     response += "\"accelRaw\":[";
-      response += String(msGlobals.accelCount[0]) + ",";
-      response += String(msGlobals.accelCount[1]) + ",";
-      response += String(msGlobals.accelCount[2]);
+      response += String(msGlobals.ggAccelCounts[0]) + ",";
+      response += String(msGlobals.ggAccelCounts[1]) + ",";
+      response += String(msGlobals.ggAccelCounts[2]);
     response += "],";
-    response += "\"msGlobals.accelG\":[";
-      response += String(msGlobals.accelG[0]) + ",";
-      response += String(msGlobals.accelG[1]) + ",";
-      response += String(msGlobals.accelG[2]);
+    response += "\"msGlobals.ggAccel\":[";
+      response += String(msGlobals.ggAccel[0]) + ",";
+      response += String(msGlobals.ggAccel[1]) + ",";
+      response += String(msGlobals.ggAccel[2]);
     response += "],";
     response += "\"ip\":\"";
     response += String(0xFF & (ip>>0)) + ".";
@@ -639,7 +639,7 @@ void handleGETWLANList(void)
 {
   msSystem.logln("handleGETWLANList");
 
-  if (msGlobals.apMode)
+  if (msGlobals.ggModeAP)
   {
     msSystem.msESPServer.send(200, "text/plain", "crash in AP mode...so diusabled for now");
     return;
@@ -765,7 +765,7 @@ void handleSetMode(void)
       msSystem.logln("arg: ");
       msSystem.logln(msSystem.msESPServer.arg(i));
 
-      msGlobals.shifterMode = atoi(msSystem.msESPServer.arg(i).c_str());
+      msGlobals.ggCurrentMode = atoi(msSystem.msESPServer.arg(i).c_str());
     }
 
     if (success)
@@ -773,7 +773,7 @@ void handleSetMode(void)
       String response = "{";
       response += "\"mode\":";
       response += "\"";
-      response += msGlobals.shifterMode;
+      response += msGlobals.ggCurrentMode;
       response += "\"";
       response += "}";
       msSystem.msESPServer.send(200, "text/plain", response);
@@ -791,11 +791,11 @@ void handleSetMode(void)
 
 void respondREQTime()
 {
-  int currentTime = msGlobals.time + (millis() - msGlobals.timePostedAt);
+  int currentTime = msGlobals.ggTime + (millis() - msGlobals.ggTimePostedAt);
 
   String response = "{";
     response += "\"time\":" + String(currentTime) + ",";
-    response += "\"postedAt\":" + String(msGlobals.timePostedAt);
+    response += "\"postedAt\":" + String(msGlobals.ggTimePostedAt);
   response += "}";
 
   msSystem.msESPServer.send ( 200, "text/plain", response);
@@ -814,8 +814,8 @@ void handlePOSTTime()
 
   if (msSystem.msESPServer.argName(0) == "t")
   {
-    msGlobals.time = atoi(msSystem.msESPServer.arg(0).c_str());
-    msGlobals.timePostedAt = millis();
+    msGlobals.ggTime = atoi(msSystem.msESPServer.arg(0).c_str());
+    msGlobals.ggTimePostedAt = millis();
   }
 
   respondREQTime();
@@ -851,10 +851,10 @@ void handleLedSet()
       msSystem.logln("data+1: ");
       msSystem.logln(String((int)ledData[i+1]));
 
-      msGlobals.web_rgb_buffer[idx*4] = ledData[i+1];
-      msGlobals.web_rgb_buffer[idx*4+1] = ledData[i+2];
-      msGlobals.web_rgb_buffer[idx*4+2] = ledData[i+3];
-      msGlobals.web_rgb_buffer[idx*4+3] = ledData[i+4];
+      msGlobals.ggRGBLEDBuf[idx*4] = ledData[i+1];
+      msGlobals.ggRGBLEDBuf[idx*4+1] = ledData[i+2];
+      msGlobals.ggRGBLEDBuf[idx*4+2] = ledData[i+3];
+      msGlobals.ggRGBLEDBuf[idx*4+3] = ledData[i+4];
     }
   }
   else
@@ -876,7 +876,7 @@ void handleLedsSet()
     const char* input = msSystem.msESPServer.arg(0).c_str();
     int inputLen = BASE64_ENC_LEN(RGB_BUFFER_SIZE);
 
-    base64_decode((char *)msGlobals.web_rgb_buffer, input, inputLen);
+    base64_decode((char *)msGlobals.ggRGBLEDBuf, input, inputLen);
 
     message += "done";
   }

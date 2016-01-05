@@ -1,53 +1,53 @@
-  's/GLOBAL_GS/ggGS/g'
-  's/accelCount/ggAccelCounts/g'
-  's/accelG/ggAccel/g'
-  's/accelTime/ggAccelTime/g'
-  's/accelerometerWorking/msAccelOK/g'
-  's/apMode/ggModeAP/g'
-  's/bFrame/msFrame/g'
-  's/bootTime/ggbootTime/g'
-  's/buttonBPressedTime/msBtnBPressTime/g'
-  's/buttonPowerPressedTime/msBtnPwrPressTime/g'
-  's/clickedButtonA/msBtnAHit/g'
-  's/clickedButtonB/msBtnBHit/g'
-  's/clickedButtonPower/msBtnPwrHit/g'
-  's/currentFrame/ggCurrentFrame/g'
-  's/currentMicros/ggCurrentMicros/g'
-  's/doubleClickedButtonA/msBtnADoubleHit/g'
-  's/doubleClickedButtonB/msBtnBDoubleHit/g'
-  's/doubleClickedButtonPower/msBtnPwrDoubleHit/g'
-  's/ggbootTime/ggBootTime/g'
-  's/lastFrameMicros/ggLastFrameMicros/g'
-  's/lastMicros/ggLastMicros/g'
-  's/longClickedButtonA/msBtnALongHit/g'
-  's/longClickedButtonB/msBtnBLongHit/g'
-  's/longClickedButtonPower/msBtnPwrLongHit/g'
-  's/loopFrameTime/ggLFrameTime/g'
-  's/m_enableLongClicks/msLongClickOK/g'
-  's/msGlobals.GLOBAL_GS/msGlobals.ggGS/g'
-  's/msGlobals.bootTim/msGlobals.ggBootTime/g'
-  's/msGlobals.bootTime/msGlobals.ggBootTime/g'
-  's/msGlobals.bright/msGlobals.ggBright/g'
-  's/msGlobals.currentFrame/msGlobals.ggCurrentFrame/g'
-  's/msGlobals.currentMicros/msGlobals.ggCurrentMicros/g'
-  's/msGlobals.lastFrameMicros/msGlobals.ggLastFrameMicros/g'
-  's/msGlobals.lastMicros/msGlobals.ggLastMicros/g'
-  's/msGlobals.loopFrameTime/msGlobals.ggLFrameTime/g'
-  's/msGlobals.speedMicros/msGlobals.ggSpeedMicros/g'
-  's/msGlobals.time/msGlobals.ggTime/g'
-  's/msGlobals.uploadFileName/msGlobals.ggUploadFileName/g'
-  's/msGlobals.uploadFile/msGlobals.ggUploadFile/g'
-  's/msServer/msWebServer/g'
-  's/msSystem.msWebServer/msSystem.msESPWebServer/g'
-  's/oldButton1State/ggBtn1State/g'
-  's/setActiveFile/ggAFileSet/g'
-  's/shifterMode/ggCurrentMode/g'
-  's/speedMicros/ggSpeedMicros/g'
-  's/timePostedAt/ggPostTime/g'
-  's/timeToLastClickedButtonA/msBtnATTL/g'
-  's/timeToLastClickedButtonB/msBtnBTTL/g'
-  's/timeToLastClickedButtonPower/msBtnPwrTTL/g'
-  's/uploadFileName/ggUploadFileName/g'
-  's/uploadFile/ggUploadFile/g'
-  's/web_rgb_buffer/ggRGBLEDBuf/g'
-  's/msSystem.msWebServer/msSystem.msESPWebServer/g'
+s/GLOBAL_GS/ggGS/g
+s/accelCount/ggAccelCounts/g
+s/accelG/ggAccel/g
+s/accelTime/ggAccelTime/g
+s/accelerometerWorking/msAccelOK/g
+s/apMode/ggModeAP/g
+s/bFrame/msFrame/g
+s/bootTime/ggbootTime/g
+s/buttonBPressedTime/msBtnBPressTime/g
+s/buttonPowerPressedTime/msBtnPwrPressTime/g
+s/clickedButtonA/msBtnAHit/g
+s/clickedButtonB/msBtnBHit/g
+s/clickedButtonPower/msBtnPwrHit/g
+s/currentFrame/ggCurrentFrame/g
+s/currentMicros/ggCurrentMicros/g
+s/doubleClickedButtonA/msBtnADoubleHit/g
+s/doubleClickedButtonB/msBtnBDoubleHit/g
+s/doubleClickedButtonPower/msBtnPwrDoubleHit/g
+s/ggbootTime/ggBootTime/g
+s/lastFrameMicros/ggLastFrameMicros/g
+s/lastMicros/ggLastMicros/g
+s/longClickedButtonA/msBtnALongHit/g
+s/longClickedButtonB/msBtnBLongHit/g
+s/longClickedButtonPower/msBtnPwrLongHit/g
+s/loopFrameTime/ggLFrameTime/g
+s/m_enableLongClicks/msLongClickOK/g
+s/msGlobals.GLOBAL_GS/msGlobals.ggGS/g
+s/msGlobals.bootTim/msGlobals.ggBootTime/g
+s/msGlobals.bootTime/msGlobals.ggBootTime/g
+s/msGlobals.bright/msGlobals.ggBright/g
+s/msGlobals.currentFrame/msGlobals.ggCurrentFrame/g
+s/msGlobals.currentMicros/msGlobals.ggCurrentMicros/g
+s/msGlobals.lastFrameMicros/msGlobals.ggLastFrameMicros/g
+s/msGlobals.lastMicros/msGlobals.ggLastMicros/g
+s/msGlobals.loopFrameTime/msGlobals.ggLFrameTime/g
+s/msGlobals.speedMicros/msGlobals.ggSpeedMicros/g
+s/msGlobals.time/msGlobals.ggTime/g
+s/msGlobals.uploadFileName/msGlobals.ggUploadFileName/g
+s/msGlobals.uploadFile/msGlobals.ggUploadFile/g
+s/msServer/msWebServer/g
+s/msSystem.msWebServer/msSystem.msESPWebServer/g
+s/oldButton1State/ggBtn1State/g
+s/setActiveFile/ggAFileSet/g
+s/shifterMode/ggCurrentMode/g
+s/speedMicros/ggSpeedMicros/g
+s/timePostedAt/ggPostTime/g
+s/timeToLastClickedButtonA/msBtnATTL/g
+s/timeToLastClickedButtonB/msBtnBTTL/g
+s/timeToLastClickedButtonPower/msBtnPwrTTL/g
+s/uploadFileName/ggUploadFileName/g
+s/uploadFile/ggUploadFile/g
+s/web_rgb_buffer/ggRGBLEDBuf/g
+s/msSystem.msWebServer/msSystem.msESPWebServer/g

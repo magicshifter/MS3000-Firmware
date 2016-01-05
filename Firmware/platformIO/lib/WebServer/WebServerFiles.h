@@ -27,7 +27,7 @@ void handleNotFound() {
         <title><a href=\"/\">MagicShifter3000</a> upload done</title>\
       </head>\
       <body>\
-        <h1>Upload of " + String(msGlobals.uploadFileName) + " done</h1><a href=\"/list?dir=\">list</a><br><a href=\"\">index.html</a></body></html>";
+        <h1>Upload of " + String(msGlobals.ggUploadFileName) + " done</h1><a href=\"/list?dir=\">list</a><br><a href=\"\">index.html</a></body></html>";
 
     msSystem.msESPServer.send ( 200, "text/html", message );
 
@@ -49,17 +49,17 @@ void handleReadFile()
   {
     String args = msSystem.msESPServer.arg(0);
 
-    strcpy(msGlobals.uploadFileName, args.c_str());
-    msSystem.msEEPROMs.saveString(msGlobals.uploadFileName, MAX_FILENAME_LENGTH);
+    strcpy(msGlobals.ggUploadFileName, args.c_str());
+    msSystem.msEEPROMs.saveString(msGlobals.ggUploadFileName, MAX_FILENAME_LENGTH);
 
 
     message += "file name: \"" + args /* String(filename)*/ + "\"\n";
 
-    //message += "file name strcpied: \"" +  msGlobals.uploadFileName + "\"\n";
+    //message += "file name strcpied: \"" +  msGlobals.ggUploadFileName + "\"\n";
 
 
     byte buffer[105];
-    File file = SPIFFS.open(msGlobals.uploadFileName, "r");
+    File file = SPIFFS.open(msGlobals.ggUploadFileName, "r");
 
     if (file)
     {
@@ -218,29 +218,29 @@ void handleFileUpload(){
 
   if (upload.status == UPLOAD_FILE_START)
   {
-    strncpy(msGlobals.uploadFileName, (char *)upload.filename.c_str(), MAX_FILENAME_LENGTH);//.c_str();
+    strncpy(msGlobals.ggUploadFileName, (char *)upload.filename.c_str(), MAX_FILENAME_LENGTH);//.c_str();
     msSystem.logln("upload started: ");
-    msSystem.logln(msGlobals.uploadFileName);
+    msSystem.logln(msGlobals.ggUploadFileName);
 
     msSystem.log("upload open.. ");
 
-    if (SPIFFS.exists(msGlobals.uploadFileName)) {
+    if (SPIFFS.exists(msGlobals.ggUploadFileName)) {
       msSystem.logln("Removing previous copy..");
-      SPIFFS.remove(msGlobals.uploadFileName);
+      SPIFFS.remove(msGlobals.ggUploadFileName);
     }
 
-    msGlobals.uploadFile = SPIFFS.open(msGlobals.uploadFileName, "w");
-    msSystem.log("uploadFile opened:");
-    // msSystem.logln(msGlobals.uploadFile);
+    msGlobals.ggUploadFile = SPIFFS.open(msGlobals.ggUploadFileName, "w");
+    msSystem.log("ggUploadFile opened:");
+    // msSystem.logln(msGlobals.ggUploadFile);
 
-    if (!msGlobals.uploadFile) {
+    if (!msGlobals.ggUploadFile) {
       msSystem.logln("ERROR: COULD NOT open file!!!");
     }
     else
       msSystem.logln("Opened file for writing...");
 
     //if (SD.exists((char *)upload.filename.c_str())) SD.remove((char *)upload.filename.c_str());
-    //msGlobals.uploadFile = SD.open(upload.filename.c_str(), FILE_WRITE);
+    //msGlobals.ggUploadFile = SD.open(upload.filename.c_str(), FILE_WRITE);
     //DBG_OUTPUT_PORT.print("Upload: START, filename: "); DBG_OUTPUT_PORT.println(upload.filename);
 
   }
@@ -248,9 +248,9 @@ void handleFileUpload(){
   {
 
     bool result;
-    if (msGlobals.uploadFile)
+    if (msGlobals.ggUploadFile)
     {
-      result = msGlobals.uploadFile.write(upload.buf, upload.currentSize);
+      result = msGlobals.ggUploadFile.write(upload.buf, upload.currentSize);
       if (!result) 
       {
         msSystem.logln("ERROR: could not write!");
@@ -261,15 +261,15 @@ void handleFileUpload(){
   }
   else if (upload.status == UPLOAD_FILE_END)
   {
-    msGlobals.setActiveFile = 1;
+    msGlobals.ggAFileSet = 1;
 
-    msSystem.msEEPROMs.saveString(msGlobals.uploadFileName, MAX_FILENAME_LENGTH);
+    msSystem.msEEPROMs.saveString(msGlobals.ggUploadFileName, MAX_FILENAME_LENGTH);
     
-    if (msGlobals.uploadFile)
+    if (msGlobals.ggUploadFile)
     {
       //bool result;
       //result =
-      msGlobals.uploadFile.close();
+      msGlobals.ggUploadFile.close();
       //if (!result) msSystem.logln("ERROR: could not close!");
     }
 
