@@ -16,24 +16,24 @@ CSS_DIST_DIR=${DIST_DIR}css/
 all: webpack-dev
 
 dev:
-	node server.js
+	@node server.js
 
 # installs node modules 
 install:
-	npm install
+	@npm install
 
 # installs inotify on linux
 install-inotify:
-	sudo apt-get install inotify-tools
+	@sudo apt-get install inotify-tools
 
 build: clean
-	node_modules/.bin/cross-env NODE_ENV=production \
-	node_modules/.bin/webpack --config webpack.config.prod.js;
+	@node_modules/.bin/cross-env NODE_ENV=production \
+		node_modules/.bin/webpack --config webpack.config.prod.js;
 	@echo "javascript built";
 
 # run google closure library through npm
 closure-compile:
-	java \
+	@java \
 		-jar node_modules/google-closure-compiler/compiler.jar \
 		--language_in ECMASCRIPT5 \
 		--compilation_level ADVANCED_OPTIMIZATIONS \
