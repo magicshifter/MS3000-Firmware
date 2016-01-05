@@ -27,7 +27,7 @@ private:
 
 
 static String getContentType(String filename){
-  if (msSystem.msServer.hasArg("download")) return "application/octet-stream";
+  if (msSystem.msESPWebServer.hasArg("download")) return "application/octet-stream";
   else if(filename.endsWith(".htm")) return "text/html";
   else if(filename.endsWith(".html")) return "text/html";
   else if(filename.endsWith(".css")) return "text/css";
@@ -54,7 +54,7 @@ static bool streamFile(String path){
       path += ".gz";
     }
     File file = SPIFFS.open((char *)path.c_str(), "r");
-    msSystem.msServer.streamFile(file, contentType);
+    msSystem.msESPWebServer.streamFile(file, contentType);
     file.close();
     return true;
   }
@@ -70,7 +70,7 @@ static bool streamFile(String path){
 static void HandleServeStaticFile(String path)
 {
   if (!streamFile(path)) {
-    msSystem.msServer.send(404, "text/plain", "FileNotFound");
+    msSystem.msESPWebServer.send(404, "text/plain", "FileNotFound");
   }
 }
 
@@ -90,77 +90,77 @@ void StartWebServer(void)
     msSystem.logln( "MDNS responder started" );
   }
 #endif
-  msSystem.msServer.on("/restart", []() {
-    msSystem.msServer.send(200, "text/plain", "going down for restarts now!");
+  msSystem.msESPWebServer.on("/restart", []() {
+    msSystem.msESPWebServer.send(200, "text/plain", "going down for restarts now!");
     delay(1000);
     msSystem.restart();
   } );
-  msSystem.msServer.on("/kill", []() {
-    msSystem.msServer.send(200, "text/plain", "powering down now!");
+  msSystem.msESPWebServer.on("/kill", []() {
+    msSystem.msESPWebServer.send(200, "text/plain", "powering down now!");
     delay(1000);
     msSystem.powerDown();
   } );
 
-  msSystem.msServer.on("/info", HTTP_GET, handleGETInfo);
+  msSystem.msESPWebServer.on("/info", HTTP_GET, handleGETInfo);
 
-  msSystem.msServer.on("/info/about", HTTP_GET, handleGETAbout);
-  msSystem.msServer.on("/info/status", HTTP_GET, handleGETStatus);
+  msSystem.msESPWebServer.on("/info/about", HTTP_GET, handleGETAbout);
+  msSystem.msESPWebServer.on("/info/status", HTTP_GET, handleGETStatus);
 
-  msSystem.msServer.on("/settings", HTTP_GET, handleGetSettings);
+  msSystem.msESPWebServer.on("/settings", HTTP_GET, handleGetSettings);
 
-  msSystem.msServer.on("/settings/ap", HTTP_GET, handleGETAPSettings);
-  msSystem.msServer.on("/settings/ap/set", handlePOSTAPSettings);
+  msSystem.msESPWebServer.on("/settings/ap", HTTP_GET, handleGETAPSettings);
+  msSystem.msESPWebServer.on("/settings/ap/set", handlePOSTAPSettings);
 
-  msSystem.msServer.on("/settings/server", HTTP_GET, handleGETServerSettings);
-  msSystem.msServer.on("/settings/server/set", handlePOSTServerSettings);
+  msSystem.msESPWebServer.on("/settings/server", HTTP_GET, handleGETServerSettings);
+  msSystem.msESPWebServer.on("/settings/server/set", handlePOSTServerSettings);
 
-  msSystem.msServer.on("/settings/wifi/preferred", HTTP_GET, handleGETPreferredAPSettings);
-  msSystem.msServer.on("/settings/wifi/preferred/set", handlePOSTPreferredAPSettings);
+  msSystem.msESPWebServer.on("/settings/wifi/preferred", HTTP_GET, handleGETPreferredAPSettings);
+  msSystem.msESPWebServer.on("/settings/wifi/preferred/set", handlePOSTPreferredAPSettings);
 
-  msSystem.msServer.on("/settings/wifi/list", HTTP_GET, handleGETAPList);
-  msSystem.msServer.on("/settings/wifi/add", handlePOSTAPListAdd);
-  msSystem.msServer.on("/settings/wifi/delete", handlePOSTAPListDelete);
+  msSystem.msESPWebServer.on("/settings/wifi/list", HTTP_GET, handleGETAPList);
+  msSystem.msESPWebServer.on("/settings/wifi/add", handlePOSTAPListAdd);
+  msSystem.msESPWebServer.on("/settings/wifi/delete", handlePOSTAPListDelete);
 
-  msSystem.msServer.on("/list", HTTP_GET, handleFileList);
-  msSystem.msServer.on("/leds", handleLedsSet);
-  msSystem.msServer.on("/read", handleReadFile);
+  msSystem.msESPWebServer.on("/list", HTTP_GET, handleFileList);
+  msSystem.msESPWebServer.on("/leds", handleLedsSet);
+  msSystem.msESPWebServer.on("/read", handleReadFile);
 
-  msSystem.msServer.on("/led", handleLedSet);
+  msSystem.msESPWebServer.on("/led", handleLedSet);
 
-  msSystem.msServer.on("/mode", handleSetMode);
+  msSystem.msESPWebServer.on("/mode", handleSetMode);
 
-  msSystem.msServer.on("/time", HTTP_GET, handleGETTime);
-  msSystem.msServer.on("/time", HTTP_POST, handlePOSTTime);
+  msSystem.msESPWebServer.on("/time", HTTP_GET, handleGETTime);
+  msSystem.msESPWebServer.on("/time", HTTP_POST, handlePOSTTime);
 
-  msSystem.msServer.on("/listwlans", HTTP_GET, handleGETWLANList);
+  msSystem.msESPWebServer.on("/listwlans", HTTP_GET, handleGETWLANList);
 
-  msSystem.msServer.on("/download",  []() {
-    if (!msSystem.msServer.hasArg("file")) {
-      msSystem.msServer.send(500, "text/plain", "BAD ARGS, missing file=");
+  msSystem.msESPWebServer.on("/download",  []() {
+    if (!msSystem.msESPWebServer.hasArg("file")) {
+      msSystem.msESPWebServer.send(500, "text/plain", "BAD ARGS, missing file=");
       return;
     }
-    String path = msSystem.msServer.arg("file");
+    String path = msSystem.msESPWebServer.arg("file");
 
     HandleServeStaticFile(path);
   });
 
-  msSystem.msServer.on("/",  []() {
+  msSystem.msESPWebServer.on("/",  []() {
     HandleServeStaticFile("index.html");
   });
-  //msSystem.msServer.on("favicon.gif", HandleServeStaticFile("favicon.gif"));
-  //msSystem.msServer.on("manifest.appcache", HandleServeStaticFile("manifest.appcache"));
+  //msSystem.msESPWebServer.on("favicon.gif", HandleServeStaticFile("favicon.gif"));
+  //msSystem.msESPWebServer.on("manifest.appcache", HandleServeStaticFile("manifest.appcache"));
 
-  msSystem.msServer.onFileUpload(handleFileUpload);
+  msSystem.msESPWebServer.onFileUpload(handleFileUpload);
 
-  msSystem.msServer.on ( "/format", []() {
+  msSystem.msESPWebServer.on ( "/format", []() {
     String message = "formatin DISABLED cos of FS change, TODO: implement!!!11";
     //FS.format();
-    msSystem.msServer.send ( 200, "text/plain", "formated" );
+    msSystem.msESPWebServer.send ( 200, "text/plain", "formated" );
   } );
 
-  msSystem.msServer.onNotFound ( handleNotFound );
-  msSystem.msServer.begin();
-  msSystem.logln ( "HTTP msSystem.msServer started" );
+  msSystem.msESPWebServer.onNotFound ( handleNotFound );
+  msSystem.msESPWebServer.begin();
+  msSystem.logln ( "HTTP msSystem.msESPWebServer started" );
 }
 
 
@@ -169,7 +169,7 @@ void HandleWebServer ( void ) {
   // CRASHES in new toolchain 
   msSystem.msDNS.update();
 #endif
-  msSystem.msServer.handleClient();
+  msSystem.msESPWebServer.handleClient();
 }
 
 };

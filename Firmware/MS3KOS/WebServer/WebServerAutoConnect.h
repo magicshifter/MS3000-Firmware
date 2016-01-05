@@ -87,7 +87,7 @@ bool AutoConnect()
       msSystem.logln("stored preferred wifi found.");
       if (TryConnect(apInfo, CONNECTION_TIMEOUT))
       {
-        msGlobals.apMode = false;
+        msGlobals.ggModeAP = false;
         return true;
       }
     }
@@ -129,7 +129,7 @@ bool AutoConnect()
         {
           if (TryConnect(apInfo, CONNECTION_TIMEOUT))
           {
-            msGlobals.apMode = false;
+            msGlobals.ggModeAP = false;
             return true;
           }
         }
@@ -146,7 +146,7 @@ bool AutoConnect()
   Settings.getAPConfig(&apInfo);
   if (TrySoftAP(apInfo))
   {
-    msGlobals.apMode = true;
+    msGlobals.ggModeAP = true;
     return true;
   }
 

@@ -58,16 +58,16 @@
  void setup()
  {
   // record our bootup time
-  msGlobals.bootTime = millis();
+  msGlobals.ggBootTime = millis();
 
   // start the system
   msSystem.setup();
   // start Modes as necessary ..
-  msSystem.msEEPROMs.loadString(msGlobals.uploadFileName, MAX_FILENAME_LENGTH);
+  msSystem.msEEPROMs.loadString(msGlobals.ggUploadFileName, MAX_FILENAME_LENGTH);
   msSystem.logln("upload file:");
-  msSystem.logln(msGlobals.uploadFileName);
+  msSystem.logln(msGlobals.ggUploadFileName);
 
-  if (SPIFFS.exists(msGlobals.uploadFileName)) {
+  if (SPIFFS.exists(msGlobals.ggUploadFileName)) {
     msModeShake.start();
   }
 
@@ -128,31 +128,31 @@ void testSimpleButtons()
 
   if (adVal > 950 )
   {
-    msSystem.msLEDs.setPixels(7, 0, 10, 0, msGlobals.GLOBAL_GS);
-    msSystem.msLEDs.setPixels(8, 0, 10, 0, msGlobals.GLOBAL_GS);
+    msSystem.msLEDs.setPixels(7, 0, 10, 0, msGlobals.ggGS);
+    msSystem.msLEDs.setPixels(8, 0, 10, 0, msGlobals.ggGS);
   }
   else
   {
-    msSystem.msLEDs.setPixels(7, 10, 0, 0, msGlobals.GLOBAL_GS);
-    msSystem.msLEDs.setPixels(8, 10, 0, 0, msGlobals.GLOBAL_GS);
+    msSystem.msLEDs.setPixels(7, 10, 0, 0, msGlobals.ggGS);
+    msSystem.msLEDs.setPixels(8, 10, 0, 0, msGlobals.ggGS);
   }
 
   if (!digitalRead(PIN_BUTTON_A))
   {
-    msSystem.msLEDs.setPixels(9, 0, 10, 0, msGlobals.GLOBAL_GS);
+    msSystem.msLEDs.setPixels(9, 0, 10, 0, msGlobals.ggGS);
   }
   else
   {
-    msSystem.msLEDs.setPixels(9, 10, 0, 0, msGlobals.GLOBAL_GS);
+    msSystem.msLEDs.setPixels(9, 10, 0, 0, msGlobals.ggGS);
   }
 
   if (!digitalRead(PIN_BUTTON_B))
   {
-    msSystem.msLEDs.setPixels(6, 0, 10, 0, msGlobals.GLOBAL_GS);
+    msSystem.msLEDs.setPixels(6, 0, 10, 0, msGlobals.ggGS);
   }
   else
   {
-    msSystem.msLEDs.setPixels(6, 10, 0, 0, msGlobals.GLOBAL_GS);
+    msSystem.msLEDs.setPixels(6, 10, 0, 0, msGlobals.ggGS);
   }
   if (cnt % 300 == 550)
   {
@@ -181,8 +181,8 @@ void loop()
   if (1)
     testSimpleButtons();
 
-  msGlobals.lastMicros = msGlobals.currentMicros;
-  msGlobals.currentMicros = micros();
+  msGlobals.ggLastMicros = msGlobals.ggCurrentMicros;
+  msGlobals.ggCurrentMicros = micros();
 
   msSystem.loop();
   
@@ -196,17 +196,17 @@ void loop()
   testButtonForBOM_X();
 
   // inside time-frame
-  if (msGlobals.lastFrameMicros + msGlobals.speedMicros 
-    < msGlobals.currentMicros)
+  if (msGlobals.ggLastFrameMicros + msGlobals.ggSpeedMicros 
+    < msGlobals.ggCurrentMicros)
   {
-    msGlobals.loopFrameTime = msGlobals.currentMicros - msGlobals.lastFrameMicros;
+    msGlobals.ggLFrameTime = msGlobals.ggCurrentMicros - msGlobals.ggLastFrameMicros;
 
-    msGlobals.currentFrame++;
+    msGlobals.ggCurrentFrame++;
 
-    msGlobals.lastFrameMicros = msGlobals.currentMicros;
+    msGlobals.ggLastFrameMicros = msGlobals.ggCurrentMicros;
 
     // pov msModeBouncingBall mode
-    if (msGlobals.shifterMode == 0)
+    if (msGlobals.ggCurrentMode == 0)
     {
       msModeBouncingBall.simpleBouncingBall();
 // // !J! 
@@ -225,18 +225,18 @@ void loop()
 // // end-of-hack
     }
     else 
-      if (msGlobals.shifterMode == 1)
+      if (msGlobals.ggCurrentMode == 1)
       {
-        msSystem.msLEDs.loadBuffer(msGlobals.web_rgb_buffer);
+        msSystem.msLEDs.loadBuffer(msGlobals.ggRGBLEDBuf);
         msSystem.msLEDs.updatePixels();
       }
       else 
-        if (msGlobals.shifterMode == 2)
+        if (msGlobals.ggCurrentMode == 2)
         {
           msModeShake.step();
         }
         else 
-          if (msGlobals.shifterMode == 3)
+          if (msGlobals.ggCurrentMode == 3)
           {
       #define _MOD_LED(m,x) random(m,x)
             int rRed = _MOD_LED(0,255);
@@ -267,9 +267,9 @@ void loop()
               msSystem.msLEDs.updatePixels();
             }
           }
-          if (msGlobals.shifterMode == 4)
+          if (msGlobals.ggCurrentMode == 4)
           {
-           long currentTime = msGlobals.time + (millis() - msGlobals.timePostedAt);
+           long currentTime = msGlobals.ggTime + (millis() - msGlobals.ggTimePostedAt);
            long ms = currentTime % 86400000;
        //int millisss = ms % 1000;
            ms /= 1000;
@@ -304,20 +304,20 @@ void loop()
 
   // outside time-frame
 #ifdef CONFIG_ENABLE_ACCEL
-         msSystem.msAccel.readAccelData(msGlobals.accelCount);
+         msSystem.msAccel.readAccelData(msGlobals.ggAccelCounts);
          delayYield();
 
          for (int i = 0 ; i < 3 ; i++)
          {
-      msGlobals.accelG[i] = (float) msGlobals.accelCount[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set
+      msGlobals.ggAccel[i] = (float) msGlobals.ggAccelCounts[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set
     }
 #endif
 
-    float fX = msGlobals.accelG[0];
-    float fY = msGlobals.accelG[1];
+    float fX = msGlobals.ggAccel[0];
+    float fY = msGlobals.ggAccel[1];
 
-    //msModeBouncingBall.applyForce((msGlobals.currentMicros - msGlobals.lastMicros) / 1000.0, fX, fY);
-    msModeBouncingBall.applyForce((msGlobals.currentMicros - msGlobals.lastMicros) / 1000.0, fX);
+    //msModeBouncingBall.applyForce((msGlobals.ggCurrentMicros - msGlobals.ggLastMicros) / 1000.0, fX, fY);
+    msModeBouncingBall.applyForce((msGlobals.ggCurrentMicros - msGlobals.ggLastMicros) / 1000.0, fX);
 
     delayYield();
 

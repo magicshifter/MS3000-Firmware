@@ -4,29 +4,29 @@
 class MagicShifterGlobals {
 public:
   // state !J! TODO: clean all this up 
-  int GLOBAL_GS = 10;
-  float accelG[3];  // Stores the real accel value in g's
-  long accelTime;
-  long loopFrameTime;
-  int shifterMode = 0;
-  int accelCount[3];  // Stores the 12-bit signed value
-  int oldButton1State = 0;
-  int currentMicros = 0;
-  int lastMicros = 0;
-  int speedMicros = 1000;
-  long lastFrameMicros = 0;
-  int currentFrame = 0;
-  byte bright = 0xFF;
+  int ggGS = 10;
+  float ggAccel[3];  // Stores the real accel value in g's
+  long ggAccelTime;
+  long ggLFrameTime;
+  int ggCurrentMode = 1;  // POV mode
+  int ggAccelCounts[3];  // Stores the 12-bit signed value
+  int ggBtn1State = 0;
+  int ggCurrentMicros = 0;
+  int ggLastMicros = 0;
+  int ggSpeedMicros = 1000;
+  long ggLastFrameMicros = 0;
+  int ggCurrentFrame = 0;
+  byte ggBright = 0xFF;
   byte gs = 0x1;
-  long bootTime = 0;
-  bool apMode = false;
+  long ggBootTime = 0;
+  bool ggModeAP = false;
   // make it larger to be on the safe side when base64 decoding
-  byte web_rgb_buffer[RGB_BUFFER_SIZE + 4];
-  int setActiveFile = 0; // is there a new file to activate?
-  char uploadFileName[MAX_FILENAME_LENGTH + 1];
-  File uploadFile;
-  long time = 76500000;
-  long timePostedAt = 0;
+  byte ggRGBLEDBuf[RGB_BUFFER_SIZE + 4];
+  int ggShouldAutoLoad = 0; // is there a new file to activate?
+  char ggUploadFileName[MAX_FILENAME_LENGTH + 1];
+  File ggUploadFile;
+  long ggTime = 76500000;
+  long ggTimePostedAt = 0;
 };
 
 // #else

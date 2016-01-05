@@ -304,7 +304,7 @@ void handleGETInfo(void)
       response += "]";
     response += "}";
   response += "}";
-  msSystem.msServer.send(200, "text/plain", response);
+  msSystem.msESPWebServer.send(200, "text/plain", response);
 }
 
 
@@ -321,7 +321,7 @@ void handleGETAbout(void)
     response += "\"flashid\":" + String(ESP.getFlashChipId()) + ",";
     response += "\"flashsize\":" + String(ESP.getFlashChipSize());
   response += "}";
-  msSystem.msServer.send(200, "text/plain", response);
+  msSystem.msESPWebServer.send(200, "text/plain", response);
 }
 
 void handleGETStatus(void)
@@ -346,11 +346,11 @@ void handleGETStatus(void)
   float voltage = ((float)(r1 + r2 + r3) * adValue) / (r1 * ad1V);
 
 
-  msSystem.msAccel.readAccelData(msGlobals.accelCount);
+  msSystem.msAccel.readAccelData(msGlobals.ggAccelCounts);
 
   for (int i = 0 ; i < 3 ; i++)
   {
-    msGlobals.accelG[i] = (float) msGlobals.accelCount[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set
+    msGlobals.ggAccel[i] = (float) msGlobals.ggAccelCounts[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set
   }
 
   uint32_t ip = (uint32_t)msSystem.getIP();
@@ -358,22 +358,22 @@ void handleGETStatus(void)
 
   String response = "{";
     response += "\"id\":" + String(ESP.getChipId()) + ",";
-    response += "\"uptime\":" + String(millis() - msGlobals.bootTime) + ",";
+    response += "\"uptime\":" + String(millis() - msGlobals.ggBootTime) + ",";
     response += "\"adValue\":" + String(adValue) + ",";
     response += "\"voltage\":" + String(voltage) + ",";
-    response += "\"accelTime\":" + String(msGlobals.accelTime) + ",";
-    response += "\"loopFrameTime\":" + String(msGlobals.loopFrameTime) + ",";
-    response += "\"lastFrameMicros\":" + String(msGlobals.lastFrameMicros) + ",";
-    response += "\"currentMicros\":" + String(msGlobals.currentMicros) + ",";
+    response += "\"ggAccelTime\":" + String(msGlobals.ggAccelTime) + ",";
+    response += "\"ggLFrameTime\":" + String(msGlobals.ggLFrameTime) + ",";
+    response += "\"ggLastFrameMicros\":" + String(msGlobals.ggLastFrameMicros) + ",";
+    response += "\"ggCurrentMicros\":" + String(msGlobals.ggCurrentMicros) + ",";
     response += "\"accelRaw\":[";
-      response += String(msGlobals.accelCount[0]) + ",";
-      response += String(msGlobals.accelCount[1]) + ",";
-      response += String(msGlobals.accelCount[2]);
+      response += String(msGlobals.ggAccelCounts[0]) + ",";
+      response += String(msGlobals.ggAccelCounts[1]) + ",";
+      response += String(msGlobals.ggAccelCounts[2]);
     response += "],";
-    response += "\"msGlobals.accelG\":[";
-      response += String(msGlobals.accelG[0]) + ",";
-      response += String(msGlobals.accelG[1]) + ",";
-      response += String(msGlobals.accelG[2]);
+    response += "\"msGlobals.ggAccel\":[";
+      response += String(msGlobals.ggAccel[0]) + ",";
+      response += String(msGlobals.ggAccel[1]) + ",";
+      response += String(msGlobals.ggAccel[2]);
     response += "],";
     response += "\"ip\":\"";
     response += String(0xFF & (ip>>0)) + ".";
@@ -381,27 +381,27 @@ void handleGETStatus(void)
     response += String(0xFF & (ip>>16)) + ".";
     response += String(0xFF & (ip>>24)) + "\"";
   response += "}";
-  msSystem.msServer.send(200, "text/plain", response);
+  msSystem.msESPWebServer.send(200, "text/plain", response);
 }
 
 bool parseAPInfoFromServerArgs(APInfo &apInfo)
 {
   bool success = true;
-  for (int i = 0; i < msSystem.msServer.args(); i++)
+  for (int i = 0; i < msSystem.msESPWebServer.args(); i++)
   {
     msSystem.logln("argName: ");
-    msSystem.logln(msSystem.msServer.argName(i));
+    msSystem.logln(msSystem.msESPWebServer.argName(i));
 
     msSystem.logln("arg: ");
-    msSystem.logln(msSystem.msServer.arg(i));
+    msSystem.logln(msSystem.msESPWebServer.arg(i));
 
-    if (strcmp(msSystem.msServer.argName(i).c_str(), "ssid") == 0)
+    if (strcmp(msSystem.msESPWebServer.argName(i).c_str(), "ssid") == 0)
     {
-      msSystem.msEEPROMs.safeStrncpy(apInfo.ssid, msSystem.msServer.arg(i).c_str(), sizeof(apInfo.ssid));
+      msSystem.msEEPROMs.safeStrncpy(apInfo.ssid, msSystem.msESPWebServer.arg(i).c_str(), sizeof(apInfo.ssid));
     }
-    else if (strcmp(msSystem.msServer.argName(i).c_str(), "pwd") == 0)
+    else if (strcmp(msSystem.msESPWebServer.argName(i).c_str(), "pwd") == 0)
     {
-      msSystem.msEEPROMs.safeStrncpy(apInfo.password, msSystem.msServer.arg(i).c_str(), sizeof(apInfo.password));
+      msSystem.msEEPROMs.safeStrncpy(apInfo.password, msSystem.msESPWebServer.arg(i).c_str(), sizeof(apInfo.password));
     }
     else
     {
@@ -436,7 +436,7 @@ void handleGetSettings(void)
 
     response += "</ul>";
   response += "</body></html>";
-  msSystem.msServer.send(200, "text/html", response);
+  msSystem.msESPWebServer.send(200, "text/html", response);
 }
 
 void handleGETServerSettings(void)
@@ -455,33 +455,33 @@ void handleGETServerSettings(void)
     response += "\"port\":";
     response += config.port;
   response += "}";
-  msSystem.msServer.send(200, "text/plain", response);
+  msSystem.msESPWebServer.send(200, "text/plain", response);
 }
 
 void handlePOSTServerSettings(void)
 {
   msSystem.logln("handlePOSTServerSettings");
-  if (msSystem.msServer.args() >= 2)
+  if (msSystem.msESPWebServer.args() >= 2)
   {
     ServerConfig config;
     Settings.getServerConfig(&config);
 
     bool success = true;
-    for (int i = 0; i < msSystem.msServer.args(); i++)
+    for (int i = 0; i < msSystem.msESPWebServer.args(); i++)
     {
       msSystem.logln("argName: ");
-      msSystem.logln(msSystem.msServer.argName(i));
+      msSystem.logln(msSystem.msESPWebServer.argName(i));
 
       msSystem.logln("arg: ");
-      msSystem.logln(msSystem.msServer.arg(i));
+      msSystem.logln(msSystem.msESPWebServer.arg(i));
 
-      if (strcmp(msSystem.msServer.argName(i).c_str(), "host") == 0)
+      if (strcmp(msSystem.msESPWebServer.argName(i).c_str(), "host") == 0)
       {
-        msSystem.msEEPROMs.safeStrncpy(config.hostname, msSystem.msServer.arg(i).c_str(), sizeof(config.hostname));
+        msSystem.msEEPROMs.safeStrncpy(config.hostname, msSystem.msESPWebServer.arg(i).c_str(), sizeof(config.hostname));
       }
-      else if (strcmp(msSystem.msServer.argName(i).c_str(), "port") == 0)
+      else if (strcmp(msSystem.msESPWebServer.argName(i).c_str(), "port") == 0)
       {
-        config.port = atoi(msSystem.msServer.arg(i).c_str());
+        config.port = atoi(msSystem.msESPWebServer.arg(i).c_str());
       }
       else
       {
@@ -492,16 +492,16 @@ void handlePOSTServerSettings(void)
     if (success)
     {
       Settings.setServerConfig(&config);
-      msSystem.msServer.send (200, "text/plain", "OK");
+      msSystem.msESPWebServer.send (200, "text/plain", "OK");
     }
     else
     {
-      msSystem.msServer.send(500, "text/plain", "invalid args!");
+      msSystem.msESPWebServer.send(500, "text/plain", "invalid args!");
     }
   }
   else
   {
-    msSystem.msServer.send ( 500, "text/plain", "argument missing!");
+    msSystem.msESPWebServer.send ( 500, "text/plain", "argument missing!");
   }
 }
 
@@ -521,14 +521,14 @@ void handleGETAPSettings(void)
     //response += "\"pwd\":";
     //response += "\"" + apInfo.pwd + "\"";
   response += "}";
-  msSystem.msServer.send(200, "text/plain", response);
+  msSystem.msESPWebServer.send(200, "text/plain", response);
 }
 
 void handlePOSTAPSettings(void)
 {
   msSystem.logln("handlePOSTAPSettings");
 
-  if (msSystem.msServer.args() >= 2)
+  if (msSystem.msESPWebServer.args() >= 2)
   {
     // load old settings
     APInfo apInfo;
@@ -538,16 +538,16 @@ void handlePOSTAPSettings(void)
     {
       msSystem.logln("saving setAPConfig");
       Settings.setAPConfig(&apInfo);
-      msSystem.msServer.send (200, "text/plain", "OK");
+      msSystem.msESPWebServer.send (200, "text/plain", "OK");
     }
     else
     {
-      msSystem.msServer.send(500, "text/plain", "unknown args!");
+      msSystem.msESPWebServer.send(500, "text/plain", "unknown args!");
     }
   }
   else
   {
-    msSystem.msServer.send ( 500, "text/plain", "argument missing!");
+    msSystem.msESPWebServer.send ( 500, "text/plain", "argument missing!");
   }
 }
 
@@ -568,14 +568,14 @@ void handleGETPreferredAPSettings(void)
     //response += "\"pwd\":";
     //response += "\"" + apInfo.pwd + "\"";
   response += "}";
-  msSystem.msServer.send(200, "text/plain", response);
+  msSystem.msESPWebServer.send(200, "text/plain", response);
 }
 
 void handlePOSTPreferredAPSettings(void)
 {
   msSystem.logln("handlePOSTPreferredAPSettings");
 
-  if (msSystem.msServer.args() >= 2)
+  if (msSystem.msESPWebServer.args() >= 2)
   {
     APInfo apInfo;
     Settings.getPreferredAP(&apInfo);
@@ -584,16 +584,16 @@ void handlePOSTPreferredAPSettings(void)
     {
       msSystem.logln("saving setAPConfig");
       Settings.setPreferredAP(&apInfo);
-      msSystem.msServer.send (200, "text/plain", "OK");
+      msSystem.msESPWebServer.send (200, "text/plain", "OK");
     }
     else
     {
-      msSystem.msServer.send(500, "text/plain", "unknown args!");
+      msSystem.msESPWebServer.send(500, "text/plain", "unknown args!");
     }
   }
   else
   {
-    msSystem.msServer.send ( 500, "text/plain", "argument missing!");
+    msSystem.msESPWebServer.send ( 500, "text/plain", "argument missing!");
   }
 }
 
@@ -632,16 +632,16 @@ void handleGETAPList(void)
   response += "]";
   Settings.resetAPList();
 
-  msSystem.msServer.send(200, "text/plain", response);
+  msSystem.msESPWebServer.send(200, "text/plain", response);
 }
 
 void handleGETWLANList(void)
 {
   msSystem.logln("handleGETWLANList");
 
-  if (msGlobals.apMode)
+  if (msGlobals.ggModeAP)
   {
-    msSystem.msServer.send(200, "text/plain", "crash in AP mode...so diusabled for now");
+    msSystem.msESPWebServer.send(200, "text/plain", "crash in AP mode...so diusabled for now");
     return;
   }
 
@@ -684,14 +684,14 @@ void handleGETWLANList(void)
   response += "]";
   Settings.resetAPList();
 
-  msSystem.msServer.send(200, "text/plain", response);
+  msSystem.msESPWebServer.send(200, "text/plain", response);
 }
 
 void handlePOSTAPListAdd(void)
 {
   msSystem.logln("handlePOSTAPListAdd");
 
-  if (msSystem.msServer.args() >= 2)
+  if (msSystem.msESPWebServer.args() >= 2)
   {
     APInfo apInfo;
     memset(apInfo.ssid, 0, sizeof(apInfo.ssid));
@@ -704,16 +704,16 @@ void handlePOSTAPListAdd(void)
         msSystem.logln("adding wifi");
         Settings.addAP(&apInfo);
       }
-      msSystem.msServer.send (200, "text/plain", "OK");
+      msSystem.msESPWebServer.send (200, "text/plain", "OK");
     }
     else
     {
-      msSystem.msServer.send(500, "text/plain", "invalid args!");
+      msSystem.msESPWebServer.send(500, "text/plain", "invalid args!");
     }
   }
   else
   {
-    msSystem.msServer.send(500, "text/plain", "args missing!");
+    msSystem.msESPWebServer.send(500, "text/plain", "args missing!");
   }
 }
 
@@ -721,7 +721,7 @@ void handlePOSTAPListDelete(void)
 {
   msSystem.logln("handlePOSTAPListDelete");
 
-  if (msSystem.msServer.args() >= 1)
+  if (msSystem.msESPWebServer.args() >= 1)
   {
     APInfo apInfo;
     strcpy(apInfo.ssid, "");
@@ -734,16 +734,16 @@ void handlePOSTAPListDelete(void)
         msSystem.logln("deleting wifi");
         Settings.deleteAP(apInfo.ssid);
       }
-      msSystem.msServer.send (200, "text/plain", "OK");
+      msSystem.msESPWebServer.send (200, "text/plain", "OK");
     }
     else
     {
-      msSystem.msServer.send(500, "text/plain", "invalid args!");
+      msSystem.msESPWebServer.send(500, "text/plain", "invalid args!");
     }
   }
   else
   {
-    msSystem.msServer.send(500, "text/plain", "args missing!");
+    msSystem.msESPWebServer.send(500, "text/plain", "args missing!");
   }
 }
 
@@ -751,21 +751,21 @@ void handlePOSTAPListDelete(void)
 void handleSetMode(void)
 {
   msSystem.logln("handleSetMode");
-  if (msSystem.msServer.args() == 1)
+  if (msSystem.msESPWebServer.args() == 1)
   {
     ServerConfig config;
     Settings.getServerConfig(&config);
 
     bool success = true;
-    for (int i = 0; i < msSystem.msServer.args(); i++)
+    for (int i = 0; i < msSystem.msESPWebServer.args(); i++)
     {
       msSystem.logln("argName: ");
-      msSystem.logln(msSystem.msServer.argName(i));
+      msSystem.logln(msSystem.msESPWebServer.argName(i));
 
       msSystem.logln("arg: ");
-      msSystem.logln(msSystem.msServer.arg(i));
+      msSystem.logln(msSystem.msESPWebServer.arg(i));
 
-      msGlobals.shifterMode = atoi(msSystem.msServer.arg(i).c_str());
+      msGlobals.ggCurrentMode = atoi(msSystem.msESPWebServer.arg(i).c_str());
     }
 
     if (success)
@@ -773,32 +773,32 @@ void handleSetMode(void)
       String response = "{";
       response += "\"mode\":";
       response += "\"";
-      response += msGlobals.shifterMode;
+      response += msGlobals.ggCurrentMode;
       response += "\"";
       response += "}";
-      msSystem.msServer.send(200, "text/plain", response);
+      msSystem.msESPWebServer.send(200, "text/plain", response);
     }
     else
     {
-      msSystem.msServer.send(500, "text/plain", "invalid args!");
+      msSystem.msESPWebServer.send(500, "text/plain", "invalid args!");
     }
   }
   else
   {
-    msSystem.msServer.send ( 500, "text/plain", "argument missing!");
+    msSystem.msESPWebServer.send ( 500, "text/plain", "argument missing!");
   }
 }
 
 void respondREQTime()
 {
-  int currentTime = msGlobals.time + (millis() - msGlobals.timePostedAt);
+  int currentTime = msGlobals.ggTime + (millis() - msGlobals.ggTimePostedAt);
 
   String response = "{";
     response += "\"time\":" + String(currentTime) + ",";
-    response += "\"postedAt\":" + String(msGlobals.timePostedAt);
+    response += "\"postedAt\":" + String(msGlobals.ggTimePostedAt);
   response += "}";
 
-  msSystem.msServer.send ( 200, "text/plain", response);
+  msSystem.msESPWebServer.send ( 200, "text/plain", response);
 }
 
 void handleGETTime()
@@ -812,10 +812,10 @@ void handlePOSTTime()
 {
   msSystem.logln("handlePOSTTime");
 
-  if (msSystem.msServer.argName(0) == "t")
+  if (msSystem.msESPWebServer.argName(0) == "t")
   {
-    msGlobals.time = atoi(msSystem.msServer.arg(0).c_str());
-    msGlobals.timePostedAt = millis();
+    msGlobals.ggTime = atoi(msSystem.msESPWebServer.arg(0).c_str());
+    msGlobals.ggTimePostedAt = millis();
   }
 
   respondREQTime();
@@ -827,10 +827,10 @@ void handleLedSet()
 
   String message = "LedSet\n\n";
 
-  if (msSystem.msServer.args() == 1)
+  if (msSystem.msESPWebServer.args() == 1)
   {
-    const char* input = msSystem.msServer.arg(0).c_str();
-    unsigned int inputLen =  (int)msSystem.msServer.arg(0).length();
+    const char* input = msSystem.msESPWebServer.arg(0).c_str();
+    unsigned int inputLen =  (int)msSystem.msESPWebServer.arg(0).length();
     msSystem.logln("inputLen: ");
     msSystem.logln(String(inputLen));
 
@@ -851,17 +851,17 @@ void handleLedSet()
       msSystem.logln("data+1: ");
       msSystem.logln(String((int)ledData[i+1]));
 
-      msGlobals.web_rgb_buffer[idx*4] = ledData[i+1];
-      msGlobals.web_rgb_buffer[idx*4+1] = ledData[i+2];
-      msGlobals.web_rgb_buffer[idx*4+2] = ledData[i+3];
-      msGlobals.web_rgb_buffer[idx*4+3] = ledData[i+4];
+      msGlobals.ggRGBLEDBuf[idx*4] = ledData[i+1];
+      msGlobals.ggRGBLEDBuf[idx*4+1] = ledData[i+2];
+      msGlobals.ggRGBLEDBuf[idx*4+2] = ledData[i+3];
+      msGlobals.ggRGBLEDBuf[idx*4+3] = ledData[i+4];
     }
   }
   else
   {
     message += "argument missing or too many arguments!";
   }
-  msSystem.msServer.send ( 200, "text/plain",message );
+  msSystem.msESPWebServer.send ( 200, "text/plain",message );
 }
 
 
@@ -871,12 +871,12 @@ void handleLedsSet()
   
   String message = "LedsSet\n\n";
 
-  if (msSystem.msServer.args() >= 1)
+  if (msSystem.msESPWebServer.args() >= 1)
   {
-    const char* input = msSystem.msServer.arg(0).c_str();
+    const char* input = msSystem.msESPWebServer.arg(0).c_str();
     int inputLen = BASE64_ENC_LEN(RGB_BUFFER_SIZE);
 
-    base64_decode((char *)msGlobals.web_rgb_buffer, input, inputLen);
+    base64_decode((char *)msGlobals.ggRGBLEDBuf, input, inputLen);
 
     message += "done";
   }
@@ -884,7 +884,7 @@ void handleLedsSet()
   {
     message += "argument missing!";
   }
-  msSystem.msServer.send ( 200, "text/plain",message );
+  msSystem.msESPWebServer.send ( 200, "text/plain",message );
 }
 
 #endif

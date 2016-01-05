@@ -7,7 +7,7 @@ void testAccelerometer()
   int b = 20;
   while (1)
   {
-    if (msSystem.accelerometerWorking) 
+    if (msSystem.msAccelOK) 
     {
       msSystem.msLEDs.fillPixels(0, b, 0, 0xff);
     }
@@ -27,42 +27,42 @@ void testAccelerometer()
 
 void testButtonForBOM_X()
 {
-  if (msGlobals.currentFrame % 1000 == 0)
+  if (msGlobals.ggCurrentFrame % 1000 == 0)
   {
     msSystem.logln("_");
   }
 
-  if (msSystem.longClickedButtonPower)
+  if (msSystem.msBtnPwrLongHit)
   {
     msSystem.msLEDs.setPixels(1, 0, 0, 20, 20);
     msSystem.msLEDs.updatePixels();
     delay(200);
   }
-  if (msSystem.clickedButtonPower)
+  if (msSystem.msBtnPwrHit)
   {
     msSystem.msLEDs.setPixels(1, 20, 20, 0, 15);
     msSystem.msLEDs.updatePixels();
     delay(200);
   }
-  if (msSystem.longClickedButtonA)
+  if (msSystem.msBtnALongHit)
   {
     msSystem.msLEDs.setPixels(0, 20, 0, 20, 20);
     msSystem.msLEDs.updatePixels();
     delay(200);
   }
-  if (msSystem.clickedButtonA)
+  if (msSystem.msBtnAHit)
   {
     msSystem.msLEDs.setPixels(0, 20, 20, 0, 20);
     msSystem.msLEDs.updatePixels();
     delay(200);
   }
-  if (msSystem.longClickedButtonB)
+  if (msSystem.msBtnBLongHit)
   {
     msSystem.msLEDs.setPixels(2, 20, 0, 20, 20);
     msSystem.msLEDs.updatePixels();
     delay(200);
   }
-  if (msSystem.clickedButtonB)
+  if (msSystem.msBtnBHit)
   {
     msSystem.msLEDs.setPixels(2, 20, 20, 0, 20);
     msSystem.msLEDs.updatePixels();

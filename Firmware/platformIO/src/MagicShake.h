@@ -11,13 +11,13 @@
 class RGBLightMode : .. shiftermode
 {
 private:
-  loadBuffer(msGlobals.web_rgb_buffer);
+  loadBuffer(msGlobals.ggRGBLEDBuf);
   msSystem.msLEDs.updatePixels();
 
 public:
   void step(void)
   {
-    loadBuffer(msGlobals.web_rgb_buffer);
+    loadBuffer(msGlobals.ggRGBLEDBuf);
     msSystem.msLEDs.updatePixels();
   }
 }
@@ -37,7 +37,7 @@ public:
 
   void start()
   {
-    setActiveFile(msGlobals.uploadFileName);
+    loadAutoFile(msGlobals.ggUploadFileName);
     
   } // todo: startActiveFile() with a default filename
 
@@ -46,7 +46,7 @@ public:
 
   void step()
   {
-    if (shakeSync.update(msGlobals.accelG[2]))
+    if (shakeSync.update(msGlobals.ggAccel[2]))
     {
       int index = shakeSync.getFrameIndex();
       if (index > 0)
@@ -63,13 +63,13 @@ public:
       }
     }
     // !J! TODO: give modes an event queue ..
-    if (msGlobals.setActiveFile == 1) {
-      setActiveFile(msGlobals.uploadFileName);
-      msGlobals.setActiveFile = 0;
+    if (msGlobals.ggShouldAutoLoad == 1) {
+      loadAutoFile(msGlobals.ggUploadFileName);
+      msGlobals.ggShouldAutoLoad = 0;
     }
   }
 
-  void setActiveFile(char *filename)
+  void loadAutoFile(char *filename)
   {
     activeImage.close();
 
@@ -77,7 +77,7 @@ public:
     activeImage = MSImage(activeFilename);
     int w = activeImage.getWidth() * FRAME_MULTIPLY;
     shakeSync.setFrames(w);
-    msSystem.logln("set frames to: ");
+    msSystem.log("set frames to: ");
     msSystem.logln(String(w));
   }
 };

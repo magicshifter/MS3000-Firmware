@@ -130,7 +130,7 @@ class BouncingBallMode
     bool stopLoop = false;
     for (byte idx = start; !stopLoop ; idx += delta)
     {
-      msSystem.msLEDs.setPixels(idx, 255, 255, 255, msGlobals.GLOBAL_GS);
+      msSystem.msLEDs.setPixels(idx, 255, 255, 255, msGlobals.ggGS);
       msSystem.msLEDs.updatePixels();
       delay(2);
 
@@ -169,24 +169,24 @@ public:
       }
       */
 
-      //  msGlobals.bright = 1;
+      //  msGlobals.ggBright = 1;
       //scale *= 10;
-      //msSystem.msLEDs.setPixels(idx, (msGlobals.currentFrame & 1) ? msGlobals.bright*scale : 0, (msGlobals.currentFrame & 2) ? msGlobals.bright*scale : 0, (msGlobals.currentFrame & 4) ? msGlobals.bright*scale : 0, msGlobals.gs);
+      //msSystem.msLEDs.setPixels(idx, (msGlobals.ggCurrentFrame & 1) ? msGlobals.ggBright*scale : 0, (msGlobals.ggCurrentFrame & 2) ? msGlobals.ggBright*scale : 0, (msGlobals.ggCurrentFrame & 4) ? msGlobals.ggBright*scale : 0, msGlobals.gs);
 
       if (allowFlash)
       {
         if (smoothLanding)
         {
-          msSystem.msLEDs.setPixels(idx, 0, msGlobals.bright * scale, 0, msGlobals.GLOBAL_GS);
+          msSystem.msLEDs.setPixels(idx, 0, msGlobals.ggBright * scale, 0, msGlobals.ggGS);
         }
         else
         {
-          msSystem.msLEDs.setPixels(idx, msGlobals.bright * scale, msGlobals.bright * scale, msGlobals.bright * scale, msGlobals.GLOBAL_GS);
+          msSystem.msLEDs.setPixels(idx, msGlobals.ggBright * scale, msGlobals.ggBright * scale, msGlobals.ggBright * scale, msGlobals.ggGS);
         }
       }
       else
       {  
-        msSystem.msLEDs.setPixels(idx, msGlobals.bright * scale, 0, 0.5 * msGlobals.bright * scale, msGlobals.GLOBAL_GS);
+        msSystem.msLEDs.setPixels(idx, msGlobals.ggBright * scale, 0, 0.5 * msGlobals.ggBright * scale, msGlobals.ggGS);
       }
     }
     msSystem.msLEDs.updatePixels();

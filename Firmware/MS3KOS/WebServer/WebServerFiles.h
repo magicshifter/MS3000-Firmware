@@ -2,22 +2,22 @@
 #define _WEBSERVER_ROUTES_H
 
 void handleNotFound() {
-  if (msSystem.msServer.uri() != "/upload")
+  if (msSystem.msESPWebServer.uri() != "/upload")
   {
     String message = "MS Command Not Found\n\n";
     message += "URI: ";
-    message += msSystem.msServer.uri();
+    message += msSystem.msESPWebServer.uri();
     message += "\nMethod: ";
-    message += ( msSystem.msServer.method() == HTTP_GET ) ? "GET" : "POST";
+    message += ( msSystem.msESPWebServer.method() == HTTP_GET ) ? "GET" : "POST";
     message += "\nArguments: ";
-    message += msSystem.msServer.args();
+    message += msSystem.msESPWebServer.args();
     message += "\n";
 
-    for ( uint8_t i = 0; i < msSystem.msServer.args(); i++ ) {
-      message += " " + msSystem.msServer.argName ( i ) + ": " + msSystem.msServer.arg ( i ) + "\n";
+    for ( uint8_t i = 0; i < msSystem.msESPWebServer.args(); i++ ) {
+      message += " " + msSystem.msESPWebServer.argName ( i ) + ": " + msSystem.msESPWebServer.arg ( i ) + "\n";
     }
 
-    msSystem.msServer.send ( 404, "text/plain", message );
+    msSystem.msESPWebServer.send ( 404, "text/plain", message );
   }
   else
   {
@@ -27,9 +27,9 @@ void handleNotFound() {
         <title><a href=\"/\">MagicShifter3000</a> upload done</title>\
       </head>\
       <body>\
-        <h1>Upload of " + String(msGlobals.uploadFileName) + " done</h1><a href=\"/list?dir=\">list</a><br><a href=\"\">index.html</a></body></html>";
+        <h1>Upload of " + String(msGlobals.ggUploadFileName) + " done</h1><a href=\"/list?dir=\">list</a><br><a href=\"\">index.html</a></body></html>";
 
-    msSystem.msServer.send ( 200, "text/html", message );
+    msSystem.msESPWebServer.send ( 200, "text/html", message );
 
   }
 }
@@ -45,21 +45,21 @@ void handleReadFile()
   String message = "ReadFile:\n";
 
 
-  if (msSystem.msServer.args() >= 1)
+  if (msSystem.msESPWebServer.args() >= 1)
   {
-    String args = msSystem.msServer.arg(0);
+    String args = msSystem.msESPWebServer.arg(0);
 
-    strcpy(msGlobals.uploadFileName, args.c_str());
-    msSystem.msEEPROMs.saveString(msGlobals.uploadFileName, MAX_FILENAME_LENGTH);
+    strcpy(msGlobals.ggUploadFileName, args.c_str());
+    msSystem.msEEPROMs.saveString(msGlobals.ggUploadFileName, MAX_FILENAME_LENGTH);
 
 
     message += "file name: \"" + args /* String(filename)*/ + "\"\n";
 
-    //message += "file name strcpied: \"" +  msGlobals.uploadFileName + "\"\n";
+    //message += "file name strcpied: \"" +  msGlobals.ggUploadFileName + "\"\n";
 
 
     byte buffer[105];
-    File file = SPIFFS.open(msGlobals.uploadFileName, "r");
+    File file = SPIFFS.open(msGlobals.ggUploadFileName, "r");
 
     if (file)
     {
@@ -95,7 +95,7 @@ void handleReadFile()
     message += "argument missing!";
   }
 
-  msSystem.msServer.send ( 200, "text/html", message );
+  msSystem.msESPWebServer.send ( 200, "text/html", message );
 }
 
 
@@ -103,11 +103,11 @@ void handleReadFile()
 
 
 void handleFileList() {
-  if (!msSystem.msServer.hasArg("dir")) {
-    msSystem.msServer.send(500, "text/plain", "BAD ARGS, missing dir=");
+  if (!msSystem.msESPWebServer.hasArg("dir")) {
+    msSystem.msESPWebServer.send(500, "text/plain", "BAD ARGS, missing dir=");
     return;
   }
-  String path = msSystem.msServer.arg("dir");
+  String path = msSystem.msESPWebServer.arg("dir");
 
   //File entry;
   Dir dir = SPIFFS.openDir((char *)path.c_str());
@@ -116,7 +116,7 @@ void handleFileList() {
 /*
   if (!dir.isDirectory()){
     dir.close();
-    msSystem.msServer.send(500, "text/plain", "NOT DIR");
+    msSystem.msESPWebServer.send(500, "text/plain", "NOT DIR");
     return;
   }
   */
@@ -155,17 +155,17 @@ void handleFileList() {
 
     output += "</body>\
 </html>";
-	msSystem.msServer.send ( 200, "text/html", output );
+	msSystem.msESPWebServer.send ( 200, "text/html", output );
 }
 
 
 /*
 void handleFileListJson() {
-  if (!msSystem.msServer.hasArg("dir")) {
-    msSystem.msServer.send(500, "text/plain", "BAD ARGS, missing dir=");
+  if (!msSystem.msESPWebServer.hasArg("dir")) {
+    msSystem.msESPWebServer.send(500, "text/plain", "BAD ARGS, missing dir=");
     return;
   }
-  String path = msSystem.msServer.arg("dir");
+  String path = msSystem.msESPWebServer.arg("dir");
 
   File entry;
   File dir = FS.open((char *)path.c_str());
@@ -173,7 +173,7 @@ void handleFileListJson() {
 
   if (!dir.isDirectory()){
     dir.close();
-    msSystem.msServer.send(500, "text/plain", "NOT DIR");
+    msSystem.msESPWebServer.send(500, "text/plain", "NOT DIR");
     return;
   }
   dir.rewindDirectory();
@@ -205,28 +205,28 @@ void handleFileListJson() {
   dir.close();
 
   output += "]";
-  msSystem.msServer.send(200, "text/json", output);
+  msSystem.msESPWebServer.send(200, "text/json", output);
 }
 */
 
 void handleFileUpload(){
   msSystem.logln("handle upload!");
-  //if (msSystem.msServer.uri() != "/upload") return;
-  HTTPUpload& upload = msSystem.msServer.upload();
+  //if (msSystem.msESPWebServer.uri() != "/upload") return;
+  HTTPUpload& upload = msSystem.msESPWebServer.upload();
   if (upload.status == UPLOAD_FILE_START)
   {
-    strcpy(msGlobals.uploadFileName, upload.filename.c_str());//.c_str();
+    strcpy(msGlobals.ggUploadFileName, upload.filename.c_str());//.c_str();
     msSystem.logln("upload started: ");
-    msSystem.logln(msGlobals.uploadFileName);
+    msSystem.logln(msGlobals.ggUploadFileName);
 
-    msGlobals.uploadFile = SPIFFS.open(msGlobals.uploadFileName, "w");
+    msGlobals.ggUploadFile = SPIFFS.open(msGlobals.ggUploadFileName, "w");
 
-    if (!msGlobals.uploadFile) {
+    if (!msGlobals.ggUploadFile) {
       msSystem.logln("ERROR: COULD NOT open file!!!");
     }
 
     //if (SD.exists((char *)upload.filename.c_str())) SD.remove((char *)upload.filename.c_str());
-    //msGlobals.uploadFile = SD.open(upload.filename.c_str(), FILE_WRITE);
+    //msGlobals.ggUploadFile = SD.open(upload.filename.c_str(), FILE_WRITE);
     //DBG_OUTPUT_PORT.print("Upload: START, filename: "); DBG_OUTPUT_PORT.println(upload.filename);
 
   }
@@ -234,9 +234,9 @@ void handleFileUpload(){
   {
 
     bool result;
-    if (msGlobals.uploadFile)
+    if (msGlobals.ggUploadFile)
     {
-      result = msGlobals.uploadFile.write(upload.buf, upload.currentSize);
+      result = msGlobals.ggUploadFile.write(upload.buf, upload.currentSize);
       if (!result) 
       {
       msSystem.logln("ERROR: could not write!");
@@ -247,14 +247,14 @@ void handleFileUpload(){
   }
   else if (upload.status == UPLOAD_FILE_END)
   {
-    msGlobals.setActiveFile = 1;
+    msGlobals.ggAFileSet = 1;
 
-    msSystem.msEEPROMs.saveString(msGlobals.uploadFileName, MAX_FILENAME_LENGTH);
-    if (msGlobals.uploadFile)
+    msSystem.msEEPROMs.saveString(msGlobals.ggUploadFileName, MAX_FILENAME_LENGTH);
+    if (msGlobals.ggUploadFile)
     {
       //bool result;
       //result =
-      msGlobals.uploadFile.close();
+      msGlobals.ggUploadFile.close();
       //if (!result) msSystem.logln("ERROR: could not close!");
     }
     msSystem.logln("Upload: END, Size: ");

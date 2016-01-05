@@ -180,28 +180,28 @@ adsr_envelope anEnvelope;
 // !J! TODO : There should be a MagicShifter API for this
 // TODO: private state
 // state for button timing
-  int buttonAPressedTime = 0;
-  int buttonPowerPressedTime = 0;
-  int buttonBPressedTime = 0;
+  int msBtnAPressTime = 0;
+  int msBtnPwrPressTime = 0;
+  int msBtnBPressTime = 0;
 
 // state for double click timing
-  int timeToLastClickedButtonA = 0;
-  int timeToLastClickedButtonPower = 0;
-  int timeToLastClickedButtonB = 0;
+  int msBtnATTL = 0;
+  int msBtnPwrTTL = 0;
+  int msBtnBTTL = 0;
 
-  bool m_enableLongClicks = true;
+  bool msLongClickOK = true;
 
-  bool clickedButtonA = false;
-  bool clickedButtonPower = false;
-  bool clickedButtonB = false;
+  bool msBtnAHit = false;
+  bool msBtnPwrHit = false;
+  bool msBtnBHit = false;
 
-  bool longClickedButtonA = false;
-  bool longClickedButtonPower = false;
-  bool longClickedButtonB = false;
+  bool msBtnALongHit = false;
+  bool msBtnPwrLongHit = false;
+  bool msBtnBLongHit = false;
   
-  bool doubleClickedButtonA = false;
-  bool doubleClickedButtonPower = false;
-  bool doubleClickedButtonB = false;
+  bool msBtnADoubleHit = false;
+  bool msBtnPwrDoubleHit = false;
+  bool msBtnBDoubleHit = false;
 
 
 // ------------------------------------------------------------------------------ MIDI I/O
@@ -301,19 +301,19 @@ void LEDFrame()
 #endif
 
 	// Debug:
-	if (clickedButtonA) {
+	if (msBtnAHit) {
 		msSystem.msLEDs.fillPixels(100, 0, 0);
 		// updateLedsWithBlank();
 		delay(10);
 		msSystem.msLEDs.fillPixels(0, 0, 0);
-		clickedButtonA = false;
+		msBtnAHit = false;
 	}
-	if (clickedButtonB) {
+	if (msBtnBHit) {
 		msSystem.msLEDs.fillPixels(0, 0, 100);
 		// updateLedsWithBlank();
 		delay(10);
 		msSystem.msLEDs.fillPixels(0, 0, 0);
-		clickedButtonB = false;
+		msBtnBHit = false;
 	}
 
 }
@@ -407,109 +407,109 @@ void envFrame()
   void handleButtons()
   {
     // reset public btton state
-    clickedButtonA = longClickedButtonA = false;
+    msBtnAHit = msBtnALongHit = false;
     if (!digitalRead(PIN_BUTTON_A))
     {
-      if (buttonAPressedTime)
-        buttonAPressedTime += microsSinceLast;
+      if (msBtnAPressTime)
+        msBtnAPressTime += microsSinceLast;
       else
-        buttonAPressedTime = 1;
+        msBtnAPressTime = 1;
     }
     else
     {
-      if (m_enableLongClicks && buttonAPressedTime >= MIN_TIME_LONG_CLICK)
+      if (msLongClickOK && msBtnAPressTime >= MIN_TIME_LONG_CLICK)
       {
-        longClickedButtonA = true;
-        msSystem.logln("longClickedButtonA");
+        msBtnALongHit = true;
+        msSystem.logln("msBtnALongHit");
       }
-      else if (buttonAPressedTime >= MIN_TIME_CLICK)
+      else if (msBtnAPressTime >= MIN_TIME_CLICK)
       {
-        clickedButtonA = true;
-        msSystem.logln("clickedButtonA");
+        msBtnAHit = true;
+        msSystem.logln("msBtnAHit");
       }
 
-      buttonAPressedTime = 0;
+      msBtnAPressTime = 0;
     }
 
 
     // reset public btton state
-    clickedButtonB = longClickedButtonB = false;
+    msBtnBHit = msBtnBLongHit = false;
     if (!digitalRead(PIN_BUTTON_B))
     {
-      if (buttonBPressedTime)
-        buttonBPressedTime += microsSinceLast;
+      if (msBtnBPressTime)
+        msBtnBPressTime += microsSinceLast;
       else
-        buttonBPressedTime = 1;
+        msBtnBPressTime = 1;
     }
     else
     {
-      if (m_enableLongClicks && buttonBPressedTime >= MIN_TIME_LONG_CLICK)
+      if (msLongClickOK && msBtnBPressTime >= MIN_TIME_LONG_CLICK)
       {
-        longClickedButtonB = true;
-        msSystem.logln("longClickedButtonB");
+        msBtnBLongHit = true;
+        msSystem.logln("msBtnBLongHit");
 
       }
-      else if (buttonBPressedTime >= MIN_TIME_CLICK)
+      else if (msBtnBPressTime >= MIN_TIME_CLICK)
       {
-        clickedButtonB = true;
-        msSystem.logln("clickedButtonB");
+        msBtnBHit = true;
+        msSystem.logln("msBtnBHit");
       }
 
-      buttonBPressedTime = 0;
+      msBtnBPressTime = 0;
     }
 
 
     // reset public btton state
-    clickedButtonPower = longClickedButtonPower = false;
+    msBtnPwrHit = msBtnPwrLongHit = false;
 /*
-    if (bFrame++ % 10 == 0)
+    if (msFrame++ % 10 == 0)
     if (powerButtonPressed())
     {
-      if (buttonPowerPressedTime)
-        buttonPowerPressedTime += microsSinceLast;
+      if (msBtnPwrPressTime)
+        msBtnPwrPressTime += microsSinceLast;
       else
-        buttonPowerPressedTime = 1;
+        msBtnPwrPressTime = 1;
     }
     else
     {
-      if (buttonPowerPressedTime >= MIN_TIME_LONG_CLICK)
+      if (msBtnPwrPressTime >= MIN_TIME_LONG_CLICK)
       {
-        longClickedButtonPower = true;
+        msBtnPwrLongHit = true;
       }
-      else if (buttonPowerPressedTime >= MIN_TIME_CLICK)
+      else if (msBtnPwrPressTime >= MIN_TIME_CLICK)
       {
-        clickedButtonPower = true;
+        msBtnPwrHit = true;
       }
 
-      buttonPowerPressedTime = 0;
+      msBtnPwrPressTime = 0;
     }
     //*/
 
 // internal button usage
-    if (longClickedButtonA)
+    if (msBtnALongHit)
     {
       // powerDown();	// !J!
     }
 
-    if (clickedButtonB)
+    if (msBtnBHit)
     {
-      msGlobals.GLOBAL_GS+=2;
-      if (msGlobals.GLOBAL_GS > 31)
+      msGlobals.ggGS+=2;
+      if (msGlobals.ggGS > 31)
       {
-        msGlobals.GLOBAL_GS = 31;
+        msGlobals.ggGS = 31;
       }
 
-      msGlobals.shifterMode = (msGlobals.shifterMode+1)%NUM_MS_MODES;
+      msGlobals.ggCurrentMode = (msGlobals.ggCurrentMode+1)%NUM_MS_MODES;
     }
-    if (longClickedButtonB)
+    if (msBtnBLongHit)
     {
-      msGlobals.GLOBAL_GS-=6;
-      if (msGlobals.GLOBAL_GS < 1)
+      msGlobals.ggGS-=6;
+      if (msGlobals.ggGS < 1)
       {
-        msGlobals.GLOBAL_GS = 1;
+        msGlobals.ggGS = 1;
       }
 
-      msGlobals.shifterMode = (msGlobals.shifterMode+1)%NUM_MS_MODES;
+      msGlobals.ggCurrentMode = (msGlobals.ggCurrentMode+1)%NUM_MS_MODES;
     }
   }
 
