@@ -194,7 +194,7 @@ void MIDISync()
 // !J! TODO : There should be a MagicShifter API for this
 // TODO: private state
 // state for button timing
-  int buttonAPressedTime = 0;
+  int msBtnAPressTime = 0;
   int msBtnPwrPressTime = 0;
   int msBtnBPressTime = 0;
 
@@ -223,25 +223,25 @@ void MIDISync()
     msBtnAHit = msBtnALongHit = false;
     if (!digitalRead(PIN_BUTTON_A))
     {
-      if (buttonAPressedTime)
-        buttonAPressedTime += microsSinceLast;
+      if (msBtnAPressTime)
+        msBtnAPressTime += microsSinceLast;
       else
-        buttonAPressedTime = 1;
+        msBtnAPressTime = 1;
     }
     else
     {
-      if (msLongClickOK && buttonAPressedTime >= MIN_TIME_LONG_CLICK)
+      if (msLongClickOK && msBtnAPressTime >= MIN_TIME_LONG_CLICK)
       {
         msBtnALongHit = true;
         log("msBtnALongHit");
       }
-      else if (buttonAPressedTime >= MIN_TIME_CLICK)
+      else if (msBtnAPressTime >= MIN_TIME_CLICK)
       {
         msBtnAHit = true;
         log("msBtnAHit");
       }
 
-      buttonAPressedTime = 0;
+      msBtnAPressTime = 0;
     }
 
 

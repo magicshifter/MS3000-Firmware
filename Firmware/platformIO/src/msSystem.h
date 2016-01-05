@@ -45,7 +45,7 @@ public:
 
 // TODO: private state
 // state for button timing
-  int buttonAPressedTime = 0;
+  int msBtnAPressTime = 0;
   int msBtnPwrPressTime = 0;
   int msBtnBPressTime = 0;
 
@@ -75,7 +75,13 @@ public:
 
 public:
   // wrap a logging class ..
-  void log(String msg) { Serial.print(msg); };
+  void log(String msg) { Serial.print(msg); 
+// TODO: this
+    // WiFiUDP udp;
+    // udp.beginPacket("192.168.1.112", 514); // wks port for syslog
+    // udp.print(msg);
+    // udp.endPacket();
+  };
   void logln(String msg) { Serial.println(msg); }; 
 
   void log(int8_t &msg, int base) { log(String(msg)); } 
@@ -91,9 +97,8 @@ public:
   void TEST_SPIFFS_bug()
   {
 
-
     const char* debugPath = "XXXXX";
-    uint8_t testVals[] = {1,23, 3, 7};
+    uint8_t testVals[] = {1, 23, 3, 7};
     uint8_t readBuffer[] = {0,0,0,0};
     //File file = SPIFFS.open((char *)debugPath.c_str(), "w");
     
@@ -276,25 +281,25 @@ public:
     {
       Serial.println("A PRESSED");
 
-      if (buttonAPressedTime)
-        buttonAPressedTime += msGlobals.ggLastMicros;
+      if (msBtnAPressTime)
+        msBtnAPressTime += msGlobals.ggLastMicros;
       else
-        buttonAPressedTime = 1;
+        msBtnAPressTime = 1;
     }
     else
     {
-      if (msLongClickOK && buttonAPressedTime >= MIN_TIME_LONG_CLICK)
+      if (msLongClickOK && msBtnAPressTime >= MIN_TIME_LONG_CLICK)
       {
         msBtnALongHit = true;
         Serial.println("msBtnALongHit");
       }
-      else if (buttonAPressedTime >= MIN_TIME_CLICK)
+      else if (msBtnAPressTime >= MIN_TIME_CLICK)
       {
         msBtnAHit = true;
         Serial.println("msBtnAHit");
       }
 
-      buttonAPressedTime = 0;
+      msBtnAPressTime = 0;
     }
 
     // reset public btton state

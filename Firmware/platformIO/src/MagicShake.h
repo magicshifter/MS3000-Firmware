@@ -77,7 +77,7 @@ public:
     activeImage = MSImage(activeFilename);
     int w = activeImage.getWidth() * FRAME_MULTIPLY;
     shakeSync.setFrames(w);
-    msSystem.logln("set frames to: ");
+    msSystem.log("set frames to: ");
     msSystem.logln(String(w));
   }
 };

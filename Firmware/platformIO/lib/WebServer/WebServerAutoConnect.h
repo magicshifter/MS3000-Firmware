@@ -3,7 +3,7 @@
 
 bool TryConnect(struct APInfo &apInfo, int timeoutMs)
 {
-  msSystem.logln("trying to connect to AP: ");
+  msSystem.log("trying to connect to AP: ");
   msSystem.logln(apInfo.ssid);
   WiFi.begin (apInfo.ssid, apInfo.password );
 
