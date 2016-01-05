@@ -1,2 +1,2 @@
-import init from './MagicShifter';
+import init from './js/MagicShifter';
 init();

@@ -1,14 +1,19 @@
 // need to import react here
 import React, {Component, PropTypes} from 'react';
+import Radium from 'radium';
 
-export default class ExampleComponent extends Component {
+import PixelEditor from './PixelEditor/PixelEditor';
+import styles from '../css/base';
+
+@Radium
+export default class Root extends Component {
 
   static propTypes = {
     text: PropTypes.string,
   }
 
   static defaultProps = {
-    text: "Example Component default text",
+    text: 'Example Component default text',
   }
 
   constructor(props) {
@@ -32,13 +37,22 @@ export default class ExampleComponent extends Component {
     const {text} = this.state;
 
     return (
-      <div>
-        <p>{text}</p>
-        <button
-          onClick={this.onButtonClick.bind(this)}
-        >
-          Click Me
-        </button>
+      <div
+        className='pixelEditor'
+        style={styles.body}
+      >
+        <PixelEditor
+          rows={16}
+          columns={16}
+        />
+        <div>
+          <p>{text}</p>
+          <button
+            onClick={this.onButtonClick.bind(this)}
+          >
+            Click Me
+          </button>
+        </div>
       </div>
     );
   }

@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 
-import ExampleComponent from './components/Example';
+import Root from './components/Root';
 
 // main initialization point of the application
 export default function init() {
@@ -13,8 +13,8 @@ export default function init() {
   }
 
   ReactDom.render(
-    <ExampleComponent
-      text='yay, this prop got passed down'
+    <Root
+      text='yay, this prop got passed down from MagicShifter.js'
     />,
     appContainer
   );

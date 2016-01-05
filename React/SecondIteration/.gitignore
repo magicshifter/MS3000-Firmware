@@ -1,14 +1,6 @@
-rules/
-r.js
 .idea/
 cellspace.sublime-project
 cellspace.sublime-workspace
-*.js~
-*.html~
 node_modules
 npm-debug.log
 dist/*
-evocell-private.iml
-figwheel_server.log
-resources/
-target
