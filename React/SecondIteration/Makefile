@@ -26,7 +26,12 @@ install:
 install-inotify:
 	@sudo apt-get install inotify-tools
 
-build: clean
+jade:
+	@node_modules/.bin/jade \
+		-o dist/ \
+		src/html/ 
+
+build: clean jade
 	@node_modules/.bin/cross-env NODE_ENV=production \
 		node_modules/.bin/webpack --config webpack.config.prod.js;
 	@echo "javascript built";
