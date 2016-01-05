@@ -1,0 +1,34 @@
+{
+  "name": "magicshifter-react",
+  "version": "0.0.1",
+  "description": "magicshifter",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/"
+  },
+  "author": "Wizards@Work",
+  "license": "",
+  "bugs": {
+    "url": "https://github.com/"
+  },
+  "homepage": "https://github.com/",
+  "devDependencies": {
+    "babel-preset-es2015": "^6.1.18",
+    "babel-preset-react": "^6.1.18",
+    "babelify": "^7.2.0",
+    "browserify": "^12.0.1",
+    "browserify-shim": "^3.8.11",
+    "esprima-fb": "^15001.1001.0-dev-harmony-fb",
+    "exorcist": "^0.4.0",
+    "google-closure-compiler": "^20151015.0.0",
+    "jscs": "^2.7.0",
+    "stylus": "^0.52.4",
+    "uglifyjs": "^2.4.10",
+    "watchify": "^3.6.1"
+    "watch": "^0.16.0"
+  },
+  "dependencies": {
+    "react": "^0.14.3",
+    "react-dom": "^0.14.3",
+  }
+}
