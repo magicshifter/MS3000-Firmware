@@ -1,14 +1,16 @@
 var path = require('path');
 var webpack = require('webpack');
+var CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   devtool: 'source-map',
   entry: [
-    './src/index'
+    './index'
   ],
+  context: path.join(__dirname, 'src'),
   output: {
-    path: path.join(__dirname, 'dist', 'js'),
-    filename: 'bundle.js',
+    path: path.join(__dirname, 'dist'),
+    filename: 'js/bundle.js',
     publicPath: '/js/'
   },
   plugins: [
@@ -41,5 +43,12 @@ module.exports = {
         loader: 'url-loader?limit=100000',
       },
     ],
-  }
+  },
+  plugins: [
+    new CopyWebpackPlugin([
+      {
+        from: 'assets',
+      },
+    ]),
+  ],
 };
