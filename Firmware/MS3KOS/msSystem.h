@@ -52,7 +52,7 @@ public:
 
 // TODO: private state
 // state for button timing
-  int buttonAPressedTime = 0;
+  int msBtnAPressTime = 0;
   int msBtnPwrPressTime = 0;
   int msBtnBPressTime = 0;
 
@@ -297,25 +297,25 @@ Serial.print("\n------\n");
     {
       Serial.println("A PRESSED");
 
-      if (buttonAPressedTime)
-        buttonAPressedTime += msGlobals.ggLastMicros;
+      if (msBtnAPressTime)
+        msBtnAPressTime += msGlobals.ggLastMicros;
       else
-        buttonAPressedTime = 1;
+        msBtnAPressTime = 1;
     }
     else
     {
-      if (msLongClickOK && buttonAPressedTime >= MIN_TIME_LONG_CLICK)
+      if (msLongClickOK && msBtnAPressTime >= MIN_TIME_LONG_CLICK)
       {
         msBtnALongHit = true;
         Serial.println("msBtnALongHit");
       }
-      else if (buttonAPressedTime >= MIN_TIME_CLICK)
+      else if (msBtnAPressTime >= MIN_TIME_CLICK)
       {
         msBtnAHit = true;
         Serial.println("msBtnAHit");
       }
 
-      buttonAPressedTime = 0;
+      msBtnAPressTime = 0;
     }
 
     // reset public btton state
