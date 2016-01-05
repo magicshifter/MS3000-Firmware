@@ -6,6 +6,9 @@ var config = require('./webpack.config.dev');
 var app = express();
 var compiler = webpack(config);
 
+var host = 'localhost';
+var port = 2323;
+
 app.use(require('webpack-dev-middleware')(compiler, {
   noInfo: true,
   publicPath: config.output.publicPath
@@ -13,17 +16,15 @@ app.use(require('webpack-dev-middleware')(compiler, {
 
 app.use(require('webpack-hot-middleware')(compiler));
 
-//app.use(express.static('dist'));
-
 app.get('/', function(req, res) {
   res.render(path.join(__dirname, 'src', 'html', 'index.jade'));
 });
 
-app.listen(3000, 'localhost', function(err) {
+app.listen(port, host, function(err) {
   if (err) {
     console.log(err);
     return;
   }
 
-  console.log('Listening at http://localhost:3000');
+  console.log('Listening at http://' + host + ':' + port);
 });
