@@ -13,7 +13,7 @@ export default function init() {
   }
 
   ReactDom.render(
-    <ExampleCompontent
+    <ExampleComponent
       text='yay, this prop got passed down'
     />,
     appContainer
