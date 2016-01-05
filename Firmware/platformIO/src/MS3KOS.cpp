@@ -379,7 +379,7 @@ void loop()
     float fY = msGlobals.accelG[1];
 
     //msModeBouncingBall.applyForce((msGlobals.currentMicros - msGlobals.lastMicros) / 1000.0, fX, fY);
-    msModeBouncingBall.applyForce((msGlobals.currentMicros - msGlobals.lastMicros) / 1000.0, fX);
+    msModeBouncingBall.applyForce((msGlobals.currentMicros - msGlobals.lastMicros) / 1000.0, fX*3);
 
     delayYield();
 

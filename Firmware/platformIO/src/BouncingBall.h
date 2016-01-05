@@ -217,7 +217,7 @@ public:
     if (pos < 0)
     {
       pos = 0;
-      vel = -vel;
+      vel = -vel*0.9;
 
       if (allowFlash && smoothLanding)
       {
@@ -231,7 +231,7 @@ public:
     else if (pos > 1)
     {
       pos = 1;
-      vel = -vel;
+      vel = -vel*0.9;
 
       if (allowFlash && smoothLanding)
       {
