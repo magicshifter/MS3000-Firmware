@@ -39,16 +39,16 @@
 #include "msSystem.h"
  MagicShifterSystem msSystem;
 // note: WebServer and msSystem are in love
-#include "WebServer/WebServer.h" 
+#include "WebServer.h" 
  MagicShifterWebServer msWebServer;
 
 // MIDI can be configured on or off 
 #ifdef CONFIG_ENABLE_MIDI
-#include "MidiShifter/MidiShifter.h"
+#include "MidiShifter.h"
 #endif
 
 // GUI modes, well actually .. modes are more of an 'app' ..
-#include "Modes/Modes.h"
+#include "Modes.h"
 
  BouncingBallMode msModeBouncingBall(600);
  MagicShakeMode msModeShake;
@@ -90,20 +90,83 @@
 }
 
 
+void testAccelerometer()
+{
+  Serial.println("trying accel!");
+
+  int d = 500;
+  int b = 20;
+  while (1)
+  {
+    if (msSystem.accelerometerWorking) 
+    {
+      msSystem.msLEDs.fillPixels(0, b, 0, 0xff);
+    }
+    else
+    {
+     msSystem.msLEDs.fillPixels(b, 0, 0, 0xff);
+   }
+   msSystem.msLEDs.updatePixels();
+   delay(d);
+
+   msSystem.msLEDs.fillPixels(b, b, b, 0xff);
+   msSystem.msLEDs.updatePixels();
+   delay(d);
+ }
+}
+
+
+void testButtonForBOM_X()
+{
+  if (msGlobals.currentFrame % 1000 == 0)
+  {
+    msSystem.logln("_");
+  }
+
+  if (msSystem.longClickedButtonPower)
+  {
+    msSystem.msLEDs.setPixels(1, 0, 0, 20, 20);
+    msSystem.msLEDs.updatePixels();
+    delay(200);
+  }
+  if (msSystem.clickedButtonPower)
+  {
+    msSystem.msLEDs.setPixels(1, 20, 20, 0, 15);
+    msSystem.msLEDs.updatePixels();
+    delay(200);
+  }
+  if (msSystem.longClickedButtonA)
+  {
+    msSystem.msLEDs.setPixels(0, 20, 0, 20, 20);
+    msSystem.msLEDs.updatePixels();
+    delay(200);
+  }
+  if (msSystem.clickedButtonA)
+  {
+    msSystem.msLEDs.setPixels(0, 20, 20, 0, 20);
+    msSystem.msLEDs.updatePixels();
+    delay(200);
+  }
+  if (msSystem.longClickedButtonB)
+  {
+    msSystem.msLEDs.setPixels(2, 20, 0, 20, 20);
+    msSystem.msLEDs.updatePixels();
+    delay(200);
+  }
+  if (msSystem.clickedButtonB)
+  {
+    msSystem.msLEDs.setPixels(2, 20, 20, 0, 20);
+    msSystem.msLEDs.updatePixels();
+    delay(200);
+  }
+}
 
 void delayYield()
 {
-
-yield();
-
-// hack yield
-#if 0
   int nYields = 150;  // todo: fix this magic number
   while(nYields--) {
     yield();
   }
-#endif
-
 }
 
 void testSimpleButtons()
@@ -178,8 +241,6 @@ void testSimpleButtons()
 
 void loop()
 {
-  if (1)
-    testSimpleButtons();
 
   msGlobals.lastMicros = msGlobals.currentMicros;
   msGlobals.currentMicros = micros();
@@ -193,7 +254,8 @@ void loop()
 
   // do some tests
   // testAccelerometer();
-  testButtonForBOM_X();
+  // testButtonForBOM_X();
+  // testSimpleButtons();
 
   // inside time-frame
   if (msGlobals.lastFrameMicros + msGlobals.speedMicros 
@@ -317,7 +379,7 @@ void loop()
     float fY = msGlobals.accelG[1];
 
     //msModeBouncingBall.applyForce((msGlobals.currentMicros - msGlobals.lastMicros) / 1000.0, fX, fY);
-    msModeBouncingBall.applyForce((msGlobals.currentMicros - msGlobals.lastMicros) / 1000.0, fX);
+    msModeBouncingBall.applyForce((msGlobals.currentMicros - msGlobals.lastMicros) / 1000.0, fX*3);
 
     delayYield();
 

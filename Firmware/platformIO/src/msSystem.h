@@ -11,20 +11,13 @@
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 
-extern "C" {
-#include "osapi.h"
-#include "ets_sys.h"
-#include "mem.h"
-#include "user_interface.h"
-}
-
 #include <Base64.h>
 #include <EEPROM.h>
 #include <SPI.h>
 
-#include "Hardware/EEPROMString.h"
-#include "Hardware/LEDHardware.h"
-#include "Hardware/Accelerometer.h"
+#include "EEPROMString.h"
+#include "LEDHardware.h"
+#include "Accelerometer.h"
 
 // Power management
 #define PIN_PWR_MGT 16
@@ -78,63 +71,52 @@ public:
   bool doubleClickedButtonB = false;
 
   MDNSResponder msDNS;
-  ESP8266WebServer msServer;
+  ESP8266WebServer msESPServer;
 
 public:
-
   // wrap a logging class ..
-  void log(String msg)
-  {
-    Serial.print(String(msg));
-    // #define DEBUGV(...) ets_printf(__VA_ARGS__)
-
-Serial.print("\n------\n");
-    ets_printf("This was: %s\n", "ets_printf");
-
-//#endif
-  };
+  void log(String msg) { Serial.print(msg); };
+  void logln(String msg) { Serial.println(msg); }; 
 
   void log(int8_t &msg, int base) { log(String(msg)); } 
   void log(uint16_t &msg, int base) { log(String(msg));  }
   void log(unsigned int msg, int base) { log(String(msg)); } 
-  void log(bool b) { log(String(b));}
-
-  void logln(String msg) { log(msg); log("\r\n");  };
+//  void log(bool b) { if (b) log(String("true")); else log (String("false")); }
   
   void logln(int8_t &msg, int base) { logln(String(msg)); }
   void logln(uint16_t &msg, int base) { logln(String(msg));  }
   void logln(unsigned int msg, int base) { logln(String(msg));  }
-  void logln(bool &msg, int base) { logln(String(msg));  }
-
+//  void logln(bool b) { if (b) logln(String("true")); else logln(String("false")); }
 
   void TEST_SPIFFS_bug()
   {
+
 
     const char* debugPath = "XXXXX";
     uint8_t testVals[] = {1,23, 3, 7};
     uint8_t readBuffer[] = {0,0,0,0};
     //File file = SPIFFS.open((char *)debugPath.c_str(), "w");
     
-    logln("openin for w: ");
+    log("openin for w: ");
     logln(String(debugPath));
     
     File file = SPIFFS.open(debugPath, "w");
 
-    logln("opended for w: ");
+    log("opended for w: ");
     logln(String((bool)file));
 
-    logln("writin: ");
+    log("writin: ");
     logln(String(testVals[1]));
 
     file.write((uint8_t *)testVals, sizeof testVals);
     file.close();
 
-    logln("openin for r: ");
+    log("openin for r: ");
     logln(String(debugPath));
     
     File fileR = SPIFFS.open(debugPath, "r");
 
-    logln("opended for r: ");
+    log("opended for r: ");
     logln(String((bool)fileR));
 
     logln("readin: ");
@@ -142,10 +124,9 @@ Serial.print("\n------\n");
     fileR.read((uint8_t *)readBuffer, sizeof readBuffer);
     fileR.close();
 
-    logln("readback: ");
+    log("readback: ");
     logln(String(readBuffer[1]));
   };
-
 
   void logSysInfo()
   {
@@ -240,9 +221,7 @@ Serial.print("\n------\n");
       logln("SPIFFS not begin .. :|");
     }
 
-/*
       TEST_SPIFFS_bug();
-*/
 
     // all engines turn on
     pinMode(PIN_PWR_MGT, INPUT);

@@ -39,3 +39,8 @@ trsh/*
 
 # Debug files
 *.dSYM/
+
+# platformio stuff:
+.pioenvs/*
+*.pioenvs*
+Firmware/platformIO/.pioenvs/*

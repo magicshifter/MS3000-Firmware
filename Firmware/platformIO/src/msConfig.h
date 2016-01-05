@@ -7,6 +7,8 @@
 
 #undef DEBUG_OUTPUT
 
+#define HW_ID HW_ID_MS3000_FSOX8700CQ
+
 // HW_ID is passed one of these constants from Makefile -DHW_ID=.. 
 
 // set of Hw configurations	
@@ -14,8 +16,6 @@
 #define HW_ID_MS3000_MMA8452Q 		2		// accel
 #define HW_ID_RING   				3		// on the wall
 #define HW_ID_SABRE   				4		// proto-j-beta light wandstrip, new ESP model
-
-#define HW_ID HW_ID_MS3000_FSOX8700CQ
 
 // set of LED types
 #define LED_TYPE_APA102 1 
@@ -49,11 +49,12 @@
 
 #define POV_TIME_MICROSECONDS 1
 
+#define USE_MDNS
 
 // which MMA is in use
 #if(HW_ID==HW_ID_MS3000_FSOX8700CQ)
 #warning "HW ID :  HW_ID_MS3000_FSOX8700CQ "
-#define MAX_LEDS 32
+#define MAX_LEDS 16
 #define CONFIG_MMA_FSOX
 #elif(HW_ID==HW_ID_MS3000_MMA8452Q)
 #warning "HW ID :  HW_ID_MS3000_MMA8452Q "
@@ -88,7 +89,7 @@
   #endif
 #endif
 
-//#define MAX_LEDS 32
+//#define MAX_LEDS 160
 #define RGB_BUFFER_SIZE (4*MAX_LEDS)
 
 // Use pre-configured AP list
