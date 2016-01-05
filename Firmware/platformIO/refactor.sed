@@ -1,53 +1,53 @@
- find . -name "*" -print -exec  sed -i 's/GLOBAL_GS/ggGS/g' {} \;
- find . -name "*" -print -exec  sed -i 's/accelCount/ggAccelCounts/g' {} \;
- find . -name "*" -print -exec  sed -i 's/accelG/ggAccel/g' {} \;
- find . -name "*" -print -exec  sed -i 's/accelTime/ggAccelTime/g' {} \;
- find . -name "*" -print -exec  sed -i 's/accelerometerWorking/msAccelOK/g' {} \;
- find . -name "*" -print -exec  sed -i 's/apMode/ggModeAP/g' {} \;
- find . -name "*" -print -exec  sed -i 's/bFrame/msFrame/g' {} \;
- find . -name "*" -print -exec  sed -i 's/bootTime/ggbootTime/g' {} \;
- find . -name "*" -print -exec  sed -i 's/buttonBPressedTime/msBtnBPressTime/g' {} \;
- find . -name "*" -print -exec  sed -i 's/buttonPowerPressedTime/msBtnPwrPressTime/g' {} \;
- find . -name "*" -print -exec  sed -i 's/clickedButtonA/msBtnAHit/g' {} \;
- find . -name "*" -print -exec  sed -i 's/clickedButtonB/msBtnBHit/g' {} \;
- find . -name "*" -print -exec  sed -i 's/clickedButtonPower/msBtnPwrHit/g' {} \;
- find . -name "*" -print -exec  sed -i 's/currentFrame/ggCurrentFrame/g' {} \;
- find . -name "*" -print -exec  sed -i 's/currentMicros/ggCurrentMicros/g' {} \;
- find . -name "*" -print -exec  sed -i 's/doubleClickedButtonA/msBtnADoubleHit/g' {} \;
- find . -name "*" -print -exec  sed -i 's/doubleClickedButtonB/msBtnBDoubleHit/g' {} \;
- find . -name "*" -print -exec  sed -i 's/doubleClickedButtonPower/msBtnPwrDoubleHit/g' {} \;
- find . -name "*" -print -exec  sed -i 's/ggbootTime/ggBootTime/g' {} \;
- find . -name "*" -print -exec  sed -i 's/lastFrameMicros/ggLastFrameMicros/g' {} \;
- find . -name "*" -print -exec  sed -i 's/lastMicros/ggLastMicros/g' {} \;
- find . -name "*" -print -exec  sed -i 's/longClickedButtonA/msBtnALongHit/g' {} \;
- find . -name "*" -print -exec  sed -i 's/longClickedButtonB/msBtnBLongHit/g' {} \;
- find . -name "*" -print -exec  sed -i 's/longClickedButtonPower/msBtnPwrLongHit/g' {} \;
- find . -name "*" -print -exec  sed -i 's/loopFrameTime/ggLFrameTime/g' {} \;
- find . -name "*" -print -exec  sed -i 's/m_enableLongClicks/msLongClickOK/g' {} \;
- find . -name "*" -print -exec  sed -i 's/msGlobals.GLOBAL_GS/msGlobals.ggGS/g' {} \;
- find . -name "*" -print -exec  sed -i 's/msGlobals.bootTim/msGlobals.ggBootTime/g' {} \;
- find . -name "*" -print -exec  sed -i 's/msGlobals.bootTime/msGlobals.ggBootTime/g' {} \;
- find . -name "*" -print -exec  sed -i 's/msGlobals.bright/msGlobals.ggBright/g' {} \;
- find . -name "*" -print -exec  sed -i 's/msGlobals.currentFrame/msGlobals.ggCurrentFrame/g' {} \;
- find . -name "*" -print -exec  sed -i 's/msGlobals.currentMicros/msGlobals.ggCurrentMicros/g' {} \;
- find . -name "*" -print -exec  sed -i 's/msGlobals.lastFrameMicros/msGlobals.ggLastFrameMicros/g' {} \;
- find . -name "*" -print -exec  sed -i 's/msGlobals.lastMicros/msGlobals.ggLastMicros/g' {} \;
- find . -name "*" -print -exec  sed -i 's/msGlobals.loopFrameTime/msGlobals.ggLFrameTime/g' {} \;
- find . -name "*" -print -exec  sed -i 's/msGlobals.speedMicros/msGlobals.ggSpeedMicros/g' {} \;
- find . -name "*" -print -exec  sed -i 's/msGlobals.time/msGlobals.ggTime/g' {} \;
- find . -name "*" -print -exec  sed -i 's/msGlobals.uploadFileName/msGlobals.ggUploadFileName/g' {} \;
- find . -name "*" -print -exec  sed -i 's/msGlobals.uploadFile/msGlobals.ggUploadFile/g' {} \;
- find . -name "*" -print -exec  sed -i 's/msServer/msWebServer/g' {} \;
- find . -name "*" -print -exec  sed -i 's/msSystem.msWebServer/msSystem.msESPWebServer/g'
- find . -name "*" -print -exec  sed -i 's/oldButton1State/ggBtn1State/g' {} \;
- find . -name "*" -print -exec  sed -i 's/setActiveFile/ggAFileSet/g' {} \;
- find . -name "*" -print -exec  sed -i 's/shifterMode/ggCurrentMode/g' {} \;
- find . -name "*" -print -exec  sed -i 's/speedMicros/ggSpeedMicros/g' {} \;
- find . -name "*" -print -exec  sed -i 's/timePostedAt/ggPostTime/g' {} \;
- find . -name "*" -print -exec  sed -i 's/timeToLastClickedButtonA/msBtnATTL/g' {} \;
- find . -name "*" -print -exec  sed -i 's/timeToLastClickedButtonB/msBtnBTTL/g' {} \;
- find . -name "*" -print -exec  sed -i 's/timeToLastClickedButtonPower/msBtnPwrTTL/g' {} \;
- find . -name "*" -print -exec  sed -i 's/uploadFileName/ggUploadFileName/g' {} \;
- find . -name "*" -print -exec  sed -i 's/uploadFile/ggUploadFile/g' {} \;
- find . -name "*" -print -exec  sed -i 's/web_rgb_buffer/ggRGBLEDBuf/g' {} \;
- find . -type "*" -print -exec  sed -i 's/msSystem.msWebServer/msSystem.msESPWebServer/g' {} \;
+  's/GLOBAL_GS/ggGS/g'
+  's/accelCount/ggAccelCounts/g'
+  's/accelG/ggAccel/g'
+  's/accelTime/ggAccelTime/g'
+  's/accelerometerWorking/msAccelOK/g'
+  's/apMode/ggModeAP/g'
+  's/bFrame/msFrame/g'
+  's/bootTime/ggbootTime/g'
+  's/buttonBPressedTime/msBtnBPressTime/g'
+  's/buttonPowerPressedTime/msBtnPwrPressTime/g'
+  's/clickedButtonA/msBtnAHit/g'
+  's/clickedButtonB/msBtnBHit/g'
+  's/clickedButtonPower/msBtnPwrHit/g'
+  's/currentFrame/ggCurrentFrame/g'
+  's/currentMicros/ggCurrentMicros/g'
+  's/doubleClickedButtonA/msBtnADoubleHit/g'
+  's/doubleClickedButtonB/msBtnBDoubleHit/g'
+  's/doubleClickedButtonPower/msBtnPwrDoubleHit/g'
+  's/ggbootTime/ggBootTime/g'
+  's/lastFrameMicros/ggLastFrameMicros/g'
+  's/lastMicros/ggLastMicros/g'
+  's/longClickedButtonA/msBtnALongHit/g'
+  's/longClickedButtonB/msBtnBLongHit/g'
+  's/longClickedButtonPower/msBtnPwrLongHit/g'
+  's/loopFrameTime/ggLFrameTime/g'
+  's/m_enableLongClicks/msLongClickOK/g'
+  's/msGlobals.GLOBAL_GS/msGlobals.ggGS/g'
+  's/msGlobals.bootTim/msGlobals.ggBootTime/g'
+  's/msGlobals.bootTime/msGlobals.ggBootTime/g'
+  's/msGlobals.bright/msGlobals.ggBright/g'
+  's/msGlobals.currentFrame/msGlobals.ggCurrentFrame/g'
+  's/msGlobals.currentMicros/msGlobals.ggCurrentMicros/g'
+  's/msGlobals.lastFrameMicros/msGlobals.ggLastFrameMicros/g'
+  's/msGlobals.lastMicros/msGlobals.ggLastMicros/g'
+  's/msGlobals.loopFrameTime/msGlobals.ggLFrameTime/g'
+  's/msGlobals.speedMicros/msGlobals.ggSpeedMicros/g'
+  's/msGlobals.time/msGlobals.ggTime/g'
+  's/msGlobals.uploadFileName/msGlobals.ggUploadFileName/g'
+  's/msGlobals.uploadFile/msGlobals.ggUploadFile/g'
+  's/msServer/msWebServer/g'
+  's/msSystem.msWebServer/msSystem.msESPWebServer/g'
+  's/oldButton1State/ggBtn1State/g'
+  's/setActiveFile/ggAFileSet/g'
+  's/shifterMode/ggCurrentMode/g'
+  's/speedMicros/ggSpeedMicros/g'
+  's/timePostedAt/ggPostTime/g'
+  's/timeToLastClickedButtonA/msBtnATTL/g'
+  's/timeToLastClickedButtonB/msBtnBTTL/g'
+  's/timeToLastClickedButtonPower/msBtnPwrTTL/g'
+  's/uploadFileName/ggUploadFileName/g'
+  's/uploadFile/ggUploadFile/g'
+  's/web_rgb_buffer/ggRGBLEDBuf/g'
+  's/msSystem.msWebServer/msSystem.msESPWebServer/g'
