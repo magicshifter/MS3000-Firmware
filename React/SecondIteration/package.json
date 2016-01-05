@@ -13,6 +13,7 @@
   },
   "homepage": "https://github.com/",
   "devDependencies": {
+    "babel-plugin-transform-class-properties": "^6.3.13",
     "babel-preset-es2015": "^6.1.18",
     "babel-preset-react": "^6.1.18",
     "babelify": "^7.2.0",
@@ -24,8 +25,8 @@
     "jscs": "^2.7.0",
     "stylus": "^0.52.4",
     "uglifyjs": "^2.4.10",
-    "watchify": "^3.6.1",
-    "watch": "^0.16.0"
+    "watch": "^0.16.0",
+    "watchify": "^3.6.1"
   },
   "dependencies": {
     "react": "^0.14.3",
