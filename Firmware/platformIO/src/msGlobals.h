@@ -16,7 +16,7 @@ public:
   int ggSpeedMicros = 1000;
   long ggLastFrameMicros = 0;
   int ggCurrentFrame = 0;
-  byte bright = 0xFF;
+  byte ggBright = 0xFF;
   byte gs = 0x1;
   long ggBootTime = 0;
   bool ggModeAP = false;
@@ -25,8 +25,8 @@ public:
   int ggAFileSet = 0; // is there a new file to activate?
   char ggUploadFileName[MAX_FILENAME_LENGTH + 1];
   File ggUploadFile;
-  long time = 76500000;
-  long ggPostTime = 0;
+  long ggTime = 76500000;
+  long ggTimePostedAt = 0;
 };
 
 // #else
