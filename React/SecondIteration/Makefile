@@ -17,10 +17,7 @@ CSS_DIST_DIR=${DIST_DIR}css/
 # a simple make starts the watch task
 all: watch
 
-build-static: ; ${MAKE} -j2 build-assets stylus
-	@echo "build-static finished"
-
-build: ; ${MAKE} -j2 browserify build-static 
+build: ; ${MAKE} -j3 browserify build-assets stylus
 
 # copies ./src/assets, git clones and then starts server
 server-static:
@@ -54,8 +51,8 @@ browserify:
 	mkdir -p ${JS_DIST_DIR};
 	node_modules/.bin/browserify \
 	-e src/index.js \
-	-t [ babelify --presets [es2015 react] ] \
-	-o ${JS_DIST_DIR}/build.js \
+	-t [ babelify --presets [es2015 react] --plugins [transform-class-properties] ] \
+	-o ${JS_DIST_DIR}build.js \
 	;
 	@echo "javascript built";
 
@@ -65,6 +62,7 @@ browserify-sourcemap:
 	@node_modules/.bin/browserify \
 	-e src/index.js \
 	-t [ babelify --presets [es2015 react] ] \
+	-p [ babel-plugin-transform-class-properties ] \
 	--debug \
 	| node_modules/.bin/exorcist ${JS_DIST_DIR}bundle.js.map > ${JS_DIST_DIR}build.js \
 	;
@@ -76,8 +74,8 @@ watch-javascript:
 	@echo "start watching javascript";
 	@node_modules/.bin/watchify \
 		-e src/index.js \
+		-t [ babelify --presets [es2015 react] --plugins [transform-class-properties] ] \
 		-o ${JS_DIST_DIR}build.js \
-		-t [ babelify --presets [es2015 react] ] \
 		-v \
 	;
 
@@ -96,7 +94,7 @@ watch-sourcemap:
 # watch static files and recopy/rebuild on change
 
 #	does not run on mac os x, no inotifywait there
-watch-assets: build-static
+watch-assets:
 	@echo "watch static file assets and css";
 	@while inotifywait -r \
 		-e close_write \
@@ -112,7 +110,7 @@ watch-assets-osx: build-static
 watch-osx: ; @${MAKE} -j2 watch-javascript watch-assets-osx;
 
 # run uglifyjs task
-uglify: browserify
+uglify:
 	@node_modules/.bin/uglifyjs \
 		${JS_DIST_DIR}build.js \
 		--mangle -c -o \
@@ -120,7 +118,7 @@ uglify: browserify
 	@echo "uglify done";
 
 # run google closure library through npm
-closure-compile: browserify
+closure-compile:
 	java \
 		-jar node_modules/google-closure-compiler/compiler.jar \
 		--language_in ECMASCRIPT5 \
