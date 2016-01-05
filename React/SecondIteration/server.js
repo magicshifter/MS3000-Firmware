@@ -11,14 +11,17 @@ var port = 2323;
 
 app.use(require('webpack-dev-middleware')(compiler, {
   noInfo: true,
-  publicPath: config.output.publicPath
+  publicPath: config.output.publicPath,
 }));
 
 app.use(require('webpack-hot-middleware')(compiler));
 
+
 app.get('/', function(req, res) {
   res.render(path.join(__dirname, 'src', 'html', 'index.jade'));
 });
+
+app.use(express.static('dist'));
 
 app.listen(port, host, function(err) {
   if (err) {
