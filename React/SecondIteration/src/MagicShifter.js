@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 
-import ExampleCompontent from './components/Example';
+import ExampleComponent from './components/Example';
 
 // main initialization point of the application
 export default function init() {
