@@ -13,7 +13,7 @@ CSS_DIST_DIR=${DIST_DIR}css/
 	help
 
 # a simple make starts the watch task
-all: webpack-dev
+all: dev
 
 dev:
 	@node server.js
