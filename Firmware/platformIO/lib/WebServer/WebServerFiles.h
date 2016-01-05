@@ -261,7 +261,7 @@ void handleFileUpload(){
   }
   else if (upload.status == UPLOAD_FILE_END)
   {
-    msGlobals.ggAFileSet = 1;
+    msGlobals.ggShouldAutoLoad = 1;
 
     msSystem.msEEPROMs.saveString(msGlobals.ggUploadFileName, MAX_FILENAME_LENGTH);
     

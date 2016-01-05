@@ -8,7 +8,7 @@ public:
   float ggAccel[3];  // Stores the real accel value in g's
   long ggAccelTime;
   long ggLFrameTime;
-  int ggCurrentMode = 0;
+  int ggCurrentMode = 1;  // POV mode
   int ggAccelCounts[3];  // Stores the 12-bit signed value
   int ggBtn1State = 0;
   int ggCurrentMicros = 0;
@@ -22,7 +22,7 @@ public:
   bool ggModeAP = false;
   // make it larger to be on the safe side when base64 decoding
   byte ggRGBLEDBuf[RGB_BUFFER_SIZE + 4];
-  int ggAFileSet = 0; // is there a new file to activate?
+  int ggShouldAutoLoad = 0; // is there a new file to activate?
   char ggUploadFileName[MAX_FILENAME_LENGTH + 1];
   File ggUploadFile;
   long ggTime = 76500000;

@@ -37,7 +37,7 @@ public:
 
   void start()
   {
-    ggAFileSet(msGlobals.ggUploadFileName);
+    setFile(msGlobals.ggUploadFileName);
     
   } // todo: startActiveFile() with a default filename
 
@@ -63,13 +63,13 @@ public:
       }
     }
     // !J! TODO: give modes an event queue ..
-    if (msGlobals.ggAFileSet == 1) {
-      ggAFileSet(msGlobals.ggUploadFileName);
-      msGlobals.ggAFileSet = 0;
+    if (msGlobals.ggShouldAutoLoad == 1) {
+      setFile(msGlobals.ggUploadFileName);
+      msGlobals.ggShouldAutoLoad = 0;
     }
   }
 
-  void ggAFileSet(char *filename)
+  void setFile(char *filename)
   {
     activeImage.close();
 

@@ -70,6 +70,8 @@
   if (SPIFFS.exists(msGlobals.ggUploadFileName)) {
     msModeShake.start();
   }
+  else
+    msSystem.logln("Did not INIT msMODESHAKe");
 
   // todo: move to module start sequence.
   msModePOVShake.setFrames(32);
