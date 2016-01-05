@@ -78,7 +78,7 @@ public:
     // swipe colors
     for (byte idx = 0; idx < MAX_LEDS; idx++)
     {
-      setPixels(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 2); //msGlobals.GLOBAL_GS);
+      setPixels(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 2); //msGlobals.ggGS);
       updatePixels();
       delay(30);
     }
