@@ -241,8 +241,6 @@ void testSimpleButtons()
 
 void loop()
 {
-  if (1)
-    testSimpleButtons();
 
   msGlobals.lastMicros = msGlobals.currentMicros;
   msGlobals.currentMicros = micros();
@@ -256,7 +254,8 @@ void loop()
 
   // do some tests
   // testAccelerometer();
-  testButtonForBOM_X();
+  // testButtonForBOM_X();
+  // testSimpleButtons();
 
   // inside time-frame
   if (msGlobals.lastFrameMicros + msGlobals.speedMicros 
