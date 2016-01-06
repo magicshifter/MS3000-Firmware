@@ -1,20 +1,15 @@
 // need to import react here
 import React, {Component, PropTypes} from 'react';
 import Radium from 'radium';
+import {Link} from 'react-router';
 
+import App from './App';
+import Menu from './Menu';
 import PixelEditor from './PixelEditor/PixelEditor';
-import styles from '../css/base';
+import NoMatch from './NoMatch';
 
 @Radium
 export default class Root extends Component {
-
-  static propTypes = {
-    text: PropTypes.string,
-  }
-
-  static defaultProps = {
-    text: 'Example Component default text',
-  }
 
   constructor(props) {
     super(props);
@@ -23,35 +18,65 @@ export default class Root extends Component {
       text: props.text,
       clicked: 0,
     };
-  }
 
-  onButtonClick() {
-    const clicked = this.state.clicked + 1;
-    this.setState({
-      text: `You Clicked the Button ${this.state.clicked} times!`,
-      clicked,
-    });
+    this.styles = {
+      body: {
+        fontFamily: 'Ubuntu, "Lucida Grande", "Segoe UI", sans-serif',
+        fontSize: '0.8em',
+      },
+      header: {
+        display: 'inline-block',
+        width: '100%',
+      },
+      logoContainer: {
+        float: 'left',
+      },
+      logo: {
+        float: 'left',
+      },
+      title: {
+        float: 'left',
+        margin: '.8em 0 0 .4em',
+      },
+    };
   }
 
   render() {
-    const {text} = this.state;
-
     return (
       <div
-        className='pixelEditor'
-        style={styles.body}
+        className='root'
+        style={this.styles.body}
       >
-        <PixelEditor
-          rows={16}
-          columns={16}
-        />
-        <div>
-          <p>{text}</p>
-          <button
-            onClick={this.onButtonClick.bind(this)}
+        <header
+          className='main'
+          style={this.styles.header}
+        >
+          <div
+            className='logoContainer'
+            style={this.styles.logoContainer}
           >
-            Click Me
-          </button>
+            <Link
+              to='/'
+            >
+              <img
+                className='headerLogo'
+                style={this.styles.logo}
+                src='/img/logo.png'
+                height='40'
+                width='40'
+              />
+              <h3
+                style={this.styles.title}
+              >
+                MagicShifter 3000
+              </h3>
+            </Link>
+          </div>
+          <Menu />
+        </header>
+        <div className='active-component'>
+          {/* load react-router components */}
+          {this.props.children}
         </div>
       </div>
     );

@@ -3,6 +3,12 @@ import ReactDom from 'react-dom';
 
 import Root from './components/Root';
 
+import { Router, Route, Link, browserHistory, IndexRoute } from 'react-router';
+
+import App from './components/App';
+import PixelEditor from './components/PixelEditor/PixelEditor';
+import NoMatch from './components/NoMatch';
+
 // main initialization point of the application
 export default function init() {
   const appContainer = document.getElementById('app')
@@ -12,10 +18,18 @@ export default function init() {
     return;
   }
 
+  const routes = {
+    path: '/',
+    component: Root,
+    indexRoute: { component: App },
+    childRoutes: [
+      { path: 'pixels', component: PixelEditor },
+      { path: '*', component: NoMatch },
+    ]
+  }
+
   ReactDom.render(
-    <Root
-      text='yay, this prop got passed down from MagicShifter.js'
-    />,
+    <Router history={browserHistory} routes={routes}></Router>,
     appContainer
   );
 }
