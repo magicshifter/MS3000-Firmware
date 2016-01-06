@@ -25,7 +25,7 @@ export default function init() {
     childRoutes: [
       { path: 'pixels', component: PixelEditor },
       { path: '*', component: NoMatch },
-    ]
+    ],
   }
 
   ReactDom.render(
