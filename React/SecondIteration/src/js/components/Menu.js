@@ -12,11 +12,7 @@ export default class NoMatch extends Component {
     super(props);
 
     
-  }
-
-  render() {
-
-    const style = {
+    this.styles = {
       nav: {
         float: 'right',
       },
@@ -30,23 +26,26 @@ export default class NoMatch extends Component {
         margin: '.5em',
       },
     };
+  }
 
+  render() {
     const links = [
       {to: '/', text: 'about',},
       {to: '/pixels', text: 'pixeleditor',},
+      {to: '/settings', text: 'settings',},
     ];
 
     return (
       <nav
         className='main'
-        style={style.nav}
+        style={this.styles.nav}
       >
-        <ul style={style.ul}>
+        <ul style={this.styles.ul}>
           {links.map(link => {
             const {to, text, key} = link;
             return (
               <li
-                style={style.li}
+                style={this.styles.li}
                 key={key || text}
               >
                 <Link to={to} activeClassName='active'>{text}</Link>
