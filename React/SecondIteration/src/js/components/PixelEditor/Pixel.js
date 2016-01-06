@@ -23,7 +23,7 @@ export default class Pixel extends Component {
   constructor(props) {
     super(props);
 
-    const {rows, columns, row, column, backgroundColor} = this.props;
+    const {rows, columns, row, column, backgroundColor} = props;
 
     this.state = {
       row,

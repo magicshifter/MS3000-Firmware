@@ -22,7 +22,7 @@ export default class PixelEditor extends Component {
   constructor(props) {
     super(props);
 
-    const {rows, columns} = this.props;
+    const {rows, columns} = props;
 
     this.state = {
       rows,
