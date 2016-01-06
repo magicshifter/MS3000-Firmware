@@ -11,20 +11,8 @@ export default class NoMatch extends Component {
   }
 
   render() {
-
-    const style = {
-      color: 'green',
-
-      ':hover': {
-        color: 'orange',
-      },
-    };
-
     return (
-      <div
-        className='nomatch-page'
-        style={style}
-      >
+      <div className='nomatch-page'>
         <h3>404 - page not found error</h3>
       </div>
     );
