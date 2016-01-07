@@ -40,7 +40,7 @@ bool TryConnect(struct APInfo &apInfo, int timeoutMs)
   msSystem.logln ( "Connected to: " );
   msSystem.logln ( apInfo.ssid );
   msSystem.logln ( "IP address: " );
-  msSystem.logln ( String(WiFi.localIP()) );
+  msSystem.logln ( String(WiFi.localIP().toString()) );
 
   return true;
 }
@@ -66,10 +66,10 @@ bool TrySoftAP(struct APInfo &apInfo)
     WiFi.softAP(apInfo.ssid, apInfo.password);
   }
 
-  msSystem.logln ( "Established acces point: " );
+  msSystem.logln ( "accesspoints: " );
   msSystem.logln ( apInfo.ssid );
   msSystem.logln("SoftAP IP: ");
-  msSystem.logln(String(WiFi.softAPIP()));
+  msSystem.logln(String(WiFi.softAPIP().toString()));
 
   return true;
 }
@@ -92,30 +92,31 @@ bool AutoConnect()
       }
     }
 
-    msSystem.logln("WiFi AP scan starting...");
+    msSystem.log("wifi scan start:");
     // WiFi.scanNetworks will return the number of networks found
     int n = WiFi.scanNetworks();
-    msSystem.logln("scan done");
+    msSystem.logln("good");
     if (n == 0) {
       msSystem.logln("no networks found");
     }
     else
     {
-      msSystem.logln(String(n));
+      msSystem.log(String(n));
       msSystem.logln(" networks found");
       for (int i = 0; i < n; ++i)
       {
         // Print SSID and RSSI for each network found
-        msSystem.logln(String(i + 1));
-        msSystem.logln(": ");
-        msSystem.logln(WiFi.SSID(i));
-        msSystem.logln(" (");
-        msSystem.logln(String(WiFi.RSSI(i)));
-        msSystem.logln(")");
-        msSystem.logln((WiFi.encryptionType(i) == ENC_TYPE_NONE)?" ":"*");
+        msSystem.log(String(i + 1));
+        msSystem.log(": ");
+        msSystem.log(WiFi.SSID(i));
+        msSystem.log(" (");
+        msSystem.log(String(WiFi.RSSI(i)));
+        msSystem.log(")");
+        msSystem.log((WiFi.encryptionType(i) == ENC_TYPE_NONE)?" ":"*");
         delay(20);
       }
     }
+
     msSystem.logln("");
 
     Settings.resetAPList();

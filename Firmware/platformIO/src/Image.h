@@ -14,8 +14,12 @@ public:
     height = width = 0;
   }
 
-  MSImage(char *fileName)
+  char sv_Filename[100];
+
+  void loadFile(char *fileName)
   {
+      msSystem.msEEPROMs.safeStrncpy(sv_Filename, fileName, 100);
+
       file = SPIFFS.open(fileName, "r");
       if (file)
       {
@@ -30,6 +34,7 @@ public:
           msSystem.logln(String(fileName));
         }
         width = size / frameSize;
+        msSystem.log("File could be opened: ");
       }
       else
       {
@@ -38,6 +43,14 @@ public:
         width = 0;
         height = MAX_LEDS;
       }
+      msSystem.log("image width:"); msSystem.logln(String(width));;
+      msSystem.log("image height:"); msSystem.logln(String(height));;
+
+  }
+
+  MSImage(char *fileName)
+  {
+    loadFile(fileName);
   }
 
   ~MSImage()
@@ -52,21 +65,32 @@ public:
   {
     if (file)
     {
+
       file.seek(frameIdx * height * BYTESPERPIXEL, SeekSet);
 
       if (height < maxHeight) maxHeight = height;
 
-      int result = file.read(frameData, maxHeight * BYTESPERPIXEL);
+        int result = file.read(frameData, maxHeight * BYTESPERPIXEL);
 
-      if (result < maxHeight * BYTESPERPIXEL)
-      {
-        return false;
-      }
+#if 0
+msSystem.log("framedata:");
+for (int x=0;x<maxHeight * BYTESPERPIXEL;x++) {
+  msSystem.log(":"); Serial.print(frameData[x], HEX);;
+}
+msSystem.logln("<<EOF");
+#endif
+
+        if (result < maxHeight * BYTESPERPIXEL)
+        {
+          return false;
+        }
       
-      return true;
-    }
+        return true;
+      }
+
     return false;
   }
+
 
   void close()
   {

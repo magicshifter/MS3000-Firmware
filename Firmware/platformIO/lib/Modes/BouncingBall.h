@@ -130,7 +130,7 @@ class BouncingBallMode
     bool stopLoop = false;
     for (byte idx = start; !stopLoop ; idx += delta)
     {
-      msSystem.msLEDs.setPixels(idx, 255, 255, 255, msGlobals.ggGS);
+      msSystem.msLEDs.setPixels(idx, 255, 255, 255, msGlobals.ggFactoryIntensity);
       msSystem.msLEDs.updatePixels();
       delay(2);
 
@@ -177,16 +177,16 @@ public:
       {
         if (smoothLanding)
         {
-          msSystem.msLEDs.setPixels(idx, 0, msGlobals.ggBright * scale, 0, msGlobals.ggGS);
+          msSystem.msLEDs.setPixels(idx, 0, msGlobals.ggBright * scale, 0, msGlobals.ggFactoryIntensity);
         }
         else
         {
-          msSystem.msLEDs.setPixels(idx, msGlobals.ggBright * scale, msGlobals.ggBright * scale, msGlobals.ggBright * scale, msGlobals.ggGS);
+          msSystem.msLEDs.setPixels(idx, msGlobals.ggBright * scale, msGlobals.ggBright * scale, msGlobals.ggBright * scale, msGlobals.ggFactoryIntensity);
         }
       }
       else
       {  
-        msSystem.msLEDs.setPixels(idx, msGlobals.ggBright * scale, 0, 0.5 * msGlobals.ggBright * scale, msGlobals.ggGS);
+        msSystem.msLEDs.setPixels(idx, msGlobals.ggBright * scale, 0, 0.5 * msGlobals.ggBright * scale, msGlobals.ggFactoryIntensity);
       }
     }
     msSystem.msLEDs.updatePixels();

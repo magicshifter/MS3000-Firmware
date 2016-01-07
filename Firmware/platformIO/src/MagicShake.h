@@ -5,6 +5,7 @@
 
 #define FRAME_MULTIPLY 4
 
+#define MS_SHAKEFILE_DEFAULT "nix"
 
 // make it larger to be on the save side when base64 decoding
 /*
@@ -26,58 +27,68 @@ public:
 class MagicShakeMode : public MagicShifterBaseMode
 {
 private:
-  char activeFilename[MAX_FILENAME_LENGTH];
+  char shakeFileName[MAX_FILENAME_LENGTH];
   MSImage activeImage;
   POVShakeSyncDummyMode shakeSync;
 
 public:
   MagicShakeMode()
   {
+    msSystem.msEEPROMs.safeStrncpy(shakeFileName, MS_SHAKEFILE_DEFAULT, MAX_FILENAME_LENGTH);
+
   }
 
   void start()
   {
-    loadAutoFile(msGlobals.ggUploadFileName);
-    
+    loadShakeFile(msGlobals.ggUploadFileName);
   } // todo: startActiveFile() with a default filename
 
   void stop()
-  {}
+  {
+    activeImage.close();
+    shakeSync.setFrames(0);
+  }
 
   void step()
   {
+    // !J! TODO: give modes an event queue ..
+    if (msGlobals.ggShouldAutoLoad == 1) {
+      loadShakeFile(msGlobals.ggUploadFileName);
+      msGlobals.ggShouldAutoLoad = 0;
+    }
+
     if (shakeSync.update(msGlobals.ggAccel[2]))
     {
       int index = shakeSync.getFrameIndex();
+
       if (index > 0)
       {
-        //msSystem.logln(index);
+
         byte povData[RGB_BUFFER_SIZE];
-        activeImage.readFrame(index / FRAME_MULTIPLY, povData, RGB_BUFFER_SIZE);
+
+        activeImage.readFrame(index / FRAME_MULTIPLY, povData, 16);
         msSystem.msLEDs.loadBuffer(povData);
         msSystem.msLEDs.updatePixels();
 
         delayMicroseconds(POV_TIME_MICROSECONDS);
         msSystem.msLEDs.fastClear();
-        //delay(10);
       }
+
     }
-    // !J! TODO: give modes an event queue ..
-    if (msGlobals.ggShouldAutoLoad == 1) {
-      loadAutoFile(msGlobals.ggUploadFileName);
-      msGlobals.ggShouldAutoLoad = 0;
-    }
+    
   }
 
-  void loadAutoFile(char *filename)
+  void loadShakeFile(char *filename)
   {
     activeImage.close();
 
-    msSystem.msEEPROMs.safeStrncpy(activeFilename, filename, MAX_FILENAME_LENGTH);
-    activeImage = MSImage(activeFilename);
+    msSystem.msEEPROMs.safeStrncpy(shakeFileName, filename, MAX_FILENAME_LENGTH);
+
+    activeImage.loadFile(filename);
+
     int w = activeImage.getWidth() * FRAME_MULTIPLY;
+    
     shakeSync.setFrames(w);
-    msSystem.log("set frames to: ");
-    msSystem.logln(String(w));
+
   }
 };

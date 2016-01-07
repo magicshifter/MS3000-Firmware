@@ -16,6 +16,9 @@ public:
 
   MSImage(char *fileName)
   {
+
+    msSystem.log("opening file:"); msSystem.logln(String(fileName));
+
       file = SPIFFS.open(fileName, "r");
       if (file)
       {

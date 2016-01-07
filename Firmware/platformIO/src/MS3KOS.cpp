@@ -60,24 +60,20 @@
   // record our bootup time
   msGlobals.ggBootTime = millis();
 
+delay(300); // debug !J!
+
   // start the system
   msSystem.setup();
-  // start Modes as necessary ..
-  msSystem.msEEPROMs.loadString(msGlobals.ggUploadFileName, MAX_FILENAME_LENGTH);
-  msSystem.logln("upload file:");
-  msSystem.logln(msGlobals.ggUploadFileName);
-
-  if (SPIFFS.exists(msGlobals.ggUploadFileName)) {
-    msModeShake.start();
-  }
-  else
-    msSystem.logln("Did not INIT msMODESHAKe");
-
-  // todo: move to module start sequence.
-  msModePOVShake.setFrames(32);
-
+  
   // get the web interface started
   msWebServer.StartWebServer();
+
+  msSystem.msLEDs.bootSwipe();
+
+  // initialize the modules ..
+  msModeShake.start();
+  // todo: move to module start sequence.
+  msModePOVShake.setFrames(32);
 
 #if 0
   // // debug output so we know we're alive in case a mode dies ..
@@ -86,8 +82,6 @@
   //   msSystem.msLEDs.setPixels(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
   // }
 #endif 
-
-  msSystem.msLEDs.bootSwipe();
 
 }
 
@@ -196,31 +190,31 @@ void testSimpleButtons()
 
   if (adVal > 950 )
   {
-    msSystem.msLEDs.setPixels(7, 0, 10, 0, msGlobals.ggGS);
-    msSystem.msLEDs.setPixels(8, 0, 10, 0, msGlobals.ggGS);
+    msSystem.msLEDs.setPixels(7, 0, 10, 0, msGlobals.ggFactoryIntensity);
+    msSystem.msLEDs.setPixels(8, 0, 10, 0, msGlobals.ggFactoryIntensity);
   }
   else
   {
-    msSystem.msLEDs.setPixels(7, 10, 0, 0, msGlobals.ggGS);
-    msSystem.msLEDs.setPixels(8, 10, 0, 0, msGlobals.ggGS);
+    msSystem.msLEDs.setPixels(7, 10, 0, 0, msGlobals.ggFactoryIntensity);
+    msSystem.msLEDs.setPixels(8, 10, 0, 0, msGlobals.ggFactoryIntensity);
   }
 
   if (!digitalRead(PIN_BUTTON_A))
   {
-    msSystem.msLEDs.setPixels(9, 0, 10, 0, msGlobals.ggGS);
+    msSystem.msLEDs.setPixels(9, 0, 10, 0, msGlobals.ggFactoryIntensity);
   }
   else
   {
-    msSystem.msLEDs.setPixels(9, 10, 0, 0, msGlobals.ggGS);
+    msSystem.msLEDs.setPixels(9, 10, 0, 0, msGlobals.ggFactoryIntensity);
   }
 
   if (!digitalRead(PIN_BUTTON_B))
   {
-    msSystem.msLEDs.setPixels(6, 0, 10, 0, msGlobals.ggGS);
+    msSystem.msLEDs.setPixels(6, 0, 10, 0, msGlobals.ggFactoryIntensity);
   }
   else
   {
-    msSystem.msLEDs.setPixels(6, 10, 0, 0, msGlobals.ggGS);
+    msSystem.msLEDs.setPixels(6, 10, 0, 0, msGlobals.ggFactoryIntensity);
   }
   if (cnt % 300 == 550)
   {
