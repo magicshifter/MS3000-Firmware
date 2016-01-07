@@ -1,13 +1,14 @@
 import React from 'react';
 import ReactDom from 'react-dom';
-
-import Root from './components/Root';
-
 import { Router, Route, Link, browserHistory, IndexRoute } from 'react-router';
 
+import Root from './components/Root';
 import App from './components/App';
 import PixelEditor from './components/PixelEditor/PixelEditor';
+import Settings from './components/Settings/Settings';
 import NoMatch from './components/NoMatch';
+
+import globals from './GLOBALS';
 
 // main initialization point of the application
 export default function init() {
@@ -23,9 +24,10 @@ export default function init() {
     component: Root,
     indexRoute: { component: App },
     childRoutes: [
-      { path: 'pixels', component: PixelEditor },
-      { path: '*', component: NoMatch },
-    ]
+      { path: 'pixels', component: PixelEditor, },
+      { path: 'settings', component: Settings, },
+      { path: '*', component: NoMatch, },
+    ],
   }
 
   ReactDom.render(

@@ -12,24 +12,11 @@ export default class App extends Component {
 
   render() {
 
-    const style = {
-      color: 'green',
-
-      ':hover': {
-        color: 'orange',
-      },
-    };
-
     return (
-      <div
-        className='about-page'
-        style={style}
-      >
+      <div className='about-page'>
         <h3>Welcome to the MagicShifter 3000 UserInterface</h3>
         <div>
-          <p>
-            This page will soon contain a description of features and usage instructions.
-          </p>
+          <p>This page will soon contain a description of features and usage instructions.</p>
         </div>
       </div>
     );
