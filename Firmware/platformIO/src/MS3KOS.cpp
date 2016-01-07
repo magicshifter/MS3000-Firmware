@@ -60,7 +60,7 @@
   // record our bootup time
   msGlobals.ggBootTime = millis();
 
-delay(300); // debug !J!
+// delay(300); // debug !J!
 
   // start the system
   msSystem.setup();
@@ -74,6 +74,12 @@ delay(300); // debug !J!
   msModeShake.start();
   // todo: move to module start sequence.
   msModePOVShake.setFrames(32);
+
+
+// char in_v;
+// while(1) {
+//   analogRead(A0);
+// }
 
 #if 0
   // // debug output so we know we're alive in case a mode dies ..
@@ -159,7 +165,7 @@ void testButtonForBOM_X()
 
 void delayYield()
 {
-  yield();
+  // yield();
   #if 0
   int nYields = 150;  // todo: fix this magic number
   while(nYields--) {
@@ -365,13 +371,12 @@ void loop()
 
   // outside time-frame
 #ifdef CONFIG_ENABLE_ACCEL
-         msSystem.msAccel.readAccelData(msGlobals.ggAccelCounts);
-         delayYield();
+          msSystem.msAccel.readAccelData(msGlobals.ggAccelCounts);
+          delayYield();
 
-         for (int i = 0 ; i < 3 ; i++)
-         {
-      msGlobals.ggAccel[i] = (float) msGlobals.ggAccelCounts[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set
-    }
+          for (int i = 0 ; i < 3 ; i++) {
+            msGlobals.ggAccel[i] = (float) msGlobals.ggAccelCounts[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set
+          }
 #endif
 
     float fX = msGlobals.ggAccel[0];

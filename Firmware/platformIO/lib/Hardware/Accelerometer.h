@@ -49,14 +49,14 @@ public:
 
     if (Wire.available() < bytesToRead)
     {
-      // msSystem.logln("I2C not available. This should NEVER happen!");
+      Serial.println("I2C not available. This should NEVER happen!");
       delay(10);
     }; //Hang out until we get the # of bytes we expect
 
     for(int x = 0 ; x < bytesToRead ; x++)
     {
       dest[x] = Wire.read();
-      yield();
+      // yield();
     }
   }
 
@@ -70,7 +70,7 @@ public:
     Wire.requestFrom(MMA8452_ADDRESS, 1); //Ask for 1 byte, once done, bus is released by default
 
     if (!Wire.available()){
-      // msSystem.logln("I2C not available. This should NEVER happen!");
+      Serial.println("I2C not available. This should NEVER happen!");
       delay(10);
     } ; //Wait for the data to come back
     return Wire.read(); //Return this one byte
@@ -144,15 +144,15 @@ public:
 
       if (c == MMA8452_ID) // WHO_AM_I should always be 0x2A
       {
-        // msSystem.logln("MMA8452Q is online...");
+        // Serial.println("MMA8452Q is online...");
         success = true;
       }
       else
       {
-        // msSystem.logln("Could not connect to MMA8452Q: expected 0x");
-        // msSystem.logln(String(MMA8452_ID, HEX));
-        // msSystem.logln(" but received 0x");
-        // msSystem.logln(String(c, HEX));
+        // Serial.println("Could not connect to MMA8452Q: expected 0x");
+        // Serial.println(String(MMA8452_ID, HEX));
+        // Serial.println(" but received 0x");
+        // Serial.println(String(c, HEX));
         delay(10);
       }
       /* code */

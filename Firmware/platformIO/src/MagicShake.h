@@ -66,7 +66,7 @@ public:
 
         byte povData[RGB_BUFFER_SIZE];
 
-        activeImage.readFrame(index / FRAME_MULTIPLY, povData, 16);
+        activeImage.readFrame(index / FRAME_MULTIPLY, povData, RGB_BUFFER_SIZE);
         msSystem.msLEDs.loadBuffer(povData);
         msSystem.msLEDs.updatePixels();
 
