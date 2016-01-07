@@ -3,39 +3,60 @@ import React, {Component, PropTypes} from 'react';
 
 import Radium from 'radium';
 
+import {rgba_toString} from '../../utils/colors';
+
 @Radium
 export default class Pixel extends Component {
 
   static propTypes = {
     row: PropTypes.number,
+    rows: PropTypes.number,
     column: PropTypes.number,
-    color: PropTypes.string,
-    container: PropTypes.shape({
-      height: PropTypes.number,
-      width: PropTypes.number,
+    columns: PropTypes.number,
+    color: PropTypes.shape({
+      r: PropTypes.number,
+      b: PropTypes.number,
+      g: PropTypes.number,
+      a: PropTypes.number,
     }),
   }
 
   static defaultProps = {
-    backgroundColor: '#000000',
+    color: {
+      r: 0,
+      b: 0,
+      g: 0,
+      a: 155,
+    },
+    backgroundColor: rgba_toString({r: 0, b: 0, g: 0, a: 0}),
   }
 
   constructor(props) {
     super(props);
 
-    const {rows, columns, row, column, backgroundColor} = props;
+    const {row, rows, column, columns, color} = props;
 
     this.state = {
       row,
       column,
-      backgroundColor,
+      color,
       rows,
       columns,
+      backgroundColor: rgba_toString(props.color)
     };
+
+    // this feels dirty, but more clear than binding in the event call.
+    this.onClick = this.onClick.bind(this);
+  }
+
+  onClick(evt) {
+    this.setState({
+      backgroundColor: rgba_toString(this.state.color),
+    });
   }
 
   render() {
-    const {rows, columns, row, column, backgroundColor} = this.state;
+    const {row, column, columns, backgroundColor} = this.state;
 
     const style = {
       backgroundColor,
@@ -53,6 +74,7 @@ export default class Pixel extends Component {
 
     return (
       <li
+        onClick={this.onClick}
         className={`row-${row} column-${column}`}
         style={style}
       ></li>
