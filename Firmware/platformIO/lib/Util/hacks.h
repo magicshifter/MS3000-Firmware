@@ -47,7 +47,7 @@ while (1)
   // swipe colors
     for (byte idx = 0; idx < MAX_LEDS; idx++)
     {
-      msSystem.msLEDs.setPixels(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, msGlobals.ggGS);
+      msSystem.msLEDs.setPixels(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, msGlobals.ggFactoryIntensity);
       msSystem.msLEDs.updatePixels();
       delay(30);
     }

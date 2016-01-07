@@ -218,7 +218,7 @@ void handleFileUpload(){
 
   if (upload.status == UPLOAD_FILE_START)
   {
-    strncpy(msGlobals.ggUploadFileName, (char *)upload.filename.c_str(), MAX_FILENAME_LENGTH);//.c_str();
+    msSystem.msEEPROMs.safeStrncpy(msGlobals.ggUploadFileName, (char *)upload.filename.c_str(), MAX_FILENAME_LENGTH);//.c_str();
     msSystem.logln("upload started: ");
     msSystem.logln(msGlobals.ggUploadFileName);
 

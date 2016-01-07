@@ -71,7 +71,7 @@ public:
     }
     else 
     {
-      msSystem.logln("File doesn't exist:");
+      msSystem.log("no server config file?::");
       msSystem.logln((char * )path.c_str());
     }
 

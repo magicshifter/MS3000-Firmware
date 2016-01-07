@@ -7,7 +7,11 @@
 
 #undef DEBUG_OUTPUT
 
-#define HW_ID HW_ID_MS3000_FSOX8700CQ
+// Chip ID's's
+// 16299018 // jv's proto
+// 16298245 // 'p2' proto
+//  1210204 //"in-production" Chip
+
 
 // HW_ID is passed one of these constants from Makefile -DHW_ID=.. 
 
@@ -16,6 +20,8 @@
 #define HW_ID_MS3000_MMA8452Q 		2		// accel
 #define HW_ID_RING   				3		// on the wall
 #define HW_ID_SABRE   				4		// proto-j-beta light wandstrip, new ESP model
+
+#define HW_ID HW_ID_MS3000_MMA8452Q
 
 // set of LED types
 #define LED_TYPE_APA102 1 

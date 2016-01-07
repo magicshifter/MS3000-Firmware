@@ -4,11 +4,11 @@
 class MagicShifterGlobals {
 public:
   // state !J! TODO: clean all this up 
-  int ggGS = 10;
+  int ggFactoryIntensity = 10;
   float ggAccel[3];  // Stores the real accel value in g's
   long ggAccelTime;
   long ggLFrameTime;
-  int ggCurrentMode = 1;  // POV mode
+  int ggCurrentMode = 0;  // POV mode
   int ggAccelCounts[3];  // Stores the 12-bit signed value
   int ggBtn1State = 0;
   int ggCurrentMicros = 0;

@@ -37,7 +37,7 @@ public:
 
   void start()
   {
-    setFile(msGlobals.ggUploadFileName);
+    loadAutoFile(msGlobals.ggUploadFileName);
     
   } // todo: startActiveFile() with a default filename
 
@@ -49,33 +49,39 @@ public:
     if (shakeSync.update(msGlobals.ggAccel[2]))
     {
       int index = shakeSync.getFrameIndex();
+      msSystem.log("Index:"); msSystem.logln(index);
+
       if (index > 0)
       {
         //msSystem.logln(index);
         byte povData[RGB_BUFFER_SIZE];
-        activeImage.readFrame(index / FRAME_MULTIPLY, povData, RGB_BUFFER_SIZE);
+        activeImage->readFrame(index / FRAME_MULTIPLY, povData, RGB_BUFFER_SIZE);
         msSystem.msLEDs.loadBuffer(povData);
         msSystem.msLEDs.updatePixels();
 
         delayMicroseconds(POV_TIME_MICROSECONDS);
         msSystem.msLEDs.fastClear();
-        //delay(10);
+        delay(10);
       }
     }
+    else
+      msSystem.logln("Accel?");
+
     // !J! TODO: give modes an event queue ..
     if (msGlobals.ggShouldAutoLoad == 1) {
-      setFile(msGlobals.ggUploadFileName);
+      msSystem.logln("Should Auto Load");
+      loadAutoFile(msGlobals.ggUploadFileName);
       msGlobals.ggShouldAutoLoad = 0;
     }
   }
 
-  void setFile(char *filename)
+  void loadAutoFile(char *filename)
   {
-    activeImage.close();
+    activeImage->close();
 
     msSystem.msEEPROMs.safeStrncpy(activeFilename, filename, MAX_FILENAME_LENGTH);
     activeImage = MSImage(activeFilename);
-    int w = activeImage.getWidth() * FRAME_MULTIPLY;
+    int w = activeImage->getWidth() * FRAME_MULTIPLY;
     shakeSync.setFrames(w);
     msSystem.logln("set frames to: ");
     msSystem.logln(String(w));

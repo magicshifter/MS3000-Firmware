@@ -493,20 +493,20 @@ void envFrame()
 
     if (msBtnBHit)
     {
-      msGlobals.ggGS+=2;
-      if (msGlobals.ggGS > 31)
+      msGlobals.ggFactoryIntensity+=2;
+      if (msGlobals.ggFactoryIntensity > 31)
       {
-        msGlobals.ggGS = 31;
+        msGlobals.ggFactoryIntensity = 31;
       }
 
       msGlobals.ggCurrentMode = (msGlobals.ggCurrentMode+1)%NUM_MS_MODES;
     }
     if (msBtnBLongHit)
     {
-      msGlobals.ggGS-=6;
-      if (msGlobals.ggGS < 1)
+      msGlobals.ggFactoryIntensity-=6;
+      if (msGlobals.ggFactoryIntensity < 1)
       {
-        msGlobals.ggGS = 1;
+        msGlobals.ggFactoryIntensity = 1;
       }
 
       msGlobals.ggCurrentMode = (msGlobals.ggCurrentMode+1)%NUM_MS_MODES;

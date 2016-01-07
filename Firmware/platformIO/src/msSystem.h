@@ -73,15 +73,17 @@ public:
   MDNSResponder msDNS;
   ESP8266WebServer msESPServer;
 
+  WiFiUDP udp;
+
 public:
-  // wrap a logging class ..
-  void log(String msg) { Serial.print(msg); 
-// TODO: this
-    // WiFiUDP udp;
-    // udp.beginPacket("192.168.1.112", 514); // wks port for syslog
-    // udp.print(msg);
-    // udp.endPacket();
+  void log(String msg) { 
+  // todo:switch log from OFF, to BANNED (MIDI), to UDP .. etc.
+    Serial.print(msg); 
+    udp.beginPacket("192.168.1.112", 514); // wks port for syslog
+    udp.print(msg);
+    udp.endPacket();
   };
+
   void logln(String msg) { Serial.println(msg); }; 
 
   void log(int8_t &msg, int base) { log(String(msg)); } 
@@ -136,6 +138,9 @@ public:
   void logSysInfo()
   {
     // // DUMP sysinfo
+delay (750); // !j!
+
+    logln("System config:");
     log("Vcc: ");
     logln(String(ESP.getVcc()));
     log("Free heap: ");
@@ -177,8 +182,6 @@ public:
     //log("FS mount: ");
     //logln(String(FS.mount() ? "OK" : "ERROR!"));
     
-    logln(String());
-    
 #if 0
     log(F("Heap: ")); 
     logln(String(system_get_free_heap_size()));
@@ -202,31 +205,36 @@ public:
 
   };
 
+
+  // gets the basic stuff set up
   void setup()
   {
-
-
 // #ifdef CONFIG_ENABLE_MIDI
 //     Serial.begin(31250);
 // #else
     Serial.begin(115200);
 // #endif
-
     EEPROM.begin(512);
+
+    logln(String("\r\nMagicShifter 3000 OS V0.24"));
+
+    // start Modes as necessary ..
+    msEEPROMs.loadString(msGlobals.ggUploadFileName, MAX_FILENAME_LENGTH);
+    log("uploadfile:"); logln(msGlobals.ggUploadFileName);
 
     logSysInfo();
 
     // wake up filesystem
     if (SPIFFS.begin()) 
     {
-      logln("SPIFFS begin!");
+      log("SPIFFS:");
     }
     else
     {
-      logln("SPIFFS not begin .. :|");
+      log("noSPIFFS:");
     }
 
-      TEST_SPIFFS_bug();
+    TEST_SPIFFS_bug();
 
     // all engines turn on
     pinMode(PIN_PWR_MGT, INPUT);
@@ -249,7 +257,6 @@ public:
   // boot that we are alive
     msLEDs.bootSwipe();
 
-    logln(String("\r\nMagicShifter 3000 OS V0.24"));
   }
 
   void powerDown()
@@ -272,14 +279,13 @@ public:
 
     // logln("(LOOP)");
     // handle Buttons:
-  pinMode(PIN_BUTTON_A, INPUT);
-  pinMode(PIN_BUTTON_B, INPUT);
+    pinMode(PIN_BUTTON_A, INPUT);
+    pinMode(PIN_BUTTON_B, INPUT);
 
     // reset public button state
     msBtnAHit = msBtnALongHit = false;
     if (!digitalRead(PIN_BUTTON_A))
     {
-      Serial.println("A PRESSED");
 
       if (msBtnAPressTime)
         msBtnAPressTime += msGlobals.ggLastMicros;
@@ -291,12 +297,10 @@ public:
       if (msLongClickOK && msBtnAPressTime >= MIN_TIME_LONG_CLICK)
       {
         msBtnALongHit = true;
-        Serial.println("msBtnALongHit");
       }
       else if (msBtnAPressTime >= MIN_TIME_CLICK)
       {
         msBtnAHit = true;
-        Serial.println("msBtnAHit");
       }
 
       msBtnAPressTime = 0;
@@ -306,7 +310,6 @@ public:
     msBtnBHit = msBtnBLongHit = false;
     if (!digitalRead(PIN_BUTTON_B))
     {
-      Serial.println("B PRESSED");
 
       if (msBtnBPressTime)
         msBtnBPressTime += msGlobals.ggLastMicros;
@@ -318,13 +321,11 @@ public:
       if (msLongClickOK && msBtnBPressTime >= MIN_TIME_LONG_CLICK)
       {
         msBtnBLongHit = true;
-        Serial.println("msBtnBLongHit");
 
       }
       else if (msBtnBPressTime >= MIN_TIME_CLICK)
       {
         msBtnBHit = true;
-        Serial.println("msBtnBHit");
       }
 
       msBtnBPressTime = 0;
@@ -337,8 +338,6 @@ public:
     //if (msFrame++ % 10 == 0)
     if (powerButtonPressed())
     {
-      Serial.println("POWER PRESSED");
-
       if (msBtnPwrPressTime)
         msBtnPwrPressTime += msGlobals.ggLastMicros;
       else
@@ -357,7 +356,6 @@ public:
 
       msBtnPwrPressTime = 0;
     }
-    //*/
 
     // internal button usage
     if (msBtnALongHit)
@@ -367,29 +365,29 @@ public:
 
     if (msBtnBHit)
     {
-      msGlobals.ggGS+=2;
-      if (msGlobals.ggGS > 31)
+      msGlobals.ggFactoryIntensity+=2;
+      if (msGlobals.ggFactoryIntensity > 31)
       {
-        msGlobals.ggGS = 31;
+        msGlobals.ggFactoryIntensity = 31;
       }
-
-      Serial.println("cB");
 
       msGlobals.ggCurrentMode = (msGlobals.ggCurrentMode+1)%NUM_MS_MODES;
     }
+
     if (msBtnBLongHit)
     {
-      msGlobals.ggGS-=6;
-      if (msGlobals.ggGS < 1)
+      msGlobals.ggFactoryIntensity-=6;
+      if (msGlobals.ggFactoryIntensity < 1)
       {
-        msGlobals.ggGS = 1;
+        msGlobals.ggFactoryIntensity = 1;
       }
 
-      Serial.println("looooooong clickedB");
-
       msGlobals.ggCurrentMode = (msGlobals.ggCurrentMode+1)%NUM_MS_MODES;
+      
+      log("Changed Mode:"); logln(String(msGlobals.ggCurrentMode));
+
     }
-  }
+}
 
   void enableLongClicks(bool enable)
   {
