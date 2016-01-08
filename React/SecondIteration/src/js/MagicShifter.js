@@ -12,11 +12,10 @@ import globals from './GLOBALS';
 
 // main initialization point of the application
 export default function init() {
-  const appContainer = document.getElementById('app')
+  const appContainer = document.getElementById('app');
 
   if (!appContainer) {
-    throw 'div#app not found';
-    return;
+    throw new Error('div#app not found');
   }
 
   const routes = {
