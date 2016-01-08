@@ -21,7 +21,7 @@
 #define HW_ID_RING   				3		// on the wall
 #define HW_ID_SABRE   				4		// proto-j-beta light wandstrip, new ESP model
 
-#define HW_ID HW_ID_MS3000_MMA8452Q
+#define HW_ID HW_ID_MS3000_FSOX8700CQ
 
 // set of LED types
 #define LED_TYPE_APA102 1 
@@ -49,7 +49,7 @@
 //#define USE_MDNS
 
 // 192.168.4.1 is the IP it always has in softAP mode
-#define FORCE_APMODE 1
+// #define SCAN_FIRST_MODE 1
 
 #define CONNECTION_TIMEOUT 30000
 
