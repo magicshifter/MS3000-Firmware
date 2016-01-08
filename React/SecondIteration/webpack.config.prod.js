@@ -34,7 +34,10 @@ module.exports = {
         include: path.join(__dirname, 'src'),
         query: {
           presets: ['react', 'es2015'],
-          plugins: ['transform-class-properties', 'transform-decorators-legacy',],
+          plugins: [
+            'transform-runtime',
+            'transform-class-properties',
+            'transform-decorators-legacy',],
           cacheDirectory: true,
         },
       },
