@@ -60,7 +60,7 @@
   // record our bootup time
   msGlobals.ggBootTime = millis();
 
-// delay(300); // debug !J!
+delay(350); // debug !J!
 
   // start the system
   msSystem.setup();
