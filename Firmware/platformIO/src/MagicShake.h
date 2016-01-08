@@ -3,7 +3,7 @@
 #include "Image.h"
 #include "ShakeSync.h"
 
-#define FRAME_MULTIPLY 4
+#define FRAME_MULTIPLY 2
 
 #define MS_SHAKEFILE_DEFAULT "nix"
 

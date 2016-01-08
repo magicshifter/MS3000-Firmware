@@ -79,7 +79,8 @@ bool AutoConnect()
   struct jsonparse_state jsonState;
   struct APInfo apInfo;
 
-#ifdef FORCE_AP_MODE
+#define FORCE_APMODE 1
+#ifdef FORCE_APMODE
   // if (!forceAPMode)
   {
     if (Settings.getPreferredAP(&apInfo))

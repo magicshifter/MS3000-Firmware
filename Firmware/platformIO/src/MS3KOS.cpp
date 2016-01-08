@@ -165,7 +165,7 @@ void testButtonForBOM_X()
 
 void delayYield()
 {
-  // yield();
+  yield();
   #if 0
   int nYields = 150;  // todo: fix this magic number
   while(nYields--) {
