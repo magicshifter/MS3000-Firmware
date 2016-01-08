@@ -43,7 +43,7 @@
 //#define USE_MDNS
 
 // 192.168.4.1 is the IP it always has in softAP mode
-#define FORCE_APMODE 1
+// #define FORCE_AP_MODE 1
 
 #define CONNECTION_TIMEOUT 30000
 

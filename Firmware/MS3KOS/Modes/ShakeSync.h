@@ -57,8 +57,6 @@ public:
 };
 
 
-
-
 class POVShakeSync {
 
   typedef struct struct_ShakePoint {

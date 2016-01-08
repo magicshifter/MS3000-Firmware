@@ -37,9 +37,16 @@ public:
 
   void start()
   {
-    ggAFileSet(msGlobals.ggUploadFileName);
-    
-  } // todo: startActiveFile() with a default filename
+    // todo: startActiveFile() with a default filename
+    // initialize the shakefile
+    if (SPIFFS.exists(msGlobals.ggUploadFileName)) {
+      msSystem.logln("modeShake go");
+      ggAFileSet(msGlobals.ggUploadFileName);
+    }
+    else {
+      msSystem.logln("modeShake no-go");
+    } 
+  }
 
   void stop()
   {}
@@ -48,6 +55,7 @@ public:
   {
     if (shakeSync.update(msGlobals.ggAccel[2]))
     {
+      msSystem.logln("**sAccels");
       int index = shakeSync.getFrameIndex();
       if (index > 0)
       {
@@ -62,10 +70,14 @@ public:
         //delay(10);
       }
     }
+    else
+      msSystem.logln("*");
+
     // !J! TODO: give modes an event queue ..
     if (msGlobals.ggAFileSet == 1) {
       ggAFileSet(msGlobals.ggUploadFileName);
       msGlobals.ggAFileSet = 0;
+      msSystem.logln("**setfile");
     }
   }
 
