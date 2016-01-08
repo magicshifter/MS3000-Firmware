@@ -109,7 +109,7 @@ public:
       msSystem.logln((char *)path.c_str());
     }
 
-    msSystem.msEEPROMs.safeStrncpy(config->ssid, "MS3000", sizeof(config->ssid));
+    msSystem.msEEPROMs.safeStrncpy(config->ssid, "MS3000-jv", sizeof(config->ssid));
     msSystem.msEEPROMs.safeStrncpy(config->password, "", sizeof(config->password));
     
     return false;

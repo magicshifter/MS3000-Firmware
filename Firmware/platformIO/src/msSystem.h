@@ -174,7 +174,8 @@ public:
     logln(String(ESP.getSketchSize()));
     log("Free sketch space: ");
     logln(String(ESP.getFreeSketchSpace()));
-    log("Reset info: ");
+
+    // log("Reset info: ");
     // logln(String(ESP.getResetInfo()));
     //log("FS mount: ");
     //logln(String(FS.mount() ? "OK" : "ERROR!"));
@@ -233,7 +234,8 @@ delay(1500); // this enables serial consoles to sync
     TEST_SPIFFS_bug();
 
     logSysInfo();
-    log("uploadfile:"); logln(msGlobals.ggUploadFileName);
+
+    log("uploadfile: "); logln(msGlobals.ggUploadFileName);
 
     // all engines turn on
     pinMode(PIN_PWR_MGT, INPUT);

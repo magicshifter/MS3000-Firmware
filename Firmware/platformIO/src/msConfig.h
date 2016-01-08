@@ -49,7 +49,7 @@
 //#define USE_MDNS
 
 // 192.168.4.1 is the IP it always has in softAP mode
-#define SCAN_FIRST_MODE 1
+// #define SCAN_FIRST_MODE 1
 
 #define CONNECTION_TIMEOUT 30000
 

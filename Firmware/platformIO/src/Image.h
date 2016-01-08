@@ -30,11 +30,12 @@ public:
 
         if (size % frameSize != 0)
         {
-          msSystem.log("File is no multiple of LED count: ");
-          msSystem.logln(String(fileName));
+          msSystem.log("File is no multiple of LED count: "); msSystem.logln(String(fileName));
         }
         width = size / frameSize;
-        msSystem.log("File could be opened: ");
+
+        msSystem.log("File could be opened: "); msSystem.logln(String(fileName));
+
       }
       else
       {
@@ -43,6 +44,7 @@ public:
         width = 0;
         height = MAX_LEDS;
       }
+
       msSystem.log("image width:"); msSystem.logln(String(width));;
       msSystem.log("image height:"); msSystem.logln(String(height));;
 
@@ -66,14 +68,16 @@ public:
     if (file)
     {
 
-      file.seek(frameIdx * height * BYTESPERPIXEL, SeekSet);
+      // !J! 16-byte OFFSET due to bug in bitmap generator code
+#define MAGIC_OFFSET 16 
+      file.seek( (frameIdx * height * BYTESPERPIXEL) + MAGIC_OFFSET, SeekSet);
 
       if (height < maxHeight) maxHeight = height;
 
         int result = file.read(frameData, maxHeight * BYTESPERPIXEL);
 
 #if 0
-msSystem.log("framedata:");
+msSystem.log("framedata/"); msSystem.log(String(maxHeight * BYTESPERPIXEL)); 
 for (int x=0;x<maxHeight * BYTESPERPIXEL;x++) {
   msSystem.log(":"); Serial.print(frameData[x], HEX);;
 }

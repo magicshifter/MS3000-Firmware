@@ -75,12 +75,6 @@ delay(350); // debug !J!
   // todo: move to module start sequence.
   msModePOVShake.setFrames(32);
 
-
-// char in_v;
-// while(1) {
-//   analogRead(A0);
-// }
-
 #if 0
   // // debug output so we know we're alive in case a mode dies ..
   // for (byte idx = 0; idx < MAX_LEDS; idx++)

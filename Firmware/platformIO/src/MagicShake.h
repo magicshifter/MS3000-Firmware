@@ -3,7 +3,7 @@
 #include "Image.h"
 #include "ShakeSync.h"
 
-#define FRAME_MULTIPLY 2
+#define FRAME_MULTIPLY 4
 
 #define MS_SHAKEFILE_DEFAULT "nix"
 
@@ -49,6 +49,18 @@ public:
     shakeSync.setFrames(0);
   }
 
+  void hexDump(int len, byte *buf, const char*label) {
+    msSystem.log(label); 
+    msSystem.log(String(len)); 
+    msSystem.log("/");
+
+    for (int x=0;x<len;x++) {
+      msSystem.log(":"); Serial.print(buf[x], HEX);; 
+      if ((x) && (x % 4 == 0)) msSystem.log(" ");
+    }
+    msSystem.logln("<<EOF");
+  }
+
   void step()
   {
     // !J! TODO: give modes an event queue ..
@@ -66,11 +78,25 @@ public:
 
         byte povData[RGB_BUFFER_SIZE];
 
-        activeImage.readFrame(index / FRAME_MULTIPLY, povData, RGB_BUFFER_SIZE);
+        int frame_index = index / FRAME_MULTIPLY;
+
+// msSystem.log("i:"); msSystem.logln(String(index));
+// msSystem.log("fi:"); msSystem.logln(String(frame_index));
+
+        // frame_index = 0; // debug
+
+        activeImage.readFrame(frame_index, povData, MAX_LEDS);
+        
+// hexDump(RGB_BUFFER_SIZE, povData, "povData1/");
+
         msSystem.msLEDs.loadBuffer(povData);
+
+// hexDump(RGB_BUFFER_SIZE, povData, "povData2/");
+
         msSystem.msLEDs.updatePixels();
 
         delayMicroseconds(POV_TIME_MICROSECONDS);
+
         msSystem.msLEDs.fastClear();
       }
 
@@ -81,13 +107,10 @@ public:
   void loadShakeFile(char *filename)
   {
     activeImage.close();
-
     msSystem.msEEPROMs.safeStrncpy(shakeFileName, filename, MAX_FILENAME_LENGTH);
 
     activeImage.loadFile(filename);
-
     int w = activeImage.getWidth() * FRAME_MULTIPLY;
-    
     shakeSync.setFrames(w);
 
   }
