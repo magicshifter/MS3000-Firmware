@@ -1,4 +1,3 @@
-// need to import react here
 import React, {Component, PropTypes} from 'react';
 
 import Radium from 'radium';
