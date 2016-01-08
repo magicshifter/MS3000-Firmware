@@ -56,7 +56,7 @@ public:
     for(int x = 0 ; x < bytesToRead ; x++)
     {
       dest[x] = Wire.read();
-      // yield();
+      yield();
     }
   }
 
