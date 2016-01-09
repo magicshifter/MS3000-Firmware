@@ -1,6 +1,7 @@
-.idea/
-cellspace.sublime-project
-cellspace.sublime-workspace
+.DS_STORE
+*.log
+
 node_modules
-npm-debug.log
-dist/*
+
+dist
+coverage

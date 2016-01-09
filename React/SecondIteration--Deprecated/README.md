@@ -5,7 +5,7 @@ Usage:
   git clone git@github.com:hackerspaceshop/MagicShifter3000
   cd MagicShifter3000/React/SecondIteration
   make install
-  make
+  make 
 ```
 
 See

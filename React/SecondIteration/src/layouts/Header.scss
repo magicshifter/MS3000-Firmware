@@ -1,0 +1,17 @@
+header.main {
+  display: inline-block;
+  width: 100%;
+
+  .container {
+    float: left;
+
+    .logo {
+      float: left;
+    }
+
+    h3 {
+      float: left;
+      margin: .8em 0 0 .4em;
+    }
+  }
+}
