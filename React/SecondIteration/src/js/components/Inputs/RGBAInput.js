@@ -20,9 +20,9 @@ export default class RGBAInput extends Component {
 
   static defaultProps = {
     color: {
-      r: 255,
-      b: 255,
-      g: 255,
+      r: 0,
+      b: 0,
+      g: 0,
       a: 155,
     },
   }

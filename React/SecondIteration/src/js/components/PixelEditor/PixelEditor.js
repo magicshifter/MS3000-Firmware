@@ -6,6 +6,7 @@ import objectAssign from 'object-assign';
 
 import Pixel from './Pixel';
 import RGBAInput from '../Inputs/RGBAInput';
+import ImageInput from '../Inputs/ImageInput';
 
 @Radium
 export default class PixelEditor extends Component {
@@ -26,11 +27,10 @@ export default class PixelEditor extends Component {
     columns: 16,
     color: {
       a: 155,
-      b: 255,
-      g: 255,
-      r: 255,
+      b: 0,
+      g: 0,
+      r: 0,
     },
-    alpha: 155,
   }
 
   constructor(props) {
@@ -117,6 +117,7 @@ export default class PixelEditor extends Component {
             color={color}
             onChange={this.onColorInputChange}
           />
+          <ImageInput label='upload image' rows={rows} columns={columns} />
         </div>
       </section>
     );
