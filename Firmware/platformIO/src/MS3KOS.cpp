@@ -60,7 +60,7 @@
   // record our bootup time
   msGlobals.ggBootTime = millis();
 
-// delay(300); // debug !J!
+delay(350); // debug !J!
 
   // start the system
   msSystem.setup();
@@ -72,14 +72,9 @@
 
   // initialize the modules ..
   msModeShake.start();
+  msModeShake.loadShakeFile("blueghost_png.magicBitmap");
   // todo: move to module start sequence.
   msModePOVShake.setFrames(32);
-
-
-// char in_v;
-// while(1) {
-//   analogRead(A0);
-// }
 
 #if 0
   // // debug output so we know we're alive in case a mode dies ..

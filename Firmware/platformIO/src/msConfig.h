@@ -22,6 +22,7 @@
 #define HW_ID_SABRE   				4		// proto-j-beta light wandstrip, new ESP model
 
 #define HW_ID HW_ID_MS3000_FSOX8700CQ
+// #define HW_ID HW_ID_MS3000_MMA8452Q
 
 // set of LED types
 #define LED_TYPE_APA102 1 

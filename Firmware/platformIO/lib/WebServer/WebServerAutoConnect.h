@@ -21,7 +21,9 @@ bool TryConnect(struct APInfo &apInfo, int timeoutMs)
     }
     msSystem.msLEDs.updatePixels();
     frame++;
+
     if (frame%50 == 0) msSystem.logln(".");
+    
     if (WiFi.status() == WL_NO_SSID_AVAIL || WiFi.status() == WL_CONNECT_FAILED || millis() > startTime + timeoutMs)
     {
       msSystem.logln ( "" );
@@ -30,9 +32,6 @@ bool TryConnect(struct APInfo &apInfo, int timeoutMs)
       return false; // :(
     }
 
-    // crashes!
-    msSystem.loop();
-    
     delay(20);
   }
 
@@ -79,8 +78,7 @@ bool AutoConnect()
   struct jsonparse_state jsonState;
   struct APInfo apInfo;
 
-#define FORCE_APMODE 1
-#ifdef FORCE_APMODE
+#ifdef SCAN_FIRST_MODE
   // if (!forceAPMode)
   {
     if (Settings.getPreferredAP(&apInfo))

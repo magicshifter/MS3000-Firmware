@@ -137,9 +137,6 @@ public:
 
   void logSysInfo()
   {
-    // // DUMP sysinfo
-delay (750); // !j!
-
     logln("System config:");
     log("Vcc: ");
     logln(String(ESP.getVcc()));
@@ -177,8 +174,9 @@ delay (750); // !j!
     logln(String(ESP.getSketchSize()));
     log("Free sketch space: ");
     logln(String(ESP.getFreeSketchSpace()));
-    log("Reset info: ");
-    logln(String(ESP.getResetInfo()));
+
+    // log("Reset info: ");
+    // logln(String(ESP.getResetInfo()));
     //log("FS mount: ");
     //logln(String(FS.mount() ? "OK" : "ERROR!"));
     
@@ -212,6 +210,8 @@ delay (750); // !j!
 // #ifdef CONFIG_ENABLE_MIDI
 //     Serial.begin(31250);
 // #else
+delay(1500); // this enables serial consoles to sync
+
     Serial.begin(115200);
 // #endif
     EEPROM.begin(512);
@@ -220,9 +220,6 @@ delay (750); // !j!
 
     // start Modes as necessary ..
     msEEPROMs.loadString(msGlobals.ggUploadFileName, MAX_FILENAME_LENGTH);
-    log("uploadfile:"); logln(msGlobals.ggUploadFileName);
-
-    logSysInfo();
 
     // wake up filesystem
     if (SPIFFS.begin()) 
@@ -235,6 +232,10 @@ delay (750); // !j!
     }
 
     TEST_SPIFFS_bug();
+
+    logSysInfo();
+
+    log("uploadfile: "); logln(msGlobals.ggUploadFileName);
 
     // all engines turn on
     pinMode(PIN_PWR_MGT, INPUT);
