@@ -13,7 +13,7 @@ public:
   int ggBtn1State = 0;
   int ggCurrentMicros = 0;
   int ggLastMicros = 0;
-  int ggSpeedMicros = 500;
+  int ggSpeedMicros = 800;
   long ggLastFrameMicros = 0;
   int ggCurrentFrame = 0;
   byte ggBright = 0xFF;
