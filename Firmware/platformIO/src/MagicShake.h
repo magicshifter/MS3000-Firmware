@@ -3,7 +3,7 @@
 #include "Image.h"
 #include "ShakeSync.h"
 
-#define FRAME_MULTIPLY 4
+#define FRAME_MULTIPLY 1
 
 #define MS_SHAKEFILE_DEFAULT "nix"
 
@@ -29,7 +29,7 @@ class MagicShakeMode : public MagicShifterBaseMode
 private:
   char shakeFileName[MAX_FILENAME_LENGTH];
   MSImage activeImage;
-  POVShakeSyncDummyMode shakeSync;
+  POVShakeSync shakeSync;
 
 public:
   MagicShakeMode()
@@ -69,8 +69,11 @@ public:
       msGlobals.ggShouldAutoLoad = 0;
     }
 
-    if (shakeSync.update(msGlobals.ggAccel[2]))
+// msSystem.log("accel:"); msSystem.logln(String(msGlobals.ggAccel[1]));
+
+    if (shakeSync.update(msGlobals.ggAccel[1]))
     {
+
       int index = shakeSync.getFrameIndex();
 
       if (index > 0)

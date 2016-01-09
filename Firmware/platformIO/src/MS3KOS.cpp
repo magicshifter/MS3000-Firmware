@@ -72,6 +72,7 @@ delay(350); // debug !J!
 
   // initialize the modules ..
   msModeShake.start();
+  msModeShake.loadShakeFile("blueghost_png.magicBitmap");
   // todo: move to module start sequence.
   msModePOVShake.setFrames(32);
 

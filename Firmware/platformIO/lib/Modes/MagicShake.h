@@ -3,7 +3,7 @@
 #include "Image.h"
 #include "ShakeSync.h"
 
-#define FRAME_MULTIPLY 4
+#define FRAME_MULTIPLY 1
 
 
 // make it larger to be on the save side when base64 decoding
@@ -28,7 +28,7 @@ class MagicShakeMode : public MagicShifterBaseMode
 private:
   char activeFilename[MAX_FILENAME_LENGTH];
   MSImage activeImage;
-  POVShakeSyncDummyMode shakeSync;
+  POVShakeSync shakeSync;
 
 public:
   MagicShakeMode()

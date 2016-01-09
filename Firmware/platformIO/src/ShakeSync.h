@@ -5,6 +5,9 @@
 
 #include "msGlobals.h"
 
+// #define SHOW_LOCAL_STATE
+
+
 class POVShakeSyncDummyMode
 {
   int frames = 16;
@@ -125,6 +128,14 @@ public:
     }
 	}
 
+  void localDebugSetPixels(int r, int g, int b)
+  {
+#ifdef SHOW_LOCAL_STATE
+    msSystem.msLEDs.fillPixels(r,g,b);
+#endif
+  }
+
+
 	// returns true if POV shake is actve
   bool update(float g)
   {
@@ -150,7 +161,7 @@ public:
         isActive = true;
     }
 
-		msSystem.msLEDs.fillPixels(0, 0, 0);
+		localDebugSetPixels(0, 0, 0);
 
     activeFramesMin2Max++;
     activeFramesMax2Min++;
@@ -162,6 +173,9 @@ public:
 			  activeMin.g = g;
 			  activeMin.micros = msGlobals.ggCurrentMicros;
         activeFramesMin2Max = 0;
+
+        // localDebugSetPixels(20, 0, 0);
+
 			}
       else
       {
@@ -191,15 +205,15 @@ public:
 				if (dDiff < 0) dDiff = -dDiff;
 				if (dSame <= dDiff)
 				{
-					msSystem.logln("same");
+					// msSystem.logln("same");
 					sameCount++;
 				}
 				else
 				{
-					msSystem.logln("diff");
+					// msSystem.logln("diff");
 					diffCount++;
 				}
-				msSystem.logln(String(sameCount-diffCount));
+				// msSystem.logln(String(sameCount-diffCount));
 				//msSystem.logln(dDiff);
 				//msSystem.logln(activeMin.g);
 
@@ -218,12 +232,12 @@ public:
         isFrameIndexActive = true;
 			  firedPredictedZero = true;
 
-			  //fillPixels(5, 0, 0);
+			  localDebugSetPixels(10, 3, 3);
 			}
 			else if (!firedPredictedExtremum && msGlobals.ggCurrentMicros >= lastMax.micros + max2minDelta)
 			{
 				firedPredictedExtremum = true;
-				//fillPixels(20, 0, 0);
+				localDebugSetPixels(20, 0, 0);
 			}
 		}
 		else {
@@ -232,6 +246,7 @@ public:
 			  activeMax.g = g;
 			  activeMax.micros = msGlobals.ggCurrentMicros;
 				activeFramesMax2Min = 0;
+        // localDebugSetPixels(0, 20, 0);
 			}
 			else
 			{
@@ -246,15 +261,13 @@ public:
 				firedPredictedZero = false;
 				firedPredictedExtremum = false;
 
-        frameStartTime = lastMin.micros + max2minDelta/2 - ((((float)max2minFrames) / max2minDelta) * frames) / 2;
+        frameStartTime = lastMax.micros + max2minDelta/2 - ((((float)max2minFrames) / max2minDelta) * frames) / 2;
 				// end previous frame since it wont fit anyway (we are allready moving in other dir)
         isFrameIndexActive = false;
 
 				// reset min
 				activeMin.g = g;
 				activeMin.micros = msGlobals.ggCurrentMicros;
-
-				//fillPixels(0, 3, 3);
 			}
 			//else if (!firedPredictedZero && (msGlobals.ggCurrentMicros > lastMin.micros + max2minDelta/2)) // ikes
 			//else if (!firedPredictedZero && (msGlobals.ggCurrentMicros > lastMin.micros + min2maxDelta/2)) // ok
@@ -263,11 +276,21 @@ public:
         frameIndex = 0;
         isFrameIndexActive = true;
 			  firedPredictedZero = true;
-			  //fillPixels(0, 5, 0);
+
+        localDebugSetPixels(3, 10, 3);
 			}
+      else if (!firedPredictedExtremum && msGlobals.ggCurrentMicros >= lastMin.micros + max2minDelta)
+      {
+        firedPredictedExtremum = true;
+        localDebugSetPixels(0, 20, 0);
+      }
+
 		}
 
+
+#ifdef SHOW_LOCAL_STATE
 		msSystem.msLEDs.updatePixels();
+#endif
 
     return isActive;
 	}
