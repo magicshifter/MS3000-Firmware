@@ -1,13 +1,16 @@
 import React, {PropTypes, Component} from 'react';
 import {connect} from 'react-redux';
-import {actions} from 'redux/modules/window';
+import {actions} from 'redux/modules/layout';
 
-import 'styles/core.scss';
 import Header from './Header';
 
+import 'styles/core.scss';
+
+import classes from './CoreLayout.scss';
+
 const mapStateToProps = (state) => ({
-  height: state.win.height,
-  width: state.win.width,
+  height: state.layout.height,
+  width: state.layout.width,
 });
 
 class CoreLayout extends Component {
@@ -18,12 +21,14 @@ class CoreLayout extends Component {
   };
 
   render() {
-    const {children} = this.props;
+    const {children, height, width} = this.props;
+
+    console.log({width, height});
 
     return (
-      <div className='page-container'>
+      <div className={classes['container']}>
         <Header />
-        <div className='view-container'>
+        <div className={classes['view']}>
           {children}
         </div>
       </div>
