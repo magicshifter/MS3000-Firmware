@@ -1,8 +1,9 @@
 import React, {PropTypes, Component} from 'react';
 import {connect} from 'react-redux';
 import {Link} from 'react-router';
-import {actions} from '../../redux/modules/counter';
-import classes from './HomeView.scss';
+
+import {actions} from 'redux/modules/counter';
+import classes from './AboutView.scss';
 
 // We define mapStateToProps where we'd normally use
 // the @connect decorator so the data requirements are clear upfront, but then
@@ -13,7 +14,7 @@ const mapStateToProps = (state) => ({
   counter: state.counter,
 });
 
-export class HomeView extends Component {
+export class AboutView extends Component {
   static propTypes = {
     counter: PropTypes.number.isRequired,
     increment: PropTypes.func.isRequired,
@@ -44,4 +45,4 @@ export class HomeView extends Component {
   }
 }
 
-export default connect(mapStateToProps, actions)(HomeView);
+export default connect(mapStateToProps, actions)(AboutView);

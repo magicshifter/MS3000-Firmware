@@ -4,11 +4,15 @@ import assign from 'object-assign';
 import {colorType} from 'utils/propTypes';
 import {rgba_toString} from 'utils/colors';
 
+import classes from './Pixel.scss';
+
 export default class Pixel extends Component {
   static propTypes = {
-    color: colorType,
-    row: PropTypes.number.isRequired,
-    column: PropTypes.number.isRequired,
+    pixel: PropTypes.shape({
+      color: colorType,
+      row: PropTypes.number.isRequired,
+      column: PropTypes.number.isRequired,
+    }).isRequired,
     columns: PropTypes.number.isRequired,
     pixelClick: PropTypes.func.isRequired,
   };
@@ -25,30 +29,25 @@ export default class Pixel extends Component {
     this.styles = {
       height: widthValue,
       width: widthValue,
-      float: 'left',
-      borderWidth: '.2vw',
-      borderStyle: 'solid',
-      borderColor: 'grey',
-      boxSizing: 'border-box',
-      cursor: 'pointer',
     };
 
     this.onClick = this.onClick.bind(this);
   }
 
   onClick(e) {
-    const {pixelClick, row, column, columns} = this.props;
+    const {columns, pixel} = this.props;
+    const {pixelClick, row, column} = pixel;
     const id = (((row - 1) * columns) - 1) + column;
 
     pixelClick({id});
   }
 
   render() {
-    const {row, column, color} = this.props;
+    const {row, column, color} = this.props.pixel;
 
     return (
       <li
-        className={`r-${row}-c-${column}`}
+        className={`${classes['container']} r-${row} c-${column}`}
         onClick={this.onClick}
         style={assign({}, this.styles, {backgroundColor: rgba_toString(color)})}
       ></li>

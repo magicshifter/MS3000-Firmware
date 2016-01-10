@@ -28,7 +28,7 @@ export default class ImageInput extends Component {
     const {label} = this.props;
 
     return (
-      <div className={classes['imageInput']}>
+      <div className={classes['input']}>
         {label &&
           <label>{label}</label>
         }

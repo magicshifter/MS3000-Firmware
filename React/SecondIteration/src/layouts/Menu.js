@@ -5,8 +5,8 @@ import classes from './Menu.scss';
 
 export const Menu = () => {
   const links = [
-    {to: '/', text: 'about'},
-    {to: '/pixels', text: 'pixeleditor'},
+    {to: '/', text: 'pixeleditor'},
+    {to: '/about', text: 'about'},
     {to: '/settings', text: 'settings'},
   ];
 

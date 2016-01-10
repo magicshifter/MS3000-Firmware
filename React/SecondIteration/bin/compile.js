@@ -4,6 +4,12 @@ const config = require('../config');
 const debug = require('debug')('app:bin:compile');
 const fs = require('fs-extra');
 
+const inlineHTML = require('html-inline');
+
+const cp = require('child_process');
+
+const path = require('path');
+
 const paths = config.utils_paths;
 
 debug('Create webpack compiler.');
@@ -34,4 +40,16 @@ compiler.run(function(err, stats) {
 
   debug('Copy static assets to dist folder.');
   fs.copySync(paths.client('static'), paths.dist());
+
+  debug('Create Inlined Html');
+  var fileContent = fs.readFileSync(path.join(paths.dist(), 'index.html'), 'utf8');
+  fileContent = fileContent.replace(
+    '<script src="vendor.js"></script><script src="app.js"></script>',
+    '<script src="min.js"></script>'
+  );
+  fileContent = fileContent.replace(
+    '<link href="app.css" rel="stylesheet">',
+    '<link href="app.css" rel="stylesheet" />'
+  );
+  fs.writeFileSync(path.join(paths.dist(), 'min.html'), fileContent, 'utf8');
 });

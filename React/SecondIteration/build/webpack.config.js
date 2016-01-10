@@ -35,7 +35,7 @@ webpackConfig.entry = {
 // Bundle Output
 // ------------------------------------
 webpackConfig.output = {
-  filename: `[name].[${config.compiler_hash_type}].js`,
+  filename: `[name].js`,
   path: paths.base(config.dir_dist),
   publicPath: config.compiler_public_path,
 };
@@ -49,7 +49,6 @@ webpackConfig.plugins = [
   new webpack.optimize.DedupePlugin(),
   new HtmlWebpackPlugin({
     template: paths.client('index.html'),
-    hash: false,
     favicon: paths.client('static/favicon.ico'),
     filename: 'index.html',
     inject: 'body',
@@ -122,7 +121,7 @@ const cssLoader = !config.compiler_css_modules
     'css?modules',
     'sourceMap',
     'importLoaders=1',
-    'localIdentName=[name]__[local]___[hash:base64:5]',
+    'localIdentName=[name]__[local]',
   ].join('&');
 
 webpackConfig.module.loaders.push({
@@ -182,7 +181,7 @@ if (!config.compiler_enable_hmr) {
   });
 
   webpackConfig.plugins.push(
-    new ExtractTextPlugin('[name].[contenthash].css', {
+    new ExtractTextPlugin('[name].css', {
       allChunks: true,
     })
   );
