@@ -204,6 +204,26 @@ public:
   };
 
 
+  // reset the power controller
+  void powerStabilize()
+  {
+    digitalWrite(PIN_PWR_MGT, HIGH);
+    pinMode(PIN_PWR_MGT, OUTPUT);
+    digitalWrite(PIN_PWR_MGT, HIGH);
+  }
+
+  // tell power controller to power down
+  void powerDown()
+  {
+    // works even with pulldown but output seems to make more sense
+    //pinMode(PIN_PWR_MGT, INPUT_PULLDOWN);
+    pinMode(PIN_PWR_MGT, OUTPUT);
+    digitalWrite(PIN_PWR_MGT, LOW);
+    // now sleep forever...
+    delay(1000);
+  }
+
+
   // gets the basic stuff set up
   void setup()
   {
@@ -245,6 +265,8 @@ delay(1500); // this enables serial consoles to sync
     pinMode(PIN_BUTTON_A, INPUT);
     pinMode(PIN_BUTTON_B, INPUT);
 
+    // reset power controller to stay on
+    powerStabilize();
 
 #ifdef CONFIG_ENABLE_ACCEL
     // accelerometer 
@@ -258,16 +280,6 @@ delay(1500); // this enables serial consoles to sync
   // boot that we are alive
     msLEDs.bootSwipe();
 
-  }
-
-  void powerDown()
-  {
-    // works even with pulldown but output seems to make more sense
-    //pinMode(PIN_PWR_MGT, INPUT_PULLDOWN);
-    pinMode(PIN_PWR_MGT, OUTPUT);
-    digitalWrite(PIN_PWR_MGT, LOW);
-    // now sleep forever...
-    delay(1000);
   }
 
   void restart()
