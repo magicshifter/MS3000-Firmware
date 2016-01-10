@@ -50,6 +50,38 @@ export class PixelEditorView extends Component {
     );
   }
 
+  handleUploadClick() {
+    var formData = new FormData();
+
+    // formData.append("username", "Groucho");
+    // formData.append("accountnum", 123456); // number 123456 is immediately converted to a string "123456"
+
+
+    var w = this.props.columns;
+    var h = this.props.rows;
+   
+    var fileSize = w*h*4;
+    var fileData = new Uint8Array(fileSize);
+    fileData[0] = 32;
+    fileData[1] = 1;
+    fileData[2] = 0xFF;
+
+    var blob = new Blob(fileData);
+
+    formData.append("uploadFile", blob);
+
+    var request = new XMLHttpRequest();
+    request.onload = function(oEvent) {
+      if (request.status == 200) {
+        console.log("Uploaded!");
+      } else {
+        console.warn("Error " + request.status + " occurred when trying to upload your file.");
+      }
+    };
+    request.open("POST", "http://foo.com/submitform.php");
+    request.send(formData);
+  }
+
   render() {
     const {pixels, color, rows, columns, setColorValue} = this.props;
 
@@ -69,6 +101,7 @@ export class PixelEditorView extends Component {
 
     return (
       <div className='pixelEditor container'>
+      <input type="button" onClick={this.handleUploadClick.bind(this)} value="send to MS3000" />
         <ul className='pixelList list' style={styles.ul}>
           {pixels && pixels.map(this.renderPixel)}
         </ul>
