@@ -1,7 +1,66 @@
 #ifndef _WEBSERVER_ROUTES_H
 #define _WEBSERVER_ROUTES_H
 
+
+
+static String getContentType(String filename){
+  if (msSystem.msESPServer.hasArg("download")) return "application/octet-stream";
+  else if(filename.endsWith(".htm")) return "text/html";
+  else if(filename.endsWith(".html")) return "text/html";
+  else if(filename.endsWith(".css")) return "text/css";
+  else if(filename.endsWith(".js")) return "application/javascript";
+  else if(filename.endsWith(".png")) return "image/png";
+  else if(filename.endsWith(".gif")) return "image/gif";
+  else if(filename.endsWith(".jpg")) return "image/jpeg";
+  else if(filename.endsWith(".ico")) return "image/x-icon";
+  else if(filename.endsWith(".xml")) return "text/xml";
+  else if(filename.endsWith(".pdf")) return "application/x-pdf";
+  else if(filename.endsWith(".zip")) return "application/x-zip";
+  else if(filename.endsWith(".gz")) return "application/x-gzip";
+  return "text/plain";
+}
+
+static bool streamFile(String path){
+  
+  if (path.endsWith("/")) {
+    path += "index.htm";
+  }
+  String contentType = getContentType(path);
+  if (SPIFFS.exists((char *)(path+".gz").c_str()) || SPIFFS.exists((char *)path.c_str())){
+    if (SPIFFS.exists((char *)(path+".gz").c_str())) {
+      path += ".gz";
+    }
+    File file = SPIFFS.open((char *)path.c_str(), "r");
+    msSystem.msESPServer.streamFile(file, contentType);
+    file.close();
+    return true;
+  }
+  else
+  {
+    msSystem.logln("streamFile fail:");
+    msSystem.logln(path.c_str());
+  }
+  
+  return false;
+}
+
+
+
 void handleNotFound() {
+
+  char fName[MAX_FILENAME_LENGTH];
+  msSystem.msEEPROMs.safeStrncpy(fName, msSystem.msESPServer.uri().c_str(), MAX_FILENAME_LENGTH);
+
+  msSystem.log("URI to retrieve: ");
+  msSystem.logln(msSystem.msESPServer.uri());
+  msSystem.log("fName to retrieve: ");
+  msSystem.logln(String(fName + 1));
+
+  // if we don't have a route for the request, but do have a file, serve the file
+  if (SPIFFS.exists(fName + 1)) {
+    streamFile(String(fName + 1));
+  }
+else
   if (msSystem.msESPServer.uri() != "/upload")
   {
     String message = "MS Command Not Found\n\n";
@@ -33,6 +92,7 @@ void handleNotFound() {
 
   }
 }
+
 
 void handleReadFile()
 {

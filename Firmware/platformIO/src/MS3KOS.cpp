@@ -72,7 +72,9 @@ delay(350); // debug !J!
 
   // initialize the modules ..
   msModeShake.start();
-  msModeShake.loadShakeFile("blueghost_png.magicBitmap");
+
+  // !J! set autoload
+  // msModeShake.loadShakeFile("blueghost_png.magicBitmap");
   // todo: move to module start sequence.
   msModePOVShake.setFrames(32);
 
@@ -161,12 +163,12 @@ void testButtonForBOM_X()
 void delayYield()
 {
   yield();
-  #if 0
+#if 0
   int nYields = 150;  // todo: fix this magic number
   while(nYields--) {
     yield();
   }
-  #endif
+#endif
 }
 
 void testSimpleButtons()
@@ -383,8 +385,12 @@ void loop()
     delayYield();
 
     // !J! hack of timing .. 
+    // if (msGlobals.ggCurrentFrame % 100 == 0)
+    // WiFi.printDiag(Serial);
+    // delay(200);
     // delay(1); // if we lose this, we lose wifi .. grr .. 
     // delayMicroseconds(500);
+
   }
 
 } // end of loop()

@@ -1,11 +1,22 @@
 #ifndef _WEBSERVERAUTOCONNECT_H
 #define _WEBSERVERAUTOCONNECT_H
 
+void printIPInfo(){
+  msSystem.logln ( "IP address: " );
+  msSystem.logln ( String(WiFi.localIP().toString()) );
+  msSystem.logln ( "SoftAP IP: " );
+  msSystem.logln ( String(WiFi.softAPIP().toString()) );
+
+  WiFi.printDiag(Serial);
+}
+
 bool TryConnect(struct APInfo &apInfo, int timeoutMs)
 {
   msSystem.log("trying to connect to AP: ");
   msSystem.logln(apInfo.ssid);
-  WiFi.begin (apInfo.ssid, apInfo.password );
+  WiFi.begin (apInfo.ssid, apInfo.password, 9);
+  msSystem.log("using password: ");
+  msSystem.logln(apInfo.password);
 
   // Wait for connection
   int frame = 0;
@@ -38,8 +49,8 @@ bool TryConnect(struct APInfo &apInfo, int timeoutMs)
   msSystem.logln ( "" );
   msSystem.logln ( "Connected to: " );
   msSystem.logln ( apInfo.ssid );
-  msSystem.logln ( "IP address: " );
-  msSystem.logln ( String(WiFi.localIP().toString()) );
+
+  printIPInfo();
 
   return true;
 }
@@ -67,8 +78,8 @@ bool TrySoftAP(struct APInfo &apInfo)
 
   msSystem.logln ( "accesspoints: " );
   msSystem.logln ( apInfo.ssid );
-  msSystem.logln("SoftAP IP: ");
-  msSystem.logln(String(WiFi.softAPIP().toString()));
+
+  printIPInfo();
 
   return true;
 }
@@ -120,7 +131,6 @@ bool AutoConnect()
 
     Settings.resetAPList();
 
-
     while (Settings.getNextAP(&apInfo))
     {
       for (int i = 0; i < n; i++)
@@ -141,7 +151,9 @@ bool AutoConnect()
   }
 #endif
 
+
   msSystem.logln("fallback to standalone access point...");
+  // WiFi.disconnect(false);
 
   Settings.getAPConfig(&apInfo);
   if (TrySoftAP(apInfo))
