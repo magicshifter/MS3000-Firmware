@@ -18,34 +18,50 @@ BIN_DIR = node_modules/.bin/
 all: dev
 
 clean:
-	rm -rf dist;
+	@echo 'clean dist directory'
+	@rm -rf dist;
+	@echo "cleaned dist dir"
 
 build:
-	node -r dotenv/config --harmony bin/compile
+	@echo "start compilation process"
+	@node -r dotenv/config --harmony bin/compile
+	@echo "build completed in dist/"
 
 install:
-	npm install
+	@echo "start install using npm"
+	@npm install
+	@echo "install completed"
 
 lint:
-	${BIN_DIR}eslint . ./
+	@echo "start lint task"
+	@${BIN_DIR}eslint . ./
+	@echo "lint completed"
 
 lint-fix:
+	@echo "start lint and fix task"
 	${BIN_DIR}eslint  --fix . ./
+	@echo "lint-fix completed"
 
 server:
+	@echo "start node koa development server"
 	node -r dotenv/config bin/server --hot
 
 dev:
-	${BIN_DIR}nodemon -r dotenv/config bin/server --hot
-
-nw:
+	@echo "spawn state debugger in a separate window"
 	${BIN_DIR}nodemon -r dotenv/config bin/server --hot --nw
 
+dev-no-nw:
+	@echo "spawn state debugger inlined into page."
+	${BIN_DIR}nodemon -r dotenv/config bin/server --hot
+
+# start dev mode with production environment
 dev-no-debug:
 	@${BIN_DIR}nodemon -r dotenv/config bin/server --hot --no_debug
 
 test:
+	@echo 'start tests'
 	@node -r dotenv/config ./node_modules/karma/bin/karma start bin/karma.js
+	@echo 'tests finished'
 
 test-dev:
 	@node -r dotenv/config ./node_modules/karma/bin/karma start bin/karma.js --watch
