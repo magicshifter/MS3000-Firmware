@@ -3,11 +3,13 @@ import {connect} from 'react-redux';
 
 import {actions} from 'redux/modules/pixelEditor';
 
-import Pixel from './Pixel';
+import Pixel from 'components/inputs/Pixel';
 
 import RGBAInput from 'components/inputs/RGBAInput';
 import ImageInput from 'components/inputs/ImageInput';
 import FileUploadInput from 'components/inputs/FileUploadInput';
+
+import classes from './PixelEditorView.scss';
 
 const mapStateToProps = (state) => {
   const {pixelEditor, settings, layout} = state;
@@ -49,43 +51,24 @@ export class PixelEditorView extends Component {
   };
 
   render() {
-    const {pixelClick, setColorValue} = this.props;
-    const {pixels, color, rows, columns} = this.props.pixelEditor;
-    const {host, protocol} = this.props.settings;
-
-    const width = window.innerWidth > window.innerHeight
-                  ? '56%'
-                  : '100%';
-
-    const styles = {
-      ul: {
-        listStyle: 'none',
-        width: width,
-        display: 'inline-block',
-        margin: 0,
-        padding: 0,
-      },
-    };
+    const {pixelClick, setColorValue, pixelEditor, settings} = this.props;
+    const {pixels, color, rows, columns} = pixelEditor;
+    const {host, protocol} = settings;
 
     return (
-      <div className='pixelEditor container'>
-        <ul className='pixelList list' style={styles.ul}>
-          {pixels && pixels.map(pixel => {
-            const {row, column, color} = pixel;
-            return (
-              <Pixel
-                key={`${column}-${row}`}
-                row={row}
-                column={column}
-                columns={columns}
-                color={color}
-                pixelClick={pixelClick}
-              />
-            );
-          })}
+      <div className={classes['container']}>
+        <ul className={classes['list']}>
+          {pixels && pixels.map(p => (
+            <Pixel
+              key={`${p.column}-${p.row}`}
+              pixel={p}
+              columns={columns}
+              pixelClick={pixelClick}
+            />
+          ))}
         </ul>
 
-        <div className='colorPicker'>
+        <div className={classes['picker']}>
           <RGBAInput
             color={color}
             setColorValue={setColorValue}
