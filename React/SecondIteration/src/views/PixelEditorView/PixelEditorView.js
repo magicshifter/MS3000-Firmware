@@ -53,33 +53,66 @@ export class PixelEditorView extends Component {
   handleUploadClick() {
     var formData = new FormData();
 
-    // formData.append("username", "Groucho");
-    // formData.append("accountnum", 123456); // number 123456 is immediately converted to a string "123456"
+  // formData.append("username", "Groucho");
+  // formData.append("accountnum", 123456); // number 123456 is immediately converted to a string "123456"
 
+  //   // write header
+  // shifterFileData[0] = 0x23;
+  // shifterFileData[1] = (shifterFileSize & 0xFF0000) >> 16;
+  // shifterFileData[2] = (shifterFileSize & 0xFF00) >> 8;
+  // shifterFileData[3] = (shifterFileSize & 0xFF) >> 0;
+  // shifterFileData[4] = bitPerPixel;
+  // shifterFileData[5] = (frames-1); // 0 for static images larger for animations and fonts
+  // shifterFileData[6] = frameWidth;
+  // shifterFileData[7] = frameHeight;
+  // shifterFileData[8] = subType == "font" ? 0xF0 : subType == "bitmap" ? 0xBA : 0x00;
+  // shifterFileData[9] = firstChar; // >= 1 for fonts/ 0 for animations
+  // shifterFileData[10] = (delayMs & 0xFF00) >> 8; // 0 for fonts
+  // shifterFileData[11] = (delayMs & 0xFF) >> 0;
+  // for (var idx = 12; idx < headerSize; idx++) {
+  //   shifterFileData[idx] = 0xFF;
+  // }
 
     var w = this.props.columns;
     var h = this.props.rows;
-   
-    var fileSize = w*h*4;
+    var pixels = this.props.pixels;
+
+    var fileSize = w * h * 4;
     var fileData = new Uint8Array(fileSize);
-    fileData[0] = 32;
-    fileData[1] = 1;
-    fileData[2] = 0xFF;
 
-    var blob = new Blob(fileData);
+    var headerSize = 0;
 
-    formData.append("uploadFile", blob);
+    for (var x = 0; x < w; x++) {
+      for (var y = 0; y < h; y++) {
+        var idx = x + y * w;
+        var pixel = pixels[idx];
+
+        var fileDataIdx = headerSize + (x + y * w) * 4;
+
+        fileData[fileDataIdx + 0] = pixel.color.r;
+        fileData[fileDataIdx + 1] = pixel.color.g;
+        fileData[fileDataIdx + 2] = pixel.color.b;
+        fileData[fileDataIdx + 3] = 0xFF;
+      }
+    }
+
+    var blob = new Blob([fileData]);
+
+    formData.append('uploadFile', blob);
 
     var request = new XMLHttpRequest();
     request.onload = function(oEvent) {
-      if (request.status == 200) {
-        console.log("Uploaded!");
+      if (request.status === 200) {
+        console.log('Uploaded!');
       } else {
-        console.warn("Error " + request.status + " occurred when trying to upload your file.");
+        console.warn('Error ' + request.status + ' occurred when trying to upload your file.');
       }
     };
-    request.open("POST", "http://foo.com/submitform.php");
+    request.open('POST', '/upload');
     request.send(formData);
+
+    // var iframe = document.createElement("iframe");
+    // body.append(iframe);
   }
 
   render() {
@@ -101,7 +134,7 @@ export class PixelEditorView extends Component {
 
     return (
       <div className='pixelEditor container'>
-      <input type="button" onClick={this.handleUploadClick.bind(this)} value="send to MS3000" />
+      <input type='button' onClick={this.handleUploadClick.bind(this)} value='send to MS3000' />
         <ul className='pixelList list' style={styles.ul}>
           {pixels && pixels.map(this.renderPixel)}
         </ul>
