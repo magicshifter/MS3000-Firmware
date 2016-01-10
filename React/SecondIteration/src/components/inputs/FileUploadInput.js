@@ -19,30 +19,38 @@ export default class FileUploadInput extends Component {
   }
 
   onClick() {
-    const {height, width, url} = this.props;
+    const {height, width, url, pixels} = this.props;
+    const fileSize = width * height * 4;
+    const fileData = new Uint8Array(fileSize);
+
+    const headerSize = 0;
+
+    for (let x = 0; x < width; x++) {
+      for (let y = 0; y < height; y++) {
+        const idx = x + (y * width);
+        const pixel = pixels[idx];
+
+        const fileDataIdx = headerSize + (idx * 4);
+
+        fileData[fileDataIdx + 0] = pixel.color.r;
+        fileData[fileDataIdx + 1] = pixel.color.g;
+        fileData[fileDataIdx + 2] = pixel.color.b;
+        fileData[fileDataIdx + 3] = 0xFF;
+      }
+    }
+
+    const blob = new Blob([fileData]);
 
     const formData = new FormData();
-
-    // formData.append('username', 'Groucho');
-    // number 123456 is immediately converted to a string '123456'
-    // formData.append('accountnum', 123456);
-
-    const fileSize = height * width * 4;
-    let fileData = new Uint8Array(fileSize);
-    fileData[0] = 32;
-    fileData[1] = 1;
-    fileData[2] = 0xFF;
-
-    const blob = new Blob(fileData);
-
     formData.append('uploadFile', blob);
 
     const request = new XMLHttpRequest();
     request.onload = oEvent => {
-      if (request.status === 200) {
+      const {status} = request;
+      if (status === 200) {
         console.log('Uploaded!');
       } else {
-        console.warn(`Error ${request.status} occurred when trying to upload your file.`);
+        console.warn(`Error ${status} occurred when trying to upload your file.`);
       }
     };
 
