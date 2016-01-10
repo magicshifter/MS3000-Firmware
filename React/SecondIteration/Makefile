@@ -1,8 +1,10 @@
 BIN_DIR = node_modules/.bin/
+JS_DIST_DIR = ./dist/
 
 .PHONY: \
 	all \
 	dev \
+	sed \
 	install \
 	clean \
 	build \
@@ -22,10 +24,13 @@ clean:
 	@rm -rf dist;
 	@echo "cleaned dist dir"
 
-build:
+compile:
 	@echo "start compilation process"
 	@node -r dotenv/config --harmony bin/compile
 	@echo "build completed in dist/"
+
+build: closure-compile inline
+	@echo "build finished"
 
 install:
 	@echo "start install using npm"
@@ -41,6 +46,17 @@ lint-fix:
 	@echo "start lint and fix task"
 	${BIN_DIR}eslint  --fix . ./
 	@echo "lint-fix completed"
+
+# run google closure library through npm
+closure-compile: clean compile
+	@echo "start closure compilation"
+	@java \
+		-jar node_modules/google-closure-compiler/compiler.jar \
+		--language_in ECMASCRIPT5 \
+		--compilation_level ADVANCED_OPTIMIZATIONS \
+		--js ${JS_DIST_DIR}app.js ${JS_DIST_DIR}vendor.js \
+		> ${JS_DIST_DIR}min.js
+	@echo "closure compilation completed"
 
 server:
 	@echo "start node koa development server"
@@ -66,7 +82,13 @@ test:
 test-dev:
 	@node -r dotenv/config ./node_modules/karma/bin/karma start bin/karma.js --watch
 
-deploy: test clean build
+inline:
+	@node_modules/.bin/html-inline \
+		-i ./dist/min.html \
+		-o ./dist/bundle.html \
+		-b ./dist/
+
+deploy: test clean closure-compile inline
 
 help:
 	@echo " \n\
