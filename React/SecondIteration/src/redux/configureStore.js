@@ -2,7 +2,7 @@ import thunk from 'redux-thunk';
 import rootReducer from './rootReducer';
 import {applyMiddleware, compose, createStore} from 'redux';
 
-import devTools from '../containers/DevTools';
+import devTools from 'containers/DevTools';
 
 export default function configureStore(initialState) {
   let createStoreWithMiddleware;
