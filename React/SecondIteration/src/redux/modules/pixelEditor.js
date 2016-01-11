@@ -31,7 +31,7 @@ export const SET_COLOR_VALUE = 'SET_COLOR_VALUE';
 // ------------------------------------
 export const pixelClick = createAction(
   PIXEL_CLICK,
-  (value = {id: 1, color: {r: 0, b: 0, g: 0, a: 155}}) => value
+  (value = {id: 1}) => value
 );
 
 export const setColor = createAction(
