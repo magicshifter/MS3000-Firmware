@@ -3,6 +3,8 @@ import {connect} from 'react-redux';
 
 import {actions} from 'redux/modules/pixelEditor';
 
+import {colorType} from 'utils/propTypes';
+
 import Pixel from 'components/inputs/Pixel';
 
 import RGBAInput from 'components/inputs/RGBAInput';
@@ -22,7 +24,6 @@ const mapStateToProps = (state) => {
 
 export class PixelEditorView extends Component {
   static propTypes = {
-    pixelClick: PropTypes.func.isRequired,
     setColor: PropTypes.func.isRequired,
     setColorValue: PropTypes.func.isRequired,
 
@@ -30,13 +31,7 @@ export class PixelEditorView extends Component {
       pixels: PropTypes.array.isRequired,
       rows: PropTypes.number.isRequired,
       columns: PropTypes.number.isRequired,
-
-      color: PropTypes.shape({
-        r: PropTypes.number,
-        g: PropTypes.number,
-        b: PropTypes.number,
-        a: PropTypes.number,
-      }).isRequired,
+      color: colorType.isRequired,
     }).isRequired,
 
     settings: PropTypes.shape({
@@ -51,9 +46,15 @@ export class PixelEditorView extends Component {
   };
 
   render() {
-    const {pixelClick, setColorValue, pixelEditor, settings} = this.props;
+    const {setColorValue, pixelEditor, settings, layout} = this.props;
     const {pixels, color, rows, columns} = pixelEditor;
     const {host, protocol} = settings;
+
+    const width = layout.height > layout.width
+                    ? ((100 / columns) / 1.6) - 0.42 + 'vw'
+                    : (100 / columns) - 0.2 + 'vw';
+
+    const height = width;
 
     return (
       <div className={classes['container']}>
@@ -62,8 +63,9 @@ export class PixelEditorView extends Component {
             <Pixel
               key={`${p.column}-${p.row}`}
               pixel={p}
-              columns={columns}
-              pixelClick={pixelClick}
+              pixelId={(((p.row - 1) * columns) - 1) + p.column}
+              height={height}
+              width={width}
             />
           ))}
         </ul>
