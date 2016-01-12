@@ -104,6 +104,7 @@ export class PixelEditorView extends Component {
             width: controlSize,
           }}
         >
+          <h3>Controls</h3>
           <div className={classes['picker']}>
             <RGBAInput
               color={color}
@@ -122,10 +123,8 @@ export class PixelEditorView extends Component {
           </div>
 
           <div className={classes['settings']}>
+            <h3>Settings</h3>
             <ul>
-              <lh>
-                Editor Settings
-              </lh>
               <li>
                 <NumberInput
                   label='Columns:'
