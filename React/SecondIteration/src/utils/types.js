@@ -2,15 +2,12 @@ const objProto = Object.prototype;
 const toStr = objProto.toString;
 
 export const cleanType =
-  t => {
-    if (t === 'array') { return '[object Array]'; }
-
-    if (t === 'nodeList' || t === 'nodelist') { return '[object ' + t + ']'; }
-
-    if (t === 'object') { return '[object Object]'; }
-
-    return t;
-  };
+  t => (
+    (t === 'array' && '[object Array]') ||
+    ((t === 'nodeList' || t === 'nodelist') && '[object ' + t + ']') ||
+    ((t === 'object') && '[object Object]') ||
+    t
+  );
 
 export const cleanTypes =
   (types, ...addTypes) => {
@@ -28,44 +25,80 @@ export const test =
   );
 
 export const isType =
-  (ele, ...types) => test(ele, types);
+  (ele, ...types) =>
+    test(ele, types);
+
 export const isNotType =
-  (ele, ...types) => !test(ele, types);
+  (ele, ...types) =>
+    !test(ele, types);
 
 export const isArray =
-  ele => toStr.call(ele) === '[object Array]';
+  ele =>
+    toStr.call(ele) === '[object Array]';
+
 export const isBoolean =
-  ele => typeof ele === 'boolean';
+  ele =>
+    typeof ele === 'boolean';
+
 export const isDefined =
-  ele => typeof ele !== 'undefined';
+  ele =>
+    typeof ele !== 'undefined';
+
 export const isFunction =
-  ele => typeof ele === 'function';
+  ele =>
+    typeof ele === 'function';
+
 export const isNumber =
-  ele => typeof ele === 'number' && parseFloat(ele, 10) === parseFloat(ele, 10);
+  ele =>
+    typeof ele === 'number' &&
+    parseFloat(ele, 10) === parseFloat(ele, 10);
+
 export const isObject =
-  ele => typeof ele === 'object';
+  ele =>
+    typeof ele === 'object';
+
 export const isString =
-  ele => typeof ele === 'string';
+  ele =>
+    typeof ele === 'string';
 
 export const isRGBAObject =
-  e => isObject(e) && isNumber(e.r) && isNumber(e.g) && isNumber(e.b) && isNumber(e.a);
+  e =>
+    isObject(e) &&
+    isNumber(e.r) &&
+    isNumber(e.g) &&
+    isNumber(e.b) &&
+    isNumber(e.a);
 
 export const isRGBObject =
-  e => isObject(e) && isNumber(e.r) && isNumber(e.g) && isNumber(e.b);
+  e =>
+    isObject(e) &&
+    isNumber(e.r) &&
+    isNumber(e.g) &&
+    isNumber(e.b);
 
 export const isColor =
-  e => isRGBAObject(e) || isRGBObject(e);
+  e =>
+    isRGBAObject(e) ||
+    isRGBObject(e);
 
 export const isDate =
-  ele => (ele.constructor === Date);
+  ele =>
+    ele.constructor === Date;
 
 export const isTruthy =
-  ele => !!ele;
+  ele =>
+    !!ele;
+
 export const isFalsy =
-  ele => (!ele || isEmpty(ele));
+  ele =>
+    !ele ||
+    isEmpty(ele);
 
 export const isEmpty =
-  ele => (!ele || !Object.keys(ele).length);
+  ele =>
+    !ele ||
+    !Object.keys(ele).length;
 
 export const isNodeList =
-  ele => toStr.call(ele) === '[object NodeList]';
+  ele =>
+    toStr.call(ele) === '[object NodeList]';
