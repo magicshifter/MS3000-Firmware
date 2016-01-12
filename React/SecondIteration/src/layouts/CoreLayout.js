@@ -32,7 +32,6 @@ class CoreLayout extends Component {
 
   render() {
     const {children, height, width} = this.props;
-    console.log('render corelayout');
 
     return (
       <div
