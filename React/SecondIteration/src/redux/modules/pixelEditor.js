@@ -35,20 +35,23 @@ export const SET_COLUMNS = 'SET_COLUMNS';
 // ------------------------------------
 // Actions
 // ------------------------------------
-export const pixelClick = createAction(
-  PIXEL_CLICK,
-  (value = 1) => value
-);
+export const pixelClick =
+  createAction(
+    PIXEL_CLICK,
+    (value = 1) => value
+  );
 
-export const setColor = createAction(
-  SET_COLOR,
-  (value = {r: 0, b: 0, g: 0, a: 155}) => value
-);
+export const setColor =
+  createAction(
+    SET_COLOR,
+    (value = {r: 0, b: 0, g: 0, a: 155}) => value
+  );
 
-export const setColorValue = createAction(
-  SET_COLOR_VALUE,
-  (value = {name: '', value: 0, min: 0, max: 255}) => value
-);
+export const setColorValue =
+  createAction(
+    SET_COLOR_VALUE,
+    (value = {name: '', value: 0, min: 0, max: 255}) => value
+  );
 
 export const setColumns = createAction(
   SET_COLUMNS,
@@ -66,45 +69,28 @@ export const actions = {
 // Reducer
 // ------------------------------------
 export default handleActions({
-  [PIXEL_CLICK]: (state, {payload}) => {
-    const id = payload;
-    const pixel =
-      state
-        .getIn(['pixels', id])
-        .set('color', state.get('color'));
+  [PIXEL_CLICK]:
+    (state, {payload: id}) =>
+      state.setIn(
+        ['pixels', id],
+        state
+          .getIn(['pixels', id])
+          .set('color', state.get('color'))),
 
-    console.log('pixel clicked', pixel);
+  [SET_COLOR]:
+    (state, {payload: p}) =>
+      isColor(p.color)
+      ? state.set('color', assign({}, state.get('color'), p.color))
+      : state,
 
-    return state.setIn(['pixels', id], pixel);
-  },
+  [SET_COLOR_VALUE]:
+    (state, {payload: p}) =>
+      state.setIn(['color', p.name], isNumber(p.value) ? p.value : 0),
 
-  [SET_COLOR]: (state, {payload}) => {
-    const {color} = payload;
-    if (isColor(color)) {
-      const newColor = assign({}, state.get('color'), color);
-      return state.set('color', newColor);
-    }
-
-    return state;
-  },
-
-  [SET_COLOR_VALUE]: (state, {payload}) => {
-    const {name} = payload;
-    const value = payload.value && isNumber(payload.value)
-                ? payload.value
-                : 0;
-
-    return state.setIn(['color', name], value);
-  },
-
-  [SET_COLUMNS]: (state, {payload}) => {
-    const value = parseInt(payload.value, 10);
-
-    if (isNumber(value)) {
-      return state.set('columns', value);
-    }
-
-    return state;
-  },
+  [SET_COLUMNS]:
+    (state, {payload: p}) =>
+      isNumber(parseInt(p.value, 10))
+      ? state.set('columns', parseInt(p.value, 10))
+      : state,
 
 }, Immutable.Map({pixels, rows, columns, color}));
