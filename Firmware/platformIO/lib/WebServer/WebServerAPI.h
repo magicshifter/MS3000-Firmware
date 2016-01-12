@@ -109,8 +109,11 @@ public:
       msSystem.logln((char *)path.c_str());
     }
 
-    msSystem.msEEPROMs.safeStrncpy(config->ssid, "MS3000.jjj", sizeof(config->ssid));
+    
+#ifdef AP_NAME_OVERRIDE
+    msSystem.msEEPROMs.safeStrncpy(config->ssid, AP_NAME_OVERRIDE, sizeof(config->ssid));
     msSystem.msEEPROMs.safeStrncpy(config->password, "", sizeof(config->password));
+#endif
     
     return false;
   }
