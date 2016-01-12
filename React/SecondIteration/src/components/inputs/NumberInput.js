@@ -15,6 +15,11 @@ export default class NumberInput extends Component {
     label: PropTypes.string,
   };
 
+  static defaultProps = {
+    min: 0,
+    max: 9999,
+  };
+
   constructor(props) {
     super(props);
 
@@ -22,26 +27,19 @@ export default class NumberInput extends Component {
   }
 
   onChange(e) {
-    const {name, val, min, max, action} = this.props;
+    const {name, min, max, action} = this.props;
 
     let value = minmax(parseInt(e.target.value, 10), min, max);
 
     if (!isNumber(value)) {
-      value = val;
+      value = 0;
     }
 
     action({name, value});
   }
 
   render() {
-    const {
-      val,
-      name,
-      label,
-      action,
-      min = 0,
-      max = 9999,
-    } = this.props;
+    const {val, name, label, action, min, max} = this.props;
 
     return (
       <div className={classes['input']}>
@@ -51,7 +49,7 @@ export default class NumberInput extends Component {
         }
 
         <button
-          onClick={() => action({name, value: val - 1, min, max})}
+          onClick={() => action({name, value: minmax(val - 1, min, max)})}
         >-</button>
 
         <input
@@ -63,7 +61,7 @@ export default class NumberInput extends Component {
         />
 
         <button
-          onClick={() => action({name, value: val + 1, min, max})}
+          onClick={() => action({name, value: minmax(val + 1, min, max)})}
         >+</button>
       </div>
     );
