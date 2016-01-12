@@ -1,7 +1,9 @@
 import {createAction, handleActions} from 'redux-actions';
 import Immutable from 'immutable';
+import assign from 'object-assign';
 
 import {minmax} from 'utils/math';
+import {isColor, isNumber} from 'utils/types';
 
 const rows = 16;
 const columns = 16;
@@ -66,12 +68,20 @@ export default handleActions({
 
   [SET_COLOR]: (state, {payload}) => {
     const {color} = payload;
-    const newState = state.set('color', color);
-    return newState;
+    if (isColor(color)) {
+      const newColor = assign({}, state.get('color'), color);
+      return state.set('color', newColor);
+    }
+
+    return state;
   },
 
   [SET_COLOR_VALUE]: (state, {payload}) => {
-    const {name, value, min, max} = payload;
+    const {name, min, max} = payload;
+    let value = payload.value && isNumber(payload.value)
+                ? payload.value
+                : 0;
+
     const minMaxedValue = minmax(value, min, max);
     return state.setIn(['color', name], minMaxedValue);
   },
