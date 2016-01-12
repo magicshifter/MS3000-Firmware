@@ -6,20 +6,14 @@ import {actions} from 'redux/modules/pixelEditor';
 import {colorType} from 'utils/propTypes';
 import {rgba_toString} from 'utils/colors';
 
-// import Pixel from 'components/inputs/Pixel';
-
-import RGBAInput from 'components/inputs/RGBAInput';
-import NumberInput from 'components/inputs/NumberInput';
-import ImageInput from 'components/inputs/ImageInput';
-import FileUploadInput from 'components/inputs/FileUploadInput';
+import PixelEditorSidebar from './PixelEditorSidebar';
 
 import classes from './PixelEditorView.scss';
 
 const mapStateToProps = (state) => {
-  const {pixelEditor, settings, layout} = state;
+  const {pixelEditor, layout} = state;
   return {
     pixelEditor: pixelEditor.toJS(),
-    settings: settings.toJS(),
     layout: layout.toJS(),
   };
 };
@@ -27,19 +21,12 @@ const mapStateToProps = (state) => {
 export class PixelEditorView extends Component {
   static propTypes = {
     pixelClick: PropTypes.func.isRequired,
-    setColorValue: PropTypes.func.isRequired,
-    setColumns: PropTypes.func.isRequired,
 
     pixelEditor: PropTypes.shape({
       pixels: PropTypes.array.isRequired,
       rows: PropTypes.number.isRequired,
       columns: PropTypes.number.isRequired,
       color: colorType.isRequired,
-    }).isRequired,
-
-    settings: PropTypes.shape({
-      protocol: PropTypes.string.isRequired,
-      host: PropTypes.string.isRequired,
     }).isRequired,
 
     layout: PropTypes.shape({
@@ -50,30 +37,25 @@ export class PixelEditorView extends Component {
 
   render() {
     const {
-      setColorValue, setColumns, pixelClick, // actions
-      pixelEditor, settings, layout, // state objects
+      pixelClick, // actions
+      pixelEditor, layout, // state objects
     } = this.props;
 
-    const {pixels, color, rows, columns} = pixelEditor;
-    const {host, protocol} = settings;
+    const {pixels, columns} = pixelEditor;
 
     const pixelListSize =
       layout.height > layout.width
       ? layout.width * 0.6
-      : layout.height * 0.6;
+      : layout.height * 0.7;
 
     const pxSize =
       layout.height > layout.width
       ? pixelListSize / columns
       : pixelListSize / columns;
 
-    const controlSize =
-      layout.height > layout.width
-      ? layout.width * 0.39
-      : layout.height * 0.39;
-
     return (
       <div className={classes['container']}>
+
         <ul
           className={classes['list']}
           style={{
@@ -98,44 +80,7 @@ export class PixelEditorView extends Component {
           })}
         </ul>
 
-        <div
-          className={classes['controls']}
-          style={{
-            width: controlSize,
-          }}
-        >
-          <h3>Controls</h3>
-          <div className={classes['picker']}>
-            <RGBAInput
-              color={color}
-              setColorValue={setColorValue}
-            />
-
-            <ImageInput label='upload image' />
-
-            <FileUploadInput
-              pixels={pixels}
-              height={rows}
-              width={columns}
-              url={[protocol, host].join('://')}
-              text='send to MS3000'
-            />
-          </div>
-
-          <div className={classes['settings']}>
-            <h3>Settings</h3>
-            <ul>
-              <li>
-                <NumberInput
-                  label='Columns:'
-                  name='columns'
-                  val={columns}
-                  action={setColumns}
-                />
-              </li>
-            </ul>
-          </div>
-        </div>
+        <PixelEditorSidebar />
       </div>
     );
   }
