@@ -31,8 +31,8 @@ export default class ColorInput extends Component {
           label={label}
           name={name}
           val={val}
-          min={0}
-          max={255}
+          min={min}
+          max={max}
           action={setColorValue}
         />
       </li>
