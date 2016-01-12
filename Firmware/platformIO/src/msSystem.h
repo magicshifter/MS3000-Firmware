@@ -387,6 +387,8 @@ delay(1500); // this enables serial consoles to sync
       msGlobals.ggCurrentMode = (msGlobals.ggCurrentMode+1)%NUM_MS_MODES;
     }
 
+    
+
     if (msBtnBLongHit)
     {
       msGlobals.ggFactoryIntensity-=6;

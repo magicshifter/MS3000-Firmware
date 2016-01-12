@@ -38,9 +38,33 @@ public:
 
   }
 
+
+  void loadShakeFile(char *filename)
+  {
+    activeImage.close();
+    msSystem.msEEPROMs.safeStrncpy(shakeFileName, filename, MAX_FILENAME_LENGTH);
+
+    activeImage.loadFile(filename);
+    int w = activeImage.getWidth() * FRAME_MULTIPLY;
+    shakeSync.setFrames(w);
+
+  }
+
   void start()
   {
     loadShakeFile(msGlobals.ggUploadFileName);
+
+    Dir POVDir = SPIFFS.openDir("/"); 
+
+    msSystem.logln("POV DIR START::");
+    while(true)
+    { 
+      if (!POVDir.next()) break;
+      Serial.println(POVDir.fileName());
+    } 
+    msSystem.logln("");
+    msSystem.logln(":: END");
+
   } // todo: startActiveFile() with a default filename
 
   void stop()
@@ -70,6 +94,10 @@ public:
     }
 
 // msSystem.log("accel:"); msSystem.logln(String(msGlobals.ggAccel[1]));
+
+    if (msSystem.msBtnPwrLongHit == true) {
+      // loadShakeFile( );
+    }
 
     if (shakeSync.update(msGlobals.ggAccel[1]))
     {
@@ -104,21 +132,13 @@ public:
       }
       else
       {
+        delay(1);
         yield();
+
       }
 
     }
     
   }
 
-  void loadShakeFile(char *filename)
-  {
-    activeImage.close();
-    msSystem.msEEPROMs.safeStrncpy(shakeFileName, filename, MAX_FILENAME_LENGTH);
-
-    activeImage.loadFile(filename);
-    int w = activeImage.getWidth() * FRAME_MULTIPLY;
-    shakeSync.setFrames(w);
-
-  }
 };

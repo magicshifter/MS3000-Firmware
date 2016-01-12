@@ -368,9 +368,10 @@ void loop()
     msModeBouncingBall.applyForce((msGlobals.ggCurrentMicros - msGlobals.ggLastMicros) / 1000.0, fX*3);
 
     // !J! hack of timing .. 
-    if (msGlobals.ggCurrentFrame % 100 == 0) {
+    if (msGlobals.ggCurrentFrame % 50 == 0) {
       // WiFi.printDiag(Serial); 
       Serial.print(".");
+      // yield();
     }
 
   }

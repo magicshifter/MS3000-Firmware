@@ -292,7 +292,7 @@ void handleFileUpload(){
 
     msGlobals.ggUploadFile = SPIFFS.open(msGlobals.ggUploadFileName, "w");
     msSystem.log("ggUploadFile opened:");
-    // msSystem.logln(msGlobals.ggUploadFile);
+    msSystem.logln(msGlobals.ggUploadFileName);
 
     if (!msGlobals.ggUploadFile) {
       msSystem.logln("ERROR: COULD NOT open file!!!");
