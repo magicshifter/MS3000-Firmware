@@ -9,6 +9,7 @@ import {rgba_toString} from 'utils/colors';
 // import Pixel from 'components/inputs/Pixel';
 
 import RGBAInput from 'components/inputs/RGBAInput';
+import NumberInput from 'components/inputs/NumberInput';
 import ImageInput from 'components/inputs/ImageInput';
 import FileUploadInput from 'components/inputs/FileUploadInput';
 
@@ -27,6 +28,7 @@ export class PixelEditorView extends Component {
   static propTypes = {
     pixelClick: PropTypes.func.isRequired,
     setColorValue: PropTypes.func.isRequired,
+    setColumns: PropTypes.func.isRequired,
 
     pixelEditor: PropTypes.shape({
       pixels: PropTypes.array.isRequired,
@@ -47,19 +49,38 @@ export class PixelEditorView extends Component {
   };
 
   render() {
-    const {setColorValue, pixelEditor, settings, layout, pixelClick} = this.props;
+    const {
+      setColorValue, setColumns, pixelClick, // actions
+      pixelEditor, settings, layout, // state objects
+    } = this.props;
+
     const {pixels, color, rows, columns} = pixelEditor;
     const {host, protocol} = settings;
 
-    const width = layout.height > layout.width
-                    ? ((100 / columns) / 1.6) - 0.42 + 'vw'
-                    : (100 / columns) - 0.2 + 'vw';
+    const pixelListSize =
+      layout.height > layout.width
+      ? layout.width * 0.6
+      : layout.height * 0.6;
 
-    const height = width;
+    const pxSize =
+      layout.height > layout.width
+      ? pixelListSize / columns
+      : pixelListSize / columns;
+
+    const controlSize =
+      layout.height > layout.width
+      ? layout.width * 0.39
+      : layout.height * 0.39;
 
     return (
       <div className={classes['container']}>
-        <ul className={classes['list']}>
+        <ul
+          className={classes['list']}
+          style={{
+            height: pixelListSize,
+            width: pixelListSize,
+          }}
+        >
           {pixels && pixels.map(p => {
             const id = (((p.row - 1) * columns) - 1) + p.column;
             return (
@@ -68,8 +89,8 @@ export class PixelEditorView extends Component {
                 className={`${classes['pixel']} id-${id} r-${p.row} c-${p.column}`}
                 style={{
                   backgroundColor: rgba_toString(p.color),
-                  height,
-                  width,
+                  height: pxSize,
+                  width: pxSize,
                 }}
                 onClick={() => pixelClick(id)}
               ></li>
@@ -77,21 +98,44 @@ export class PixelEditorView extends Component {
           })}
         </ul>
 
-        <div className={classes['picker']}>
-          <RGBAInput
-            color={color}
-            setColorValue={setColorValue}
-          />
+        <div
+          className={classes['controls']}
+          style={{
+            width: controlSize,
+          }}
+        >
+          <div className={classes['picker']}>
+            <RGBAInput
+              color={color}
+              setColorValue={setColorValue}
+            />
 
-          <ImageInput label='upload image' />
+            <ImageInput label='upload image' />
 
-          <FileUploadInput
-            pixels={pixels}
-            height={rows}
-            width={columns}
-            url={[protocol, host].join('://')}
-            text='send to MS3000'
-          />
+            <FileUploadInput
+              pixels={pixels}
+              height={rows}
+              width={columns}
+              url={[protocol, host].join('://')}
+              text='send to MS3000'
+            />
+          </div>
+
+          <div className={classes['settings']}>
+            <ul>
+              <lh>
+                Editor Settings
+              </lh>
+              <li>
+                <NumberInput
+                  label='Columns:'
+                  name='columns'
+                  val={columns}
+                  action={setColumns}
+                />
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     );
