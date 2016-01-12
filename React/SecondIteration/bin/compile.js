@@ -4,10 +4,6 @@ const config = require('../config');
 const debug = require('debug')('app:bin:compile');
 const fs = require('fs-extra');
 
-const inlineHTML = require('html-inline');
-
-const cp = require('child_process');
-
 const path = require('path');
 
 const paths = config.utils_paths;
