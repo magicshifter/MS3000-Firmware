@@ -1,6 +1,20 @@
-.input {
+.container {
+  background-color: #fff;
+  display: inline-block;
 
   ul {
     list-style: none;
+    float: left;
+    display: inline-block;
+    margin: 0 0 0 10px;
+    text-align: right;
+  }
+
+  .indicator {
+    display: block;
+    width: 50px;
+    height: 50px;
+    clear: both;
+    float: left;
   }
 }

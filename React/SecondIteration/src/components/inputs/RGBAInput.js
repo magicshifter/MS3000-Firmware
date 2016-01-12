@@ -28,6 +28,10 @@ export default class RGBAInput extends Component {
 
     return (
       <div className={classes['container']}>
+        <div
+          className={classes['indicator']}
+          style={styles}
+        ></div>
         <ul>
           {color && Object.keys(color).map(key => (
             typeof color[key] === 'number' &&
