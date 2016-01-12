@@ -160,16 +160,6 @@ void testButtonForBOM_X()
   }
 }
 
-void delayYield()
-{
-  yield();
-#if 0
-  int nYields = 150;  // todo: fix this magic number
-  while(nYields--) {
-    yield();
-  }
-#endif
-}
 
 void testSimpleButtons()
 {
@@ -248,11 +238,8 @@ void loop()
   msGlobals.ggCurrentMicros = micros();
 
   msSystem.loop();
-  
-  delayYield();
 
   msWebServer.HandleWebServer();
-  delayYield();
 
   // do some tests
   // testAccelerometer();
@@ -284,7 +271,6 @@ void loop()
 //       c_b = c_loops & 4 ? c_bright : 0;  
 //       fillPixels(c_r, c_g, c_b, 0xff);
 //       msSystem.msLEDs.updatePixels();
-//       delayYield();
 
 // // end-of-hack
     }
@@ -369,7 +355,6 @@ void loop()
   // outside time-frame
 #ifdef CONFIG_ENABLE_ACCEL
           msSystem.msAccel.readAccelData(msGlobals.ggAccelCounts);
-          delayYield();
 
           for (int i = 0 ; i < 3 ; i++) {
             msGlobals.ggAccel[i] = (float) msGlobals.ggAccelCounts[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set
@@ -382,14 +367,11 @@ void loop()
     //msModeBouncingBall.applyForce((msGlobals.ggCurrentMicros - msGlobals.ggLastMicros) / 1000.0, fX, fY);
     msModeBouncingBall.applyForce((msGlobals.ggCurrentMicros - msGlobals.ggLastMicros) / 1000.0, fX*3);
 
-    delayYield();
-
     // !J! hack of timing .. 
-    // if (msGlobals.ggCurrentFrame % 100 == 0)
-    // WiFi.printDiag(Serial);
-    // delay(200);
-    // delay(1); // if we lose this, we lose wifi .. grr .. 
-    // delayMicroseconds(500);
+    if (msGlobals.ggCurrentFrame % 100 == 0) {
+      // WiFi.printDiag(Serial); 
+      Serial.print(".");
+    }
 
   }
 
