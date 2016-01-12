@@ -1,15 +1,15 @@
 import {createAction, handleActions} from 'redux-actions';
-import assign from 'object-assign';
+import Immutable from 'immutable';
 
 import {minmax} from 'utils/math';
 
 const rows = 16;
 const columns = 16;
 
-let pixels = [];
+let pixelArray = [];
 for (let row = 0; row < rows; row++) {
   for (let column = 0; column < columns; column++) {
-    pixels.push({
+    pixelArray.push({
       row: row + 1,
       column: column + 1,
       color: {r: 0, b: 0, g: 0, a: 155},
@@ -17,7 +17,9 @@ for (let row = 0; row < rows; row++) {
   }
 }
 
-const color = {r: 0, b: 0, g: 0, a: 155};
+const pixels = Immutable.List(pixelArray);
+
+const color = Immutable.Map({r: 0, b: 0, g: 0, a: 155});
 
 // ------------------------------------
 // Constants
@@ -31,7 +33,7 @@ export const SET_COLOR_VALUE = 'SET_COLOR_VALUE';
 // ------------------------------------
 export const pixelClick = createAction(
   PIXEL_CLICK,
-  (value = {id: 1}) => value
+  (value = 1) => value
 );
 
 export const setColor = createAction(
@@ -55,30 +57,23 @@ export const actions = {
 // ------------------------------------
 export default handleActions({
   [PIXEL_CLICK]: (state, {payload}) => {
-    const {id} = payload;
+    const id = payload;
+    const pixel = state.getIn(['pixels', id]);
+    pixel.color = state.get('color').toObject();
 
-    let pixels = state.pixels;
-    pixels[id].color = state.color;
-
-    delete state.pixels;
-
-    return assign({}, state, {pixels});
+    return state.setIn(['pixels', id], Immutable.Map(pixel));
   },
 
   [SET_COLOR]: (state, {payload}) => {
     const {color} = payload;
-
-    delete state.color;
-    return assign({}, state, {color});
+    const newState = state.set('color', color);
+    return newState;
   },
 
   [SET_COLOR_VALUE]: (state, {payload}) => {
     const {name, value, min, max} = payload;
-    let {color} = state;
-    color[name] = minmax(value, min, max);
-
-    delete state.color;
-    return assign({}, state, {color});
+    const minMaxedValue = minmax(value, min, max);
+    return state.setIn(['color', name], minMaxedValue);
   },
 
-}, {pixels, rows, columns, color});
+}, Immutable.Map({pixels, rows, columns, color}));

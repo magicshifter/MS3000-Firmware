@@ -4,8 +4,9 @@ import {connect} from 'react-redux';
 import {actions} from 'redux/modules/pixelEditor';
 
 import {colorType} from 'utils/propTypes';
+import {rgba_toString} from 'utils/colors';
 
-import Pixel from 'components/inputs/Pixel';
+// import Pixel from 'components/inputs/Pixel';
 
 import RGBAInput from 'components/inputs/RGBAInput';
 import ImageInput from 'components/inputs/ImageInput';
@@ -16,15 +17,15 @@ import classes from './PixelEditorView.scss';
 const mapStateToProps = (state) => {
   const {pixelEditor, settings, layout} = state;
   return {
-    pixelEditor,
-    settings,
-    layout,
+    pixelEditor: pixelEditor.toJS(),
+    settings: settings.toJS(),
+    layout: layout.toJS(),
   };
 };
 
 export class PixelEditorView extends Component {
   static propTypes = {
-    setColor: PropTypes.func.isRequired,
+    pixelClick: PropTypes.func.isRequired,
     setColorValue: PropTypes.func.isRequired,
 
     pixelEditor: PropTypes.shape({
@@ -46,7 +47,7 @@ export class PixelEditorView extends Component {
   };
 
   render() {
-    const {setColorValue, pixelEditor, settings, layout} = this.props;
+    const {setColorValue, pixelEditor, settings, layout, pixelClick} = this.props;
     const {pixels, color, rows, columns} = pixelEditor;
     const {host, protocol} = settings;
 
@@ -59,15 +60,21 @@ export class PixelEditorView extends Component {
     return (
       <div className={classes['container']}>
         <ul className={classes['list']}>
-          {pixels && pixels.map(p => (
-            <Pixel
-              key={`${p.column}-${p.row}`}
-              pixel={p}
-              pixelId={(((p.row - 1) * columns) - 1) + p.column}
-              height={height}
-              width={width}
-            />
-          ))}
+          {pixels && pixels.map(p => {
+            const id = (((p.row - 1) * columns) - 1) + p.column;
+            return (
+              <li
+                key={`${p.column}-${p.row}`}
+                className={`${classes['pixel']} id-${id} r-${p.row} c-${p.column}`}
+                style={{
+                  backgroundColor: rgba_toString(p.color),
+                  height,
+                  width,
+                }}
+                onClick={() => pixelClick(id)}
+              ></li>
+            );
+          })}
         </ul>
 
         <div className={classes['picker']}>

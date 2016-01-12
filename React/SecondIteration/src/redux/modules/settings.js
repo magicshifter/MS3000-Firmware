@@ -1,5 +1,5 @@
 import {createAction, handleActions} from 'redux-actions';
-import assign from 'object-assign';
+import Immutable from 'immutable';
 
 // ------------------------------------
 // Constants
@@ -11,7 +11,7 @@ export const SET_SETTINGS = 'SET_SETTING';
 // ------------------------------------
 export const setSettings = createAction(
   SET_SETTINGS,
-  (value = {protocol: 'http', host: 'magicshifter.local'}) => value
+  (value = Immutable.Map({protocol: 'http', host: 'magicshifter.local'})) => value
 );
 
 export const actions = {
@@ -22,5 +22,5 @@ export const actions = {
 // Reducer
 // ------------------------------------
 export default handleActions({
-  [SET_SETTINGS]: (state, {payload}) => assign({}, state, payload),
-}, {protocol: 'http', host: 'magicshifter.local'});
+  [SET_SETTINGS]: (state, {payload}) => state.set(payload),
+}, Immutable.Map({protocol: 'http', host: 'magicshifter.local'}));

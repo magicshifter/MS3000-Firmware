@@ -1,4 +1,5 @@
 import {createAction, handleActions} from 'redux-actions';
+import Immutable from 'immutable';
 
 // ------------------------------------
 // Constants
@@ -21,6 +22,9 @@ export const actions = {
 // Reducer
 // ------------------------------------
 export default handleActions({
-  [COUNTER_INCREMENT]: (state, {payload}) => state + payload,
-  [COUNTER_DECREMENT]: (state, {payload}) => state - payload,
-}, 1);
+  [COUNTER_INCREMENT]: (state, {payload}) => {
+    return state.set('count', state.get('count') + payload);
+  },
+
+  [COUNTER_DECREMENT]: (state, {payload}) => state.set('count', state.get('count') - payload),
+}, Immutable.Map({count: 1}));
