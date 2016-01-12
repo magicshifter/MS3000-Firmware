@@ -11,7 +11,7 @@ export const WINDOW_RESIZE = 'WINDOW_RESIZE';
 // ------------------------------------
 export const windowResize = createAction(
   WINDOW_RESIZE,
-  (value = Immutable.Map({width: window.innerWidth, height: window.innerHeight})) => value
+  (value = {width: window.innerWidth, height: window.innerHeight}) => value
 );
 
 export const actions = {
@@ -22,5 +22,11 @@ export const actions = {
 // Reducer
 // ------------------------------------
 export default handleActions({
-  [WINDOW_RESIZE]: (state, {payload}) => state.update(payload),
+  [WINDOW_RESIZE]:
+    (state, {payload}) =>
+      Immutable.Map({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      }),
+
 }, Immutable.Map({width: window.innerWidth, height: window.innerHeight}));
