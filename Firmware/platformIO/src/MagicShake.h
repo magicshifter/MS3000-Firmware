@@ -102,6 +102,10 @@ public:
 
         msSystem.msLEDs.fastClear();
       }
+      else
+      {
+        yield();
+      }
 
     }
     
