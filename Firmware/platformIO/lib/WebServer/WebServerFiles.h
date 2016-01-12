@@ -88,6 +88,7 @@ else
       <body>\
         <h1>Upload of " + String(msGlobals.ggUploadFileName) + " done</h1><a href=\"/list?dir=\">list</a><br><a href=\"\">index.html</a></body></html>";
 
+    msSystem.msESPServer.sendHeader("Access-Control-Allow-Origin", "*");
     msSystem.msESPServer.send ( 200, "text/html", message );
 
   }
