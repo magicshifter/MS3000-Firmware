@@ -30,6 +30,7 @@ const color = Immutable.Map({r: 0, b: 0, g: 0, a: 155});
 export const PIXEL_CLICK = 'PIXEL_CLICK';
 export const SET_COLOR = 'SET_COLOR';
 export const SET_COLOR_VALUE = 'SET_COLOR_VALUE';
+export const SET_COLUMNS = 'SET_COLUMNS';
 
 // ------------------------------------
 // Actions
@@ -49,10 +50,16 @@ export const setColorValue = createAction(
   (value = {name: '', value: 0, min: 0, max: 255}) => value
 );
 
+export const setColumns = createAction(
+  SET_COLUMNS,
+  (value = 1) => value
+);
+
 export const actions = {
   pixelClick,
   setColor,
   setColorValue,
+  setColumns,
 };
 
 // ------------------------------------
@@ -88,6 +95,16 @@ export default handleActions({
                 : 0;
 
     return state.setIn(['color', name], value);
+  },
+
+  [SET_COLUMNS]: (state, {payload}) => {
+    const value = parseInt(payload.value, 10);
+
+    if (isNumber(value)) {
+      return state.set('columns', value);
+    }
+
+    return state;
   },
 
 }, Immutable.Map({pixels, rows, columns, color}));
