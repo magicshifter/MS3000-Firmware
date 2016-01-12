@@ -1,5 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 
+import NumberInput from 'components/inputs/NumberInput';
+
 import classes from './ColorInput.scss';
 
 export default class ColorInput extends Component {
@@ -24,28 +26,15 @@ export default class ColorInput extends Component {
 
     return (
       <li className={classes['input']}>
-
-        {label &&
-          <label>{label}</label>
-        }
-
-        <button
-          onClick={() => setColorValue({name, value: val - 1, min, max})}
-        >-</button>
-
-        <input
+        <NumberInput
           type='text'
+          label={label}
           name={name}
-          value={val}
-          size='3'
-          onChange={(e) => {
-            setColorValue({name, value: parseInt(e.target.value, 10), min, max});
-          }}
+          val={val}
+          min={0}
+          max={255}
+          action={setColorValue}
         />
-
-        <button
-          onClick={() => setColorValue({name, value: val + 1, min, max})}
-        >+</button>
       </li>
     );
   }
