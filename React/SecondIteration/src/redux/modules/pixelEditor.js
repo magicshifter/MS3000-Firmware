@@ -2,7 +2,6 @@ import {createAction, handleActions} from 'redux-actions';
 import Immutable from 'immutable';
 import assign from 'object-assign';
 
-import {minmax} from 'utils/math';
 import {isColor, isNumber} from 'utils/types';
 
 const rows = 16;
@@ -11,11 +10,13 @@ const columns = 16;
 let pixelArray = [];
 for (let row = 0; row < rows; row++) {
   for (let column = 0; column < columns; column++) {
-    pixelArray.push({
+    const px = Immutable.Map({
       row: row + 1,
       column: column + 1,
       color: {r: 0, b: 0, g: 0, a: 155},
     });
+
+    pixelArray.push(px);
   }
 }
 
@@ -60,10 +61,14 @@ export const actions = {
 export default handleActions({
   [PIXEL_CLICK]: (state, {payload}) => {
     const id = payload;
-    const pixel = state.getIn(['pixels', id]);
-    pixel.color = state.get('color').toObject();
+    const pixel =
+      state
+        .getIn(['pixels', id])
+        .set('color', state.get('color'));
 
-    return state.setIn(['pixels', id], Immutable.Map(pixel));
+    console.log('pixel clicked', pixel);
+
+    return state.setIn(['pixels', id], pixel);
   },
 
   [SET_COLOR]: (state, {payload}) => {
@@ -77,13 +82,12 @@ export default handleActions({
   },
 
   [SET_COLOR_VALUE]: (state, {payload}) => {
-    const {name, min, max} = payload;
-    let value = payload.value && isNumber(payload.value)
+    const {name} = payload;
+    const value = payload.value && isNumber(payload.value)
                 ? payload.value
                 : 0;
 
-    const minMaxedValue = minmax(value, min, max);
-    return state.setIn(['color', name], minMaxedValue);
+    return state.setIn(['color', name], value);
   },
 
 }, Immutable.Map({pixels, rows, columns, color}));
