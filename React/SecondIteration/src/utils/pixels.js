@@ -1,17 +1,18 @@
 import Immutable from 'immutable';
+import assign from 'object-assign';
 
 export const getPixelId =
   (columns, column, row) =>
-    (((row - 1) * columns) - 1) + column;
+    (row * columns) + column;
 
 export const createPixel =
-  (color, column, row, visible = false) =>
-    Immutable.Map({
-      color: Immutable.Map(color),
-      row,
-      column,
-      visible,
-    });
+  (color, columns, column, row, visible = false) => ({
+    id: getPixelId(columns, column, row),
+    color: color,
+    row,
+    column,
+    visible,
+  });
 
 export const createPixels =
   (totalColumns, visibleColumns, rows) => {
@@ -22,6 +23,7 @@ export const createPixels =
         pixelArray.push(
           createPixel(
             {r: 0, b: 0, g: 0, a: 155},
+            totalColumns,
             column + 1,
             row + 1,
             visible,
@@ -30,5 +32,30 @@ export const createPixels =
       }
     }
 
-    return Immutable.List(pixelArray);
+    return pixelArray;
   };
+
+export const makePixelImmutable =
+  pixel =>
+    Immutable.Map(assign(
+      pixel,
+      {
+        color: Immutable.Map(pixel.color),
+      }
+    ));
+
+export const makePixelObject =
+  immutablePixel =>
+    immutablePixel.toJS();
+
+export const makePixelsObject =
+  immutablePixels =>
+    immutablePixels
+      .toArray()
+      .map(px => makePixelObject(px));
+
+export const createImmutablePixels =
+  (totalColumns, visibleColumns, rows) =>
+    Immutable.List(
+      createPixels(totalColumns, visibleColumns, rows)
+        .map(px => makePixelImmutable(px)));
