@@ -14,6 +14,16 @@ export const colorNames = {
   a: 'Alpha',
 };
 
+export const pixelType = PropTypes.shape({
+  color: colorType.isRequired,
+  row: PropTypes.number.isRequired,
+  column: PropTypes.number.isRequired,
+  id: PropTypes.number.isRequired,
+  visible: PropTypes.bool.isRequired,
+});
+
+export const pixelsType = PropTypes.arrayOf(pixelType);
+
 export const pixelEditorType = PropTypes.shape({
   pixels: PropTypes.array.isRequired,
   rows: PropTypes.number.isRequired,
