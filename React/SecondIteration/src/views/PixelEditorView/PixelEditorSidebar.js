@@ -37,7 +37,7 @@ export class PixelEditorSidebar extends Component {
       pixelEditor, settings, layout, // state objects
     } = this.props;
 
-    const {pixels, color, rows, columns} = pixelEditor;
+    const {pixels, color, rows, visibleColumns, totalColumns} = pixelEditor;
     const {host, protocol} = settings;
 
     const containerWidth =
@@ -66,7 +66,7 @@ export class PixelEditorSidebar extends Component {
           <FileUploadInput
             pixels={pixels}
             height={rows}
-            width={columns}
+            width={visibleColumns}
             url={[protocol, host].join('://')}
             text='send to MS3000'
           />
@@ -79,7 +79,8 @@ export class PixelEditorSidebar extends Component {
               <NumberInput
                 label='Columns:'
                 name='columns'
-                val={columns}
+                max={totalColumns}
+                val={visibleColumns}
                 action={setColumns}
               />
             </li>

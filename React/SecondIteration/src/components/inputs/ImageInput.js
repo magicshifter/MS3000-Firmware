@@ -1,13 +1,24 @@
 import React, {Component, PropTypes} from 'react';
+import {connect} from 'react-redux';
 
+import {actions} from 'redux/modules/pixelEditor';
+
+import {pixelEditorType} from 'utils/propTypes';
 import {getImagePixels} from 'utils/images';
 
 import classes from './ImageInput.scss';
 
-export default class ImageInput extends Component {
+const mapStateToProps = (state) => {
+  const {pixelEditor} = state;
+  return {
+    pixelEditor: pixelEditor.toJS(),
+  };
+};
+
+export class ImageInput extends Component {
   static propTypes = {
-    rows: PropTypes.number,
-    columns: PropTypes.number,
+    setPixels: PropTypes.func.isRequired,
+    pixelEditor: pixelEditorType,
     label: PropTypes.string,
   };
 
@@ -18,9 +29,12 @@ export default class ImageInput extends Component {
   }
 
   onChange(e) {
-    const {rows, columns} = this.props;
-    getImagePixels(e, columns, rows, (pixels) => {
-      console.log({pixels});
+    const {pixelEditor, setPixels} = this.props;
+    const {rows, visibleColumns, totalColumns} = pixelEditor;
+
+    getImagePixels(e, totalColumns, visibleColumns, rows, pixels => {
+      console.log(pixels);
+      // setPixels(pixels, visibleColumns, rows);
     });
   }
 
@@ -29,16 +43,21 @@ export default class ImageInput extends Component {
 
     return (
       <div className={classes['input']}>
-        {label &&
+
+        {
+          label &&
           <label>{label}</label>
         }
+
         <input
           type='file'
           name='fileUpload'
           onChange={this.onChange}
         />
+
       </div>
     );
   }
 }
 
+export default connect(mapStateToProps, actions)(ImageInput);

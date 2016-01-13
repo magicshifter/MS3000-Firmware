@@ -17,7 +17,8 @@ export const colorNames = {
 export const pixelEditorType = PropTypes.shape({
   pixels: PropTypes.array.isRequired,
   rows: PropTypes.number.isRequired,
-  columns: PropTypes.number.isRequired,
+  visibleColumns: PropTypes.number.isRequired,
+  totalColumns: PropTypes.number.isRequired,
   color: colorType.isRequired,
 }).isRequired;
 

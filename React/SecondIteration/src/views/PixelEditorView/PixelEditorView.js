@@ -3,8 +3,10 @@ import {connect} from 'react-redux';
 
 import {actions} from 'redux/modules/pixelEditor';
 
-import {colorType} from 'utils/propTypes';
+import {pixelEditorType, layoutType} from 'utils/propTypes';
 import {rgba_toString} from 'utils/colors';
+import {getPixelId} from 'utils/pixels';
+import {multimax} from 'utils/math';
 
 import PixelEditorSidebar from './PixelEditorSidebar';
 
@@ -21,18 +23,8 @@ const mapStateToProps = (state) => {
 export class PixelEditorView extends Component {
   static propTypes = {
     pixelClick: PropTypes.func.isRequired,
-
-    pixelEditor: PropTypes.shape({
-      pixels: PropTypes.array.isRequired,
-      rows: PropTypes.number.isRequired,
-      columns: PropTypes.number.isRequired,
-      color: colorType.isRequired,
-    }).isRequired,
-
-    layout: PropTypes.shape({
-      height: PropTypes.number.isRequired,
-      width: PropTypes.number.isRequired,
-    }).isRequired,
+    pixelEditor: pixelEditorType,
+    layout: layoutType,
   };
 
   render() {
@@ -41,44 +33,61 @@ export class PixelEditorView extends Component {
       pixelEditor, layout, // state objects
     } = this.props;
 
-    const {pixels, columns} = pixelEditor;
+    const {pixels, visibleColumns, totalColumns, rows} = pixelEditor;
 
-    const pixelListSize =
-      layout.height > layout.width
-      ? layout.width * 0.6
-      : layout.height * 0.7;
+    const pixelListSize = multimax(layout.width, layout.width * 0.6, layout.height);
 
-    const pxSize =
-      layout.height > layout.width
-      ? pixelListSize / columns
-      : pixelListSize / columns;
+    let rowArray = [];
+    for (let i = 0; i < rows; i++) {
+      rowArray.push(i);
+    }
+
+    let columnArray = [];
+    for (let i = 0; i < totalColumns; i++) {
+      columnArray.push(i);
+    }
+
+    const pxSize = (pixelListSize - 1) / visibleColumns;
 
     return (
       <div className={classes['container']}>
 
-        <ul
+        <table
           className={classes['list']}
           style={{
             height: pixelListSize,
             width: pixelListSize,
           }}
         >
-          {pixels && pixels.map(p => {
-            const id = (((p.row - 1) * columns) - 1) + p.column;
-            return (
-              <li
-                key={`${p.column}-${p.row}`}
-                className={`${classes['pixel']} id-${id} r-${p.row} c-${p.column}`}
-                style={{
-                  backgroundColor: rgba_toString(p.color),
-                  height: pxSize,
-                  width: pxSize,
-                }}
-                onClick={() => pixelClick(id)}
-              ></li>
-            );
-          })}
-        </ul>
+          <tbody>
+            {rowArray.map(
+              r =>
+                <tr
+                  key={`r-${r + 1}`}
+                  style={{
+                    height: pxSize,
+                  }}
+                >
+                  {columnArray.map(
+                    c =>
+                      c < visibleColumns &&
+                      <td
+                        className={classes['pixel']}
+                        key={`r-${r + 1}-c-${c + 1}`}
+                        onClick={() => pixelClick(getPixelId(totalColumns, c + 1, r + 1))}
+                        style={{
+                          width: pxSize,
+                          height: pxSize,
+                          backgroundColor: rgba_toString(
+                            pixels[getPixelId(totalColumns, c + 1, r + 1)].color
+                          ),
+                        }}
+                      ></td>
+                  )}
+                </tr>
+            )}
+          </tbody>
+        </table>
 
         <PixelEditorSidebar />
       </div>
