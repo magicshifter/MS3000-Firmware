@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 
 import {actions} from 'redux/modules/pixelEditor';
 
-import {colorType} from 'utils/propTypes';
+import {pixelEditorType, settingsType, layoutType} from 'utils/propTypes';
 
 import RGBAInput from 'components/inputs/RGBAInput';
 import NumberInput from 'components/inputs/NumberInput';
@@ -26,22 +26,9 @@ export class PixelEditorSidebar extends Component {
     setColorValue: PropTypes.func.isRequired,
     setColumns: PropTypes.func.isRequired,
 
-    pixelEditor: PropTypes.shape({
-      pixels: PropTypes.array.isRequired,
-      rows: PropTypes.number.isRequired,
-      columns: PropTypes.number.isRequired,
-      color: colorType.isRequired,
-    }).isRequired,
-
-    settings: PropTypes.shape({
-      protocol: PropTypes.string.isRequired,
-      host: PropTypes.string.isRequired,
-    }).isRequired,
-
-    layout: PropTypes.shape({
-      height: PropTypes.number.isRequired,
-      width: PropTypes.number.isRequired,
-    }).isRequired,
+    pixelEditor: pixelEditorType,
+    settings: settingsType,
+    layout: layoutType,
   };
 
   render() {
@@ -74,9 +61,7 @@ export class PixelEditorSidebar extends Component {
             setColorValue={setColorValue}
           />
 
-          <div>
-            <ImageInput label='upload image' />
-          </div>
+          <ImageInput label='upload image' />
 
           <FileUploadInput
             pixels={pixels}
