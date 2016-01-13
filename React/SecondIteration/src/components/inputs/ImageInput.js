@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 
 import {actions} from 'redux/modules/pixelEditor';
 
-import {pixelEditorType, pixelsType} from 'utils/propTypes';
+import {pixelsType} from 'utils/propTypes';
 import {getImagePixels} from 'utils/images';
 import {makePixelsObject} from 'utils/pixels';
 
