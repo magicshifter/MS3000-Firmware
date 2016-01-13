@@ -25,10 +25,10 @@ export default class Root extends Component {
         } else {
           window.devToolsExtension.open();
         }
-       } else if (!window.devToolsExtension) {
+      } else if (!window.devToolsExtension) {
         const DevTools = require('containers/DevTools').default;
         return (
-           <DevTools />
+          <DevTools />
         );
       }
     }
