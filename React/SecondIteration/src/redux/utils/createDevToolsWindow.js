@@ -11,25 +11,27 @@ export default function createDevToolsWindow(store) {
     `width=400,height=${window.outerHeight},menubar=no,location=no,resizable=yes,scrollbars=no,status=no`,
   );
 
-  if (!win || !win.location) {
-    return console.error('devtools could not be opened, check if popups are allowed in your browser');
+  if (!win || !win.location || !win.document) {
+    return console.error(
+      'devtools could not be opened, check if popups are allowed in your browser'
+    );
   }
 
   // reload in case it's reusing the same window with the old content
-  window.location.reload();
+  win.location.reload();
 
   // wait a little bit for it to reload, then render
   setTimeout(() => {
     // Wait for the reload to prevent:
     // "Uncaught Error: Invariant Violation: _registerComponent(...): Target container is not a DOM element."
-    window.document.write('<div id="react-devtools-root"></div>');
-    window.document.body.style.margin = '0';
+    win.document.write('<div id="react-devtools-root"></div>');
+    win.document.body.style.margin = '0';
 
     ReactDOM.render(
       <Provider store={store}>
         <DevTools />
       </Provider>
-      , window.document.getElementById('react-devtools-root')
+      , win.document.getElementById('react-devtools-root')
     );
   }, 10);
 }
