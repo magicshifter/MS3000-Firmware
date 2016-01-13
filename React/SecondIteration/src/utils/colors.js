@@ -12,12 +12,9 @@ export function rgba_toString(color) {
 export const rgba_fromArray =
   pixelArray => {
     let convertedColors = [];
-    let currentColorId = 0;
     const colorNames = ['r', 'b', 'g', 'a'];
 
     for (let currentColorId = 0; currentColorId < pixelArray.length; currentColorId += 4) {
-      const currentColorName = colorNames[currentColorId];
-
       let color = {};
 
       Object.keys(colorNames)
