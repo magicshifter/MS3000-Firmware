@@ -50,7 +50,6 @@
 // GUI modes, well actually .. modes are more of an 'app' ..
 #include "Modes.h"
 
- BouncingBallMode msModeBouncingBall(600);
  MagicShakeMode msModeShake;
  POVShakeSyncDummyMode msModePOVShake;
 
@@ -256,10 +255,9 @@ void loop()
 
     msGlobals.ggLastFrameMicros = msGlobals.ggCurrentMicros;
 
-    // pov msModeBouncingBall mode
     if (msGlobals.ggCurrentMode == 0)
     {
-      msModeBouncingBall.simpleBouncingBall();
+      msModeShake.step();
 // // !J! 
 // // hack to test timing..
 //       static int c_loops; 
@@ -361,16 +359,10 @@ void loop()
           }
 #endif
 
-    float fX = msGlobals.ggAccel[0];
-    float fY = msGlobals.ggAccel[1];
-
-    //msModeBouncingBall.applyForce((msGlobals.ggCurrentMicros - msGlobals.ggLastMicros) / 1000.0, fX, fY);
-    msModeBouncingBall.applyForce((msGlobals.ggCurrentMicros - msGlobals.ggLastMicros) / 1000.0, fX*3);
-
     // !J! hack of timing .. 
     if (msGlobals.ggCurrentFrame % 50 == 0) {
       // WiFi.printDiag(Serial); 
-      Serial.print(".");
+      // Serial.print(".");
       // yield();
     }
 

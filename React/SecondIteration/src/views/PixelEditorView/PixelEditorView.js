@@ -3,9 +3,9 @@ import {connect} from 'react-redux';
 
 import {actions} from 'redux/modules/pixelEditor';
 
-import {pixelEditorType, layoutType} from 'utils/propTypes';
+import {pixelsType, layoutType} from 'utils/propTypes';
 import {rgba_toString} from 'utils/colors';
-import {getPixelId} from 'utils/pixels';
+import {getPixelId, makePixelsObject} from 'utils/pixels';
 import {multimax} from 'utils/math';
 
 import PixelEditorSidebar from './PixelEditorSidebar';
@@ -15,7 +15,10 @@ import classes from './PixelEditorView.scss';
 const mapStateToProps = (state) => {
   const {pixelEditor, layout} = state;
   return {
-    pixelEditor: pixelEditor.toJS(),
+    pixels: makePixelsObject(pixelEditor.get('pixels')),
+    totalColumns: pixelEditor.get('totalColumns'),
+    visibleColumns: pixelEditor.get('visibleColumns'),
+    rows: pixelEditor.get('rows'),
     layout: layout.toJS(),
   };
 };
@@ -23,17 +26,19 @@ const mapStateToProps = (state) => {
 export class PixelEditorView extends Component {
   static propTypes = {
     pixelClick: PropTypes.func.isRequired,
-    pixelEditor: pixelEditorType,
+    pixels: pixelsType.isRequired,
+    rows: PropTypes.number.isRequired,
+    visibleColumns: PropTypes.number.isRequired,
+    totalColumns: PropTypes.number.isRequired,
     layout: layoutType,
   };
 
   render() {
     const {
       pixelClick, // actions
-      pixelEditor, layout, // state objects
+      layout, // layout state object
+      pixels, visibleColumns, totalColumns, rows, // pixelEditor state
     } = this.props;
-
-    const {pixels, visibleColumns, totalColumns, rows} = pixelEditor;
 
     const {sidebar, header} = layout;
 
@@ -57,13 +62,7 @@ export class PixelEditorView extends Component {
     return (
       <div className={classes['container']}>
 
-        <table
-          className={classes['list']}
-          style={{
-            height: pixelListSize,
-            width: pixelListSize,
-          }}
-        >
+        <table className={classes['list']}>
           <tbody>
             {rowArray.map(
               r =>
@@ -79,12 +78,12 @@ export class PixelEditorView extends Component {
                       <td
                         className={classes['pixel']}
                         key={`r-${r + 1}-c-${c + 1}`}
-                        onClick={() => pixelClick(getPixelId(totalColumns, c + 1, r + 1))}
+                        onClick={() => pixelClick(getPixelId(totalColumns, c, r))}
                         style={{
                           width: pxSize,
                           height: pxSize,
                           backgroundColor: rgba_toString(
-                            pixels[getPixelId(totalColumns, c + 1, r + 1)].color
+                            pixels[getPixelId(totalColumns, c, r)].color,
                           ),
                         }}
                       ></td>

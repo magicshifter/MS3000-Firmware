@@ -16,7 +16,7 @@ public:
 
   char sv_Filename[100];
 
-  void loadFile(char *fileName)
+  void loadFile(const char *fileName)
   {
       msSystem.msEEPROMs.safeStrncpy(sv_Filename, fileName, 100);
 
@@ -50,7 +50,7 @@ public:
 
   }
 
-  MSImage(char *fileName)
+  MSImage(const char *fileName)
   {
     loadFile(fileName);
   }
