@@ -33,16 +33,26 @@ class CoreLayout extends Component {
   render() {
     const {children, height, width} = this.props;
 
+    const headerHeight = 50;
+    const viewHeight = height - 50;
+
     return (
       <div
         className={classes['container']}
-        style={{
-          height,
-          width,
-        }}
       >
-        <Header />
-        <div className={classes['view']}>
+        <Header
+          style={{
+            height: headerHeight,
+            width: width,
+          }}
+        />
+        <div
+          className={classes['view']}
+          style={{
+            height: viewHeight,
+            width: width,
+          }}
+        >
           {children}
         </div>
       </div>
