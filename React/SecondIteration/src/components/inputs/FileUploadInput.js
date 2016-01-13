@@ -26,7 +26,7 @@ export default class FileUploadInput extends Component {
     const headerSize = 0;
 
     var fileName = this.refs.fileName.value;
-    fileName = '/pov/' + fileName; 
+    fileName = '/pov/' + fileName;
     url = 'http://magicshifter.local';
 
     for (let x = 0; x < width; x++) {
