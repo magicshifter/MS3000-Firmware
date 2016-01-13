@@ -32,7 +32,8 @@ class CoreLayout extends Component {
 
   render() {
     const {children, layout} = this.props;
-    const {height} = layout;
+    const {header} = layout;
+    const {height} = header;
 
     return (
       <div className={classes['container']}>
