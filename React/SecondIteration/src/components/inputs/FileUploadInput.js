@@ -27,18 +27,19 @@ export default class FileUploadInput extends Component {
     const headerSize = 0;
 
     var fileName = this.refs.fileName.value;
-    fileName = '/pov/' + fileName;
+    fileName = fileName + '.magicBitmap';
+
     url = 'http://magicshifter.local';
 
     for (let x = 0; x < width; x++) {
       for (let y = 0; y < height; y++) {
         const idx = x + (y * totalWidth);
         const pixel = pixels[idx];
-        const fileDataIdx = headerSize + 4 * (x + y * width);
+        const fileDataIdx = headerSize + 4 * (y + x * width);
 
-        fileData[fileDataIdx + 0] = pixel.color.r;
+        fileData[fileDataIdx + 0] = pixel.color.b;
         fileData[fileDataIdx + 1] = pixel.color.g;
-        fileData[fileDataIdx + 2] = pixel.color.b;
+        fileData[fileDataIdx + 2] = pixel.color.r;
         fileData[fileDataIdx + 3] = 0xFF;
 
         // fileData[fileDataIdx + 0] = x & 1 ? 255 : 0;
@@ -51,7 +52,7 @@ export default class FileUploadInput extends Component {
     const blob = new Blob([fileData]);
 
     const formData = new FormData();
-    formData.append('uploadFile', blob, '/pov/userImage2');
+    formData.append('uploadFile', blob, fileName);
 
     const request = new XMLHttpRequest();
     request.onload = oEvent => {
