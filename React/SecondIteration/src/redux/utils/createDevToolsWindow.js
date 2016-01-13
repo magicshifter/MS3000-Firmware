@@ -11,6 +11,10 @@ export default function createDevToolsWindow(store) {
     `width=400,height=${window.outerHeight},menubar=no,location=no,resizable=yes,scrollbars=no,status=no`,
   );
 
+  if (!win || !win.location) {
+    return console.error('devtools could not be opened, check if popups are allowed in your browser');
+  }
+
   // reload in case it's reusing the same window with the old content
   win.location.reload();
 
