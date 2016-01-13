@@ -70,7 +70,7 @@ export default handleActions({
     (state, {payload: id}) =>
       state.setIn(
         ['pixels', id, 'color'],
-        state.get('color'));
+        state.get('color')),
 
   [SET_PIXELS]:
     (state, {payload: pixels}) =>
