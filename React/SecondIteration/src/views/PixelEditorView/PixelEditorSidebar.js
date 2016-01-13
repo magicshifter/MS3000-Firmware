@@ -39,17 +39,15 @@ export class PixelEditorSidebar extends Component {
 
     const {pixels, color, rows, visibleColumns, totalColumns} = pixelEditor;
     const {host, protocol} = settings;
+    const {sidebar} = layout;
 
-    const containerWidth =
-      layout.height > layout.width
-      ? layout.width * 0.39
-      : layout.height * 0.29;
+    const {width} = sidebar;
 
     return (
       <div
         className={classes['container']}
         style={{
-          width: containerWidth,
+          width,
         }}
       >
         <div className={classes['picker']}>

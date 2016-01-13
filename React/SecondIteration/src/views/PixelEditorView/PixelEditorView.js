@@ -35,7 +35,11 @@ export class PixelEditorView extends Component {
 
     const {pixels, visibleColumns, totalColumns, rows} = pixelEditor;
 
-    const pixelListSize = multimax(layout.width, layout.width * 0.6, layout.height);
+    const {sidebar, header} = layout;
+
+    const maxWidth = layout.width - sidebar.width;
+    const maxHeight = layout.height - header.height;
+    const pixelListSize = multimax(layout.width, maxWidth, maxHeight);
 
     let rowArray = [];
     for (let i = 0; i < rows; i++) {
