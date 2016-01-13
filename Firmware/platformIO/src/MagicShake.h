@@ -30,6 +30,7 @@ private:
   char shakeFileName[MAX_FILENAME_LENGTH];
   MSImage activeImage;
   POVShakeSync shakeSync;
+  Dir POVDir;
 
 public:
   MagicShakeMode()
@@ -39,8 +40,10 @@ public:
   }
 
 
-  void loadShakeFile(char *filename)
+  void loadShakeFile(const char *filename)
   {
+    msSystem.log("loadShakeFile:"); msSystem.logln(filename);
+
     activeImage.close();
     msSystem.msEEPROMs.safeStrncpy(shakeFileName, filename, MAX_FILENAME_LENGTH);
 
@@ -53,17 +56,7 @@ public:
   void start()
   {
     loadShakeFile(msGlobals.ggUploadFileName);
-
-    Dir POVDir = SPIFFS.openDir("/"); 
-
-    msSystem.logln("POV DIR START::");
-    while(true)
-    { 
-      if (!POVDir.next()) break;
-      Serial.println(POVDir.fileName());
-    } 
-    msSystem.logln("");
-    msSystem.logln(":: END");
+    POVDir = SPIFFS.openDir("/");
 
   } // todo: startActiveFile() with a default filename
 
@@ -96,7 +89,16 @@ public:
 // msSystem.log("accel:"); msSystem.logln(String(msGlobals.ggAccel[1]));
 
     if (msSystem.msBtnPwrLongHit == true) {
-      // loadShakeFile( );
+      if (!POVDir.next()) {
+        POVDir = SPIFFS.openDir("/");
+      }
+
+msSystem.log("DISP FILE:"); msSystem.logln();
+
+      msSystem.msEEPROMs.safeStrncpy(shakeFileName, String(POVDir.fileName()).c_str();, MAX_FILENAME_LENGTH);
+
+
+      loadShakeFile(POVDir.fileName().c_str());
     }
 
     if (shakeSync.update(msGlobals.ggAccel[1]))
