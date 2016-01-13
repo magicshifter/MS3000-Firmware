@@ -45,7 +45,7 @@ export default class FileUploadInput extends Component {
     formData.append('uploadFile', blob);
 
     const request = new XMLHttpRequest();
-    request.onload = oEvent => {
+    request.onload = () => {
       const {status} = request;
       if (status === 200) {
         console.log('Uploaded!');
