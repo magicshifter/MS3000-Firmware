@@ -8,19 +8,9 @@ import 'styles/core.scss';
 
 import classes from './CoreLayout.scss';
 
-const mapStateToProps =
-  (state) => (
-    {
-      height: state.layout.height,
-      width: state.layout.width,
-    }
-  );
-
 class CoreLayout extends Component {
   static propTypes = {
     children: PropTypes.element,
-    height: PropTypes.number,
-    width: PropTypes.number,
     windowResize: PropTypes.func.isRequired,
   };
 
@@ -31,28 +21,12 @@ class CoreLayout extends Component {
   }
 
   render() {
-    const {children, height, width} = this.props;
-
-    const headerHeight = 50;
-    const viewHeight = height - 50;
+    const {children} = this.props;
 
     return (
-      <div
-        className={classes['container']}
-      >
-        <Header
-          style={{
-            height: headerHeight,
-            width: width,
-          }}
-        />
-        <div
-          className={classes['view']}
-          style={{
-            height: viewHeight,
-            width: width,
-          }}
-        >
+      <div className={classes['container']}>
+        <Header />
+        <div className={classes['view']}>
           {children}
         </div>
       </div>
@@ -60,4 +34,4 @@ class CoreLayout extends Component {
   }
 }
 
-export default connect(mapStateToProps, actions)(CoreLayout);
+export default connect(() => {}, actions)(CoreLayout);
