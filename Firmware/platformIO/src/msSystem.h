@@ -19,12 +19,15 @@
 #include "LEDHardware.h"
 #include "Accelerometer.h"
 
+
 // Power management
 #define PIN_PWR_MGT 16
 
 // double features as bootloader button
 #define PIN_BUTTON_A  0
 #define PIN_BUTTON_B 12
+
+void USBPoll();
 
 // TODO: all init and all sensors and leds in here :)
 // (accelerometer wuld also be a class but the MAgicShifter object has one ;)
@@ -402,6 +405,8 @@ delay(1500); // this enables serial consoles to sync
       log("Changed Mode:"); logln(String(msGlobals.ggCurrentMode));
 
     }
+
+    USBPoll();
 }
 
   void enableLongClicks(bool enable)
@@ -451,6 +456,9 @@ delay(1500); // this enables serial consoles to sync
     }
   }
 };
+
+
+#include "USBCommandInterface.h"
 
 #else
 extern MagicShifterSystem msSystem;
