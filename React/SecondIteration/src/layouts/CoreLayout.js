@@ -34,4 +34,4 @@ class CoreLayout extends Component {
   }
 }
 
-export default connect(() => {}, actions)(CoreLayout);
+export default connect(() => ({}), actions)(CoreLayout);
