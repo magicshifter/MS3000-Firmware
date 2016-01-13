@@ -1,5 +1,12 @@
 .container {
   display: inline-block;
+
+  table {
+    tr, td {
+      margin: 0;
+      padding: 0;
+    }
+  }
 }
 
 .list {
