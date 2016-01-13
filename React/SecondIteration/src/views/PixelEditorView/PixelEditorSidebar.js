@@ -67,6 +67,7 @@ export class PixelEditorSidebar extends Component {
             pixels={pixels}
             height={rows}
             width={visibleColumns}
+            totalWidth={totalColumns}
             url={[protocol, host].join('://')}
             text='send to MS3000'
           />
