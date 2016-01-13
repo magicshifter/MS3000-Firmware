@@ -3,22 +3,29 @@ import {connect} from 'react-redux';
 
 import {actions} from 'redux/modules/pixelEditor';
 
-import {pixelEditorType} from 'utils/propTypes';
+import {pixelEditorType, pixelsType} from 'utils/propTypes';
 import {getImagePixels} from 'utils/images';
+import {makePixelsObject} from 'utils/pixels';
 
 import classes from './ImageInput.scss';
 
 const mapStateToProps = (state) => {
   const {pixelEditor} = state;
   return {
-    pixelEditor: pixelEditor.toJS(),
+    pixels: makePixelsObject(pixelEditor.get('pixels')),
+    visibleColumns: pixelEditor.get('visibleColumns'),
+    totalColumns: pixelEditor.get('totalColumns'),
+    rows: pixelEditor.get('rows'),
   };
 };
 
 export class ImageInput extends Component {
   static propTypes = {
     setPixels: PropTypes.func.isRequired,
-    pixelEditor: pixelEditorType,
+    pixels: pixelsType.isRequired,
+    rows: PropTypes.number.isRequired,
+    visibleColumns: PropTypes.number.isRequired,
+    totalColumns: PropTypes.number.isRequired,
     label: PropTypes.string,
   };
 
@@ -29,12 +36,10 @@ export class ImageInput extends Component {
   }
 
   onChange(e) {
-    const {pixelEditor, setPixels} = this.props;
-    const {rows, visibleColumns, totalColumns} = pixelEditor;
+    const {setPixels, pixels, rows, visibleColumns, totalColumns} = this.props;
 
-    getImagePixels(e, totalColumns, visibleColumns, rows, pixels => {
-      console.log(pixels);
-      // setPixels(pixels, visibleColumns, rows);
+    getImagePixels(e, pixels, totalColumns, visibleColumns, rows, pixels => {
+      setPixels(pixels, visibleColumns, rows);
     });
   }
 
