@@ -25,19 +25,28 @@ export default class Root extends Component {
         } else {
           window.devToolsExtension.open();
         }
-       } else if (!window.devToolsExtension) {
+      } else if (!window.devToolsExtension) {
         const DevTools = require('containers/DevTools').default;
         return (
-           <DevTools />
+          <DevTools />
         );
       }
     }
   }
 
   render() {
+    const {store} = this.props;
+    const state = store.getState();
+
+    const fontSize = state.layout.get('fontSize');
+
     return (
-      <Provider store={this.props.store}>
-        <div style={{ height: '100%' }}>
+      <Provider store={store}>
+        <div
+          style={{
+            fontSize,
+          }}
+        >
           {this.content}
           {this.devTools}
         </div>

@@ -83,10 +83,11 @@ export const getImagePixels =
         for (let row = 0; row < maxHeight; row++) {
           const color = pixelColors[getPixelId(maxWidth, column, row)];
 
-          convertedPixels.push(createPixel(color, row, column));
+          convertedPixels.push(createPixel(color, column, row));
         }
       }
-      console.log(convertedPixels);
+
+      console.log({convertedPixels});
       cb(pixels);
     };
   };

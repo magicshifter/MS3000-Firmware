@@ -30,4 +30,10 @@ export const settingsType = PropTypes.shape({
 export const layoutType = PropTypes.shape({
   height: PropTypes.number.isRequired,
   width: PropTypes.number.isRequired,
+  header: PropTypes.shape({
+    height: PropTypes.number.isRequired,
+  }).isRequired,
+  sidebar: PropTypes.shape({
+    width: PropTypes.number.isRequired,
+  }).isRequired,
 }).isRequired;
