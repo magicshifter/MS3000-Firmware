@@ -62,13 +62,7 @@ export class PixelEditorView extends Component {
     return (
       <div className={classes['container']}>
 
-        <table
-          className={classes['list']}
-          style={{
-            height: pixelListSize,
-            width: pixelListSize,
-          }}
-        >
+        <table className={classes['list']}>
           <tbody>
             {rowArray.map(
               r =>
