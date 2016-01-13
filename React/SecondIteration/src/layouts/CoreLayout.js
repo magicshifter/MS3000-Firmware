@@ -4,13 +4,23 @@ import {actions} from 'redux/modules/layout';
 
 import Header from './Header';
 
+import {layoutType} from 'utils/propTypes';
+
 import 'styles/core.scss';
 
 import classes from './CoreLayout.scss';
 
+const mapStateToProps = (state) => {
+  const {layout} = state;
+  return {
+    layout: layout.toJS(),
+  };
+};
+
 class CoreLayout extends Component {
   static propTypes = {
     children: PropTypes.element,
+    layout: layoutType,
     windowResize: PropTypes.func.isRequired,
   };
 
@@ -21,11 +31,14 @@ class CoreLayout extends Component {
   }
 
   render() {
-    const {children} = this.props;
+    const {children, layout} = this.props;
+    const {height} = layout;
 
     return (
       <div className={classes['container']}>
-        <Header />
+        <Header
+          height={height}
+        />
         <div className={classes['view']}>
           {children}
         </div>
@@ -34,4 +47,4 @@ class CoreLayout extends Component {
   }
 }
 
-export default connect(() => ({}), actions)(CoreLayout);
+export default connect(mapStateToProps, actions)(CoreLayout);

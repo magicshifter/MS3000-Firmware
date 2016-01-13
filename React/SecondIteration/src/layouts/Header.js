@@ -1,13 +1,18 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 import {Link} from 'react-router';
 
 import Menu from './Menu';
 
 import classes from './Header.scss';
 
-export const Header = () => {
-  return (
-    <header className={classes['main']}>
+export const Header =
+  ({height}) => (
+    <header
+      className={classes['main']}
+      style={{
+        height,
+      }}
+    >
       <Link to='/' className={classes['container']}>
         <img
           className={classes['logo']}
@@ -21,6 +26,9 @@ export const Header = () => {
       <Menu />
     </header>
   );
+
+Header.propTypes = {
+  height: PropTypes.number.isRequired,
 };
 
 export default Header;
