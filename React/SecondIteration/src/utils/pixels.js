@@ -1,4 +1,5 @@
 import Immutable from 'immutable';
+import assign from 'object-assign';
 
 export const getPixelId =
   (columns, column, row) =>
@@ -35,30 +36,23 @@ export const createPixels =
   };
 
 export const makePixelImmutable =
-  (pixel) => {
-    const {color, id, row, column, visible} = pixel;
-    const immutableColor = Immutable.Map(color);
-    return Immutable.Map({
-      color: Immutable.Map(color),
-      id,
-      row,
-      column,
-      visible,
-    });
-  }
+  pixel =>
+    Immutable.Map(assign(
+      pixel,
+      {
+        color: Immutable.Map(pixel.color),
+      }
+    ));
 
 export const makePixelObject =
-  immutablePixel => {
-    const pixel = immutablePixel.toObject();
-    pixel.color = pixel.color.toObject();
-    return pixel;
-  };
+  immutablePixel =>
+    immutablePixel.toJS();
 
 export const makePixelsObject =
-  immutablePixels => {
-    const pixels = immutablePixels.toArray();
-    return pixels.map(px => makePixelObject(px));
-  };
+  immutablePixels =>
+    immutablePixels
+      .toArray()
+      .map(px => makePixelObject(px));
 
 export const createImmutablePixels =
   (totalColumns, visibleColumns, rows) =>
