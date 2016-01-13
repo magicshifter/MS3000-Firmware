@@ -8,6 +8,7 @@ export default class FileUploadInput extends Component {
     pixels: PropTypes.array.isRequired,
     height: PropTypes.number.isRequired,
     width: PropTypes.number.isRequired,
+    totalWidth: PropTypes.number.isRequired,
     label: PropTypes.string,
     text: PropTypes.string,
   };
@@ -19,27 +20,31 @@ export default class FileUploadInput extends Component {
   }
 
   onClick() {
-    var {height, width, url, pixels} = this.props;
+    var {height, width, url, pixels, totalWidth} = this.props;
     const fileSize = width * height * 4;
     const fileData = new Uint8Array(fileSize);
 
     const headerSize = 0;
 
     var fileName = this.refs.fileName.value;
-    fileName = '/pov/' + fileName;
+    fileName = '/pov/' + fileName; 
     url = 'http://magicshifter.local';
 
     for (let x = 0; x < width; x++) {
       for (let y = 0; y < height; y++) {
-        const idx = x + (y * width);
+        const idx = x + (y * totalWidth);
         const pixel = pixels[idx];
-
-        const fileDataIdx = headerSize + (idx * 4);
+        const fileDataIdx = headerSize + 4 * (x + y * width);
 
         fileData[fileDataIdx + 0] = pixel.color.r;
         fileData[fileDataIdx + 1] = pixel.color.g;
         fileData[fileDataIdx + 2] = pixel.color.b;
         fileData[fileDataIdx + 3] = 0xFF;
+
+        // fileData[fileDataIdx + 0] = x & 1 ? 255 : 0;
+        // fileData[fileDataIdx + 1] = x & 2 ? 255 : 0;
+        // fileData[fileDataIdx + 2] = x & 4 ? 255 : 0;
+        // fileData[fileDataIdx + 3] = 0xFF;
       }
     }
 
@@ -49,7 +54,7 @@ export default class FileUploadInput extends Component {
     formData.append('uploadFile', blob, '/pov/userImage2');
 
     const request = new XMLHttpRequest();
-    request.onload = () => {
+    request.onload = oEvent => {
       const {status} = request;
       if (status === 200) {
         console.log('Uploaded!');

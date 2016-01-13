@@ -39,7 +39,10 @@ export class PixelEditorView extends Component {
 
     const maxWidth = layout.width - sidebar.width;
     const maxHeight = layout.height - header.height;
+
     const pixelListSize = multimax(layout.width, maxWidth, maxHeight);
+    var pxSize = Math.floor(pixelListSize / Math.max(visibleColumns, rows)) - 1;
+    if (pxSize < 1) pxSize = 1; // paranoia!!!
 
     let rowArray = [];
     for (let i = 0; i < rows; i++) {
@@ -50,8 +53,6 @@ export class PixelEditorView extends Component {
     for (let i = 0; i < totalColumns; i++) {
       columnArray.push(i);
     }
-
-    const pxSize = (pixelListSize - 1) / visibleColumns;
 
     return (
       <div className={classes['container']}>
