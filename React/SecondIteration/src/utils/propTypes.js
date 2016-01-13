@@ -27,13 +27,17 @@ export const settingsType = PropTypes.shape({
   host: PropTypes.string.isRequired,
 }).isRequired;
 
+export const headerType = PropTypes.shape({
+  height: PropTypes.number.isRequired,
+}).isRequired;
+
+export const sidebarType = PropTypes.shape({
+  width: PropTypes.number.isRequired,
+}).isRequired;
+
 export const layoutType = PropTypes.shape({
   height: PropTypes.number.isRequired,
   width: PropTypes.number.isRequired,
-  header: PropTypes.shape({
-    height: PropTypes.number.isRequired,
-  }).isRequired,
-  sidebar: PropTypes.shape({
-    width: PropTypes.number.isRequired,
-  }).isRequired,
+  header: headerType,
+  sidebar: sidebarType,
 }).isRequired;
