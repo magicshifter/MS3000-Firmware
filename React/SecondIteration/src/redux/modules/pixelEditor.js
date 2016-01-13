@@ -3,7 +3,7 @@ import Immutable from 'immutable';
 import assign from 'object-assign';
 
 import {isColor, isNumber, isObject} from 'utils/types';
-import {createPixels} from 'utils/pixels';
+import {createImmutablePixels} from 'utils/pixels';
 
 const rows = 16;
 const visibleColumns = 16;
@@ -11,7 +11,7 @@ const totalColumns = 96;
 
 const color = Immutable.Map({r: 0, b: 0, g: 0, a: 155});
 
-const pixels = createPixels(totalColumns, visibleColumns, rows);
+const pixels = createImmutablePixels(totalColumns, visibleColumns, rows);
 
 // ------------------------------------
 // Constants
@@ -70,17 +70,12 @@ export default handleActions({
     (state, {payload: id}) =>
       state.setIn(
         ['pixels', id, 'color'],
-        state.get('color')),
+        state.get('color'));
 
   [SET_PIXELS]:
-    (state, {payload: pixels}) => {
-      // const rows = state.get('rows');
-      // const columns = state.get('columns');
-
-      return isObject(pixels)
-      ? state.set('pixels', Immutable.List(pixels))
-      : state;
-    },
+    (state, {payload: pixels}) =>
+      isObject(pixels) &&
+      state.set('pixels', state.merge('pixels', pixels)),
 
   [SET_COLOR]:
     (state, {payload: p}) =>

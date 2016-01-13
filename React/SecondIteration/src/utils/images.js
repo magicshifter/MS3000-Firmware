@@ -1,31 +1,8 @@
-import Immutable from 'immutable';
-
-import {getPixelId, createPixel} from 'utils/pixels';
-
-export const convertArrayToPixels =
-  pixelArray => {
-    let convertedColors = [];
-    let currentColorId = 0;
-    let currentColor = {};
-    const colorNames = ['r', 'b', 'g', 'a'];
-
-    for (let pixelColorId = 0; pixelColorId < pixelArray.length; pixelColorId++) {
-      const currentColorName = colorNames[currentColorId];
-      currentColor[currentColorName] = pixelArray[pixelColorId];
-
-      currentColorId += 1;
-      if (currentColorId === 4) {
-        convertedColors.push(Immutable.Map(currentColor));
-        currentColor = {};
-        currentColorId = 0;
-      }
-    }
-
-    return convertedColors;
-  };
+import {getPixelId} from 'utils/pixels';
+import {rgba_fromArray} from 'utils/colors';
 
 export const getImagePixels =
-  (e, totalColumns, maxWidth = 16, maxHeight = 16, cb = () => {}) => {
+  (e, pixels, totalColumns, maxWidth = 16, maxHeight = 16, cb = () => {}) => {
     const {files} = e.target;
 
     const file = files[0];
@@ -47,19 +24,17 @@ export const getImagePixels =
       if (width > height) {
         if (parseInt(width, 10) > maxWidth) {
           width = maxWidth;
-          height = width * heightWidthRatio;
+          height = parseInt(width * heightWidthRatio, 10);
         }
       } else if (width < height) {
         if (parseInt(height, 10) > maxHeight) {
           height = maxHeight;
-          width = height * widthHeightRatio;
+          width = parseInt(height * widthHeightRatio, 10);
         }
       }
 
       ctx.drawImage(loadedImg, 0, 0, width, height);
-      let pixels = ctx.getImageData(0, 0, width, height).data;
-
-      // console.log({width, maxWidth, height, maxHeight});
+      let pixelData = ctx.getImageData(0, 0, width, height).data;
 
       // center image horizontally and vertically
       // if (width < maxWidth) {
@@ -74,20 +49,18 @@ export const getImagePixels =
           // console.log('height diff', diff);
         // }
       // }
+      const pixelColors = rgba_fromArray(pixelData);
 
-      console.log('converted pixels');
-      const pixelColors = convertArrayToPixels(pixels);
-
-      let convertedPixels = [];
-      for (let column = 0; column < maxWidth; column++) {
-        for (let row = 0; row < maxHeight; row++) {
-          const color = pixelColors[getPixelId(maxWidth, column, row)];
-
-          convertedPixels.push(createPixel(color, column, row));
+      for (let column = 0; column < totalColumns; column++) {
+        for (let row = 0; row < height; row++) {
+          const id = getPixelId(totalColumns, column + 1, row + 1);
+          if (column < width && pixels[id].color) {
+            const colorId = getPixelId(width, column, row);
+            // console.log({id});
+            pixels[id].color = pixelColors[colorId];
+          }
         }
       }
-
-      console.log({convertedPixels});
       cb(pixels);
     };
   };
