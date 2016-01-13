@@ -1,5 +1,5 @@
 
-#include "BaseMode.h"
+#include "Modes.h"
 #include "Image.h"
 #include "ShakeSync.h"
 
@@ -7,22 +7,7 @@
 
 #define MS_SHAKEFILE_DEFAULT "nix"
 
-// make it larger to be on the save side when base64 decoding
-/*
-class RGBLightMode : .. shiftermode
-{
-private:
-  loadBuffer(msGlobals.ggRGBLEDBuf);
-  msSystem.msLEDs.updatePixels();
-
-public:
-  void step(void)
-  {
-    loadBuffer(msGlobals.ggRGBLEDBuf);
-    msSystem.msLEDs.updatePixels();
-  }
-}
-*/
+  BouncingBallMode msModeBouncingBall(600);
 
 class MagicShakeMode : public MagicShifterBaseMode
 {
@@ -30,15 +15,32 @@ private:
   char shakeFileName[MAX_FILENAME_LENGTH];
   MSImage activeImage;
   POVShakeSync shakeSync;
-  Dir POVDir;
+  int dirCursor = 0;
+  int lastShakeFrame = 0;
+  // QueueArray< String> dirList;
 
 public:
+
   MagicShakeMode()
   {
     msSystem.msEEPROMs.safeStrncpy(shakeFileName, MS_SHAKEFILE_DEFAULT, MAX_FILENAME_LENGTH);
 
+    // Debug
+    // dirList.setPrinter(Serial);
   }
 
+  String getFile(int fileIndex)
+  {
+    Dir POVDir;
+    POVDir = SPIFFS.openDir("/");
+    int cnt = 0;
+    do {
+        msSystem.log("DISP FILE:"); msSystem.logln(shakeFileName);
+        if (cnt = fileIndex) return POVDir.fileName();
+    } while (POVDir.next() && cnt++ && (cnt <= fileIndex));
+
+    return String("");
+  }
 
   void loadShakeFile(const char *filename)
   {
@@ -56,8 +58,6 @@ public:
   void start()
   {
     loadShakeFile(msGlobals.ggUploadFileName);
-    POVDir = SPIFFS.openDir("/");
-
   } // todo: startActiveFile() with a default filename
 
   void stop()
@@ -89,16 +89,15 @@ public:
 // msSystem.log("accel:"); msSystem.logln(String(msGlobals.ggAccel[1]));
 
     if (msSystem.msBtnPwrLongHit == true) {
-      if (!POVDir.next()) {
-        POVDir = SPIFFS.openDir("/");
+      dirCursor++;
+      String toLoad = getFile(dirCursor);
+      if (toLoad.endsWith(".magicBitmap")) {
+        msSystem.log("Would DISP:"); msSystem.logln(toLoad);
       }
-
-msSystem.log("DISP FILE:"); msSystem.logln();
-
-      msSystem.msEEPROMs.safeStrncpy(shakeFileName, String(POVDir.fileName()).c_str();, MAX_FILENAME_LENGTH);
-
-
-      loadShakeFile(POVDir.fileName().c_str());
+      else {
+        dirCursor = 0;
+        msSystem.log("RESETDISP:"); msSystem.logln(toLoad);
+      }
     }
 
     if (shakeSync.update(msGlobals.ggAccel[1]))
@@ -108,6 +107,8 @@ msSystem.log("DISP FILE:"); msSystem.logln();
 
       if (index > 0)
       {
+
+        lastShakeFrame = 0;
 
         byte povData[RGB_BUFFER_SIZE];
 
@@ -134,10 +135,21 @@ msSystem.log("DISP FILE:"); msSystem.logln();
       }
       else
       {
-        delay(1);
         yield();
-
       }
+
+    }
+    else
+    {
+        // if (lastShakeFrame > 500) {
+      float fX = msGlobals.ggAccel[0];
+      float fY = msGlobals.ggAccel[1];
+      // msModeBouncingBall.applyForce((msGlobals.ggCurrentMicros - msGlobals.ggLastMicros) / 1000.0, fX, fY);
+      msModeBouncingBall.applyForce((msGlobals.ggCurrentMicros - msGlobals.ggLastMicros) / 1000.0, fX*3);
+      msModeBouncingBall.simpleBouncingBall();
+      // } 
+      // else
+      //   lastShakeFrame++;
 
     }
     

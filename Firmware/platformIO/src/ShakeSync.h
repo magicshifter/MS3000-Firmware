@@ -155,11 +155,13 @@ public:
   	else
   	{
   		// TODO: make values configurable
-  		if (lastMin.micros > msGlobals.ggCurrentMicros + 500 * 1000 || lastMin.g + 1. > lastMax.g)
+  		if ((lastMin.micros < msGlobals.ggCurrentMicros - (700 * 1000))) // || lastMin.g + 1. > lastMax.g)
         isActive = false;
       else
         isActive = true;
+
     }
+
 
 		localDebugSetPixels(0, 0, 0);
 
