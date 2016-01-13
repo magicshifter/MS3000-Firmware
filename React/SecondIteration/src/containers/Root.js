@@ -18,20 +18,21 @@ export default class Root extends Component {
   }
 
   get devTools() {
-    if (__DEBUG__) {
-      if (__DEBUG_NEW_WINDOW__) {
-        if (!window.devToolsExtension) {
-          require('../redux/utils/createDevToolsWindow').default(this.props.store);
-        } else {
-          window.devToolsExtension.open();
-        }
-      } else if (!window.devToolsExtension) {
-        const DevTools = require('containers/DevTools').default;
-        return (
-          <DevTools />
-        );
-      }
-    }
+    return <div>hello</div>;
+    // if (__DEBUG__) {
+    //   if (__DEBUG_NEW_WINDOW__) {
+    //     if (!window.devToolsExtension) {
+    //       require('../redux/utils/createDevToolsWindow').default(this.props.store);
+    //     } else {
+    //       window.devToolsExtension.open();
+    //     }
+    //   } else if (!window.devToolsExtension) {
+    //     const DevTools = require('containers/DevTools').default;
+    //     return (
+    //       <DevTools />
+    //     );
+    //   }
+    // }
   }
 
   render() {

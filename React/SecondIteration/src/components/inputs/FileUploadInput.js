@@ -19,11 +19,15 @@ export default class FileUploadInput extends Component {
   }
 
   onClick() {
-    const {height, width, url, pixels} = this.props;
+    var {height, width, url, pixels} = this.props;
     const fileSize = width * height * 4;
     const fileData = new Uint8Array(fileSize);
 
     const headerSize = 0;
+
+    var fileName = this.refs.fileName.value;
+    fileName = '/pov/' + fileName; 
+    url = 'http://magicshifter.local';
 
     for (let x = 0; x < width; x++) {
       for (let y = 0; y < height; y++) {
@@ -42,7 +46,7 @@ export default class FileUploadInput extends Component {
     const blob = new Blob([fileData]);
 
     const formData = new FormData();
-    formData.append('uploadFile', blob);
+    formData.append('uploadFile', blob, '/pov/userImage2');
 
     const request = new XMLHttpRequest();
     request.onload = () => {
@@ -62,6 +66,8 @@ export default class FileUploadInput extends Component {
     const {label, text = 'Upload File'} = this.props;
 
     return (
+      <div>
+      <input type='text' defaultValue='userImage' ref='fileName' />
       <div className={classes['input']}>
 
         {label &&
@@ -72,6 +78,7 @@ export default class FileUploadInput extends Component {
           onClick={this.onClick}
           value={text}
         />
+      </div>
       </div>
     );
   }
