@@ -1,6 +1,21 @@
 import {createAction, handleActions} from 'redux-actions';
 import Immutable from 'immutable';
 
+const height = window.innerHeight;
+const width = window.innerWidth;
+
+export const defaultState = Immutable.Map({
+  fontSize: 15,
+  width,
+  height,
+  header: {
+    height: 50,
+  },
+  sidebar: {
+    width: 200,
+  },
+});
+
 // ------------------------------------
 // Constants
 // ------------------------------------
@@ -24,9 +39,8 @@ export const actions = {
 export default handleActions({
   [WINDOW_RESIZE]:
     (state, {payload}) =>
-      Immutable.Map({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      }),
+      state
+        .set('width', window.innerWidth)
+        .set('height', window.innerHeight),
 
-}, Immutable.Map({width: window.innerWidth, height: window.innerHeight}));
+}, defaultState);
