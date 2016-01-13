@@ -5,11 +5,11 @@ export const getPixelId =
     (((row - 1) * columns) - 1) + column;
 
 export const createPixel =
-  (color, row, column, visible = false) =>
+  (color, column, row, visible = false) =>
     Immutable.Map({
+      color: Immutable.Map(color),
       row,
       column,
-      color,
       visible,
     });
 
@@ -22,8 +22,8 @@ export const createPixels =
         pixelArray.push(
           createPixel(
             {r: 0, b: 0, g: 0, a: 155},
-            row + 1,
             column + 1,
+            row + 1,
             visible,
           )
         );
