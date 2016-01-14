@@ -28,7 +28,6 @@ export default class FileUploadInput extends Component {
 
     var fileName = this.refs.fileName.value;
     fileName = '/pov/' + fileName;
-    url = 'http://magicshifter.local';
 
     for (let x = 0; x < width; x++) {
       for (let y = 0; y < height; y++) {
@@ -62,6 +61,9 @@ export default class FileUploadInput extends Component {
         console.warn(`Error ${status} occurred when trying to upload your file.`);
       }
     };
+
+    request.timeout = 3000;
+    request.ontimeout = () => { console.warn(`Connection to ${url} timed out!!!`); };
 
     request.open('POST', `${url}/upload`);
     request.send(formData);
