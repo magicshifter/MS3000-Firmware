@@ -71,13 +71,14 @@ export default handleActions({
         state.get('color')),
 
   [SET_PIXELS]:
-    (state, {payload: pixels}) =>
+    (state, {payload: pixels}) => {
       // TODO
       // need to calculate and pass all pixels to this function,
       // image upload currently might not do so
-      isObject(pixels)
-      ? state.set('pixels', Immutable.List.of(...pixels))
-      : state,
+      return isObject(pixels)
+      ? state.set('pixels', Immutable.List.of(...pixels.map(p => Immutable.fromJS(p))))
+      : state;
+    },
 
   [SET_COLOR]:
     (state, {payload: p}) =>
