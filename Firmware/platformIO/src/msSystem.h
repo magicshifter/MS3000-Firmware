@@ -392,10 +392,12 @@ public:
       if (msBtnPwrPressTime >= MIN_TIME_LONG_CLICK)
       {
         msBtnPwrLongHit = true;
+        // msSystem.logln("Btn Pwr Looong Hit");
       }
       else if (msBtnPwrPressTime >= MIN_TIME_CLICK)
       {
         msBtnPwrHit = true;
+        // msSystem.logln("Btn Pwr Hit");
       }
 
       msBtnPwrPressTime = 0;
