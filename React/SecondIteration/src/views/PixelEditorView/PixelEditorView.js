@@ -46,7 +46,7 @@ export class PixelEditorView extends Component {
     const maxHeight = layout.height - header.height;
 
     const pixelListSize = multimax(layout.width, maxWidth, maxHeight);
-    var pxSize = Math.floor(pixelListSize / Math.max(visibleColumns, rows)) - 1;
+    var pxSize = Math.floor(pixelListSize / (Math.max(visibleColumns, rows) + 1));
     if (pxSize < 1) {
       pxSize = 1; // paranoia!!!
     }
@@ -61,18 +61,32 @@ export class PixelEditorView extends Component {
       columnArray.push(i);
     }
 
+    const style = {
+      table: {},
+      tr: {
+        height: pxSize,
+      },
+    };
+
+    if (layout.width < 500) {
+      style.table = {
+        paddingTop: '1em',
+      };
+    }
+
     return (
       <div className={classes['container']}>
 
-        <table className={classes['list']}>
+        <table
+          className={classes['list']}
+          style={style.table}
+        >
           <tbody>
             {rowArray.map(
               r =>
                 <tr
                   key={`r-${r + 1}`}
-                  style={{
-                    height: pxSize,
-                  }}
+                  style={style.tr}
                 >
                   {columnArray.map(
                     c => {

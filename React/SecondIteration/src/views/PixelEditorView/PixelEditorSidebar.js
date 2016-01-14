@@ -61,6 +61,7 @@ export class PixelEditorSidebar extends Component {
       container: {
         width,
       },
+      rgba: {},
       button: {
         display: layout.width > 500 ? 'none' : 'inherit',
       },
@@ -68,11 +69,20 @@ export class PixelEditorSidebar extends Component {
 
     if (layout.width < 500) {
       style.container.position = 'absolute';
-      style.container.right = 0;
+      style.container.left = -width;
 
       style.content = {
-        right: !visible ? -200 : 0,
+        left: visible ? width : 0,
+        top: 25,
       };
+
+      if (layout.width < 330) {
+        style.rgba = {
+          position: 'fixed',
+          bottom: 0,
+          left: '1em',
+        };
+      }
     }
 
     return (
@@ -85,7 +95,7 @@ export class PixelEditorSidebar extends Component {
           className={classes['button']}
           onClick={e => this.onClickShowSidebar(e)}
         >
-          {visible ? 'Hide' : 'Show'} Sidebar
+          {(visible ? '<<<' : '>>>')}
         </button>
 
         <div
@@ -96,7 +106,10 @@ export class PixelEditorSidebar extends Component {
 
             <h3>Controls</h3>
             <ul>
-              <li key='rgba'>
+              <li
+                key='rgba'
+                style={style.rgba}
+              >
                 <h5>Colors:</h5>
                 <RGBAInput
                   color={color}
