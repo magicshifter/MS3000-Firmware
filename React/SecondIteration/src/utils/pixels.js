@@ -1,6 +1,8 @@
 import Immutable from 'immutable';
 import assign from 'object-assign';
 
+import {isFunction} from 'utils/types';
+
 export const getPixelId =
   (columns, column, row) =>
     (row * columns) + column;
@@ -46,7 +48,9 @@ export const makePixelImmutable =
 
 export const makePixelObject =
   immutablePixel =>
-    immutablePixel.toJS();
+    isFunction(immutablePixel.toJS)
+    ? immutablePixel.toJS()
+    : immutablePixel;
 
 export const makePixelsObject =
   immutablePixels =>
