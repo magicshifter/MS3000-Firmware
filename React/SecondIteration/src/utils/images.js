@@ -1,5 +1,6 @@
 import {getPixelId} from 'utils/pixels';
 import {rgba_fromArray} from 'utils/colors';
+import {isColor} from 'utils/types';
 
 export const getImagePixels =
   (e, pixels, totalColumns, maxWidth = 16, maxHeight = 16, cb = () => {}) => {
@@ -49,18 +50,24 @@ export const getImagePixels =
           // console.log('height diff', diff);
         // }
       // }
+
       const pixelColors = rgba_fromArray(pixelData);
 
       for (let column = 0; column < totalColumns; column++) {
         for (let row = 0; row < height; row++) {
           const id = getPixelId(totalColumns, column + 1, row + 1);
-          if (column < width && pixels[id].color) {
-            const colorId = getPixelId(width, column, row);
-            // console.log({id});
-            pixels[id].color = pixelColors[colorId];
+          const pixel = pixels[id];
+          if (pixel && pixel.color) {
+            const colorId = getPixelId(width, column + 1, row + 1);
+            const color = pixelColors[colorId];
+            if (isColor(color)) {
+              console.log('set pixel with id', id, 'in row', row, 'and column', column);
+              pixels[id].color = color;
+            }
           }
         }
       }
+
       cb(pixels);
     };
   };
