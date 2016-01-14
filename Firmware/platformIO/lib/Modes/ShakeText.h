@@ -4,67 +4,7 @@
 #define _MAGIC_SHAKETEXT_H
 
 
-#define COLOR_CODING_RGB
-
-#ifdef COLOR_CODING_RGB
-	#define CHANNEL_RED 		0
-	#define CHANNEL_GREEN 		1
-	#define CHANNEL_BLUE 		2
-#endif
-#ifdef COLOR_CODING_GRB
-	#define CHANNEL_RED 		1
-	#define CHANNEL_GREEN 		0
-	#define CHANNEL_BLUE 		2
-#endif
-
-#define COLUMNMULTIPLY 2
-
-
-union MSColor {
-#ifdef COLOR_CODING_RGB
-  struct { uint8_t r, g, b; } rgb;
-#endif
-#ifdef COLOR_CODING_GRB
-  struct { uint8_t g, r, b; } rgb;
-#endif
-  struct { uint8_t ch0, ch1, ch2; } ordered;
-  uint8_t channels[3];
-/*
-	public MSColor(uint8_t _r, uint8_t _g, uint8_t _b)
-	{
-		rgb.r = _r;
-		rgb.g = _g;
-		rgb.b = _b;
-	}
-*/
- };
-
- #define MAGIC_BITMAP_PIXEL_OFFSET 16
-
-// MagicShifter.cc
-struct MSBitmapHeader
-{
-	uint32_t fileSize;
-
-	uint8_t pixelFormat;
-	uint8_t maxFrame;
-	uint8_t frameWidth;
-	uint8_t frameHeight;
-
-	uint8_t subType;
-	uint8_t firstChar;
-	uint16_t animationDelay;
-} __attribute__((packed));
-
-struct MSBitmap
-{
-	MSBitmapHeader header;
-	MSColor color;
-	File bmFile;
-};
-
-
-class MagicShakeTextMode  : public MagicShifterBaseMode
+class MagicShakeText  : public MagicShifterBaseMode
 {
 
 private:
@@ -84,14 +24,14 @@ private:
 
 public:
 
- 	MagicShakeTextMode()
+ 	MagicShakeText()
 	{
 		// LoadBitmap(128, &font16px);
 		// LoadBitmap(129, &font12px);
 		// LoadBitmap(130, &font8px);
 		// LoadBitmap(131, &font6px);
 	}
-
+#if 0
 
 	void dumpHeader(const MSBitmapHeader& header)
 	{
@@ -116,7 +56,7 @@ public:
 	};
 
 
-	bool LoadBitmapFile(const char *filename, MSBitmap *bitmap)
+	static bool LoadBitmapFile(const char *filename, MSBitmap *bitmap)
 	{
 		int bmResult;
 
@@ -146,7 +86,7 @@ public:
 	// 	color.rgb.b = 255;
 	// }
 
-	void PlotBitmapColumn1Bit(const MSBitmap *bitmap, uint16_t absColumn, uint8_t ledIdx)
+	static void PlotBitmapColumn1Bit(const MSBitmap *bitmap, uint16_t absColumn, uint8_t ledIdx, byte *frameDest)
 	{
 		uint8_t bitBuffer[3];
 		uint8_t bitBufferIdx = 0;
@@ -204,18 +144,32 @@ public:
 	}
 
 
-	void PlotBitmapColumn24Bit(const MSBitmap *bitmap, uint16_t absColumn, uint8_t startLed)
+	static void PlotBitmapColumn24Bit(const MSBitmap *bitmap, uint16_t absColumn, uint8_t startLed, byte *frameDest)
 	{
-		// uint8_t nrOfBytes =  3 * bitmap->header.frameHeight;
-		// uint32_t addr = bitmap->header.fileSize + absColumn * nrOfBytes;
-		// if (startLed + bitmap->header.frameHeight > 16)
-		// 	nrOfBytes = (16 - startLed)*3;
-		
-		// ReadBytes(addr, msGlobals.ggRGBLEDBuf + 3*startLed, nrOfBytes); // never make startLed too big or it will corrupt mem
+		uint8_t nrOfBytes =  3 * bitmap->header.frameHeight;
+		uint32_t offSet = MAGIC_BITMAP_PIXEL_OFFSET + absColumn * nrOfBytes;
+		if (startLed + bitmap->header.frameHeight > 16)
+			nrOfBytes = (16 - startLed)*3;
+		// ReadBytes(offSet, msGlobals.ggRGBLEDBuf + 3*startLed, nrOfBytes); // never make startLed too big or it will corrupt mem
 
+		File lFile = bitmap->bmFile;
+		lFile.seek(offSet, SeekSet);
+		lFile.read(frameDest, nrOfBytes);
+		for(int x=MAX_LEDS - 1; x>=0; x--) 
+		{	
+			int id24 = x * 3;
+			int id32 = x * 4;
+
+			frameDest[id32 + 3] = frameDest[id24 + 2];
+			frameDest[id32 + 2] = frameDest[id24 + 1];
+			frameDest[id32 + 1] = frameDest[id24 + 0];
+			frameDest[id32 + 0] = 0xff;
+
+
+		}
 	}
 
-	void PlotBitmapColumn(const MSBitmap *bitmap, uint8_t frame, uint8_t column, uint8_t startLed)
+	static void PlotBitmapColumn(const MSBitmap *bitmap, uint8_t frame, uint8_t column, uint8_t startLed, byte *frameDest)
 	{
 		uint8_t frameIdx = frame - bitmap->header.firstChar;
 		if (frameIdx <= bitmap->header.maxFrame)
@@ -224,10 +178,10 @@ public:
 			switch (bitmap->header.pixelFormat)
 			{
 				case 24:
-					PlotBitmapColumn24Bit(bitmap, absColumn, startLed);
+					PlotBitmapColumn24Bit(bitmap, absColumn, startLed, frameDest);
 					break;
 				case 1:
-					PlotBitmapColumn1Bit(bitmap, absColumn, startLed);
+					PlotBitmapColumn1Bit(bitmap, absColumn, startLed, frameDest);
 					break;
 			}
 		}
@@ -236,13 +190,14 @@ public:
 
 	void PlotText(const MSBitmap *bitmap, const char *text, uint16_t column, uint8_t startLed)
 	{
-		if (!bitmap) bitmap = &font10x16;
+		// if (!bitmap) bitmap = &font10x16;
 
-		// dumpHeader(bitmap->header);
+		dumpHeader(bitmap->header);
 
 		uint8_t ascii = text[column / bitmap->header.frameWidth];
 		PlotBitmapColumn(bitmap, ascii, column % bitmap->header.frameWidth, startLed);
 	}
+#endif
 
 
 	void Int2Str(int val, char *text) {
@@ -265,88 +220,6 @@ public:
 		}
 		*text = 0;
 
-	}
-
-
-
-	void displayText(const char *text,bool wait,MSBitmap *font)
-	{
-		int n;
-		int frame = 0;
-
-		//MSBitmap *font = &font16px;
-		if (!font) font = &font10x16;
-
-		// if (!wait && ( centerBtnClickedTime || powerBtnClickedTime || centerBtnPressed || powerBtnPressed))
-	 //  			return;
-// msSystem.msBtnPwrLongHit == true
-
-
-		#define RGB_BUFFERSIZE (3*16)
-		uint8_t backupLedValues[RGB_BUFFERSIZE];
-
-		for (int i = 0; i < RGB_BUFFERSIZE; i++) {
-			backupLedValues[i] = msGlobals.ggRGBLEDBuf[i];
-		}
-
-		while (text[n] != 0) n++;
-
-		font->color.rgb.r = 128;
-		font->color.rgb.g = 128;
-		font->color.rgb.b = 255;
-
-
-		AccelShakeNrOfFrames = n * COLUMNMULTIPLY*font->header.frameWidth;
-
-		// if(wait)
-		// 	WaitClearButtons();
-
-		// while (1)
-		{
-			frame++;
-
-			// if (!MagicShifter_Poll() || centerBtnPressed || powerBtnPressed)
-	  // 			break;
-
-			// AccelPoll();
-			// UpdateAccelShakeCurrentColumn();
-
-			if (AccelShakeFrameNr != 0xFF)
-			{
-				if (AccelShakeFrameNr < 0xFE)
-				{
-					uint8_t realFrame = AccelShakeFrameNr / COLUMNMULTIPLY;
-
-					PlotText(font, text, realFrame, 0);
-			        // msSystem.msLEDs.updatePixels();
-
-				}
-				else
-				{
-					msSystem.msLEDs.fillPixels(0,0,0);
-			        // msSystem.msLEDs.updatePixels();
-
-				}
-			}
-			else {
-				for (int i = 0; i < RGB_BUFFERSIZE; i++) {
-					msGlobals.ggRGBLEDBuf[i] = backupLedValues[i];
-				}
-		        // msSystem.msLEDs.updatePixels();
-
-			}
-		}
-
-		for (int i = 0; i < RGB_BUFFERSIZE; i++) {
-			msGlobals.ggRGBLEDBuf[i] = backupLedValues[i];
-		}
-
-	    msSystem.msLEDs.updatePixels();
-
-		// RestoreAccelState();
-
-		// if(wait)
-		// 	WaitClearButtons();
 	}
 
 };

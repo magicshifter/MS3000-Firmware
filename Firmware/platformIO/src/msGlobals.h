@@ -29,6 +29,70 @@ public:
   long ggTimePostedAt = 0;
 };
 
+
+
+
+#define COLOR_CODING_RGB
+
+#ifdef COLOR_CODING_RGB
+  #define CHANNEL_RED     0
+  #define CHANNEL_GREEN     1
+  #define CHANNEL_BLUE    2
+#endif
+#ifdef COLOR_CODING_GRB
+  #define CHANNEL_RED     1
+  #define CHANNEL_GREEN     0
+  #define CHANNEL_BLUE    2
+#endif
+
+#define COLUMNMULTIPLY 2
+
+
+union MSColor {
+#ifdef COLOR_CODING_RGB
+  struct { uint8_t r, g, b; } rgb;
+#endif
+#ifdef COLOR_CODING_GRB
+  struct { uint8_t g, r, b; } rgb;
+#endif
+  struct { uint8_t ch0, ch1, ch2; } ordered;
+  uint8_t channels[3];
+/*
+  public MSColor(uint8_t _r, uint8_t _g, uint8_t _b)
+  {
+    rgb.r = _r;
+    rgb.g = _g;
+    rgb.b = _b;
+  }
+*/
+ };
+
+ #define MAGIC_BITMAP_PIXEL_OFFSET 16
+
+// MagicShifter.cc
+struct MSBitmapHeader
+{
+  uint32_t fileSize;
+
+  uint8_t pixelFormat;
+  uint8_t maxFrame;
+  uint8_t frameWidth;
+  uint8_t frameHeight;
+
+  uint8_t subType;
+  uint8_t firstChar;
+  uint16_t animationDelay;
+} __attribute__((packed));
+
+struct MSBitmap
+{
+  MSBitmapHeader header;
+  MSColor color;
+  File bmFile;
+};
+
+
+
 // #else
 // extern MagicShifterGlobals msGlobals;
 #endif
