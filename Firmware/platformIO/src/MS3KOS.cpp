@@ -58,6 +58,7 @@
  {
   // record our bootup time
   msGlobals.ggBootTime = millis();
+  msGlobals.ggCurrentMode = 0;
 
 delay(350); // debug !J!
 
@@ -245,6 +246,16 @@ void loop()
   // testButtonForBOM_X();
   // testSimpleButtons();
 
+  // outside time-frame
+#ifdef CONFIG_ENABLE_ACCEL
+    msSystem.msAccel.readAccelData(msGlobals.ggAccelCounts);
+
+    for (int i = 0 ; i < 3 ; i++) {
+      msGlobals.ggAccel[i] = (float) msGlobals.ggAccelCounts[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set
+    }
+#endif
+
+
   // inside time-frame
   if (msGlobals.ggLastFrameMicros + msGlobals.ggSpeedMicros 
     < msGlobals.ggCurrentMicros)
@@ -258,114 +269,17 @@ void loop()
     if (msGlobals.ggCurrentMode == 0)
     {
       msModeShake.step();
-// // !J! 
-// // hack to test timing..
-//       static int c_loops; 
-//       static int c_bright = 10; 
-//       static byte c_r, c_g, c_b;
-//       c_loops++;
-//       c_r = c_loops & 1 ? c_bright : 0;  
-//       c_g = c_loops & 2 ? c_bright : 0;  
-//       c_b = c_loops & 4 ? c_bright : 0;  
-//       fillPixels(c_r, c_g, c_b, 0xff);
-//       msSystem.msLEDs.updatePixels();
-
-// // end-of-hack
     }
     else 
-      if (msGlobals.ggCurrentMode == 1)
-      {
-        msSystem.msLEDs.loadBuffer(msGlobals.ggRGBLEDBuf);
-        msSystem.msLEDs.updatePixels();
-      }
-      else 
-        if (msGlobals.ggCurrentMode == 2)
-        {
-          msModeShake.step();
-        }
-        else 
-          if (msGlobals.ggCurrentMode == 3)
-          {
-      #define _MOD_LED(m,x) random(m,x)
-            int rRed = _MOD_LED(0,255);
-            int rGreen = _MOD_LED(0,255);
-            int rBlue = _MOD_LED(0,255);
-            int pause = random(1, 10000);
+    if (msGlobals.ggCurrentMode == 1)
+    {
+      msSystem.msLEDs.loadBuffer(msGlobals.ggRGBLEDBuf);
+      msSystem.msLEDs.updatePixels();
+      delay(10);
 
-            if (random(0,100) < 60) {
-              switch(random(0,3)) 
-              {
-                case 0 : rRed = 0; break;
-                case 1 : rGreen = 0; break;
-                case 2 : rBlue = 0; break;
-              }
-            }
-
-            for (byte idx = 0; idx < MAX_LEDS; idx++)
-            {
-              for (byte idx2 = 0; idx2 < MAX_LEDS; idx2++) 
-              {
-                if (idx == idx2) 
-                  msSystem.msLEDs.setPixels(idx2, rRed, rGreen, rBlue, 255);
-                else
-                  msSystem.msLEDs.setPixels(idx2, 0,0,0,0);
-              }
-              delay(1);
-              delayMicroseconds(pause);
-              msSystem.msLEDs.updatePixels();
-            }
-          }
-          if (msGlobals.ggCurrentMode == 4)
-          {
-           long currentTime = msGlobals.ggTime + (millis() - msGlobals.ggTimePostedAt);
-           long ms = currentTime % 86400000;
-       //int millisss = ms % 1000;
-           ms /= 1000;
-           int seconds = ms % 60;
-           ms /= 60;
-           int minutes = ms % 60;
-           ms /= 60;
-           int hours = ms;
-
-           int ledStart = 0;
-           int ledEnd = MAX_LEDS - 1;
-
-#if(HW_ID==HW_ID_RING)
-           ledStart = 33;
-           ledEnd = MAX_LEDS - 33;
-#endif
-           int ledLen = ledEnd - ledStart;
-
-           msSystem.msLEDs.fillPixels(0,0,0,0);
-           int c = 255;
-           int b = 255;
-           msSystem.msLEDs.setPixels(ledStart + ledLen * hours / 24., c, 0, 0, b);
-           msSystem.msLEDs.setPixels(ledStart + ledLen * minutes / 60., 0, c, 0, b);
-           msSystem.msLEDs.setPixels(ledStart + ledLen * seconds / 60., 0, 0, c, b);
-
-           msSystem.msLEDs.updatePixels();
-
-           Serial.println(currentTime);
-           Serial.println(seconds);
-           delay(100);
-         }
-
-  // outside time-frame
-#ifdef CONFIG_ENABLE_ACCEL
-          msSystem.msAccel.readAccelData(msGlobals.ggAccelCounts);
-
-          for (int i = 0 ; i < 3 ; i++) {
-            msGlobals.ggAccel[i] = (float) msGlobals.ggAccelCounts[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set
-          }
-#endif
-
-    // !J! hack of timing .. 
-    if (msGlobals.ggCurrentFrame % 50 == 0) {
-      // WiFi.printDiag(Serial); 
-      // Serial.print(".");
-      // yield();
     }
 
   }
 
-} // end of loop()
+}
+
