@@ -231,8 +231,13 @@ def findMagicShifterSimple():
 #================================================================
 
 def openPort(timeout):
-	ser = serial.Serial(device, baudrate, timeout=timeout)#timeout=None
+	ser = serial.Serial(device, baudrate=baudrate, timeout=timeout)#timeout=None
+	ser.setRTS(True)
+	sleep(0.1)
+	ser.setDTR(False)
 	ser.setRTS(False)
+#	ser.open()
+	sleep(6)
 	return ser
 
 	
@@ -421,9 +426,12 @@ def SendInChunks(ser, dataString, chunkSize, delay):
 def issueUpload(device, data, filename):	
 	ser = None
 	try:    
+		print "openimng port"
 		#ser = serial.Serial(device, baudrate, timeout=5)#timeout=None
 		ser = openPort(5)
 		ser.write("MAGIC_UPLOAD")
+
+		print "writeUpload"
 
 		dataLen = len(data)
 
