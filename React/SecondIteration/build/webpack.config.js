@@ -1,5 +1,6 @@
 import webpack from 'webpack';
 import cssnano from 'cssnano';
+import inlineImage from 'postcss-inline-image';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import config from '../config';
@@ -150,6 +151,7 @@ webpackConfig.postcss = [
       removeAll: true,
     },
   }),
+  inlineImage(),
 ];
 
 // File loaders
