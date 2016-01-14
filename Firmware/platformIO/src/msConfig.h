@@ -14,8 +14,6 @@
 
 #define AP_NAME_OVERRIDE "MS3000_JJJJ"
 
-
-
 // HW_ID is passed one of these constants from Makefile -DHW_ID=.. 
 
 // set of Hw configurations	
@@ -46,7 +44,7 @@
 #define NUM_MS_MODES 5
 
 // MIDI enabled?
-#define CONFIG_ENABLE_MIDI
+//#define CONFIG_ENABLE_MIDI
 // Accelerometer enabled?
 #define CONFIG_ENABLE_ACCEL
 

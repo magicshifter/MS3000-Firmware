@@ -19,12 +19,15 @@
 #include "LEDHardware.h"
 #include "Accelerometer.h"
 
+
 // Power management
 #define PIN_PWR_MGT 16
 
 // double features as bootloader button
 #define PIN_BUTTON_A  0
 #define PIN_BUTTON_B 12
+
+void USBPoll();
 
 // TODO: all init and all sensors and leds in here :)
 // (accelerometer wuld also be a class but the MAgicShifter object has one ;)
@@ -223,6 +226,26 @@ public:
     delay(1000);
   }
 
+  // for fail-modes ..
+  void infinite_swipe()
+  { 
+    while (1)
+    {
+      // swipe colors
+      for (byte idx = 0; idx < MAX_LEDS; idx++)
+      {
+        msLEDs.setPixels(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, msGlobals.ggFactoryIntensity);
+        msLEDs.updatePixels();
+        delay(30);
+      }
+      for (byte idx = 0; idx < MAX_LEDS; idx++)
+      {
+        msLEDs.setPixels(idx, 0, 0, 0, 1);
+        msLEDs.updatePixels();
+        delay(30);
+      }
+    }
+  }
 
   // gets the basic stuff set up
   void setup()
@@ -230,10 +253,12 @@ public:
 // #ifdef CONFIG_ENABLE_MIDI
 //     Serial.begin(31250);
 // #else
-delay(1500); // this enables serial consoles to sync
-
     Serial.begin(115200);
 // #endif
+
+    delay(1500); // this enables serial consoles to sync
+
+    // #endif
     EEPROM.begin(512);
 
     logln(String("\r\nMagicShifter 3000 OS V0.24"));
@@ -242,14 +267,12 @@ delay(1500); // this enables serial consoles to sync
     msEEPROMs.loadString(msGlobals.ggUploadFileName, MAX_FILENAME_LENGTH);
 
     // wake up filesystem
+    log("SPIFFS:");
+
     if (SPIFFS.begin()) 
-    {
-      log("SPIFFS:");
-    }
+      log("done:");
     else
-    {
       log("noSPIFFS:");
-    }
 
     TEST_SPIFFS_bug();
 
@@ -268,16 +291,23 @@ delay(1500); // this enables serial consoles to sync
     // reset power controller to stay on
     powerStabilize();
 
+
 #ifdef CONFIG_ENABLE_ACCEL
     // accelerometer 
     msAccel.initAccelerometer();
     msAccelOK = msAccel.resetAccelerometer(); //Test and intialize the MMA8452
 #endif
 
+    // // I2C test:
+    // if (!Wire.available() ) {
+    //   infinite_swipe(); // todo: explain to user: please reset device
+    // }
+
     // led controllers and buffer
     msLEDs.initLEDHardware();
     msLEDs.initLEDBuffer();
-  // boot that we are alive
+    // boot that we are alive
+
     msLEDs.bootSwipe();
 
   }
@@ -402,7 +432,10 @@ delay(1500); // this enables serial consoles to sync
       log("Changed Mode:"); logln(String(msGlobals.ggCurrentMode));
 
     }
-}
+
+    USBPoll();
+  }
+
 
   void enableLongClicks(bool enable)
   {
@@ -450,7 +483,10 @@ delay(1500); // this enables serial consoles to sync
       return WiFi.localIP();
     }
   }
+
 };
+
+#include "USBCommandInterface.h"
 
 #else
 extern MagicShifterSystem msSystem;
