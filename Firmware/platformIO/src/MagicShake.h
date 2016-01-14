@@ -179,14 +179,15 @@ public:
       msModeBouncingBall.applyForce((msGlobals.ggCurrentMicros - msGlobals.ggLastMicros) / 1000.0, fX*3);
       msModeBouncingBall.simpleBouncingBall();
 
+      delay(10);
 
-      static int cIdx = 0;
-      msModeShakeText.PlotText(NULL, "helloshifter", cIdx++, 0);
-      if (cIdx > 100) cIdx = 0;
+      // static int cIdx = 0;
+      // msModeShakeText.PlotText(NULL, "helloshifter", cIdx++, 0);
+      // if (cIdx > 100) cIdx = 0;
 
-      msSystem.msLEDs.updatePixels();
-      delayMicroseconds(POV_TIME_MICROSECONDS);
-      msSystem.msLEDs.fastClear();
+      // msSystem.msLEDs.updatePixels();
+      // delayMicroseconds(POV_TIME_MICROSECONDS);
+      // msSystem.msLEDs.fastClear();
 
     }
     
