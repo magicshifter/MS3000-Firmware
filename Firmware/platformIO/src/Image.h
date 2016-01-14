@@ -34,7 +34,7 @@ public:
         }
         width = size / frameSize;
 
-        msSystem.log("File could be opened: "); msSystem.logln(String(fileName));
+        msSystem.log("loadFile: "); msSystem.logln(String(fileName));
 
       }
       else
@@ -45,8 +45,8 @@ public:
         height = MAX_LEDS;
       }
 
-      msSystem.log("image width:"); msSystem.logln(String(width));;
-      msSystem.log("image height:"); msSystem.logln(String(height));;
+      // msSystem.log("image width:"); msSystem.logln(String(width));;
+      // msSystem.log("image height:"); msSystem.logln(String(height));;
 
   }
 
