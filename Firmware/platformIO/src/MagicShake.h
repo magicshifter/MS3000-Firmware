@@ -17,7 +17,7 @@ private:
   int dirCursor = 0;
   int lastShakeFrame = 0;
   // QueueArray< String> dirList;
-  MagicShakeTextMode msModeShakeText;
+  MagicShakeText msModeShakeText;
 
 public:
 
@@ -57,10 +57,11 @@ public:
     return "";
   }
 
+
+
   void loadShakeFile(const char *filename)
   {
     // msSystem.log("loadShakeFile:"); msSystem.logln(filename);
-
     activeImage.close();
     msSystem.msEEPROMs.safeStrncpy(shakeFileName, filename, MAX_FILENAME_LENGTH);
 
@@ -79,7 +80,6 @@ public:
       loadShakeFile("blueghost_png.magicBitmap"); // !J! todo: move to default ..
     }
 
-    msModeShakeText.init();
     dirCursor = 0;
 
   } // todo: startActiveFile() with a default filename
@@ -96,8 +96,8 @@ public:
     msSystem.log("/");
 
     for (int x=0;x<len;x++) {
+      if (x % 4 == 0) msSystem.logln("");
       msSystem.log(":"); Serial.print(buf[x], HEX);; 
-      if ((x) && (x % 4 == 0)) msSystem.log(" ");
     }
     msSystem.logln("<<EOF");
   }
@@ -179,7 +179,7 @@ public:
       msModeBouncingBall.applyForce((msGlobals.ggCurrentMicros - msGlobals.ggLastMicros) / 1000.0, fX*3);
       msModeBouncingBall.simpleBouncingBall();
 
-      delay(10);
+      delay(40);
 
       // static int cIdx = 0;
       // msModeShakeText.PlotText(NULL, "helloshifter", cIdx++, 0);

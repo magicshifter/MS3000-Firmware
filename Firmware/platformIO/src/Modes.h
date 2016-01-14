@@ -8,7 +8,8 @@
 #include "BaseMode.h"
 
 #include "BouncingBall.h"
-#include "Bitmap.h"
+
+#include "ShakeText.h"
 
 #include "MagicShake.h"
 
