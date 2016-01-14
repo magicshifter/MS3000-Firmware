@@ -31,6 +31,18 @@ export class PixelEditorSidebar extends Component {
     layout: layoutType,
   };
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      visible: false,
+    };
+  }
+
+  onClickShowSidebar(e) {
+    this.setState({visible: !this.state.visible});
+  }
+
   render() {
     const {
       setColorValue, setColumns, // actions
@@ -39,53 +51,84 @@ export class PixelEditorSidebar extends Component {
 
     const {pixels, color, rows, visibleColumns, totalColumns} = pixelEditor;
     const {host, protocol} = settings;
-    const {sidebar} = layout;
 
+    const {sidebar} = layout;
     const {width} = sidebar;
 
+    const {visible} = this.state;
+
+    let style = {
+      container: {
+        width,
+      },
+      button: {
+        display: layout.width > 500 ? 'none' : 'inherit',
+      },
+    };
+
+    if (layout.width < 500) {
+      style.container.position = 'absolute';
+      style.container.right = 0;
+
+      style.content = {
+        right: !visible ? -200 : 0,
+      };
+    }
+
     return (
-      <div
+      <aside
         className={classes['container']}
-        style={{
-          width,
-        }}
+        style={style.container}
       >
-        <div className={classes['picker']}>
+        <button
+          style={style.button}
+          className={classes['button']}
+          onClick={e => this.onClickShowSidebar(e)}
+        >
+          {visible ? 'Hide' : 'Show'} Sidebar
+        </button>
 
-          <h3>Controls</h3>
+        <div
+          className={classes['content']}
+          style={style.content}
+        >
+          <div className={classes['picker']}>
 
-          <RGBAInput
-            color={color}
-            setColorValue={setColorValue}
-          />
+            <h3>Controls</h3>
 
-          <ImageInput label='upload image' />
+            <RGBAInput
+              color={color}
+              setColorValue={setColorValue}
+            />
 
-          <FileUploadInput
-            pixels={pixels}
-            height={rows}
-            width={visibleColumns}
-            totalWidth={totalColumns}
-            url={[protocol, host].join('://')}
-            text='send to MS3000'
-          />
+            <ImageInput label='upload image' />
+
+            <FileUploadInput
+              pixels={pixels}
+              height={rows}
+              width={visibleColumns}
+              totalWidth={totalColumns}
+              url={[protocol, host].join('://')}
+              text='send to MS3000'
+            />
+          </div>
+
+          <div className={classes['settings']}>
+            <h3>Settings</h3>
+            <ul>
+              <li>
+                <NumberInput
+                  label='Columns:'
+                  name='columns'
+                  max={totalColumns}
+                  val={visibleColumns}
+                  action={setColumns}
+                />
+              </li>
+            </ul>
+          </div>
         </div>
-
-        <div className={classes['settings']}>
-          <h3>Settings</h3>
-          <ul>
-            <li>
-              <NumberInput
-                label='Columns:'
-                name='columns'
-                max={totalColumns}
-                val={visibleColumns}
-                action={setColumns}
-              />
-            </li>
-          </ul>
-        </div>
-      </div>
+      </aside>
     );
   }
 }

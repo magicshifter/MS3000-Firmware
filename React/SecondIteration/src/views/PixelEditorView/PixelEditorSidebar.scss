@@ -2,12 +2,30 @@
   display: inline-block;
   float: left;
   padding: 0 0 0 10px;
+}
 
-  .picker {
-    text-align: left;
-  }
+.content {
+  transition: right 0.5s;
+  position: relative;
+  width: 100%;
+  background-color: #fff;
+  padding: 10px;
+  border-bottom-left-radius: 1em;
 
-  .settings {
-    text-align: left;
+  > div {
+    margin: 0 0 1em;
   }
+}
+
+.button {
+  margin: -25px 0 0;
+  float: right;
+}
+
+.picker {
+  text-align: left;
+}
+
+.settings {
+  text-align: left;
 }

@@ -42,12 +42,14 @@ export class PixelEditorView extends Component {
 
     const {sidebar, header} = layout;
 
-    const maxWidth = layout.width - sidebar.width;
+    const maxWidth = layout.width - (layout.width > 500 ? sidebar.width : 0);
     const maxHeight = layout.height - header.height;
 
     const pixelListSize = multimax(layout.width, maxWidth, maxHeight);
     var pxSize = Math.floor(pixelListSize / Math.max(visibleColumns, rows)) - 1;
-    if (pxSize < 1) pxSize = 1; // paranoia!!!
+    if (pxSize < 1) {
+      pxSize = 1; // paranoia!!!
+    }
 
     let rowArray = [];
     for (let i = 0; i < rows; i++) {
