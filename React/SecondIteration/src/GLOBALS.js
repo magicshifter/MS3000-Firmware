@@ -9,6 +9,8 @@ export const visibleColumns = 16;
 
 export const fontSize = 15;
 
+export const sidebarWidth = 250;
+
 export const links = [
   {to: '/', text: 'pixeleditor'},
   {to: '/about', text: 'about'},
