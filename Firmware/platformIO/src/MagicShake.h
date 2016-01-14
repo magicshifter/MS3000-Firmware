@@ -179,7 +179,7 @@ public:
       msModeBouncingBall.applyForce((msGlobals.ggCurrentMicros - msGlobals.ggLastMicros) / 1000.0, fX*3);
       msModeBouncingBall.simpleBouncingBall();
 
-      delay(40);
+      delay(30);
 
       // static int cIdx = 0;
       // msModeShakeText.PlotText(NULL, "helloshifter", cIdx++, 0);
