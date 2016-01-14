@@ -20,7 +20,7 @@ export const Header =
         />
         <h3
           style={{
-            display: layout.width > 500 ? 'inherit' : 'none'
+            display: layout.width > 500 ? 'inherit' : 'none',
           }}
         >
           MagicShifter 3000
