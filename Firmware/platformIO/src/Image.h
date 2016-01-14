@@ -69,7 +69,7 @@ public:
     {
 
       // !J! 16-byte OFFSET due to bug in bitmap generator code
-#define MAGIC_OFFSET 16 
+#define MAGIC_OFFSET 0
       file.seek( (frameIdx * height * BYTESPERPIXEL) + MAGIC_OFFSET, SeekSet);
 
       if (height < maxHeight) maxHeight = height;
