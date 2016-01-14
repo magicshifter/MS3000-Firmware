@@ -32,22 +32,34 @@ public:
   String getFile(int fileIndex)
   {
     Dir POVDir;
-    POVDir = SPIFFS.openDir("/");
-    int cnt = 0;
-    while(true)
-    {
-      msSystem.log("DISP FILE:"); msSystem.logln(shakeFileName);
-      if (!POVDir.next()) break;
-      if (cnt == fileIndex) return POVDir.fileName();
-      cnt++;
-    }
+    // msSystem.log("DISP FILE:index at start:"); msSystem.logln(String(fileIndex));
+    POVDir = SPIFFS.openDir("");
 
-    return String("");
+    int cnt = 0;
+    // msSystem.logln("DISP FILE:ready:");
+
+    while(cnt <= fileIndex)
+      {
+        if (!POVDir.next()) break;
+        String foundFilename;
+        // msSystem.log("while::"); 
+        foundFilename = POVDir.fileName();
+        // msSystem.log("DISP FILE:cnt:"); msSystem.logln(String(cnt));
+        // msSystem.log("DISP FILE:"); msSystem.logln(foundFilename);
+        if (!foundFilename.endsWith(".magicBitmap")) continue;
+
+        if (cnt == fileIndex)
+          return foundFilename;
+
+        cnt++;
+      }
+
+    return "";
   }
 
   void loadShakeFile(const char *filename)
   {
-    msSystem.log("loadShakeFile:"); msSystem.logln(filename);
+    // msSystem.log("loadShakeFile:"); msSystem.logln(filename);
 
     activeImage.close();
     msSystem.msEEPROMs.safeStrncpy(shakeFileName, filename, MAX_FILENAME_LENGTH);
@@ -60,8 +72,16 @@ public:
 
   void start()
   {
-    loadShakeFile(msGlobals.ggUploadFileName);
+    if (String(msGlobals.ggUploadFileName).endsWith(".magicBitmap")) {
+      loadShakeFile(msGlobals.ggUploadFileName);
+    }
+    else {
+      loadShakeFile("blueghost_png.magicBitmap"); // !J! todo: move to default ..
+    }
+
     msModeShakeText.init();
+    dirCursor = 0;
+
   } // todo: startActiveFile() with a default filename
 
   void stop()
@@ -93,15 +113,25 @@ public:
 // msSystem.log("accel:"); msSystem.logln(String(msGlobals.ggAccel[1]));
 
     if (msSystem.msBtnPwrLongHit == true) {
-      dirCursor++;
+      // msSystem.log("cursor:"); msSystem.logln(String(dirCursor));
+
       String toLoad = getFile(dirCursor);
-      if (toLoad.endsWith(".magicBitmap")) {
-        msSystem.log("Would DISP:"); msSystem.logln(toLoad);
-      }
-      else {
+      // msSystem.log("Would DISP:"); msSystem.logln(toLoad);
+
+      // out of bounds
+      if (toLoad.length() == 0) { 
+        // msSystem.log("RESETDISP:"); msSystem.logln(toLoad);
         dirCursor = 0;
-        msSystem.log("RESETDISP:"); msSystem.logln(toLoad);
+        toLoad = getFile(0);
+        if (toLoad.length() == 0) // !J! todo: default
+          toLoad = String("blueghost_png.magicBitmap");
       }
+
+      if (toLoad.length() > 0) {
+        // msSystem.log("Would DISP:"); msSystem.logln(toLoad);
+        loadShakeFile(toLoad.c_str());
+      }
+      dirCursor++;
     }
 
     if (shakeSync.update(msGlobals.ggAccel[1]))
@@ -148,6 +178,7 @@ public:
       float fY = msGlobals.ggAccel[1];
       msModeBouncingBall.applyForce((msGlobals.ggCurrentMicros - msGlobals.ggLastMicros) / 1000.0, fX*3);
       msModeBouncingBall.simpleBouncingBall();
+
 
       static int cIdx = 0;
       msModeShakeText.PlotText(NULL, "helloshifter", cIdx++, 0);

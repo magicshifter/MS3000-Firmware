@@ -298,15 +298,16 @@ public:
     msAccelOK = msAccel.resetAccelerometer(); //Test and intialize the MMA8452
 #endif
 
-    // // I2C test:
-    // if (!Wire.available() ) {
-    //   infinite_swipe(); // todo: explain to user: please reset device
-    // }
 
     // led controllers and buffer
     msLEDs.initLEDHardware();
     msLEDs.initLEDBuffer();
     // boot that we are alive
+
+    // // I2C test:
+    // if (!Wire.available() ) {
+    //   infinite_swipe(); // todo: explain to user: please reset device
+    // }
 
     msLEDs.bootSwipe();
 
@@ -417,7 +418,6 @@ public:
       msGlobals.ggCurrentMode = (msGlobals.ggCurrentMode+1)%NUM_MS_MODES;
     }
 
-    
 
     if (msBtnBLongHit)
     {

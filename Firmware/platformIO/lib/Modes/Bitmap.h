@@ -108,10 +108,10 @@ public:
 
 	void init()
 	{
-		msSystem.log("Load font 16:"); 
+		// msSystem.log("Load font 16:"); 
 		msSystem.logln(String(LoadBitmapFile("font10x16.magicFont", &font10x16)));
 		
-		dumpHeader(font10x16.header);
+		// dumpHeader(font10x16.header);
 
 	};
 
@@ -276,8 +276,6 @@ public:
 
 		//MSBitmap *font = &font16px;
 		if (!font) font = &font10x16;
-
-
 
 		// if (!wait && ( centerBtnClickedTime || powerBtnClickedTime || centerBtnPressed || powerBtnPressed))
 	 //  			return;
