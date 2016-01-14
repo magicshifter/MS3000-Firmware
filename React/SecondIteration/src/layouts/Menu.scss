@@ -1,5 +1,6 @@
-nav.main {
+.container {
   float: right;
+  margin: .3em 0 0;
 
   ul {
     list-style: none;
@@ -10,5 +11,9 @@ nav.main {
   li {
     float: left;
     margin: .5em;
+  }
+
+  a:hover {
+    opacity: 0.8;
   }
 }

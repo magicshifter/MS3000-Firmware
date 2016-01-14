@@ -1,11 +1,13 @@
 import {createAction, handleActions} from 'redux-actions';
 import Immutable from 'immutable';
 
+import {currentColor, menuTextColor, materialColors, links, fontSize} from 'GLOBALS';
+
 const height = window.innerHeight;
 const width = window.innerWidth;
 
 export const defaultState = Immutable.Map({
-  fontSize: 15,
+  fontSize,
   width,
   height,
   header: {
@@ -14,6 +16,10 @@ export const defaultState = Immutable.Map({
   sidebar: {
     width: 200,
   },
+  currentColor,
+  menuTextColor,
+  materialColors,
+  links,
 });
 
 // ------------------------------------

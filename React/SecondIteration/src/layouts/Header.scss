@@ -1,6 +1,8 @@
-header.main {
+.main {
   display: inline-block;
   width: 100%;
+  background-inline-image: url(src/static/img/header-background.jpg);
+  background-size: contain;
 
   .container {
     float: left;
@@ -8,8 +10,9 @@ header.main {
     .logo {
       float: left;
       background-inline-image: url(src/static/img/logo.png);
-      height: 40px;
-      width: 40px;
+      height: 30px;
+      width: 65px;
+      margin: 8px 5px 5px;
       background-size: contain;
     }
 
@@ -18,4 +21,5 @@ header.main {
       margin: .8em 0 0 .4em;
     }
   }
+
 }

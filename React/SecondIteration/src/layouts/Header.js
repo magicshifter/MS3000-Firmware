@@ -1,39 +1,55 @@
-import React, {PropTypes} from 'react';
+import React, {PropTypes, Component} from 'react';
+import {connect} from 'react-redux';
 import {Link} from 'react-router';
 
-import {layoutType} from 'utils/propTypes';
 import Menu from './Menu';
 
 import classes from './Header.scss';
 
-export const Header =
-  ({height, layout}) => (
-    <header
-      className={classes['main']}
-      style={{
-        height,
-      }}
-    >
-      <Link to='/' className={classes['container']}>
-        <span
-          className={classes['logo']}
-        />
-        <h3
-          style={{
-            display: layout.width > 500 ? 'inherit' : 'none',
-          }}
-        >
-          MagicShifter 3000
-        </h3>
-      </Link>
-
-      <Menu />
-    </header>
-  );
-
-Header.propTypes = {
-  height: PropTypes.number.isRequired,
-  layout: layoutType,
+const mapStateToProps = (state) => {
+  const {header: {height}, width, menuTextColor} = state.layout.toJS();
+  return {
+    height,
+    width,
+    menuTextColor,
+  };
 };
 
-export default Header;
+export class Header extends Component {
+  static propTypes = {
+    height: PropTypes.number.isRequired,
+    width: PropTypes.number.isRequired,
+    menuTextColor: PropTypes.string.isRequired,
+  };
+
+  render() {
+    const {height, width, menuTextColor} = this.props;
+    const style = {
+      container: {
+        height,
+      },
+      header: {
+        display: width > 500 ? 'inherit' : 'none',
+        color: menuTextColor,
+      },
+    };
+
+    return (
+      <header
+        className={classes['main']}
+      >
+        <Link
+          to='/'
+          className={classes['container']}
+        >
+          <span className={classes['logo']} />
+          <h3 style={style.header}>MagicShifter 3000</h3>
+        </Link>
+
+        <Menu />
+      </header>
+    );
+  }
+}
+
+export default connect(mapStateToProps, {})(Header);
