@@ -2,6 +2,8 @@ import React, {PropTypes, Component} from 'react';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router';
 
+import RadiumContainer from 'containers/RadiumContainer';
+
 export default class Root extends Component {
   static propTypes = {
     history: PropTypes.object.isRequired,
@@ -11,9 +13,11 @@ export default class Root extends Component {
 
   get content() {
     return (
-      <Router history={this.props.history}>
-        {this.props.routes}
-      </Router>
+      <RadiumContainer>
+        <Router history={this.props.history}>
+          {this.props.routes}
+        </Router>
+      </RadiumContainer>
     );
   }
 

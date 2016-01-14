@@ -1,0 +1,46 @@
+@charset 'UTF-8';
+
+@font-face {
+  font-family: 'ms-icons';
+  font-style: normal;
+  font-weight: normal;
+  src: url('../static/font/ms-icons.woff') format('woff');
+}
+
+[class^='']:before,
+[class*=' ']:before {
+  font-family: 'ms-icons';
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  speak: none;
+  text-transform: none;
+  vertical-align: text-bottom;
+}
+
+.i-colors:before {
+  content: '\69';
+}
+
+.i-plus:before {
+  content: '\6d';
+}
+
+.i-minus:before {
+  content: '\6e';
+}
+
+.i-upload:before {
+  content: '\6f';
+}
+
+.i-load:before {
+  content: '\70';
+}
+
+.i-settings:before {
+  content: '\6c';
+}

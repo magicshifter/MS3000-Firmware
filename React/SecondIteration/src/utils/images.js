@@ -1,7 +1,3 @@
-import {getPixelId} from 'utils/pixels';
-import {rgba_fromArray} from 'utils/colors';
-import {isColor} from 'utils/types';
-
 export const getImagePixels =
 
   // QUESTION: what is the difference between totalColumns and maxWidth
@@ -30,7 +26,7 @@ export const getImagePixels =
       const h = Math.min(height, maxHeight);
 
       for (let column = 0; column < w; column++) {
-        for (let row = 0; row < h; row++) { 
+        for (let row = 0; row < h; row++) {
           const pixelIdx = column + (row * totalColumns);
           const rawIdx = 4 * (column + row * width);
 
@@ -39,7 +35,7 @@ export const getImagePixels =
 
           // QUESTION: slightly worried about changing the pixels here since I thought they ought to be immutable
           pixel.color = {r: rawData[rawIdx + 0], g: rawData[rawIdx + 1], b: rawData[rawIdx + 2], a: 255};
-          console.log(pixels.color);
+          console.log(pixel.color);
         }
       }
       // commented outold code
