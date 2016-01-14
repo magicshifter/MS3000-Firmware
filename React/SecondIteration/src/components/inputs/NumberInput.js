@@ -1,5 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 
+import FloatingButton from './FloatingButton';
+
 import {minmax} from 'utils/math';
 import {isNumber} from 'utils/types';
 
@@ -48,9 +50,10 @@ export default class NumberInput extends Component {
           <label>{label}</label>
         }
 
-        <button
+        <FloatingButton
           onClick={() => action({name, value: minmax(val - 1, min, max)})}
-        >-</button>
+          icon='i-minus'
+        />
 
         <input
           type='text'
@@ -59,9 +62,10 @@ export default class NumberInput extends Component {
           onChange={this.onChange}
         />
 
-        <button
+        <FloatingButton
           onClick={() => action({name, value: minmax(val + 1, min, max)})}
-        >+</button>
+          icon='i-plus'
+        />
       </div>
     );
   }
