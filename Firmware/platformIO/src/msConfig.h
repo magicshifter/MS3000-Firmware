@@ -41,7 +41,7 @@
 
 #define MAX_FILENAME_LENGTH 32
 
-#define NUM_MS_MODES 5
+#define NUM_MS_MODES 2
 
 // MIDI enabled?
 //#define CONFIG_ENABLE_MIDI
@@ -49,7 +49,7 @@
 #define CONFIG_ENABLE_ACCEL
 
 // 192.168.4.1 is the IP it always has in softAP mode
-#define SCAN_FIRST_MODE 1
+// #define SCAN_FIRST_MODE 1
 
 #define CONNECTION_TIMEOUT 30000
 

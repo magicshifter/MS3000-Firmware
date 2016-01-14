@@ -1,13 +1,12 @@
 
 #include "Modes.h"
 #include "Image.h"
-#include "ShakeSync.h"
 
 #define FRAME_MULTIPLY 2
 
 #define MS_SHAKEFILE_DEFAULT "nix"
 
-  BouncingBallMode msModeBouncingBall(600);
+BouncingBallMode msModeBouncingBall(600);
 
 class MagicShakeMode : public MagicShifterBaseMode
 {
@@ -18,6 +17,7 @@ private:
   int dirCursor = 0;
   int lastShakeFrame = 0;
   // QueueArray< String> dirList;
+  MagicShakeTextMode msModeShakeText;
 
 public:
 
@@ -34,10 +34,13 @@ public:
     Dir POVDir;
     POVDir = SPIFFS.openDir("/");
     int cnt = 0;
-    do {
-        msSystem.log("DISP FILE:"); msSystem.logln(shakeFileName);
-        if (cnt = fileIndex) return POVDir.fileName();
-    } while (POVDir.next() && cnt++ && (cnt <= fileIndex));
+    while(true)
+    {
+      msSystem.log("DISP FILE:"); msSystem.logln(shakeFileName);
+      if (!POVDir.next()) break;
+      if (cnt == fileIndex) return POVDir.fileName();
+      cnt++;
+    }
 
     return String("");
   }
@@ -58,6 +61,7 @@ public:
   void start()
   {
     loadShakeFile(msGlobals.ggUploadFileName);
+    msModeShakeText.init();
   } // todo: startActiveFile() with a default filename
 
   void stop()
@@ -130,7 +134,6 @@ public:
         msSystem.msLEDs.updatePixels();
 
         delayMicroseconds(POV_TIME_MICROSECONDS);
-
         msSystem.msLEDs.fastClear();
       }
       else
@@ -141,15 +144,18 @@ public:
     }
     else
     {
-        // if (lastShakeFrame > 500) {
       float fX = msGlobals.ggAccel[0];
       float fY = msGlobals.ggAccel[1];
-      // msModeBouncingBall.applyForce((msGlobals.ggCurrentMicros - msGlobals.ggLastMicros) / 1000.0, fX, fY);
       msModeBouncingBall.applyForce((msGlobals.ggCurrentMicros - msGlobals.ggLastMicros) / 1000.0, fX*3);
       msModeBouncingBall.simpleBouncingBall();
-      // } 
-      // else
-      //   lastShakeFrame++;
+
+      static int cIdx = 0;
+      msModeShakeText.PlotText(NULL, "helloshifter", cIdx++, 0);
+      if (cIdx > 100) cIdx = 0;
+
+      msSystem.msLEDs.updatePixels();
+      delayMicroseconds(POV_TIME_MICROSECONDS);
+      msSystem.msLEDs.fastClear();
 
     }
     
