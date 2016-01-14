@@ -20,24 +20,25 @@ export default class FileUploadInput extends Component {
   }
 
   onClick() {
-    const {height, width, url, pixels, totalWidth} = this.props;
+    const {height, width, pixels, totalWidth} = this.props;
     const fileSize = width * height * 4;
     const fileData = new Uint8Array(fileSize);
 
     const headerSize = 0;
 
     var fileName = this.refs.fileName.value;
-    fileName = '/pov/' + fileName;
+    fileName = fileName + '.magicBitmap';
+    var url = 'http://magicshifter.local';
 
     for (let x = 0; x < width; x++) {
       for (let y = 0; y < height; y++) {
         const idx = x + (y * totalWidth);
         const pixel = pixels[idx];
-        const fileDataIdx = headerSize + 4 * (x + y * width);
+        const fileDataIdx = headerSize + 4 * (y + x * width);
 
-        fileData[fileDataIdx + 0] = pixel.color.r;
+        fileData[fileDataIdx + 0] = pixel.color.b;
         fileData[fileDataIdx + 1] = pixel.color.g;
-        fileData[fileDataIdx + 2] = pixel.color.b;
+        fileData[fileDataIdx + 2] = pixel.color.r;
         fileData[fileDataIdx + 3] = 0xFF;
       }
     }
@@ -45,7 +46,7 @@ export default class FileUploadInput extends Component {
     const blob = new Blob([fileData]);
 
     const formData = new FormData();
-    formData.append('uploadFile', blob, '/pov/userImage2');
+    formData.append('uploadFile', blob, fileName);
 
     const request = new XMLHttpRequest();
     request.onload =
