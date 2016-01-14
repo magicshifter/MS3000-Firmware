@@ -56,7 +56,6 @@ export default class NumberInput extends Component {
           type='text'
           name={name}
           value={val}
-          size='3'
           onChange={this.onChange}
         />
 
