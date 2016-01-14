@@ -20,6 +20,7 @@ export default class FileUploadInput extends Component {
     this.onClick = this.onClick.bind(this);
     this.getBlob = this.getBlob.bind(this);
     this.onFileDownload = this.onFileDownload.bind(this);
+    this.getFileName = this.getFileName.bind(this);
   }
 
   getBlob() {
@@ -46,39 +47,22 @@ export default class FileUploadInput extends Component {
     return blob;
   }
 
-  onFileDownload() {
-    var blob = this.getBlob();
-
+  getFileName() {
     var fileName = this.refs.fileName.value;
     fileName = fileName + '.magicBitmap';
+    return fileName;
+  }
+
+  onFileDownload() {
+    const blob = this.getBlob();
+    const fileName = this.getFileName();
     saveAs(blob, fileName);
   }
 
   onClick() {
-    const {height, width, pixels, totalWidth} = this.props;
-    const fileSize = width * height * 4;
-    const fileData = new Uint8Array(fileSize);
-
-    const headerSize = 0;
-
-    var fileName = this.refs.fileName.value;
-    fileName = fileName + '.magicBitmap';
-    var url = 'http://magicshifter.local';
-
-    for (let x = 0; x < width; x++) {
-      for (let y = 0; y < height; y++) {
-        const idx = x + (y * totalWidth);
-        const pixel = pixels[idx];
-        const fileDataIdx = headerSize + 4 * (y + x * width);
-
-        fileData[fileDataIdx + 0] = pixel.color.b;
-        fileData[fileDataIdx + 1] = pixel.color.g;
-        fileData[fileDataIdx + 2] = pixel.color.r;
-        fileData[fileDataIdx + 3] = 0xFF;
-      }
-    }
-
-    const blob = new Blob([fileData]);
+    const blob = this.getBlob();
+    const fileName = this.getFileName();
+    const url = 'http://magicshifter.local';
 
     const formData = new FormData();
     formData.append('uploadFile', blob, fileName);
@@ -86,7 +70,7 @@ export default class FileUploadInput extends Component {
     const request = new XMLHttpRequest();
     request.onload =
       () =>
-        request.status == 200
+        request.status === 200
         ? console.log('Uploaded!')
         : console.warn(`Error ${status} occurred when trying to upload your file.`);
 
