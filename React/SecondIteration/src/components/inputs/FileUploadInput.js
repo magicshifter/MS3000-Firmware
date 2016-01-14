@@ -20,7 +20,7 @@ export default class FileUploadInput extends Component {
   }
 
   onClick() {
-    var {height, width, url, pixels, totalWidth} = this.props;
+    const {height, width, pixels, totalWidth} = this.props;
     const fileSize = width * height * 4;
     const fileData = new Uint8Array(fileSize);
 
@@ -28,8 +28,7 @@ export default class FileUploadInput extends Component {
 
     var fileName = this.refs.fileName.value;
     fileName = fileName + '.magicBitmap';
-
-    url = 'http://magicshifter.local';
+    var url = 'http://magicshifter.local';
 
     for (let x = 0; x < width; x++) {
       for (let y = 0; y < height; y++) {
@@ -41,11 +40,6 @@ export default class FileUploadInput extends Component {
         fileData[fileDataIdx + 1] = pixel.color.g;
         fileData[fileDataIdx + 2] = pixel.color.r;
         fileData[fileDataIdx + 3] = 0xFF;
-
-        // fileData[fileDataIdx + 0] = x & 1 ? 255 : 0;
-        // fileData[fileDataIdx + 1] = x & 2 ? 255 : 0;
-        // fileData[fileDataIdx + 2] = x & 4 ? 255 : 0;
-        // fileData[fileDataIdx + 3] = 0xFF;
       }
     }
 
@@ -55,14 +49,16 @@ export default class FileUploadInput extends Component {
     formData.append('uploadFile', blob, fileName);
 
     const request = new XMLHttpRequest();
-    request.onload = oEvent => {
-      const {status} = request;
-      if (status === 200) {
-        console.log('Uploaded!');
-      } else {
-        console.warn(`Error ${status} occurred when trying to upload your file.`);
-      }
-    };
+    request.onload =
+      () =>
+        request.status === '200'
+        ? console.log('Uploaded!')
+        : console.warn(`Error ${status} occurred when trying to upload your file.`);
+
+    request.timeout = 3000;
+    request.ontimeout =
+      () =>
+        console.warn(`Connection to ${url} timed out!!!`);
 
     request.open('POST', `${url}/upload`);
     request.send(formData);
@@ -73,18 +69,18 @@ export default class FileUploadInput extends Component {
 
     return (
       <div>
-      <input type='text' defaultValue='userImage' ref='fileName' />
-      <div className={classes['input']}>
+        <input type='text' defaultValue='userImage' ref='fileName' />
+        <div className={classes['input']}>
 
-        {label &&
-          <label>{label}</label>
-        }
-        <input
-          type='button'
-          onClick={this.onClick}
-          value={text}
-        />
-      </div>
+          {label &&
+            <label>{label}</label>
+          }
+          <input
+            type='button'
+            onClick={this.onClick}
+            value={text}
+          />
+        </div>
       </div>
     );
   }

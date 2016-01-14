@@ -29,7 +29,8 @@ compile:
 	@node -r dotenv/config --harmony bin/compile
 	@echo "build completed in dist/"
 
-build: closure-compile inline
+build:
+	export NODE_ENV=production && ${MAKE} clean compile cheap-concat inline
 	@echo "build finished"
 
 install:
@@ -44,18 +45,23 @@ lint:
 
 lint-fix:
 	@echo "start lint and fix task"
-	${BIN_DIR}eslint  --fix . ./
+	@${BIN_DIR}eslint  --fix . ./
 	@echo "lint-fix completed"
 
-# run google closure library through npm
-closure-compile: clean compile
+cheap-concat:
+	@mkdir -p ${JS_DIST_DIR}bundled
+	@cat ${JS_DIST_DIR}vendor.js ${JS_DIST_DIR}app.js >> ${JS_DIST_DIR}index.js
+
+# run google closure library through java
+closure-compile:
 	@echo "start closure compilation"
+	@mkdir -p ${JS_DIST_DIR}bundled
 	@java \
 		-jar node_modules/google-closure-compiler/compiler.jar \
 		--language_in ECMASCRIPT5 \
 		--compilation_level ADVANCED_OPTIMIZATIONS \
-		--js ${JS_DIST_DIR}app.js ${JS_DIST_DIR}vendor.js \
-		> ${JS_DIST_DIR}min.js
+		--js ${JS_DIST_DIR}vendor.js ${JS_DIST_DIR}app.js\
+		> ${JS_DIST_DIR}index.js
 	@echo "closure compilation completed"
 
 server:
@@ -83,12 +89,18 @@ test-dev:
 	@node -r dotenv/config ./node_modules/karma/bin/karma start bin/karma.js --watch
 
 inline:
+	@echo "start inlining js/css/images"
+	@mkdir -p ${JS_DIST_DIR}bundled/
 	@node_modules/.bin/html-inline \
-		-i ./dist/min.html \
-		-o ./dist/bundle.html \
-		-b ./dist/
+		-i ${JS_DIST_DIR}min.html \
+		-o ${JS_DIST_DIR}bundled/index.html \
+		-b ${JS_DIST_DIR}/ \
+		--ignore-scripts
 
-deploy: test clean closure-compile inline
+	@cp ${JS_DIST_DIR}index.js ${JS_DIST_DIR}bundled/index.js
+	@echo "inlining finished"
+
+deploy: test build
 
 help:
 	@echo " \n\

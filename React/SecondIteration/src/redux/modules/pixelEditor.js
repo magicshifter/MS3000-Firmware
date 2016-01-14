@@ -5,9 +5,7 @@ import assign from 'object-assign';
 import {isColor, isNumber, isObject} from 'utils/types';
 import {createImmutablePixels} from 'utils/pixels';
 
-const rows = 16;
-const visibleColumns = 16;
-const totalColumns = 96;
+import {rows, visibleColumns, totalColumns} from 'GLOBALS';
 
 const color = Immutable.Map({r: 0, b: 0, g: 0, a: 155});
 
@@ -74,8 +72,12 @@ export default handleActions({
 
   [SET_PIXELS]:
     (state, {payload: pixels}) =>
-      isObject(pixels) &&
-      state.set('pixels', state.merge('pixels', pixels)),
+      // TODO
+      // need to calculate and pass all pixels to this function,
+      // image upload currently might not do so
+      isObject(pixels)
+      ? state.set('pixels', Immutable.List.of(...pixels))
+      : state,
 
   [SET_COLOR]:
     (state, {payload: p}) =>

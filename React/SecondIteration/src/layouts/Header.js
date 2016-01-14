@@ -14,12 +14,7 @@ export const Header =
       }}
     >
       <Link to='/' className={classes['container']}>
-        <img
-          className={classes['logo']}
-          src='/img/logo.png'
-          height='40'
-          width='40'
-        />
+        <span className={classes['logo']} />
         <h3>MagicShifter 3000</h3>
       </Link>
 

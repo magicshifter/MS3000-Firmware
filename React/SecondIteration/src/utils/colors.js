@@ -3,7 +3,7 @@ import {isRGBAObject} from 'utils/types';
 export function rgba_toString(color) {
   if (!isRGBAObject(color)) {
     console.error('invalid color passed to utils/colors.js -> rgba_toString', color);
-    return color;
+    return 'rgba(0, 0, 0, 255)';
   }
   const {r, g, b, a} = color;
   return `rgba(${r}, ${g}, ${b}, ${a})`;

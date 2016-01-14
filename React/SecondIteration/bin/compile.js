@@ -41,11 +41,14 @@ compiler.run(function(err, stats) {
   var fileContent = fs.readFileSync(path.join(paths.dist(), 'index.html'), 'utf8');
   fileContent = fileContent.replace(
     '<script src="vendor.js"></script><script src="app.js"></script>',
-    '<script src="min.js"></script>'
+    '<script src="index.js"></script>'
   );
+  var cssContent = fs.readFileSync(path.join(paths.dist(), 'app.css'), 'utf8');
   fileContent = fileContent.replace(
     '<link href="app.css" rel="stylesheet">',
-    '<link href="app.css" rel="stylesheet" />'
+    // the leading space is intended!
+    ` <style>${cssContent}</style>`
   );
+
   fs.writeFileSync(path.join(paths.dist(), 'min.html'), fileContent, 'utf8');
 });

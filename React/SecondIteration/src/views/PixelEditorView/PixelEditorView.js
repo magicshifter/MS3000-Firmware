@@ -73,20 +73,23 @@ export class PixelEditorView extends Component {
                   }}
                 >
                   {columnArray.map(
-                    c =>
-                      c < visibleColumns &&
-                      <td
-                        className={classes['pixel']}
-                        key={`r-${r + 1}-c-${c + 1}`}
-                        onClick={() => pixelClick(getPixelId(totalColumns, c, r))}
-                        style={{
-                          width: pxSize,
-                          height: pxSize,
-                          backgroundColor: rgba_toString(
-                            pixels[getPixelId(totalColumns, c, r)].color,
-                          ),
-                        }}
-                      ></td>
+                    c => {
+                      const pixelId = getPixelId(totalColumns, c, r);
+                      const pixel = pixels[pixelId];
+                      return (
+                        c < visibleColumns &&
+                        <td
+                          className={classes['pixel']}
+                          key={`r-${r + 1}-c-${c + 1}`}
+                          onClick={() => pixelClick(pixelId)}
+                          style={{
+                            width: pxSize,
+                            height: pxSize,
+                            backgroundColor: rgba_toString(pixel.color),
+                          }}
+                        ></td>
+                      );
+                    }
                   )}
                 </tr>
             )}
