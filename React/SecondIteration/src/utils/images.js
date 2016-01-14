@@ -36,7 +36,7 @@ export const getImagePixels =
 
             // QUESTION: slightly worried about changing the pixels here since I thought they ought to be immutable
             pixel.color = {r: rawData[rawIdx + 0], g: rawData[rawIdx + 1], b: rawData[rawIdx + 2], a: 255};
-            //console.log(pixel.color);
+            // console.log(pixel.color);
           }
         }
       }
