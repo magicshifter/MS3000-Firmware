@@ -3,7 +3,7 @@ import React, {Component, PropTypes} from 'react';
 import {minmax} from 'utils/math';
 import {isNumber} from 'utils/types';
 
-import classes from './ColorInput.scss';
+import classes from './NumberInput.scss';
 
 export default class NumberInput extends Component {
   static propTypes = {
