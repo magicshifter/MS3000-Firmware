@@ -1,4 +1,6 @@
-header.main {
+.main {
+  background-inline-image: url('src/static/img/header-background.jpg');
+  background-size: contain;
   display: inline-block;
   width: 100%;
 
@@ -6,11 +8,12 @@ header.main {
     float: left;
 
     .logo {
-      float: left;
-      background-inline-image: url(src/static/img/logo.png);
-      height: 40px;
-      width: 40px;
+      background-inline-image: url('src/static/img/logo.png');
       background-size: contain;
+      float: left;
+      height: 30px;
+      margin: 8px 5px 5px;
+      width: 65px;
     }
 
     h3 {
@@ -18,4 +21,5 @@ header.main {
       margin: .8em 0 0 .4em;
     }
   }
+
 }

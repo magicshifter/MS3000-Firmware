@@ -4,14 +4,32 @@
   box-sizing: border-box;
 }
 
-h1, h2, h3, h4, h5 {
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-size: 1em;
   margin: 0;
   padding: 0;
-  font-size: 1em;
 }
 
-ul, ol {
+ul,
+ol {
   list-style: none;
   margin: 0;
   padding: 0;
+}
+
+input,
+img {
+  max-height: 100%;
+  max-width: 100%;
+}
+
+label {
+  font-size: .9em;
+  font-style: italic;
+  margin: 0 .3em 0 0;
+  opacity: .8;
 }

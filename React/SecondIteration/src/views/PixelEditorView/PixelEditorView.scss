@@ -2,7 +2,10 @@
   display: inline-block;
 
   table {
-    tr, td {
+    margin: .75em 0 .75em 1em;
+
+    tr,
+    td {
       margin: 0;
       padding: 0;
     }
@@ -10,17 +13,17 @@
 }
 
 .list {
-  list-style: none;
   display: inline-block;
+  float: left;
+  list-style: none;
   margin: 0;
   padding: 0;
-  float: left;
 }
 
 .pixel {
-  float: left;
-  border-width: 1px;
+  border-color: #808080;
   border-style: solid;
-  border-color: grey;
+  border-width: 1px;
   cursor: pointer;
+  float: left;
 }

@@ -22,16 +22,16 @@ export default class RGBAInput extends Component {
 
   render() {
     const {color, setColorValue, showAlpha} = this.props;
-    const styles = {
-      backgroundColor: rgba_toString(color),
-    };
 
     return (
       <div className={classes['container']}>
         <div
           className={classes['indicator']}
-          style={styles}
+          style={{
+            backgroundColor: rgba_toString(color),
+          }}
         ></div>
+
         <ul>
           {color && Object.keys(color).map(key => (
             typeof color[key] === 'number' &&
@@ -45,7 +45,6 @@ export default class RGBAInput extends Component {
             />
           ))}
         </ul>
-
       </div>
     );
   }

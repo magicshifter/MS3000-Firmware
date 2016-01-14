@@ -2,7 +2,20 @@
 
 html,
 body {
+  font-family: Ubuntu, 'Segoe UI', roboto, 'Lucida Grande', sans-serif;
+  height: 100%;
   margin: 0;
   padding: 0;
-  height: 100%;
+}
+
+a {
+  color: inherit;
+}
+
+h5 {
+  margin: .5em 0 0;
+}
+
+button:focus {
+  outline: none;
 }
