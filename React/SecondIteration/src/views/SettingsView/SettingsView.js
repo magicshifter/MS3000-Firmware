@@ -33,7 +33,7 @@ export class SettingsView extends Component {
   }
 
   render() {
-    const {settings, setSettings} = this.props;
+    const {setSettings} = this.props;
     const {protocol, host} = this.state;
 
     return (
