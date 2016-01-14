@@ -1,12 +1,13 @@
 import React, {PropTypes} from 'react';
 import {Link} from 'react-router';
 
+import {layoutType} from 'utils/propTypes';
 import Menu from './Menu';
 
 import classes from './Header.scss';
 
 export const Header =
-  ({height}) => (
+  ({height, layout}) => (
     <header
       className={classes['main']}
       style={{
@@ -14,8 +15,16 @@ export const Header =
       }}
     >
       <Link to='/' className={classes['container']}>
-        <span className={classes['logo']} />
-        <h3>MagicShifter 3000</h3>
+        <span
+          className={classes['logo']}
+        />
+        <h3
+          style={{
+            display: layout.width > 500 ? 'inherit' : 'none'
+          }}
+        >
+          MagicShifter 3000
+        </h3>
       </Link>
 
       <Menu />
@@ -24,6 +33,7 @@ export const Header =
 
 Header.propTypes = {
   height: PropTypes.number.isRequired,
+  layout: layoutType,
 };
 
 export default Header;

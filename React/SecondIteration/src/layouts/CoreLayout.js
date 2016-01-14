@@ -39,6 +39,7 @@ class CoreLayout extends Component {
       <div className={classes['container']}>
         <Header
           height={height}
+          layout={layout}
         />
         <div className={classes['view']}>
           {children}
