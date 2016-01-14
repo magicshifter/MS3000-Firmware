@@ -38,6 +38,7 @@
     "koa": "^1.1.2",
     "koa-connect-history-api-fallback": "^0.3.0",
     "koa-static": "^1.5.2",
+    "material-colors": "^1.0.0",
     "normalize.css": "git+https://github.com/necolas/normalize.css.git",
     "react": "^0.14.0",
     "react-dom": "^0.14.0",
