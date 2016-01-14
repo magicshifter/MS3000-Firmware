@@ -4,7 +4,6 @@ import assign from 'object-assign';
 
 import {isColor, isNumber, isObject} from 'utils/types';
 import {createImmutablePixels} from 'utils/pixels';
-import {immutable} from 'utils/immutable';
 
 const rows = 16;
 const visibleColumns = 16;
@@ -79,7 +78,7 @@ export default handleActions({
       // need to calculate and pass all pixels to this function,
       // image upload currently might not do so
       isObject(pixels)
-      ? state.set('pixels', Immutable.List.of(...pixels.map(px => immutable(px))))
+      ? state.set('pixels', Immutable.List.of(...pixels))
       : state,
 
   [SET_COLOR]:
