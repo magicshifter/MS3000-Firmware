@@ -18,6 +18,16 @@ uint16_t SerialReadWord()
 	return result;
 }
 
+uint32_t SerialReadLong()
+{
+	uint32_t result = ((uint32_t)SerialReadByte()) << 24;
+	result |= ((uint32_t)SerialReadByte()) << 16;
+	result |= ((uint32_t)SerialReadByte()) << 8;
+	result |= ((uint32_t)SerialReadByte()) << 0;
+
+	return result;
+}
+
 void USBPoll()
 {
 	static uint8_t pingStatus;
@@ -82,11 +92,16 @@ void USBPoll()
 			uint32_t dataSize;				
 			
 			// sector
-			sector = SerialReadByte();
+			SerialReadLong(); // ignore MAGIC header
 			// frames (bytes)
 			dataSize = SerialReadWord();
 
-			String filenameStr = "/pov/usbUploaded" + sector;
+			char fnA[256-8];
+			for (int i = 0; i < sizeof(fnA); i++) {
+				fnA[i] = SerialReadByte();
+			}
+			String filenameStr = String(fnA);
+
 			const char *filename = filenameStr.c_str();
 
 		    //msSystem.msEEPROMs.safeStrncpy(msGlobals.ggUploadFileName, (char *)upload.filename.c_str(), MAX_FILENAME_LENGTH);//.c_str();

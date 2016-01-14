@@ -428,25 +428,28 @@ def issueUpload(device, data, filename):
 		dataLen = len(data)
 
 		headerString = map(ord,filename)
-		headerString.insert(0, (dataLen>>24)&0xFF)
-		headerString.insert(1, (dataLen>>16)&0xFF)
-		headerString.insert(2, (dataLen>>8)&0xFF)
-		headerString.insert(3, (dataLen>>0)&0xFF)
+		headerString.insert(0, 0x30)
+		headerString.insert(1, 0)
+		headerString.insert(2, 0)
+		headerString.insert(3, 0)
+
+		headerString.insert(4, (dataLen>>24)&0xFF)
+		headerString.insert(5, (dataLen>>16)&0xFF)
+		headerString.insert(6, (dataLen>>8)&0xFF)
+		headerString.insert(7, (dataLen>>0)&0xFF)
+
 
 		while len(headerString) < 256:
 			headerString.insert(len(headerString), 0)
 
 		print headerString
 			 
-
-
-
-		headerString = array.array('B', [sector, (dataLen>>8)&0xFF, dataLen%256]).tostring()
+		headerString = array.array('B', headerString).tostring()
 		print dataLen
 		#print Str2Hex(headerString)	
-		sleep(0.1)	
+		sleep(0.5)	
 		ser.write(headerString)
-		sleep(1.5)
+		sleep(0.5)
 		#sleep(0.5)			
 		dataString = array.array('B', data).tostring()
 		#print Str2Hex(dataString)	
