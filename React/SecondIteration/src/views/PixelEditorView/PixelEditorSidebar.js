@@ -95,22 +95,32 @@ export class PixelEditorSidebar extends Component {
           <div className={classes['picker']}>
 
             <h3>Controls</h3>
+            <ul>
+              <li key='rgba'>
+                <h5>Colors:</h5>
+                <RGBAInput
+                  color={color}
+                  setColorValue={setColorValue}
+                />
+              </li>
 
-            <RGBAInput
-              color={color}
-              setColorValue={setColorValue}
-            />
+              <li key='load'>
+                <h5>Load Image from disk</h5>
+                <ImageInput />
+              </li>
 
-            <ImageInput label='upload image' />
-
-            <FileUploadInput
-              pixels={pixels}
-              height={rows}
-              width={visibleColumns}
-              totalWidth={totalColumns}
-              url={[protocol, host].join('://')}
-              text='send to MS3000'
-            />
+              <li key='upload'>
+                <h5>Upload</h5>
+                <FileUploadInput
+                  pixels={pixels}
+                  height={rows}
+                  width={visibleColumns}
+                  totalWidth={totalColumns}
+                  url={[protocol, host].join('://')}
+                  text='send to MS3000'
+                />
+              </li>
+            </ul>
           </div>
 
           <div className={classes['settings']}>
