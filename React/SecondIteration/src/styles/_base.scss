@@ -1,9 +1,9 @@
-/*
-------------------------------------
-This file acts as a bundler for all variables/mixins/themes, so they
-can easily be swapped out without `core.scss` ever having to know.
-
-*/
+// This file acts as a bundler for all variables/mixins/themes, so they
+// can easily be swapped out without `core.scss` ever having to know.
 
 @import '~normalize.css/normalize';
 @import './reset';
+@import './icons';
+
+$pixel-color: #808080;
+$content-bg-color: #fff;

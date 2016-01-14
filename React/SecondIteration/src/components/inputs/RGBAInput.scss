@@ -1,19 +1,19 @@
 .container {
-  background-color: #fff;
+  background-color: $content-bg-color;
   display: inline-block;
 
   ul {
-    list-style: none;
-    float: left;
     display: inline-block;
+    float: left;
+    list-style: none;
     margin: 0 0 0 10px;
     text-align: right;
   }
 
   .indicator {
     display: block;
-    width: 30px;
-    height: 30px;
     float: left;
+    height: 30px;
+    width: 30px;
   }
 }

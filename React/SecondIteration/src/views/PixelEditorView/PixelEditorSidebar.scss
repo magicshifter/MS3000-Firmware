@@ -5,12 +5,13 @@
 }
 
 .content {
-  transition: right 0.5s;
+  background-color: $content-bg-color;
+  border-bottom-right-radius: 1em;
+  clear: both;
+  padding: .75em;
   position: relative;
+  transition: left .5s;
   width: 100%;
-  background-color: #fff;
-  padding: 0.75em;
-  border-bottom-left-radius: 1em;
 
   > div {
     margin: 0 0 1em;
@@ -18,8 +19,8 @@
 }
 
 .button {
-  margin: -25px 0 0;
-  float: right;
+  left: 0;
+  position: fixed;
 }
 
 .picker {

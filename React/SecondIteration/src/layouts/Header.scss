@@ -1,19 +1,19 @@
 .main {
+  background-inline-image: url('src/static/img/header-background.jpg');
+  background-size: contain;
   display: inline-block;
   width: 100%;
-  background-inline-image: url(src/static/img/header-background.jpg);
-  background-size: contain;
 
   .container {
     float: left;
 
     .logo {
-      float: left;
-      background-inline-image: url(src/static/img/logo.png);
-      height: 30px;
-      width: 65px;
-      margin: 8px 5px 5px;
+      background-inline-image: url('src/static/img/logo.png');
       background-size: contain;
+      float: left;
+      height: 30px;
+      margin: 8px 5px 5px;
+      width: 65px;
     }
 
     h3 {
