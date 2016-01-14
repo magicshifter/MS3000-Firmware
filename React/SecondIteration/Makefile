@@ -100,6 +100,9 @@ inline:
 	@cp ${JS_DIST_DIR}index.js ${JS_DIST_DIR}bundled/index.js
 	@echo "inlining finished"
 
+scss-lint:
+	scss-lint src
+
 deploy: test build
 
 help:
