@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 
-import {actions} from 'redux/modules/pixelEditor';
+import {actions} from 'redux/modules/views/image';
 
 import {pixelsType} from 'utils/propTypes';
 import {getImagePixels} from 'utils/images';
@@ -9,12 +9,12 @@ import {getImagePixels} from 'utils/images';
 import classes from './ImageInput.scss';
 
 const mapStateToProps = (state) => {
-  const {pixelEditor} = state;
+  const {imageView} = state;
   return {
-    pixels: pixelEditor.get('pixels').toJS(),
-    visibleColumns: pixelEditor.get('visibleColumns'),
-    totalColumns: pixelEditor.get('totalColumns'),
-    rows: pixelEditor.get('rows'),
+    pixels: imageView.get('pixels').toJS(),
+    visibleColumns: imageView.get('visibleColumns'),
+    totalColumns: imageView.get('totalColumns'),
+    rows: imageView.get('rows'),
   };
 };
 

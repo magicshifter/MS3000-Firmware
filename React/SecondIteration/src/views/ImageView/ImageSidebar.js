@@ -1,33 +1,35 @@
 import React, {PropTypes, Component} from 'react';
 import {connect} from 'react-redux';
 
-import {actions} from 'redux/modules/pixelEditor';
+import {actions} from 'redux/modules/views/image';
 
-import {pixelEditorType, settingsType, layoutType} from 'utils/propTypes';
+import {imageViewType, settingsViewType, layoutType} from 'utils/propTypes';
 
 import RGBAInput from 'components/inputs/RGBAInput';
 import NumberInput from 'components/inputs/NumberInput';
 import ImageInput from 'components/inputs/ImageInput';
 import FileUploadInput from 'components/inputs/FileUploadInput';
+import SidebarText from './Sidebar/Text';
 
-import classes from './PixelEditorSidebar.scss';
+import classes from './ImageSidebar.scss';
 
 const mapStateToProps = (state) => {
-  const {pixelEditor, settings, layout} = state;
+  const {imageView, settingsView, layout} = state;
   return {
-    pixelEditor: pixelEditor.toJS(),
-    settings: settings.toJS(),
+    imageView: imageView.toJS(),
+    settingsView: settingsView.toJS(),
     layout: layout.toJS(),
   };
 };
 
-export class PixelEditorSidebar extends Component {
+export class ImageSidebar extends Component {
   static propTypes = {
-    setColorValue: PropTypes.func.isRequired,
-    setColumns: PropTypes.func.isRequired,
+    setColorValue: PropTypes.func.isRequired, // action
+    setColumns: PropTypes.func.isRequired, // action
 
-    pixelEditor: pixelEditorType,
-    settings: settingsType,
+    imageView: imageViewType,
+    settingsView: settingsViewType,
+
     layout: layoutType,
   };
 
@@ -46,13 +48,13 @@ export class PixelEditorSidebar extends Component {
   render() {
     const {
       setColorValue, setColumns, // actions
-      pixelEditor, settings, layout, // state objects
+      imageView, settingsView, layout, // state objects
     } = this.props;
 
-    const {pixels, color, rows, visibleColumns, totalColumns} = pixelEditor;
-    const {host, protocol} = settings;
+    const {pixels, color, rows, visibleColumns, totalColumns} = imageView;
+    const {host, protocol} = settingsView;
 
-    const {sidebar} = layout;
+    const {sidebar, currentColor} = layout;
     const {width} = sidebar;
 
     const {visible} = this.state;
@@ -62,8 +64,11 @@ export class PixelEditorSidebar extends Component {
         width,
       },
       rgba: {},
+      colorTitle: {},
       button: {
         display: layout.width > 500 ? 'none' : 'inherit',
+        backgroundColor: currentColor[500],
+        borderColor: currentColor[100],
       },
     };
 
@@ -76,7 +81,11 @@ export class PixelEditorSidebar extends Component {
         top: 25,
       };
 
-      if (layout.width < 330) {
+      if (layout.width < 350) {
+        style.colorTitle = {
+          display: 'none',
+        };
+
         style.rgba = {
           position: 'fixed',
           bottom: 0,
@@ -110,7 +119,7 @@ export class PixelEditorSidebar extends Component {
                 key='rgba'
                 style={style.rgba}
               >
-                <h5>Colors:</h5>
+                <h5 style={style.colorTitle}>Colors:</h5>
                 <RGBAInput
                   color={color}
                   setColorValue={setColorValue}
@@ -136,6 +145,10 @@ export class PixelEditorSidebar extends Component {
             </ul>
           </div>
 
+          <div className={classes['text']}>
+            <SidebarText />
+          </div>
+
           <div className={classes['settings']}>
             <h3>Settings</h3>
             <ul>
@@ -156,4 +169,4 @@ export class PixelEditorSidebar extends Component {
   }
 }
 
-export default connect(mapStateToProps, actions)(PixelEditorSidebar);
+export default connect(mapStateToProps, actions)(ImageSidebar);

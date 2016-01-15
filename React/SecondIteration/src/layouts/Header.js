@@ -1,6 +1,7 @@
 import React, {PropTypes, Component} from 'react';
 import {connect} from 'react-redux';
 import {Link} from 'react-router';
+import rgba from 'rgba-convert';
 
 import Menu from './Menu';
 
@@ -11,7 +12,7 @@ const mapStateToProps = (state) => {
   return {
     height,
     width,
-    menuTextColor,
+    color: rgba.css(menuTextColor),
   };
 };
 
@@ -19,18 +20,18 @@ export class Header extends Component {
   static propTypes = {
     height: PropTypes.number.isRequired,
     width: PropTypes.number.isRequired,
-    menuTextColor: PropTypes.string.isRequired,
+    color: PropTypes.string.isRequired,
   };
 
   render() {
-    const {height, width, menuTextColor} = this.props;
+    const {height, width, color} = this.props;
     const style = {
       container: {
         height,
       },
       header: {
         display: width > 500 ? 'inherit' : 'none',
-        color: menuTextColor,
+        color: color,
       },
     };
 

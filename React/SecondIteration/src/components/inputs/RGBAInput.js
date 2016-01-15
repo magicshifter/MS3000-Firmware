@@ -1,8 +1,7 @@
-// need to import react here
 import React, {Component, PropTypes} from 'react';
+import rgba from 'rgba-convert';
 
-import {rgba_toString} from 'utils/colors';
-import {colorType, colorNames} from 'utils/propTypes';
+import {colorType, colorNames, hexStringType} from 'utils/propTypes';
 
 import ColorInput from './ColorInput';
 
@@ -11,7 +10,7 @@ import classes from './RGBAInput.scss';
 export default class RGBAInput extends Component {
 
   static propTypes = {
-    color: colorType.isRequired,
+    color: PropTypes.oneOfType([colorType, hexStringType]).isRequired,
     setColorValue: PropTypes.func.isRequired,
     showAlpha: PropTypes.bool,
   };
@@ -28,7 +27,7 @@ export default class RGBAInput extends Component {
         <div
           className={classes['indicator']}
           style={{
-            backgroundColor: rgba_toString(color),
+            backgroundColor: rgba.css(color),
           }}
         ></div>
 

@@ -1,29 +1,29 @@
 import React, {PropTypes, Component} from 'react';
 import {connect} from 'react-redux';
 
-import {actions} from 'redux/modules/pixelEditor';
+import {actions} from 'redux/modules/views/image';
 
 import {pixelsType, layoutType} from 'utils/propTypes';
 import {rgba_toString} from 'utils/colors';
 import {getPixelId, makePixelsObject} from 'utils/pixels';
 import {multimax} from 'utils/math';
 
-import PixelEditorSidebar from './PixelEditorSidebar';
+import ImageSidebar from './ImageSidebar';
 
-import classes from './PixelEditorView.scss';
+import classes from './ImageView.scss';
 
 const mapStateToProps = (state) => {
-  const {pixelEditor, layout} = state;
+  const {imageView, layout} = state;
   return {
-    pixels: makePixelsObject(pixelEditor.get('pixels')),
-    totalColumns: pixelEditor.get('totalColumns'),
-    visibleColumns: pixelEditor.get('visibleColumns'),
-    rows: pixelEditor.get('rows'),
+    pixels: makePixelsObject(imageView.get('pixels')),
+    totalColumns: imageView.get('totalColumns'),
+    visibleColumns: imageView.get('visibleColumns'),
+    rows: imageView.get('rows'),
     layout: layout.toJS(),
   };
 };
 
-export class PixelEditorView extends Component {
+export class ImageView extends Component {
   static propTypes = {
     pixelClick: PropTypes.func.isRequired,
     pixels: pixelsType.isRequired,
@@ -37,7 +37,7 @@ export class PixelEditorView extends Component {
     const {
       pixelClick, // actions
       layout, // layout state object
-      pixels, visibleColumns, totalColumns, rows, // pixelEditor state
+      pixels, visibleColumns, totalColumns, rows, // image state
     } = this.props;
 
     const {sidebar, header} = layout;
@@ -112,10 +112,10 @@ export class PixelEditorView extends Component {
           </tbody>
         </table>
 
-        <PixelEditorSidebar />
+        <ImageSidebar />
       </div>
     );
   }
 }
 
-export default connect(mapStateToProps, actions)(PixelEditorView);
+export default connect(mapStateToProps, actions)(ImageView);

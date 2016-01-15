@@ -2,7 +2,7 @@ import React, {PropTypes, Component} from 'react';
 import {connect} from 'react-redux';
 import {Link} from 'react-router';
 
-import {actions} from 'redux/modules/counter';
+import {actions} from 'redux/modules/views/about';
 import classes from './AboutView.scss';
 
 // We define mapStateToProps where we'd normally use
@@ -10,7 +10,7 @@ import classes from './AboutView.scss';
 // export the decorated component after the main class definition so
 // the component can be tested w/ and w/o being connected.
 // See: http://rackt.github.io/redux/docs/recipes/WritingTests.html
-const mapStateToProps = (state) => state.counter.toJS();
+const mapStateToProps = (state) => state.aboutView.toJS();
 
 export class AboutView extends Component {
   static propTypes = {

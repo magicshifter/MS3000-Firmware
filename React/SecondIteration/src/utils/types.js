@@ -50,8 +50,17 @@ export const isFunction =
 
 export const isNumber =
   ele =>
-    typeof ele === 'number' &&
     parseFloat(ele, 10) === parseFloat(ele, 10);
+
+export const toInt =
+  ele =>
+    isNumber(ele) &&
+    parseInt(ele, 10);
+
+export const toFloat =
+  ele =>
+    isNumber(ele) &&
+    parseFloat(ele, 10);
 
 export const isObject =
   ele =>
@@ -60,6 +69,12 @@ export const isObject =
 export const isString =
   ele =>
     typeof ele === 'string';
+
+export const toString =
+  ele =>
+    (isString(ele) && ele) ||
+    (ele && isFunction(ele.toString) && ele.toString()) ||
+    ele + '';
 
 export const isRGBAObject =
   e =>
@@ -102,3 +117,7 @@ export const isEmpty =
 export const isNodeList =
   ele =>
     toStr.call(ele) === '[object NodeList]';
+
+export const isHexString =
+  ele =>
+    isString(ele) && ele[0] === '#';

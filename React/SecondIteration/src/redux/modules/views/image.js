@@ -11,6 +11,8 @@ const color = Immutable.Map({r: 0, b: 0, g: 0, a: 155});
 
 const pixels = createImmutablePixels(totalColumns, visibleColumns, rows);
 
+const initialState = Immutable.Map({pixels, rows, visibleColumns, totalColumns, color});
+
 // ------------------------------------
 // Constants
 // ------------------------------------
@@ -96,4 +98,4 @@ export default handleActions({
       ? state.set('visibleColumns', parseInt(p.value, 10))
       : state,
 
-}, Immutable.Map({pixels, rows, visibleColumns, totalColumns, color}));
+}, initialState);

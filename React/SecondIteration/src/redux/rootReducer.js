@@ -3,15 +3,18 @@ import { routeReducer as router } from 'redux-simple-router';
 
 import Immutable from 'immutable';
 
-import counter from 'redux/modules/counter';
-import pixelEditor from 'redux/modules/pixelEditor';
 import layout from 'redux/modules/layout';
-import settings from 'redux/modules/settings';
+
+import aboutView from 'redux/modules/views/about';
+import imageView from 'redux/modules/views/image';
+import textView from 'redux/modules/views/text';
+import settingsView from 'redux/modules/views/settings';
 
 export default Immutable.fromJS(combineReducers({
   router,
-  counter,
-  pixelEditor,
   layout,
-  settings,
+  aboutView,
+  imageView,
+  textView,
+  settingsView,
 }));

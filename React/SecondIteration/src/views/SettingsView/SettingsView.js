@@ -1,21 +1,19 @@
 import React, {PropTypes, Component} from 'react';
 import {connect} from 'react-redux';
 
-import {actions} from 'redux/modules/settings';
-import {settingsType} from 'utils/propTypes';
+import {actions} from 'redux/modules/views/settings';
+import {settingsViewType} from 'utils/propTypes';
 
 import classes from './SettingsView.scss';
 
-// We define mapStateToProps where we'd normally use
-// the @connect decorator so the data requirements are clear upfront, but then
-// export the decorated component after the main class definition so
-// the component can be tested w/ and w/o being connected.
-// See: http://rackt.github.io/redux/docs/recipes/WritingTests.html
-const mapStateToProps = (state) => ({settings: state.settings.toJS()});
+const mapStateToProps =
+  state => ({
+    settings: state.settingsView.toJS(),
+  });
 
 export class SettingsView extends Component {
   static propTypes = {
-    settings: settingsType,
+    settings: settingsViewType,
     setSettings: PropTypes.func.isRequired,
   };
 
