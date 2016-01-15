@@ -3,7 +3,6 @@ import mColors from 'material-colors';
 import {colorsToObj} from 'utils/colors';
 
 export const materialColors = colorsToObj(mColors);
-console.log({materialColors});
 
 export const host = 'magicshifter.local';
 export const protocol = 'http';
@@ -19,7 +18,6 @@ export const sidebarWidth = 250;
 export const links = [
   {to: '/', text: 'about'},
   {to: '/paint', text: 'paint'},
-  {to: '/text', text: 'text'},
   {to: '/settings', text: 'settings'},
 ];
 
