@@ -1,10 +1,12 @@
 import React from 'react';
 
+import classes from './AboutView.scss';
+
 export default () => {
   const updateUrl = 'http://magicshifter.net/ms3000/update';
 
   return (
-    <div className='container text-center'>
+    <div className={[classes['container'], 'container'].join(' ')}>
       <h1>Welcome to the MagicShifter 3000 Web Interface!</h1>
       <p>
         Although we did our best to make this first beta firmware as good as possible,

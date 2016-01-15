@@ -35,7 +35,7 @@ export class SettingsView extends Component {
     const {protocol, host} = this.state;
 
     return (
-      <div className={classes['container']}>
+      <div className={[classes['container'], 'container'].join(' ')}>
         <h2>Settings:</h2>
 
         <div className={classes['form']}>
