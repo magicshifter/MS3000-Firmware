@@ -49,7 +49,6 @@ lint-fix:
 	@echo "lint-fix completed"
 
 cheap-concat:
-	@mkdir -p ${JS_DIST_DIR}bundled
 	@cat ${JS_DIST_DIR}vendor.js ${JS_DIST_DIR}app.js >> ${JS_DIST_DIR}index.js
 
 # run google closure library through java
@@ -98,6 +97,7 @@ inline:
 		--ignore-scripts
 
 	@cp ${JS_DIST_DIR}index.js ${JS_DIST_DIR}bundled/index.js
+	@cp ${JS_DIST_DIR}magicshifter.appcache ${JS_DIST_DIR}bundled/magicshifter.appcache
 	@echo "inlining finished"
 
 scss-lint:
