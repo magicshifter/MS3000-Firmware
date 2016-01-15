@@ -49,6 +49,13 @@ public:
     for (int i = 0; i < RGB_BUFFER_SIZE ; i++)
     {
       RGB_COLORS[i] = buffer[i];
+
+      // i+=4..
+      // RGB_COLORS[i] = buffer[i+3];
+      // RGB_COLORS[i+1] = buffer[i+0];
+      // RGB_COLORS[i+2] = buffer[i+1];
+      // RGB_COLORS[i+3] = buffer[i+2];
+
     }
   }
 

@@ -71,12 +71,17 @@ export default handleActions({
         state.get('color')),
 
   [SET_PIXELS]:
-    (state, {payload: pixels}) => {
+    (state, {payload: {pixels, height, width}}) => {
       // TODO
       // need to calculate and pass all pixels to this function,
       // image upload currently might not do so
+      // const newState = Immutable.fromJS(assign({}, state, {
+      //   pixels,
+      //   visibleColumns: width,
+      // }));
       return isObject(pixels)
-      ? state.set('pixels', Immutable.List.of(...pixels.map(p => Immutable.fromJS(p))))
+      // ? newState
+      ? state.set('pixels', Immutable.List.of(...pixels.map(p => Immutable.fromJS(p)))).set('visibleColumns', width)
       : state;
     },
 

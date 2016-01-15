@@ -231,8 +231,13 @@ def findMagicShifterSimple():
 #================================================================
 
 def openPort(timeout):
-	ser = serial.Serial(device, baudrate, timeout=timeout)#timeout=None
+	ser = serial.Serial(device, baudrate=baudrate, timeout=timeout)#timeout=None
+	ser.setRTS(True)
+	sleep(0.1)
+	ser.setDTR(False)
 	ser.setRTS(False)
+#	ser.open()
+	sleep(6)
 	return ser
 
 	
@@ -421,32 +426,38 @@ def SendInChunks(ser, dataString, chunkSize, delay):
 def issueUpload(device, data, filename):	
 	ser = None
 	try:    
+		print "openimng port"
 		#ser = serial.Serial(device, baudrate, timeout=5)#timeout=None
 		ser = openPort(5)
 		ser.write("MAGIC_UPLOAD")
 
+		print "writeUpload"
+
 		dataLen = len(data)
 
 		headerString = map(ord,filename)
-		headerString.insert(0, (dataLen>>24)&0xFF)
-		headerString.insert(1, (dataLen>>16)&0xFF)
-		headerString.insert(2, (dataLen>>8)&0xFF)
-		headerString.insert(3, (dataLen>>0)&0xFF)
+		headerString.insert(0, 0x30)
+		headerString.insert(1, 0)
+		headerString.insert(2, 0)
+		headerString.insert(3, 0)
+
+		headerString.insert(4, (dataLen>>24)&0xFF)
+		headerString.insert(5, (dataLen>>16)&0xFF)
+		headerString.insert(6, (dataLen>>8)&0xFF)
+		headerString.insert(7, (dataLen>>0)&0xFF)
+
 
 		while len(headerString) < 256:
 			headerString.insert(len(headerString), 0)
 
 		print headerString
 			 
-
-
-
-		headerString = array.array('B', [sector, (dataLen>>8)&0xFF, dataLen%256]).tostring()
+		headerString = array.array('B', headerString).tostring()
 		print dataLen
 		#print Str2Hex(headerString)	
-		sleep(0.1)	
+		sleep(0.5)	
 		ser.write(headerString)
-		sleep(1.5)
+		sleep(0.5)
 		#sleep(0.5)			
 		dataString = array.array('B', data).tostring()
 		#print Str2Hex(dataString)	

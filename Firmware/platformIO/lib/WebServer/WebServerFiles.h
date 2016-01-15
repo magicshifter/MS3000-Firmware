@@ -170,6 +170,8 @@ void handleFileList() {
   }
   String path = msSystem.msESPServer.arg("dir");
 
+// msSystem.log("dir path::::"); msSystem.logln((char *)path.c_str());
+
   //File entry;
   Dir dir = SPIFFS.openDir((char *)path.c_str());
   path = String();
