@@ -58,5 +58,5 @@ compiler.run(function(err, stats) {
     new Date()
   );
 
-  fs.writeFileSync(path.join(paths.dist(), 'magicshifter.appcache'), 'utf8');
+  fs.writeFileSync(path.join(paths.dist(), 'magicshifter.appcache'), appCacheContent, 'utf8');
 });
