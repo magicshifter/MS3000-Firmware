@@ -1,4 +1,8 @@
 export const getImagePixels =
+  // totalColumns: 96, actual maximum number of spawned pixels
+  // maxWidth: the visibleColumns of the imageView state
+  // maxHeight: maximum Rows, should be == 16 and never change
+
   (e, pixels, totalColumns, maxWidth = 16, maxHeight = 16, cb = () => {}) => {
     const {files} = e.target;
 
@@ -19,22 +23,24 @@ export const getImagePixels =
       ctx.drawImage(loadedImg, 0, 0, width, height);
       let rawData = ctx.getImageData(0, 0, width, height).data;
 
-      const w = Math.min(width, totalColumns, maxWidth);
+      const w = Math.min(width, totalColumns);
       const h = Math.min(height, maxHeight);
 
       for (let column = 0; column < w; column++) {
         for (let row = 0; row < h; row++) {
-          const pixelIdx = column + (row * totalColumns);
-          const rawIdx = 4 * (column + row * width);
+          if (column < width && row < height) {
+            const pixelIdx = column + (row * totalColumns);
+            const rawIdx = 4 * (column + row * width);
 
-          var pixel = pixels[pixelIdx];
-          console.log('set pixel with index', pixelIdx, 'in row', row, 'and column', column);
+            var pixel = pixels[pixelIdx];
+            // console.log('set pixel with index', pixelIdx, 'in row', row, 'and column', column);
 
-          pixel.color = {r: rawData[rawIdx + 0], g: rawData[rawIdx + 1], b: rawData[rawIdx + 2], a: 255};
-          console.log(pixel.color);
+            pixel.color = {r: rawData[rawIdx + 0], g: rawData[rawIdx + 1], b: rawData[rawIdx + 2], a: 255};
+            // console.log(pixel.color);
+          }
         }
       }
 
-      cb(pixels);
+      cb({pixels, width, height});
     };
   };

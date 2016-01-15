@@ -4,10 +4,8 @@ import rgba from 'rgba-convert';
 
 import {actions} from 'redux/modules/views/text';
 
-import RGBAInput from 'components/inputs/RGBAInput';
 import FontSelect from 'components/inputs/FontSelect';
 
-import {toInt} from 'utils/types';
 import {fontType, colorType} from 'utils/propTypes';
 
 import classes from './Text.scss';
@@ -54,12 +52,11 @@ export class Text extends Component {
     const fontStyle = `16px ${fonts[fontId].css}`;
     const colorStyle = rgba.css(color);
 
-
     ctx.font = fontStyle;
     ctx.fillStyle = colorStyle;
     ctx.fillText(text, 1, 1);
 
-    console.log({fontStyle, color});
+    console.log({fontStyle, colorStyle});
     document.body.appendChild(canvas);
   }
 
@@ -73,27 +70,27 @@ export class Text extends Component {
       <div className={classes['container']}>
         <h3>Upload Text</h3>
 
-        <ul>
-          <FontSelect
-            setFont={setFont}
-          />
+        <FontSelect
+          setFont={setFont}
+        />
 
-          <li
-            className={classes['valueInput']}
-            key='valueInput'
-          >
-            <input
-              type='text'
-              value={text}
-              onChange={e => setText(e.target.value)}
-            />
-          </li>
+        <div
+          className={classes['valueInput']}
+          key='valueInput'
+        >
+          <input
+            type='text'
+            value={text}
+            onChange={e => setText(e.target.value)}
+          />
+        </div>
+        <div>
           <input
             type='button'
             onClick={this.uploadText}
-            value="Use Text"
+            value='Use Text'
           />
-        </ul>
+        </div>
       </div>
     );
   }

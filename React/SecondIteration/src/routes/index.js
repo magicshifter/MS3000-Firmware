@@ -4,7 +4,6 @@ import { Route, IndexRoute, Redirect } from 'react-router';
 import CoreLayout from 'layouts/CoreLayout';
 
 import AboutView from 'views/AboutView/AboutView';
-import TextView from 'views/TextView/TextView';
 import ImageView from 'views/ImageView/ImageView';
 import SettingsView from 'views/SettingsView/SettingsView';
 import NotFoundView from 'views/NotFoundView/NotFoundView';
