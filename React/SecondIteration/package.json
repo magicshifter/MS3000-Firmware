@@ -33,6 +33,7 @@
   "dependencies": {
     "debug": "^2.2.0",
     "dotenv": "^1.2.0",
+    "filesaver.js": "^0.2.0",
     "history": "^1.17.0",
     "immutable": "^3.7.6",
     "koa": "^1.1.2",

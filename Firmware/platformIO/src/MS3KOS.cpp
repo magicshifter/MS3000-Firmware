@@ -58,7 +58,6 @@
  {
   // record our bootup time
   msGlobals.ggBootTime = millis();
-  msGlobals.ggCurrentMode = 0;
 
 delay(350); // debug !J!
 

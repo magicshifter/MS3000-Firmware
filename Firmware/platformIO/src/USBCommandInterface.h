@@ -18,6 +18,16 @@ uint16_t SerialReadWord()
 	return result;
 }
 
+uint32_t SerialReadLong()
+{
+	uint32_t result = ((uint32_t)SerialReadByte()) << 24;
+	result |= ((uint32_t)SerialReadByte()) << 16;
+	result |= ((uint32_t)SerialReadByte()) << 8;
+	result |= ((uint32_t)SerialReadByte()) << 0;
+
+	return result;
+}
+
 void USBPoll()
 {
 	static uint8_t pingStatus;
@@ -82,16 +92,21 @@ void USBPoll()
 			uint32_t dataSize;				
 			
 			// sector
-			sector = SerialReadByte();
+			SerialReadLong(); // ignore MAGIC header
 			// frames (bytes)
-			dataSize = SerialReadWord();
+			dataSize = SerialReadLong();
 
-			String filenameStr = "/pov/usbUploaded" + sector;
-			const char *filename = filenameStr.c_str();
+			char fnA[256-8];
+			for (int i = 0; i < sizeof(fnA); i++) {
+				fnA[i] = SerialReadByte();
+			}
+			//String filenameStr = String(fnA);
+
+			const char *filename = fnA; //filenameStr.c_str();
 
 		    //msSystem.msEEPROMs.safeStrncpy(msGlobals.ggUploadFileName, (char *)upload.filename.c_str(), MAX_FILENAME_LENGTH);//.c_str();
-		    msSystem.logln("upload started: ");
-		    msSystem.logln(filename);
+		    msSystem.log("upload started: ");
+		    msSystem.log(filename);
 
 		    msSystem.log("upload open.. ");
 
@@ -110,7 +125,7 @@ void USBPoll()
 		    }
 		    else 
 		    {
-		    	msSystem.logln("Opened file for writing...");
+		    	msSystem.log("Opened file for writing...");
 				long time = millis();
 				for (uint32_t index = 0; index < dataSize; index += USBBUFFERSIZE)
 				{
