@@ -206,9 +206,10 @@ public:
       //   height = MAX_LEDS;
       // }
 
-      msSystem.log("image width:"); msSystem.logln(String(width));;
-      msSystem.log("image height:"); msSystem.logln(String(height));;
+      // msSystem.log("image width:"); msSystem.logln(String(width));;
+      // msSystem.log("image height:"); msSystem.logln(String(height));;
 
+      msSystem.log("loadShakeImage:"); msSystem.logln(String(sv_Filename));
   }
 
   MSImage(const char *fileName)
