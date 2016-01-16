@@ -8,14 +8,14 @@ public:
   float ggAccel[3];  // Stores the real accel value in g's
   long ggAccelTime;
   long ggLFrameTime;
-  int ggCurrentMode = 0;  // POV mode
-  int ggAccelCounts[3];  // Stores the 12-bit signed value
-  int ggBtn1State = 0;
-  int ggCurrentMicros = 0;
-  int ggLastMicros = 0;
-  int ggSpeedMicros = 800;
+  long ggCurrentMode = 0;  // POV mode
+  long ggAccelCounts[3];  // Stores the 12-bit signed value
+  long ggBtn1State = 0;
+  long ggCurrentMicros = 0;
+  long ggLastMicros = 0;
+  long ggSpeedMicros = 800;
   long ggLastFrameMicros = 0;
-  int ggCurrentFrame = 0;
+  long ggCurrentFrame = 0;
   byte ggBright = 0xFF;
   byte gs = 0x1;
   long ggBootTime = 0;

@@ -238,6 +238,12 @@ void loop()
 
   msSystem.loop();
 
+msSystem.log("msBtn:"); msSystem.logln(String(msSystem.msBtnAPressTime));
+msSystem.log("msBtn:"); msSystem.logln(String(msSystem.msBtnPwrPressTime));
+msSystem.log("msBtn:"); msSystem.logln(String(msSystem.msBtnBPressTime));
+
+return;
+
   msWebServer.HandleWebServer();
 
   // do some tests

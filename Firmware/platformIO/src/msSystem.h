@@ -48,14 +48,14 @@ public:
 
 // TODO: private state
 // state for button timing
-  int msBtnAPressTime = 0;
-  int msBtnPwrPressTime = 0;
-  int msBtnBPressTime = 0;
+  long msBtnAPressTime = 0;
+  long msBtnPwrPressTime = 0;
+  long msBtnBPressTime = 0;
 
 // state for double click timing
-  int msBtnATTL = 0;
-  int msBtnPwrTTL = 0;
-  int msBtnBTTL = 0;
+  long msBtnATTL = 0;
+  long msBtnPwrTTL = 0;
+  long msBtnBTTL = 0;
 
   bool msLongClickOK = true;
 
@@ -321,7 +321,9 @@ public:
   void loop()
   {
 
-    // logln("(LOOP)");
+    long deltaMicros = (msGlobals.ggCurrentMicros - msGlobals.ggLastMicros);
+
+    logln("(LOOP)");
     // handle Buttons:
     pinMode(PIN_BUTTON_A, INPUT);
     pinMode(PIN_BUTTON_B, INPUT);
@@ -332,7 +334,7 @@ public:
     {
 
       if (msBtnAPressTime)
-        msBtnAPressTime += msGlobals.ggLastMicros;
+        msBtnAPressTime += deltaMicros;
       else
         msBtnAPressTime = 1;
     }
