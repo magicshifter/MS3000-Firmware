@@ -69,7 +69,7 @@ void StartWebServer(void)
   msSystem.msESPServer.on("/settings", HTTP_GET, handleGetSettings);
 
   msSystem.msESPServer.on("/settings/ap", HTTP_GET, handleGETAPSettings);
-  msSystem.msESPServer.on("/settings/ap/set", handlePOSTAPSettings);
+  msSystem.msESPServer.on("/settings/ap", HTTP_POST, handlePOSTAPSettings);
 
   msSystem.msESPServer.on("/settings/server", HTTP_GET, handleGETServerSettings);
   msSystem.msESPServer.on("/settings/server/set", handlePOSTServerSettings);
@@ -84,6 +84,7 @@ void StartWebServer(void)
   msSystem.msESPServer.on("/list", HTTP_GET, handleFileList);
   msSystem.msESPServer.on("/leds", handleLedsSet);
   msSystem.msESPServer.on("/read", handleReadFile);
+  msSystem.msESPServer.on("/delete", handleDeleteFile);
 
   msSystem.msESPServer.on("/led", handleLedSet);
 

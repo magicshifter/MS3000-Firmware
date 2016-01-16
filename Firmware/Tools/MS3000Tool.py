@@ -634,7 +634,71 @@ def main():
 		pFail("UNKNOWN RESPONSE WHILE MANUAL TESTING: " + str(response))
 		return False
 
+
+
+
+def initMS3000():
+	ser = openPort(5)
+	issueUploadMS3000(ser, "test1.txt", "test1_txt")
+	issueUploadMS3000(ser, "test2.txt", "test2_txtxtx")
+	sleep(0.5);
+
+
+def issueUploadMS3000(ser, sourceFilename, targetFilename):	
+
+	with open(sourceFilename, "rb") as f:
+		data = f.read()
+
+	try:    
+		ser.write("MAGIC_UPLOAD")
+
+		print "writeUpload"
+
+		dataLen = len(data)
+
+		headerString = map(ord, targetFilename)
+		headerString.insert(0, 0x30)
+		headerString.insert(1, 0)
+		headerString.insert(2, 0)
+		headerString.insert(3, 0)
+
+		headerString.insert(4, (dataLen>>24)&0xFF)
+		headerString.insert(5, (dataLen>>16)&0xFF)
+		headerString.insert(6, (dataLen>>8)&0xFF)
+		headerString.insert(7, (dataLen>>0)&0xFF)
+
+
+		while len(headerString) < 256:
+			headerString.insert(len(headerString), 0)
+
+		print headerString
+			 
+		headerString = array.array('B', headerString).tostring()
+		print dataLen
+		#print Str2Hex(headerString)	
+		sleep(0.5)	
+		ser.write(headerString)
+		sleep(0.5)
+		#sleep(0.5)			
+		dataString = array.array('B', data).tostring()
+		#print Str2Hex(dataString)	
+		SendInChunks(ser, dataString, 32, 0.003) #0.003	
+
+		response = ser.readline()
+		return response
+	except Exception as e:
+		pFail("UNEXPECTED ERROR WHILE sending UPLOAD!")
+		pFail(str(e))
+		return None	
+
+
+
+
 if __name__ == '__main__':
+	if (len(sys.argv) >= 2 and sys.argv[1] == "init"):
+		device = sys.argv[2]
+		initMS3000()
+		
 	if (len(sys.argv) >= 4 and sys.argv[1] == "up"):
 		if (len(sys.argv) == 5):
 			device = sys.argv[4]

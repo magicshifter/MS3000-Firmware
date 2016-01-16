@@ -274,7 +274,7 @@ public:
     else
       log("noSPIFFS:");
 
-    TEST_SPIFFS_bug();
+    //TEST_SPIFFS_bug();
 
     logSysInfo();
 

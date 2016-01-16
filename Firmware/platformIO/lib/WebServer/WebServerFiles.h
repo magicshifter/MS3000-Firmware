@@ -160,6 +160,38 @@ void handleReadFile()
 }
 
 
+void handleDeleteFile()
+{
+  msSystem.msLEDs.fillPixels(0, 0, 1, 0x1F);
+  msSystem.msLEDs.updatePixels();
+
+  String message = "handleDeleteFile\n";
+  if (msSystem.msESPServer.args() >= 1)
+  {
+    String args = msSystem.msESPServer.arg(0);
+    message += "Trying to delete file: \"" + args + "\"\n";
+
+    if (SPIFFS.exists(args)) {
+      SPIFFS.remove(args);
+      msSystem.logln("file deleted");
+      message += "file deleted!";
+    }
+    else
+    {
+      msSystem.logln("file not found");
+      message += "file not found!";
+    }
+  }
+  else
+  {
+    msSystem.logln("arg missing");
+    message += "argument missing!";
+  }
+
+  msSystem.msESPServer.send ( 200, "text/html", message );
+}
+
+
 
 
 
@@ -210,7 +242,7 @@ void handleFileList() {
     output += "<p><a href=\"download?file=" + name + "\">" +
       name + "</a> " +
     //  (entry.isDirectory()?"dir":"file") + " : " + entry.size() +
-      " <a href=\"read?file=" + name + "\">show</a></p>";
+      " <a href=\"delete?file=" + name + "\">delete file</a></p>";
     //entry.close();
   }
   //dir.close();
