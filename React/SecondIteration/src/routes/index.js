@@ -10,8 +10,8 @@ import NotFoundView from 'views/NotFoundView/NotFoundView';
 
 export default (
   <Route path='/' component={CoreLayout}>
-    <IndexRoute component={AboutView} />
-    <Route path='/paint' component={ImageView} />
+    <IndexRoute component={ImageView} />
+    <Route path='/about' component={AboutView} />
     <Route path='/settings' component={SettingsView} />
     <Route path='/404' component={NotFoundView} />
     <Redirect from='*' to='/404' />

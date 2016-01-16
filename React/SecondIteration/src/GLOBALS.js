@@ -16,8 +16,8 @@ export const fontSize = 15;
 export const sidebarWidth = 250;
 
 export const links = [
-  {to: '/', text: 'about'},
-  {to: '/paint', text: 'paint'},
+  {to: '/', text: 'paint'},
+  {to: '/about', text: 'about'},
   {to: '/settings', text: 'settings'},
 ];
 
