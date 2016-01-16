@@ -33,6 +33,20 @@ export class ImageView extends Component {
     layout: layoutType,
   };
 
+  constructor(props) {
+    super(props);
+
+    this.onMouseOver = this.onMouseOver.bind(this);
+  }
+
+  onMouseOver(e, id) {
+    const {pixelClick} = this.props;
+    if (e.buttons === 1) {
+      console.log({id});
+      pixelClick(id);
+    }
+  }
+
   render() {
     const {
       pixelClick, // actions
@@ -98,6 +112,7 @@ export class ImageView extends Component {
                           className={classes['pixel']}
                           key={`r-${r + 1}-c-${c + 1}`}
                           onClick={() => pixelClick(pixelId)}
+                          onMouseOver={e => this.onMouseOver(e, pixelId)}
                           style={{
                             width: pxSize,
                             height: pxSize,
