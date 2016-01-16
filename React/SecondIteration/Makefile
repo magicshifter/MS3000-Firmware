@@ -79,6 +79,9 @@ dev-no-nw:
 dev-no-debug:
 	@${BIN_DIR}nodemon -r dotenv/config bin/server --hot --no_debug
 
+flow:
+	@${BIN_DIR}flow ./src/utils/colors.js
+
 test:
 	@echo 'start tests'
 	@node -r dotenv/config ./node_modules/karma/bin/karma start bin/karma.js
