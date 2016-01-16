@@ -116,8 +116,8 @@ void StartWebServer(void)
 
 
   msSystem.msESPServer.on ( "/format", []() {
-    String message = "formatin DISABLED cos of FS change, TODO: implement!!!11";
-    //FS.format();
+    //String message = "formatin DISABLED cos of FS change, TODO: implement!!!11";
+    SPIFFS.format();
     msSystem.msESPServer.send ( 200, "text/plain", "formated" );
   } );
 

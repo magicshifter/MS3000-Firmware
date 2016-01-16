@@ -8,5 +8,5 @@ echo "using nr $1 and serialport $SERIAL_PORT"
 
 awk  'BEGIN{ printf "MS3000_Nr%03d\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0", '"$1"'}' > $CONFIG_FILE
 
-./MS3000Tool.py up $CONFIG_FILE settings/ap.bin $SERIAL_PORT 
+./MS3000Tool.py init $SERIAL_PORT 
 

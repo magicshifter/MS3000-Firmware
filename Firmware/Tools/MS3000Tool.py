@@ -7,6 +7,7 @@ import re
 import os
 import sys
 import array
+import time
 
 device = None #"/dev/ttyACM0" Device needs to be found first.
 baudrate = 115200 #Baudrate goes here
@@ -638,10 +639,32 @@ def main():
 
 
 def initMS3000():
+	start = time.time()
+	delay = 1;
+
 	ser = openPort(5)
-	issueUploadMS3000(ser, "test1.txt", "test1_txt")
-	issueUploadMS3000(ser, "test2.txt", "test2_txtxtx")
-	sleep(0.5);
+	issueUploadMS3000(ser, "settings_ap.bin", "settings/ap.bin")
+	sleep(delay)
+	issueUploadMS3000(ser, "../../Assets/MS3000_defaultconfig/index.html", "index.html")
+	sleep(delay)
+	issueUploadMS3000(ser, "../../Assets/MS3000_defaultconfig/index.js.gz", "index.js.gz")
+	sleep(delay)
+	issueUploadMS3000(ser, "../../Assets/MS3000_defaultconfig/magicshifter.appcache", "magicshifter.appcache")
+	sleep(delay)
+	issueUploadMS3000(ser, "../../Assets/MS3000_defaultconfig/MagicShifter.html", "MagicShifter.html")
+	sleep(delay)
+	issueUploadMS3000(ser, "../../Assets/MS3000_defaultconfig/admin.html", "admin.html")
+
+	imgs = ["heart.magicBitmap", "smilie.magicBitmap", "star.magicBitmap", "oneup.magicBitmap", "mario.magicBitmap", "mario.magicBitmap", "blueGhost.magicBitmap", "redGhost.magicBitmap", "BubbleBobble.magicBitmap", "invader.magicBitmap", "giraffe.magicBitmap", "cursor.magicBitmap", "nyancat.magicBitmap"]
+	for img in imgs:
+		sleep(delay)
+		issueUploadMS3000(ser, "../../Assets/magicBitmaps/" + img, img)
+
+	end = time.time()
+	print "time elapsed: ", end - start
+
+
+
 
 
 def issueUploadMS3000(ser, sourceFilename, targetFilename):	
@@ -652,7 +675,7 @@ def issueUploadMS3000(ser, sourceFilename, targetFilename):
 	try:    
 		ser.write("MAGIC_UPLOAD")
 
-		print "writeUpload"
+		print "uploading ", sourceFilename, " -> ", targetFilename 
 
 		dataLen = len(data)
 
@@ -682,7 +705,7 @@ def issueUploadMS3000(ser, sourceFilename, targetFilename):
 		#sleep(0.5)			
 		dataString = array.array('B', data).tostring()
 		#print Str2Hex(dataString)	
-		SendInChunks(ser, dataString, 32, 0.003) #0.003	
+		SendInChunks(ser, dataString, 32, 0.004) #0.003	
 
 		response = ser.readline()
 		return response
