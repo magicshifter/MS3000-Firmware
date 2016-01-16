@@ -238,11 +238,11 @@ void loop()
 
   msSystem.loop();
 
-msSystem.log("msBtn:"); msSystem.logln(String(msSystem.msBtnAPressTime));
-msSystem.log("msBtn:"); msSystem.logln(String(msSystem.msBtnPwrPressTime));
-msSystem.log("msBtn:"); msSystem.logln(String(msSystem.msBtnBPressTime));
+// // msSystem.log("msBtnA:"); msSystem.logln(String(msSystem.msBtnAPressTime));
+// // msSystem.log("msBtnPwr:"); msSystem.logln(String(msSystem.msBtnPwrPressTime));
+// // msSystem.log("msBtnB:"); msSystem.logln(String(msSystem.msBtnBPressTime));
 
-return;
+// return;
 
   msWebServer.HandleWebServer();
 

@@ -57,6 +57,8 @@
 
 #define USE_MDNS
 
+#define DEFAULT_SHAKE_IMAGE "heart.magicBitmap"
+
 // which MMA is in use
 #if(HW_ID==HW_ID_MS3000_FSOX8700CQ)
 #warning "HW ID :  HW_ID_MS3000_FSOX8700CQ "

@@ -9,8 +9,8 @@ public:
   long ggAccelTime;
   long ggLFrameTime;
   long ggCurrentMode = 0;  // POV mode
-  long ggAccelCounts[3];  // Stores the 12-bit signed value
-  long ggBtn1State = 0;
+  int ggAccelCounts[3];  // Stores the 12-bit signed value
+  int ggBtn1State = 0;
   long ggCurrentMicros = 0;
   long ggLastMicros = 0;
   long ggSpeedMicros = 800;
