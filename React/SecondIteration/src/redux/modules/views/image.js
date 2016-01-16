@@ -7,7 +7,7 @@ import {createImmutablePixels} from 'utils/pixels';
 
 import {rows, visibleColumns, totalColumns} from 'GLOBALS';
 
-const color = Immutable.Map({r: 0, b: 0, g: 0, a: 155});
+const color = Immutable.Map({r: 0, b: 0, g: 0, a: 255});
 
 const pixels = createImmutablePixels(totalColumns, visibleColumns, rows);
 
@@ -40,7 +40,7 @@ export const setPixels =
 export const setColor =
   createAction(
     SET_COLOR,
-    (value = {r: 0, b: 0, g: 0, a: 155}) => value
+    (value = {r: 0, b: 0, g: 0, a: 255}) => value
   );
 
 export const setColorValue =
@@ -74,15 +74,7 @@ export default handleActions({
 
   [SET_PIXELS]:
     (state, {payload: {pixels, height, width}}) => {
-      // TODO
-      // need to calculate and pass all pixels to this function,
-      // image upload currently might not do so
-      // const newState = Immutable.fromJS(assign({}, state, {
-      //   pixels,
-      //   visibleColumns: width,
-      // }));
       return isObject(pixels)
-      // ? newState
       ? state.set('pixels', Immutable.List.of(...pixels.map(p => Immutable.fromJS(p)))).set('visibleColumns', width)
       : state;
     },

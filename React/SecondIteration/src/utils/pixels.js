@@ -24,7 +24,7 @@ export const createPixels =
         const visible = column <= visibleColumns;
         pixelArray.push(
           createPixel(
-            {r: 0, b: 0, g: 0, a: 155},
+            {r: 0, b: 0, g: 0, a: 255},
             totalColumns,
             column + 1,
             row + 1,
