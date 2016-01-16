@@ -4,7 +4,7 @@ import {colorsToObj} from 'utils/colors';
 
 export const materialColors = colorsToObj(mColors);
 
-export const host = 'magicshifter.local';
+export const host = '';
 export const protocol = 'http';
 
 export const rows = 16;

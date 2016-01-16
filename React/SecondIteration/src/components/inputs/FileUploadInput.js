@@ -100,7 +100,13 @@ export default class FileUploadInput extends Component {
   onClick() {
     const blob = this.getBlob();
     const fileName = this.getFileName();
-    const url = 'http://magicshifter.local';
+
+    var url = this.props.url;
+    // alert(url);
+    if (url === 'http://') {
+      url = '';
+    }
+    // alert(url);
 
     const formData = new FormData();
     formData.append('uploadFile', blob, fileName);
