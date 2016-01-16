@@ -76,8 +76,8 @@ public:
     if (String(msGlobals.ggUploadFileName).endsWith(".magicBitmap")) {
       loadShakeFile(msGlobals.ggUploadFileName);
     }
-    else {
-      loadShakeFile("blueghost_png.magicBitmap"); // !J! todo: move to default ..
+     else {
+      loadShakeFile("heart.magicBitmap"); // !J! todo: move to default ..
     }
 
     dirCursor = 0;

@@ -56,8 +56,10 @@ void handleNotFound() {
   msSystem.log("fName to retrieve: ");
   msSystem.logln(String(fName + 1));
 
+  String gzFName = String(fName + 1) + ".gz";
+
   // if we don't have a route for the request, but do have a file, serve the file
-  if (SPIFFS.exists(fName + 1)) {
+  if (SPIFFS.exists(fName + 1) || SPIFFS.exists(gzFName.c_str())) {
     streamFile(String(fName + 1));
   }
 else
