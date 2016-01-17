@@ -9,6 +9,8 @@ import RGBAInput from 'components/inputs/RGBAInput';
 import NumberInput from 'components/inputs/NumberInput';
 import ImageInput from 'components/inputs/ImageInput';
 import FileUploadInput from 'components/inputs/FileUploadInput';
+import ColorList from 'components/inputs/ColorList';
+
 import SidebarText from './Sidebar/Text';
 
 import classes from './ImageSidebar.scss';
@@ -123,6 +125,9 @@ export class ImageSidebar extends Component {
                 <RGBAInput
                   color={color}
                   setColorValue={setColorValue}
+                />
+                <ColorList
+                  editorColor={color}
                 />
               </li>
 

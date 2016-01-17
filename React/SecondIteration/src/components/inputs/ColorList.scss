@@ -1,0 +1,23 @@
+.container {
+  margin: .2em 0 0;
+
+  ul li {
+    margin: 0 .2em 0 0;
+  }
+}
+
+.add {
+  margin: 0 0 .3em;
+}
+
+.indicator {
+  height: 2em;
+  width: 2em;
+  float: left;
+  border: 1px solid;
+}
+
+.remove {
+  float: left;
+  font-size: .5em;
+}
