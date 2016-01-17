@@ -12,7 +12,7 @@
 // 16298245 // 'p2' proto
 //  1210204 //"in-production" Chip
 
-#define AP_NAME_OVERRIDE "MS3000.prototype"
+#define AP_NAME_OVERRIDE "MS3000.w23"
 
 // HW_ID is passed one of these constants from Makefile -DHW_ID=.. 
 
@@ -56,6 +56,8 @@
 #define POV_TIME_MICROSECONDS 1
 
 #define USE_MDNS
+
+#define DEFAULT_SHAKE_IMAGE "heart.magicBitmap"
 
 // which MMA is in use
 #if(HW_ID==HW_ID_MS3000_FSOX8700CQ)

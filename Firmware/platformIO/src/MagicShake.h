@@ -76,8 +76,8 @@ public:
     if (String(msGlobals.ggUploadFileName).endsWith(".magicBitmap")) {
       loadShakeFile(msGlobals.ggUploadFileName);
     }
-    else {
-      loadShakeFile("blueghost_png.magicBitmap"); // !J! todo: move to default ..
+     else {
+      loadShakeFile(DEFAULT_SHAKE_IMAGE); // !J! todo: move to default ..
     }
 
     dirCursor = 0;
@@ -112,7 +112,9 @@ public:
 
 // msSystem.log("accel:"); msSystem.logln(String(msGlobals.ggAccel[1]));
 
-    if (msSystem.msBtnPwrLongHit == true) {
+    if (msSystem.msBtnPwrHit == true) {
+      msSystem.msBtnPwrHit = false;
+      dirCursor++;
       // msSystem.log("cursor:"); msSystem.logln(String(dirCursor));
 
       String toLoad = getFile(dirCursor);
@@ -131,7 +133,6 @@ public:
         // msSystem.log("Would DISP:"); msSystem.logln(toLoad);
         loadShakeFile(toLoad.c_str());
       }
-      dirCursor++;
     }
 
     if (shakeSync.update(msGlobals.ggAccel[1]))

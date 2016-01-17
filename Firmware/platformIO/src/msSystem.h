@@ -48,14 +48,14 @@ public:
 
 // TODO: private state
 // state for button timing
-  int msBtnAPressTime = 0;
-  int msBtnPwrPressTime = 0;
-  int msBtnBPressTime = 0;
+  long msBtnAPressTime = 0;
+  long msBtnPwrPressTime = 0;
+  long msBtnBPressTime = 0;
 
 // state for double click timing
-  int msBtnATTL = 0;
-  int msBtnPwrTTL = 0;
-  int msBtnBTTL = 0;
+  long msBtnATTL = 0;
+  long msBtnPwrTTL = 0;
+  long msBtnBTTL = 0;
 
   bool msLongClickOK = true;
 
@@ -321,29 +321,34 @@ public:
   void loop()
   {
 
-    // logln("(LOOP)");
+    long deltaMicros = (msGlobals.ggCurrentMicros - msGlobals.ggLastMicros);
     // handle Buttons:
     pinMode(PIN_BUTTON_A, INPUT);
     pinMode(PIN_BUTTON_B, INPUT);
 
     // reset public button state
-    msBtnAHit = msBtnALongHit = false;
+    //msBtnAHit = msBtnALongHit = false;
     if (!digitalRead(PIN_BUTTON_A))
     {
 
       if (msBtnAPressTime)
-        msBtnAPressTime += msGlobals.ggLastMicros;
+        msBtnAPressTime += deltaMicros;
       else
         msBtnAPressTime = 1;
     }
     else
     {
-      if (msLongClickOK && msBtnAPressTime >= MIN_TIME_LONG_CLICK)
+
+    // if (msLongClickOK && msBtnAPressTime >= MIN_TIME_LONG_CLICK)
+      // {
+      //   msBtnALongHit = true;
+      // }
+      // else 
+
+
+    if (msBtnAPressTime >= MIN_TIME_CLICK)
       {
-        msBtnALongHit = true;
-      }
-      else if (msBtnAPressTime >= MIN_TIME_CLICK)
-      {
+        logln("We gots clicks A.");
         msBtnAHit = true;
       }
 
@@ -351,24 +356,29 @@ public:
     }
 
     // reset public btton state
-    msBtnBHit = msBtnBLongHit = false;
+    //msBtnBHit = msBtnBLongHit = false;
     if (!digitalRead(PIN_BUTTON_B))
     {
 
       if (msBtnBPressTime)
-        msBtnBPressTime += msGlobals.ggLastMicros;
+        msBtnBPressTime += deltaMicros;
       else
         msBtnBPressTime = 1;
     }
     else
     {
-      if (msLongClickOK && msBtnBPressTime >= MIN_TIME_LONG_CLICK)
-      {
-        msBtnBLongHit = true;
+    // if (msLongClickOK && msBtnBPressTime >= MIN_TIME_LONG_CLICK)
+    //   {
 
-      }
-      else if (msBtnBPressTime >= MIN_TIME_CLICK)
+    //     msBtnBLongHit = true;
+
+    //   }
+    //   else
+
+     if (msBtnBPressTime >= MIN_TIME_CLICK)
       {
+        logln("We gots clicks B.");
+        
         msBtnBHit = true;
       }
 
@@ -377,27 +387,29 @@ public:
 
 
     // reset public btton state
-    msBtnPwrHit = msBtnPwrLongHit = false;
+    //msBtnPwrHit = false;
+    //msBtnPwrLongHit = false;
 
     //if (msFrame++ % 10 == 0)
     if (powerButtonPressed())
     {
       if (msBtnPwrPressTime)
-        msBtnPwrPressTime += msGlobals.ggLastMicros;
+        msBtnPwrPressTime += deltaMicros;
       else
         msBtnPwrPressTime = 1;
     }
     else
     {
-      if (msBtnPwrPressTime >= MIN_TIME_LONG_CLICK)
+      // if (msBtnPwrPressTime >= MIN_TIME_LONG_CLICK)
+      // {
+      //   msBtnPwrLongHit = true;
+      //   // logln("Btn Pwr Looong Hit");
+      // }
+      // else 
+      if (msBtnPwrPressTime >= MIN_TIME_CLICK)
       {
-        msBtnPwrLongHit = true;
-        // msSystem.logln("Btn Pwr Looong Hit");
-      }
-      else if (msBtnPwrPressTime >= MIN_TIME_CLICK)
-      {
+        logln("We gots clicks Pwr.");
         msBtnPwrHit = true;
-        // msSystem.logln("Btn Pwr Hit");
       }
 
       msBtnPwrPressTime = 0;
@@ -409,31 +421,33 @@ public:
       powerDown();
     }
 
-    if (msBtnBHit)
-    {
-      msGlobals.ggFactoryIntensity+=2;
-      if (msGlobals.ggFactoryIntensity > 31)
-      {
-        msGlobals.ggFactoryIntensity = 31;
-      }
+    // if (msBtnBHit)
+    // {
+    //   msGlobals.ggFactoryIntensity+=2;
+    //   if (msGlobals.ggFactoryIntensity > 31)
+    //   {
+    //     msGlobals.ggFactoryIntensity = 31;
+    //   }
 
-      msGlobals.ggCurrentMode = (msGlobals.ggCurrentMode+1)%NUM_MS_MODES;
-    }
+    //   msGlobals.ggCurrentMode = (msGlobals.ggCurrentMode+1)%NUM_MS_MODES;
+
+    //   msBtnBHit = false:
+    // }
 
 
-    if (msBtnBLongHit)
-    {
-      msGlobals.ggFactoryIntensity-=6;
-      if (msGlobals.ggFactoryIntensity < 1)
-      {
-        msGlobals.ggFactoryIntensity = 1;
-      }
+    // if (msBtnBLongHit)
+    // {
+    //   msGlobals.ggFactoryIntensity-=6;
+    //   if (msGlobals.ggFactoryIntensity < 1)
+    //   {
+    //     msGlobals.ggFactoryIntensity = 1;
+    //   }
 
-      msGlobals.ggCurrentMode = (msGlobals.ggCurrentMode+1)%NUM_MS_MODES;
+    //   msGlobals.ggCurrentMode = (msGlobals.ggCurrentMode+1)%NUM_MS_MODES;
       
-      log("Changed Mode:"); logln(String(msGlobals.ggCurrentMode));
+    //   log("Changed Mode:"); logln(String(msGlobals.ggCurrentMode));
 
-    }
+    // }
 
     USBPoll();
   }
