@@ -1,5 +1,4 @@
 import Immutable from 'immutable';
-import assign from 'object-assign';
 
 import {isFunction} from 'utils/types';
 
@@ -39,12 +38,10 @@ export const createPixels =
 
 export const makePixelImmutable =
   pixel =>
-    Immutable.Map(assign(
-      pixel,
-      {
-        color: Immutable.Map(pixel.color),
-      }
-    ));
+    Immutable.Map({
+      ...pixel,
+      ...{color: Immutable.Map(pixel.color)},
+    });
 
 export const makePixelObject =
   immutablePixel =>

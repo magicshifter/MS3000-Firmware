@@ -1,6 +1,5 @@
 import {createAction, handleActions} from 'redux-actions';
 import Immutable from 'immutable';
-import assign from 'object-assign';
 
 import {isColor, isNumber, isObject} from 'utils/types';
 import {createImmutablePixels} from 'utils/pixels';
@@ -80,10 +79,12 @@ export default handleActions({
     },
 
   [SET_COLOR]:
-    (state, {payload: p}) =>
-      isColor(p.color)
-      ? state.set('color', assign({}, state.get('color'), p.color))
-      : state,
+    (state, {payload: p}) => {
+      console.log(p.color);
+      return isColor(p.color)
+        ? state.set('color', Immutable.Map(p.color))
+        : state;
+    },
 
   [SET_COLOR_VALUE]:
     (state, {payload: p}) =>
