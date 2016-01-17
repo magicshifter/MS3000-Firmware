@@ -326,8 +326,6 @@ public:
     pinMode(PIN_BUTTON_A, INPUT);
     pinMode(PIN_BUTTON_B, INPUT);
 
-    // reset public button state
-    //msBtnAHit = msBtnALongHit = false;
     if (!digitalRead(PIN_BUTTON_A))
     {
 
@@ -339,24 +337,21 @@ public:
     else
     {
 
-    // if (msLongClickOK && msBtnAPressTime >= MIN_TIME_LONG_CLICK)
-      // {
-      //   msBtnALongHit = true;
-      // }
-      // else 
-
-
-    if (msBtnAPressTime >= MIN_TIME_CLICK)
+      if (msLongClickOK && msBtnAPressTime >= MIN_TIME_LONG_CLICK)
       {
-        logln("We gots clicks A.");
+        // logln("We gots LOON clicks A.");
+        msBtnALongHit = true;
+      }
+      else 
+      if (msBtnAPressTime >= MIN_TIME_CLICK)
+      {
+        // logln("We gots clicks A.");
         msBtnAHit = true;
       }
 
       msBtnAPressTime = 0;
     }
 
-    // reset public btton state
-    //msBtnBHit = msBtnBLongHit = false;
     if (!digitalRead(PIN_BUTTON_B))
     {
 
@@ -367,17 +362,16 @@ public:
     }
     else
     {
-    // if (msLongClickOK && msBtnBPressTime >= MIN_TIME_LONG_CLICK)
-    //   {
-
-    //     msBtnBLongHit = true;
-
-    //   }
-    //   else
+    if (msLongClickOK && msBtnBPressTime >= MIN_TIME_LONG_CLICK)
+      {
+        // logln("We gots LOON clicks AAA.");
+        msBtnBLongHit = true;
+      }
+      else
 
      if (msBtnBPressTime >= MIN_TIME_CLICK)
       {
-        logln("We gots clicks B.");
+        // logln("We gots clicks B.");
         
         msBtnBHit = true;
       }
@@ -386,11 +380,6 @@ public:
     }
 
 
-    // reset public btton state
-    //msBtnPwrHit = false;
-    //msBtnPwrLongHit = false;
-
-    //if (msFrame++ % 10 == 0)
     if (powerButtonPressed())
     {
       if (msBtnPwrPressTime)
@@ -400,15 +389,15 @@ public:
     }
     else
     {
-      // if (msBtnPwrPressTime >= MIN_TIME_LONG_CLICK)
-      // {
-      //   msBtnPwrLongHit = true;
-      //   // logln("Btn Pwr Looong Hit");
-      // }
-      // else 
+      if (msBtnPwrPressTime >= MIN_TIME_LONG_CLICK)
+      {
+        msBtnPwrLongHit = true;
+        // logln("Btn Pwr Looong Hit");
+      }
+      else 
       if (msBtnPwrPressTime >= MIN_TIME_CLICK)
       {
-        logln("We gots clicks Pwr.");
+        // logln("We gots clicks Pwr.");
         msBtnPwrHit = true;
       }
 
@@ -416,7 +405,7 @@ public:
     }
 
     // internal button usage
-    if (msBtnALongHit)
+    if (msBtnPwrLongHit)
     {
       powerDown();
     }
@@ -499,6 +488,19 @@ public:
       return WiFi.localIP();
     }
   }
+
+  void hexDump(int len, byte *buf, const char*label) {
+    log(label); 
+    log(String(len)); 
+    log("/");
+
+    for (int x=0;x<len;x++) {
+      if (x % 4 == 0) logln("");
+      log(":"); Serial.print(buf[x], HEX);; 
+    }
+    logln("<<EOF");
+  }
+
 
 };
 
