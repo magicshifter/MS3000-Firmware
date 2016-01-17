@@ -5,9 +5,9 @@ import assign from 'object-assign';
 import {isColor, isNumber, isObject} from 'utils/types';
 import {createImmutablePixels} from 'utils/pixels';
 
-import {rows, visibleColumns, totalColumns} from 'GLOBALS';
+import {rows, visibleColumns, totalColumns, defaultEditorColor} from 'GLOBALS';
 
-const color = Immutable.Map({r: 255, b: 255, g: 255, a: 255});
+const color = Immutable.Map(defaultEditorColor);
 
 const pixels = createImmutablePixels(totalColumns, visibleColumns, rows);
 
