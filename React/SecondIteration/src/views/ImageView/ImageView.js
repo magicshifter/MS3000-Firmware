@@ -42,17 +42,34 @@ export class ImageView extends Component {
   onMouseOver(e, id) {
     const {pixelClick} = this.props;
     if (e.buttons === 1) {
-      console.log({id});
       pixelClick(id);
     }
   }
 
-  render() {
-    const {
-      pixelClick, // actions
-      layout, // layout state object
-      pixels, visibleColumns, totalColumns, rows, // image state
-    } = this.props;
+  renderPixel(column, row, pxSize) {
+    const {totalColumns, visibleColumns, pixels, pixelClick} = this.props;
+
+    const pixelId = getPixelId(totalColumns, column, row);
+    const pixel = pixels[pixelId];
+
+    return (
+      column < visibleColumns &&
+      <td
+        className={classes['pixel']}
+        key={`r-${row + 1}-c-${column + 1}`}
+        onClick={() => pixelClick(pixelId)}
+        onMouseOver={e => this.onMouseOver(e, pixelId)}
+        style={{
+          width: pxSize,
+          height: pxSize,
+          backgroundColor: rgba_toString(pixel.color),
+        }}
+      ></td>
+    );
+  }
+
+  renderPixels() {
+    const {layout, rows, totalColumns, visibleColumns} = this.props;
 
     const {sidebar, header} = layout;
 
@@ -76,10 +93,30 @@ export class ImageView extends Component {
     }
 
     const style = {
-      table: {},
       tr: {
         height: pxSize,
       },
+    };
+
+    return rowArray.map(
+      row => (
+        <tr
+          key={`r-${row + 1}`}
+          style={style.tr}
+        >
+          {columnArray.map(column => this.renderPixel(column, row, pxSize))}
+        </tr>
+      )
+    );
+  }
+
+  render() {
+    const {
+      layout, // layout state object
+    } = this.props;
+
+    const style = {
+      table: {},
     };
 
     if (layout.width < 500) {
@@ -96,34 +133,7 @@ export class ImageView extends Component {
           style={style.table}
         >
           <tbody>
-            {rowArray.map(
-              r =>
-                <tr
-                  key={`r-${r + 1}`}
-                  style={style.tr}
-                >
-                  {columnArray.map(
-                    c => {
-                      const pixelId = getPixelId(totalColumns, c, r);
-                      const pixel = pixels[pixelId];
-                      return (
-                        c < visibleColumns &&
-                        <td
-                          className={classes['pixel']}
-                          key={`r-${r + 1}-c-${c + 1}`}
-                          onClick={() => pixelClick(pixelId)}
-                          onMouseOver={e => this.onMouseOver(e, pixelId)}
-                          style={{
-                            width: pxSize,
-                            height: pxSize,
-                            backgroundColor: rgba_toString(pixel.color),
-                          }}
-                        ></td>
-                      );
-                    }
-                  )}
-                </tr>
-            )}
+            {this.renderPixels()}
           </tbody>
         </table>
 
