@@ -23,6 +23,12 @@ export const links = [
 
 export const currentColorName = 'cyan';
 
+export const colorList = [
+  {r: 255, g: 255, b: 0, a: 255},
+  {r: 0, g: 255, b: 255, a: 255},
+  {r: 127, g: 255, b: 127, a: 255},
+];
+
 export const menuTextColor = materialColors['white'];
 
 export const currentColor = materialColors[currentColorName];
