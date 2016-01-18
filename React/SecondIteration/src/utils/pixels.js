@@ -21,6 +21,8 @@ export const createPixels =
     for (let row = 0; row < rows; row++) {
       for (let column = 0; column < totalColumns; column++) {
         const visible = column <= visibleColumns;
+        const id = getPixelId(totalColumns, column, row);
+
         pixelArray.push(
           createPixel(
             {r: 0, b: 0, g: 0, a: 255},
@@ -28,6 +30,7 @@ export const createPixels =
             column + 1,
             row + 1,
             visible,
+            id,
           )
         );
       }
