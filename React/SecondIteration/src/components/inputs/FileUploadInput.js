@@ -131,10 +131,11 @@ export default class FileUploadInput extends Component {
     const {label, text = 'Upload File'} = this.props;
 
     return (
-      <div className={classes['input']}>
-        <label>Filename:</label>
-        <input type='text' defaultValue='userImage' ref='fileName' />
-
+      <div className={classes['container']}>
+        <div>
+            <label>Filename:</label>
+            <input type='text' defaultValue='userImage' ref='fileName' />
+        </div>
         {label && <label>{label}</label>}
 
         <input
