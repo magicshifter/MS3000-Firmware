@@ -23,6 +23,8 @@ export const links = [
 
 export const currentColorName = 'cyan';
 
+export const defaultLedColor = {r: 0, b: 0, g: 0, a: 255};
+
 export const defaultEditorColor = {r: 255, b: 255, g: 255, a: 255};
 
 export const colorList = [
