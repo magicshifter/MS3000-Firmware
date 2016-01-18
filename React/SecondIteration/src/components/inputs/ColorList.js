@@ -1,9 +1,12 @@
 import React, {PropTypes, Component} from 'react';
 import {connect} from 'react-redux';
 import rgba from 'rgba-convert';
+import Immutable from 'immutable';
 
 import {actions as colorListActions} from 'redux/modules/colorList';
 import {actions as imageActions} from 'redux/modules/views/image';
+
+import FloatingButton from './FloatingButton';
 
 import {colorType} from 'utils/propTypes';
 
@@ -42,27 +45,32 @@ export class ColorList extends Component {
             onClick={() => setColor({color: colors[key]})}
           />
 
-          <input
-            type='button'
-            value='x'
+          <FloatingButton
             title='remove color'
             className={classes['remove']}
             onClick={() => removeColor(key)}
-          />
+          >
+            x
+          </FloatingButton>
         </li>
       )
     );
   }
 
   render() {
-    const {addColor, editorColor} = this.props;
+    const {addColor, editorColor, colors} = this.props;
+
     return (
       <div className={classes['container']}>
         <div className={classes['add']}>
           <input
             type='button'
             value='save current color'
-            onClick={() => addColor(editorColor)}
+            onClick={
+              () =>
+                !colors.some(c => Immutable.Map(c).equals(Immutable.Map(editorColor))) &&
+                addColor([...colors, editorColor])
+            }
           />
         </div>
 
