@@ -1,19 +1,14 @@
+/* @flow */
+
 import Immutable from 'immutable';
+
+import {defaultLedColor as color} from 'GLOBALS';
 
 import {isFunction} from 'utils/types';
 
 export const getPixelId =
   (columns, column, row) =>
     (row * columns) + column;
-
-export const createPixel =
-  (color, columns, column, row, visible = false) => ({
-    id: getPixelId(columns, column, row),
-    color: color,
-    row,
-    column,
-    visible,
-  });
 
 export const createPixels =
   (totalColumns, visibleColumns, rows) => {
@@ -23,16 +18,14 @@ export const createPixels =
         const visible = column <= visibleColumns;
         const id = getPixelId(totalColumns, column, row);
 
-        pixelArray.push(
-          createPixel(
-            {r: 0, b: 0, g: 0, a: 255},
-            totalColumns,
-            column + 1,
-            row + 1,
-            visible,
-            id,
-          )
-        );
+        pixelArray.push({
+          color,
+          totalColumns,
+          column: column + 1,
+          row: row + 1,
+          visible,
+          id,
+        });
       }
     }
 
