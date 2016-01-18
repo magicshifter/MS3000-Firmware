@@ -66,10 +66,12 @@ export const actions = {
 // ------------------------------------
 export default handleActions({
   [PIXEL_CLICK]:
-    (state, {payload: id}) =>
+    (state, {payload: pixel}) =>
       state.setIn(
-        ['pixels', id, 'color'],
-        state.get('color')),
+        ['pixels', pixel.id, 'color'],
+        pixel.color !== color
+          ? color
+          : state.get('color')),
 
   [SET_PIXELS]:
     (state, {payload: {pixels, height, width}}) => {
@@ -80,7 +82,6 @@ export default handleActions({
 
   [SET_COLOR]:
     (state, {payload: p}) => {
-      console.log(p.color);
       return isColor(p.color)
         ? state.set('color', Immutable.Map(p.color))
         : state;

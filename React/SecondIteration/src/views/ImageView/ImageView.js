@@ -8,8 +8,6 @@ import {rgba_toString} from 'utils/colors';
 import {getPixelId, makePixelsObject} from 'utils/pixels';
 import {multimax} from 'utils/math';
 
-import ImageSidebar from './ImageSidebar';
-
 import classes from './ImageView.scss';
 
 const mapStateToProps = (state) => {
@@ -30,7 +28,7 @@ export class ImageView extends Component {
     rows: PropTypes.number.isRequired,
     visibleColumns: PropTypes.number.isRequired,
     totalColumns: PropTypes.number.isRequired,
-    layout: layoutType,
+    layout: layoutType.isRequired,
   };
 
   constructor(props) {
@@ -39,10 +37,10 @@ export class ImageView extends Component {
     this.onMouseOver = this.onMouseOver.bind(this);
   }
 
-  onMouseOver(e, id) {
+  onMouseOver(e, pixel) {
     const {pixelClick} = this.props;
     if (e.buttons === 1) {
-      pixelClick(id);
+      pixelClick(pixel);
     }
   }
 
@@ -57,8 +55,8 @@ export class ImageView extends Component {
       <td
         className={classes['pixel']}
         key={`r-${row + 1}-c-${column + 1}`}
-        onClick={() => pixelClick(pixelId)}
-        onMouseOver={e => this.onMouseOver(e, pixelId)}
+        onClick={() => pixelClick(pixel)}
+        onMouseOver={e => this.onMouseOver(e, pixel)}
         style={{
           width: pxSize,
           height: pxSize,
@@ -77,10 +75,7 @@ export class ImageView extends Component {
     const maxHeight = layout.height - header.height;
 
     const pixelListSize = multimax(layout.width, maxWidth, maxHeight);
-    var pxSize = Math.floor(pixelListSize / (Math.max(visibleColumns, rows) + 1));
-    if (pxSize < 1) {
-      pxSize = 1; // paranoia!!!
-    }
+    var pxSize = Math.max(Math.floor(pixelListSize / (Math.max(visibleColumns, rows) + 1)), 1);
 
     let rowArray = [];
     for (let i = 0; i < rows; i++) {
@@ -136,8 +131,6 @@ export class ImageView extends Component {
             {this.renderPixels()}
           </tbody>
         </table>
-
-        <ImageSidebar />
       </div>
     );
   }
