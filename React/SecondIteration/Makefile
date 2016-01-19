@@ -80,7 +80,7 @@ dev-no-debug:
 	@${BIN_DIR}nodemon -r dotenv/config bin/server --hot --no_debug
 
 flow:
-	@${BIN_DIR}flow ./src/utils/colors.js
+	@${BIN_DIR}flow ./src/
 
 test:
 	@echo 'start tests'
