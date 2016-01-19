@@ -8,7 +8,7 @@ import ImageView from 'views/ImageView/ImageView';
 import ImageSidebarControls from 'views/ImageView/Sidebar/Controls';
 import ImageSidebarFiles from 'views/ImageView/Sidebar/Files';
 import ImageSidebarSettings from 'views/ImageView/Sidebar/Settings';
-import sidebarMenu from 'views/ImageView/Sidebar/Menu';
+import sidebarMenu from 'views/ImageView/Sidebar/sidebarMenu';
 import SettingsView from 'views/SettingsView/SettingsView';
 import NotFoundView from 'views/NotFoundView/NotFoundView';
 
