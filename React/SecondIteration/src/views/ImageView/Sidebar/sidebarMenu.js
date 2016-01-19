@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 
 import {imageViewType, settingsViewType, layoutType} from 'utils/propTypes';
 
-import classes from './Menu.scss';
+import classes from './sidebarMenu.scss';
 
 const mapStateToProps = (state) => {
   const {imageView, settingsView, layout} = state;
