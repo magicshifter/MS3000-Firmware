@@ -22,7 +22,6 @@ public:
 	long msBtnPwrTTL = 0;
 	long msBtnBTTL = 0;
 
-
 	bool msLongClickOK = true;
 
 // todo public properties? Logic for consuming buttons?
@@ -41,13 +40,16 @@ public:
 
 	long deltaMicros = 0; // !J! todo: init? (msGlobals.ggCurrentMicros - msGlobals.ggLastMicros);
 
-
-	void init() {} ;
-	void state() {} ;
-
 	bool powerButtonPressed(void)
 	{
 		return analogRead(A0) > 950;
+	}
+
+	void setup()
+	{
+	    // init pin modes
+	    pinMode(PIN_BUTTON_A, INPUT);
+	    pinMode(PIN_BUTTON_B, INPUT);
 	}
 
 	void loop() 

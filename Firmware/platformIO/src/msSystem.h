@@ -38,23 +38,20 @@ public:
   MagicShifterLEDs msLEDs;
   MagicShifterEEPROMString  msEEPROMs;
   MagicShifterButtons msButtons;
-
-  int msFrame = 0;
-
-  bool msAccelOK = false;
-
   MDNSResponder msDNS;
   ESP8266WebServer msESPServer;
+  WiFiUDP msUDP;
 
-  WiFiUDP udp;
+  int msFrame = 0;
+  bool msAccelOK = false;
 
 public:
   void log(String msg) { 
   // todo:switch log from OFF, to BANNED (MIDI), to UDP .. etc.
     Serial.print(msg); 
-    udp.beginPacket("192.168.1.112", 514); // wks port for syslog
-    udp.print(msg);
-    udp.endPacket();
+    msUDP.beginPacket("192.168.1.112", 514); // wks port for syslog
+    msUDP.print(msg);
+    msUDP.endPacket();
   };
 
   void logln(String msg) { Serial.println(msg); }; 
@@ -251,19 +248,16 @@ public:
       log("noSPIFFS:");
     // !J! todo: infinite_loop()? 
     //TEST_SPIFFS_bug();
-    logSysInfo();
 
     // all engines turn on
     pinMode(PIN_PWR_MGT, INPUT);
     pinMode(PIN_LED_ENABLE, INPUT);
 
-    // init pin modes
-    pinMode(PIN_BUTTON_A, INPUT);
-    pinMode(PIN_BUTTON_B, INPUT);
-
     // reset power controller to stay on
     powerStabilize();
     // !J! todo: power-management module 
+
+    msButtons.setup();
 
 #ifdef CONFIG_ENABLE_ACCEL
     // accelerometer 
@@ -284,6 +278,8 @@ public:
 
     msLEDs.bootSwipe();
 
+    logSysInfo();
+
   }
 
   void restart()
@@ -293,7 +289,6 @@ public:
 
   void loop()
   {
-
 
     msButtons.loop();
 
