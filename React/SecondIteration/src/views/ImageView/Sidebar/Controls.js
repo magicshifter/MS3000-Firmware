@@ -46,21 +46,18 @@ export class Controls extends Component {
     }
 
     return (
-      <div className={classes['container']}>
-        <h3>Controls</h3>
+      <div
+        className={classes['container']}
+        style={style.rgba}
+      >
+        <RGBAInput
+          color={color}
+          setColorValue={setColorValue}
+        />
 
-        <div style={style.rgba}>
-          <h5>Colors:</h5>
-
-          <RGBAInput
-            color={color}
-            setColorValue={setColorValue}
-          />
-
-          <ColorList
-            editorColor={color}
-          />
-        </div>
+        <ColorList
+          editorColor={color}
+        />
       </div>
     );
   }
