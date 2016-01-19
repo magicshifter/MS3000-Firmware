@@ -13,7 +13,15 @@
     margin: .5em;
   }
 
-  a:hover {
-    opacity: .8;
+  a {
+    text-decoration: none;
+
+    &.active {
+      text-decoration: underline;
+    }
+
+    &:hover {
+      opacity: .8;
+    }
   }
 }

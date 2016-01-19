@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {actions} from 'redux/modules/layout';
 
 import Header from './Header';
+import Sidebar from './Sidebar';
 
 import 'styles/core.scss';
 
@@ -10,7 +11,10 @@ import classes from './CoreLayout.scss';
 
 class CoreLayout extends Component {
   static propTypes = {
-    children: PropTypes.element.isRequired,
+    main: PropTypes.element,
+    sidebar: PropTypes.element,
+    sidebarMenu: PropTypes.element,
+    children: PropTypes.element,
     windowResize: PropTypes.func.isRequired,
   };
 
@@ -21,13 +25,19 @@ class CoreLayout extends Component {
   }
 
   render() {
-    const {children} = this.props;
+    const {children, main, sidebar, sidebarMenu} = this.props;
 
     return (
       <div className={classes['container']}>
         <Header />
         <div className={classes['view']}>
-          {children}
+          <div className={classes['content']}>
+            {main || children}
+          </div>
+          <Sidebar
+            menu={sidebarMenu}
+            main={sidebar}
+          />
         </div>
       </div>
     );

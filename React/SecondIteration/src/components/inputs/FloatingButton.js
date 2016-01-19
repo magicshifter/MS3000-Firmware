@@ -6,17 +6,23 @@ import iconClasses from 'styles/icons.scss';
 export default class FloatingButton extends Component {
   static propTypes = {
     onClick: PropTypes.func.isRequired,
-    icon: PropTypes.string.isRequired,
+    icon: PropTypes.string,
+    children: PropTypes.string,
+    title: PropTypes.string,
   };
 
   render() {
-    const {onClick, icon} = this.props;
+    const {onClick, icon, children, title} = this.props;
+
+    let className = `${classes['container']}${icon && ' ' + iconClasses[icon]}`;
 
     return (
       <button
-        className={classes['container'] + ' ' + iconClasses[icon]}
+        className={className}
         onClick={onClick}
+        title={title}
       >
+        {children}
       </button>
     );
   }

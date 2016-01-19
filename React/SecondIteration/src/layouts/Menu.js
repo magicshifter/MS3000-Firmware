@@ -1,6 +1,6 @@
 import React, {PropTypes, Component} from 'react';
 import {connect} from 'react-redux';
-import {Link} from 'react-router';
+import {Link, IndexLink} from 'react-router';
 import rgba from 'rgba-convert';
 
 import classes from './Menu.scss';
@@ -40,7 +40,11 @@ export class Menu extends Component {
               key={link.key || link.text}
               style={style.link}
             >
-              <Link to={link.to} activeClassName={classes['active']}>{link.text}</Link>
+              {
+                link.to === '/'
+                ? <IndexLink to={link.to} activeClassName={classes['active']}>{link.text}</IndexLink>
+                : <Link to={link.to} activeClassName={classes['active']}>{link.text}</Link>
+              }
             </li>
           ))}
         </ul>

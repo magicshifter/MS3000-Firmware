@@ -1,5 +1,8 @@
+/* @flow */
+
 import Immutable from 'immutable';
-import assign from 'object-assign';
+
+import {defaultLedColor as color} from 'GLOBALS';
 
 import {isFunction} from 'utils/types';
 
@@ -7,30 +10,22 @@ export const getPixelId =
   (columns, column, row) =>
     (row * columns) + column;
 
-export const createPixel =
-  (color, columns, column, row, visible = false) => ({
-    id: getPixelId(columns, column, row),
-    color: color,
-    row,
-    column,
-    visible,
-  });
-
 export const createPixels =
   (totalColumns, visibleColumns, rows) => {
     let pixelArray = [];
     for (let row = 0; row < rows; row++) {
       for (let column = 0; column < totalColumns; column++) {
         const visible = column <= visibleColumns;
-        pixelArray.push(
-          createPixel(
-            {r: 0, b: 0, g: 0, a: 255},
-            totalColumns,
-            column + 1,
-            row + 1,
-            visible,
-          )
-        );
+        const id = getPixelId(totalColumns, column, row);
+
+        pixelArray.push({
+          color,
+          totalColumns,
+          column: column + 1,
+          row: row + 1,
+          visible,
+          id,
+        });
       }
     }
 
@@ -39,12 +34,10 @@ export const createPixels =
 
 export const makePixelImmutable =
   pixel =>
-    Immutable.Map(assign(
-      pixel,
-      {
-        color: Immutable.Map(pixel.color),
-      }
-    ));
+    Immutable.Map({
+      ...pixel,
+      ...{color: Immutable.Map(pixel.color)},
+    });
 
 export const makePixelObject =
   immutablePixel =>

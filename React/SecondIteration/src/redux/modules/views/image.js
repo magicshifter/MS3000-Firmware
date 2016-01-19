@@ -1,13 +1,12 @@
 import {createAction, handleActions} from 'redux-actions';
 import Immutable from 'immutable';
-import assign from 'object-assign';
 
 import {isColor, isNumber, isObject} from 'utils/types';
 import {createImmutablePixels} from 'utils/pixels';
 
-import {rows, visibleColumns, totalColumns} from 'GLOBALS';
+import {rows, visibleColumns, totalColumns, defaultEditorColor} from 'GLOBALS';
 
-const color = Immutable.Map({r: 255, b: 255, g: 255, a: 255});
+const color = Immutable.Map(defaultEditorColor);
 
 const pixels = createImmutablePixels(totalColumns, visibleColumns, rows);
 
@@ -67,10 +66,12 @@ export const actions = {
 // ------------------------------------
 export default handleActions({
   [PIXEL_CLICK]:
-    (state, {payload: id}) =>
+    (state, {payload: pixel}) =>
       state.setIn(
-        ['pixels', id, 'color'],
-        state.get('color')),
+        ['pixels', pixel.id, 'color'],
+        pixel.color !== color
+          ? color
+          : state.get('color')),
 
   [SET_PIXELS]:
     (state, {payload: {pixels, height, width}}) => {
@@ -80,10 +81,11 @@ export default handleActions({
     },
 
   [SET_COLOR]:
-    (state, {payload: p}) =>
-      isColor(p.color)
-      ? state.set('color', assign({}, state.get('color'), p.color))
-      : state,
+    (state, {payload: p}) => {
+      return isColor(p.color)
+        ? state.set('color', Immutable.Map(p.color))
+        : state;
+    },
 
   [SET_COLOR_VALUE]:
     (state, {payload: p}) =>
