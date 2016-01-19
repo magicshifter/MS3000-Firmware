@@ -4,7 +4,7 @@ import Immutable from 'immutable';
 
 import {defaultLedColor as color} from 'GLOBALS';
 
-import {isFunction} from 'utils/types';
+import {isFunction, isArray} from 'utils/types';
 
 export const getPixelId =
   (columns, column, row) =>
@@ -47,9 +47,13 @@ export const makePixelObject =
 
 export const makePixelsObject =
   immutablePixels =>
+    isArray(immutablePixels) &&
     immutablePixels
       .toArray()
-      .map(px => makePixelObject(px));
+      .map(
+        px => makePixelObject(px)
+      ) ||
+    immutablePixels;
 
 export const createImmutablePixels =
   (totalColumns, visibleColumns, rows) =>
