@@ -1,4 +1,9 @@
-
+// Implements a Persistence-of-Vision display, deriving the data
+// from uploaded .magicBitmap files
+// files may be uploaded/modified/deleted by the user through the
+// web interface, so we refresh our onboard POV files with every
+// user event (except of course, Shaking..)
+ 
 #include "Modes.h"
 #include "Image.h"
 
@@ -6,64 +11,72 @@
 
 #define MS_SHAKEFILE_DEFAULT "nix"
 
+// We use a bouncing ball during non-shake periods as a 'screensaver' to
+// nevertheless indicate that the MagicShifter is operational in this
+// mode
 BouncingBallMode msModeBouncingBall(600);
 
 class MagicShakeMode : public MagicShifterBaseMode
 {
 private:
-  char shakeFileName[MAX_FILENAME_LENGTH];
+  // the currently active shake Image
   MSImage activeImage;
+
+  // the sync object used to keep the Image in POV
   POVShakeSync shakeSync;
+
+  // The direction through the filelist which the user is scrolling (-ve/+ve)
   int dirCursor = 0;
-  int lastShakeFrame = 0;
-  // QueueArray< String> dirList;
+
+  // the last frame of the Shake
   MagicShakeText msModeShakeText;
+
+  // the number of files discovered onboard during the scan for POV images..
+  int numFiles = 0;
+
 
 public:
 
   MagicShakeMode()
   {
-    msSystem.msEEPROMs.safeStrncpy(shakeFileName, MS_SHAKEFILE_DEFAULT, MAX_FILENAME_LENGTH);
-
-    // Debug
-    // dirList.setPrinter(Serial);
   }
 
-  String getFile(int fileIndex)
+
+  // Get a file from the list of onboard files, filtering only .magicBitmap files
+  // fileIndex: the idx of the file in the list
+  // maxFiles: returns the length of the list
+  // return: filename when found, empty string when not found
+  String getFileNameAtIndex(int fileIndex, int &maxFiles)
   {
     Dir POVDir;
-    // msSystem.log("DISP FILE:index at start:"); msSystem.logln(String(fileIndex));
+    msSystem.log("getFileNameAtIndex:"); msSystem.logln(String(fileIndex));
     POVDir = SPIFFS.openDir("");
 
     int cnt = 0;
-    // msSystem.logln("DISP FILE:ready:");
 
     while(cnt <= fileIndex)
-      {
-        if (!POVDir.next()) break;
-        String foundFilename;
-        // msSystem.log("while::"); 
-        foundFilename = POVDir.fileName();
-        // msSystem.log("DISP FILE:cnt:"); msSystem.logln(String(cnt));
-        // msSystem.log("DISP FILE:"); msSystem.logln(foundFilename);
-        if (!foundFilename.endsWith(".magicBitmap")) continue;
+    {
+      if (!POVDir.next()) break; // end of list
+      String foundFilename;
+      foundFilename = POVDir.fileName();
+      if (!foundFilename.endsWith(".magicBitmap")) continue;
 
-        if (cnt == fileIndex)
-          return foundFilename;
+      if (cnt == fileIndex)
+        return foundFilename;
 
-        cnt++;
-      }
+      cnt++;
+    }
+
+    maxFiles = cnt;
 
     return "";
   }
 
-
-
+  // load a magic Shake file for display
   void loadShakeFile(const char *filename)
   {
-    // msSystem.log("loadShakeFile:"); msSystem.logln(filename);
+    msSystem.log("loadShakeFile:"); msSystem.logln(filename);
     activeImage.close();
-    msSystem.msEEPROMs.safeStrncpy(shakeFileName, filename, MAX_FILENAME_LENGTH);
 
     activeImage.loadFile(filename);
     int w = activeImage.getWidth() * FRAME_MULTIPLY;
@@ -71,39 +84,36 @@ public:
 
   }
 
+  // Start the MagicShake mode:
+  //  shake the last-uploaded .magicBitmap (if set)
+  //  prime the file list, which may update dynamically during our session
   void start()
   {
     if (String(msGlobals.ggUploadFileName).endsWith(".magicBitmap")) {
       loadShakeFile(msGlobals.ggUploadFileName);
     }
-     else {
+    else {
       loadShakeFile(DEFAULT_SHAKE_IMAGE); // !J! todo: move to default ..
     }
 
-    dirCursor = 0;
+    // prime numFiles at Start
+    dirCursor = 999999;// !J! grr ..
+    getFileNameAtIndex(dirCursor, numFiles);
+    msSystem.log("numFiles:"); msSystem.logln(String(numFiles));
+    dirCursor = 0;// !J! grr ..
+  } 
 
-  } // todo: startActiveFile() with a default filename
-
+  // stop the MagicShake mode
   void stop()
   {
     activeImage.close();
     shakeSync.setFrames(0);
   }
 
-  void hexDump(int len, byte *buf, const char*label) {
-    msSystem.log(label); 
-    msSystem.log(String(len)); 
-    msSystem.log("/");
-
-    for (int x=0;x<len;x++) {
-      if (x % 4 == 0) msSystem.logln("");
-      msSystem.log(":"); Serial.print(buf[x], HEX);; 
-    }
-    msSystem.logln("<<EOF");
-  }
-
+  
   void step()
   {
+
     // !J! TODO: give modes an event queue ..
     if (msGlobals.ggShouldAutoLoad == 1) {
       loadShakeFile(msGlobals.ggUploadFileName);
@@ -112,28 +122,62 @@ public:
 
 // msSystem.log("accel:"); msSystem.logln(String(msGlobals.ggAccel[1]));
 
-    if (msSystem.msBtnPwrHit == true) {
-      msSystem.msBtnPwrHit = false;
-      dirCursor++;
-      // msSystem.log("cursor:"); msSystem.logln(String(dirCursor));
+    if (msSystem.msButtons.msBtnAHit == true) {
+      msSystem.msButtons.msBtnAHit = false;
 
-      String toLoad = getFile(dirCursor);
-      // msSystem.log("Would DISP:"); msSystem.logln(toLoad);
+      dirCursor++;
+      if (dirCursor >= numFiles) dirCursor = 0;
+
+      msSystem.log("A cursor:"); msSystem.logln(String(dirCursor));
+
+      String toLoad = getFileNameAtIndex(dirCursor, numFiles);
+      msSystem.log("Would DISP:"); msSystem.logln(toLoad);
 
       // out of bounds
       if (toLoad.length() == 0) { 
-        // msSystem.log("RESETDISP:"); msSystem.logln(toLoad);
+        msSystem.log("RESETDISP:"); msSystem.logln(toLoad);
         dirCursor = 0;
-        toLoad = getFile(0);
+        toLoad = getFileNameAtIndex(0, numFiles);
         if (toLoad.length() == 0) // !J! todo: default
           toLoad = String("blueghost_png.magicBitmap");
       }
 
+
       if (toLoad.length() > 0) {
-        // msSystem.log("Would DISP:"); msSystem.logln(toLoad);
+msSystem.log("Would DISP:"); msSystem.logln(toLoad);
+        loadShakeFile(toLoad.c_str());
+      }
+
+    }
+
+    if (msSystem.msButtons.msBtnBHit == true) {
+      msSystem.msButtons.msBtnBHit = false;
+
+      dirCursor--;
+      if (dirCursor < 0) dirCursor = numFiles - 1; // !J!
+
+      msSystem.log("B cursor:"); msSystem.logln(String(dirCursor));
+
+      String toLoad = getFileNameAtIndex(dirCursor, numFiles);
+      msSystem.log("Would DISP:"); msSystem.logln(toLoad);
+
+      // out of bounds
+      if (toLoad.length() == 0) { 
+        msSystem.log("RESETDISP:"); msSystem.logln(toLoad);
+        dirCursor = numFiles;
+        toLoad = getFileNameAtIndex(numFiles, numFiles);
+        if (toLoad.length() == 0) // !J! todo: default
+          toLoad = String("blueghost_png.magicBitmap");
+      }
+
+
+      if (toLoad.length() > 0) {
+msSystem.log("Would DISP:"); msSystem.logln(toLoad);
         loadShakeFile(toLoad.c_str());
       }
     }
+
+    // msSystem.log("numFiles:"); msSystem.logln(String(numFiles));
 
     if (shakeSync.update(msGlobals.ggAccel[1]))
     {
@@ -142,8 +186,6 @@ public:
 
       if (index > 0)
       {
-
-        lastShakeFrame = 0;
 
         byte povData[RGB_BUFFER_SIZE];
 
@@ -155,12 +197,8 @@ public:
         // frame_index = 0; // debug
 
         activeImage.readFrame(frame_index, povData, MAX_LEDS);
-        
-// hexDump(RGB_BUFFER_SIZE, povData, "povData1/");
 
         msSystem.msLEDs.loadBuffer(povData);
-
-// hexDump(RGB_BUFFER_SIZE, povData, "povData2/");
 
         msSystem.msLEDs.updatePixels();
 

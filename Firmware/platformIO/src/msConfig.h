@@ -12,7 +12,7 @@
 // 16298245 // 'p2' proto
 //  1210204 //"in-production" Chip
 
-#define AP_NAME_OVERRIDE "MS3000.w23"
+#define AP_NAME_OVERRIDE "MS3000.prototype"
 
 // HW_ID is passed one of these constants from Makefile -DHW_ID=.. 
 
@@ -99,6 +99,10 @@
 
 //#define MAX_LEDS 160
 #define RGB_BUFFER_SIZE (4*MAX_LEDS)
+
+// double features as bootloader button
+#define PIN_BUTTON_A  0
+#define PIN_BUTTON_B 12
 
 // Use pre-configured AP list
 #undef CONFIG_USE_DEBUG_AP
