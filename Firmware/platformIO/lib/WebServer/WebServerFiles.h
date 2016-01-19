@@ -324,9 +324,10 @@ void handleFileUpload(){
     if (SPIFFS.exists(msGlobals.ggUploadFileName)) {
       msSystem.logln("Removing previous copy..");
       SPIFFS.remove(msGlobals.ggUploadFileName);
+      
     }
 
-    msGlobals.ggUploadFile = SPIFFS.open(msGlobals.ggUploadFileName, "w");
+    msGlobals.ggUploadFile = SPIFFS.open(msGlobals.ggUploadFileName, "w+");
     msSystem.log("ggUploadFile opened:");
     msSystem.logln(msGlobals.ggUploadFileName);
 
@@ -362,13 +363,7 @@ void handleFileUpload(){
 
     msSystem.msEEPROMs.saveString(msGlobals.ggUploadFileName, MAX_FILENAME_LENGTH);
     
-    if (msGlobals.ggUploadFile)
-    {
-      //bool result;
-      //result =
-      msGlobals.ggUploadFile.close();
-      //if (!result) msSystem.logln("ERROR: could not close!");
-    }
+    msGlobals.ggUploadFile.close();
 
     msSystem.logln("Upload: END, Size: ");
     msSystem.logln(String(upload.totalSize));

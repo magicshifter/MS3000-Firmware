@@ -127,7 +127,7 @@ void StartWebServer(void)
 }
 
 
-void HandleWebServer ( void ) {
+void loop ( void ) {
 #ifdef USE_MDNS
   // CRASHES in new toolchain 
   msSystem.msDNS.update();

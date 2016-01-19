@@ -249,7 +249,7 @@ void loop()
 
 
 
-  msWebServer.HandleWebServer();
+  msWebServer.loop();
 
   // do some tests
   // testAccelerometer();
