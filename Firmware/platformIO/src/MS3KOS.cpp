@@ -121,37 +121,37 @@ void testButtonForBOM_X()
     msSystem.logln("_");
   }
 
-  if (msSystem.msBtnPwrLongHit)
+  if (msSystem.msButtons.msBtnPwrLongHit)
   {
     msSystem.msLEDs.setPixels(1, 0, 0, 20, 20);
     msSystem.msLEDs.updatePixels();
     delay(200);
   }
-  if (msSystem.msBtnPwrHit)
+  if (msSystem.msButtons.msBtnPwrHit)
   {
     msSystem.msLEDs.setPixels(1, 20, 20, 0, 15);
     msSystem.msLEDs.updatePixels();
     delay(200);
   }
-  if (msSystem.msBtnALongHit)
+  if (msSystem.msButtons.msBtnALongHit)
   {
     msSystem.msLEDs.setPixels(0, 20, 0, 20, 20);
     msSystem.msLEDs.updatePixels();
     delay(200);
   }
-  if (msSystem.msBtnAHit)
+  if (msSystem.msButtons.msBtnAHit)
   {
     msSystem.msLEDs.setPixels(0, 20, 20, 0, 20);
     msSystem.msLEDs.updatePixels();
     delay(200);
   }
-  if (msSystem.msBtnBLongHit)
+  if (msSystem.msButtons.msBtnBLongHit)
   {
     msSystem.msLEDs.setPixels(2, 20, 0, 20, 20);
     msSystem.msLEDs.updatePixels();
     delay(200);
   }
-  if (msSystem.msBtnBHit)
+  if (msSystem.msButtons.msBtnBHit)
   {
     msSystem.msLEDs.setPixels(2, 20, 20, 0, 20);
     msSystem.msLEDs.updatePixels();
@@ -230,6 +230,15 @@ void testSimpleButtons()
 }
 
 
+void logButtons()
+{
+  msSystem.log("msBtnA:"); msSystem.logln(String(msSystem.msButtons.msBtnAPressTime));
+  msSystem.log("msBtnPwr:"); msSystem.logln(String(msSystem.msButtons.msBtnPwrPressTime));
+  msSystem.log("msBtnB:"); msSystem.logln(String(msSystem.msButtons.msBtnBPressTime));
+}
+
+
+
 void loop()
 {
 
@@ -238,11 +247,7 @@ void loop()
 
   msSystem.loop();
 
-// // msSystem.log("msBtnA:"); msSystem.logln(String(msSystem.msBtnAPressTime));
-// // msSystem.log("msBtnPwr:"); msSystem.logln(String(msSystem.msBtnPwrPressTime));
-// // msSystem.log("msBtnB:"); msSystem.logln(String(msSystem.msBtnBPressTime));
 
-// return;
 
   msWebServer.HandleWebServer();
 
@@ -250,6 +255,7 @@ void loop()
   // testAccelerometer();
   // testButtonForBOM_X();
   // testSimpleButtons();
+  // logButtons();
 
   // outside time-frame
 #ifdef CONFIG_ENABLE_ACCEL

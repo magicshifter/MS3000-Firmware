@@ -18,14 +18,10 @@
 #include "EEPROMString.h"
 #include "LEDHardware.h"
 #include "Accelerometer.h"
-
+#include "Buttons.h"
 
 // Power management
 #define PIN_PWR_MGT 16
-
-// double features as bootloader button
-#define PIN_BUTTON_A  0
-#define PIN_BUTTON_B 12
 
 void USBPoll();
 
@@ -40,38 +36,12 @@ public:
   // todo: protect
   MagicShifterAccelerometer msAccel;
   MagicShifterLEDs msLEDs;
-  MagicShiftermsEEPROMsing  msEEPROMs;
+  MagicShifterEEPROMString  msEEPROMs;
+  MagicShifterButtons msButtons;
 
   int msFrame = 0;
 
   bool msAccelOK = false;
-
-// TODO: private state
-// state for button timing
-  long msBtnAPressTime = 0;
-  long msBtnPwrPressTime = 0;
-  long msBtnBPressTime = 0;
-
-// state for double click timing
-  long msBtnATTL = 0;
-  long msBtnPwrTTL = 0;
-  long msBtnBTTL = 0;
-
-  bool msLongClickOK = true;
-
-// todo public properties? Logic for consuming buttons?
-// events for consumers true/false;
-  bool msBtnAHit = false;
-  bool msBtnPwrHit = false;
-  bool msBtnBHit = false;
-
-  bool msBtnALongHit = false;
-  bool msBtnPwrLongHit = false;
-  bool msBtnBLongHit = false;
-  
-  bool msBtnADoubleHit = false;
-  bool msBtnPwrDoubleHit = false;
-  bool msBtnBDoubleHit = false;
 
   MDNSResponder msDNS;
   ESP8266WebServer msESPServer;
@@ -178,6 +148,9 @@ public:
     log("Free sketch space: ");
     logln(String(ESP.getFreeSketchSpace()));
 
+    log("uploadfile: "); logln(msGlobals.ggUploadFileName);
+
+
     // log("Reset info: ");
     // logln(String(ESP.getResetInfo()));
     //log("FS mount: ");
@@ -250,12 +223,15 @@ public:
   // gets the basic stuff set up
   void setup()
   {
+
+// !J! todo: enable MIDI, add arp mode
 // #ifdef CONFIG_ENABLE_MIDI
 //     Serial.begin(31250);
 // #else
     Serial.begin(115200);
 // #endif
 
+    // !J! todo: get this from factory config
     delay(1500); // this enables serial consoles to sync
 
     // #endif
@@ -263,7 +239,7 @@ public:
 
     logln(String("\r\nMagicShifter 3000 OS V0.24"));
 
-    // start Modes as necessary ..
+    // ggUploadFile is prepared for display as necessary ..
     msEEPROMs.loadString(msGlobals.ggUploadFileName, MAX_FILENAME_LENGTH);
 
     // wake up filesystem
@@ -273,12 +249,9 @@ public:
       log("done:");
     else
       log("noSPIFFS:");
-
+    // !J! todo: infinite_loop()? 
     //TEST_SPIFFS_bug();
-
     logSysInfo();
-
-    log("uploadfile: "); logln(msGlobals.ggUploadFileName);
 
     // all engines turn on
     pinMode(PIN_PWR_MGT, INPUT);
@@ -290,7 +263,7 @@ public:
 
     // reset power controller to stay on
     powerStabilize();
-
+    // !J! todo: power-management module 
 
 #ifdef CONFIG_ENABLE_ACCEL
     // accelerometer 
@@ -298,10 +271,10 @@ public:
     msAccelOK = msAccel.resetAccelerometer(); //Test and intialize the MMA8452
 #endif
 
-
     // led controllers and buffer
     msLEDs.initLEDHardware();
     msLEDs.initLEDBuffer();
+
     // boot that we are alive
 
     // // I2C test:
@@ -321,96 +294,16 @@ public:
   void loop()
   {
 
-    long deltaMicros = (msGlobals.ggCurrentMicros - msGlobals.ggLastMicros);
-    // handle Buttons:
-    pinMode(PIN_BUTTON_A, INPUT);
-    pinMode(PIN_BUTTON_B, INPUT);
 
-    if (!digitalRead(PIN_BUTTON_A))
-    {
-
-      if (msBtnAPressTime)
-        msBtnAPressTime += deltaMicros;
-      else
-        msBtnAPressTime = 1;
-    }
-    else
-    {
-
-      if (msLongClickOK && msBtnAPressTime >= MIN_TIME_LONG_CLICK)
-      {
-        // logln("We gots LOON clicks A.");
-        msBtnALongHit = true;
-      }
-      else 
-      if (msBtnAPressTime >= MIN_TIME_CLICK)
-      {
-        // logln("We gots clicks A.");
-        msBtnAHit = true;
-      }
-
-      msBtnAPressTime = 0;
-    }
-
-    if (!digitalRead(PIN_BUTTON_B))
-    {
-
-      if (msBtnBPressTime)
-        msBtnBPressTime += deltaMicros;
-      else
-        msBtnBPressTime = 1;
-    }
-    else
-    {
-    if (msLongClickOK && msBtnBPressTime >= MIN_TIME_LONG_CLICK)
-      {
-        // logln("We gots LOON clicks AAA.");
-        msBtnBLongHit = true;
-      }
-      else
-
-     if (msBtnBPressTime >= MIN_TIME_CLICK)
-      {
-        // logln("We gots clicks B.");
-        
-        msBtnBHit = true;
-      }
-
-      msBtnBPressTime = 0;
-    }
-
-
-    if (powerButtonPressed())
-    {
-      if (msBtnPwrPressTime)
-        msBtnPwrPressTime += deltaMicros;
-      else
-        msBtnPwrPressTime = 1;
-    }
-    else
-    {
-      if (msBtnPwrPressTime >= MIN_TIME_LONG_CLICK)
-      {
-        msBtnPwrLongHit = true;
-        // logln("Btn Pwr Looong Hit");
-      }
-      else 
-      if (msBtnPwrPressTime >= MIN_TIME_CLICK)
-      {
-        // logln("We gots clicks Pwr.");
-        msBtnPwrHit = true;
-      }
-
-      msBtnPwrPressTime = 0;
-    }
+    msButtons.loop();
 
     // internal button usage
-    if (msBtnPwrLongHit)
+    if (msButtons.msBtnPwrLongHit)
     {
       powerDown();
     }
 
-    // if (msBtnBHit)
+    // if (msButtons.msBtnBHit)
     // {
     //   msGlobals.ggFactoryIntensity+=2;
     //   if (msGlobals.ggFactoryIntensity > 31)
@@ -424,7 +317,7 @@ public:
     // }
 
 
-    // if (msBtnBLongHit)
+    // if (msButtons.msBtnBLongHit)
     // {
     //   msGlobals.ggFactoryIntensity-=6;
     //   if (msGlobals.ggFactoryIntensity < 1)
@@ -444,7 +337,7 @@ public:
 
   void enableLongClicks(bool enable)
   {
-    msLongClickOK = enable;
+    msButtons.msLongClickOK = enable;
   }
 
   int getADValue(void)
@@ -471,11 +364,6 @@ public:
   }
 
 
-
-  bool powerButtonPressed(void)
-  {
-    return getADValue() > 950;
-  }
 
   IPAddress getIP()
   {

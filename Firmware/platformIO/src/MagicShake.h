@@ -122,8 +122,8 @@ public:
 
 // msSystem.log("accel:"); msSystem.logln(String(msGlobals.ggAccel[1]));
 
-    if (msSystem.msBtnAHit == true) {
-      msSystem.msBtnAHit = false;
+    if (msSystem.msButtons.msBtnAHit == true) {
+      msSystem.msButtons.msBtnAHit = false;
 
       dirCursor++;
       if (dirCursor >= numFiles) dirCursor = 0;
@@ -150,8 +150,8 @@ msSystem.log("Would DISP:"); msSystem.logln(toLoad);
 
     }
 
-    if (msSystem.msBtnBHit == true) {
-      msSystem.msBtnBHit = false;
+    if (msSystem.msButtons.msBtnBHit == true) {
+      msSystem.msButtons.msBtnBHit = false;
 
       dirCursor--;
       if (dirCursor < 0) dirCursor = numFiles - 1; // !J!

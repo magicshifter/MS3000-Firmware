@@ -100,6 +100,10 @@
 //#define MAX_LEDS 160
 #define RGB_BUFFER_SIZE (4*MAX_LEDS)
 
+// double features as bootloader button
+#define PIN_BUTTON_A  0
+#define PIN_BUTTON_B 12
+
 // Use pre-configured AP list
 #undef CONFIG_USE_DEBUG_AP
 
