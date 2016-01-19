@@ -28,7 +28,7 @@ export class ImageView extends Component {
     rows: PropTypes.number.isRequired,
     visibleColumns: PropTypes.number.isRequired,
     totalColumns: PropTypes.number.isRequired,
-    layout: layoutType.isRequired,
+    layout: layoutType,
   };
 
   constructor(props) {
