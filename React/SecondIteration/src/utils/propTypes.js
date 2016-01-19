@@ -63,7 +63,6 @@ export const pixelsType = PropTypes.arrayOf(pixelType);
  */
 
 export const imageViewType = PropTypes.shape({
-  pixels: PropTypes.array.isRequired,
   rows: PropTypes.number.isRequired,
   visibleColumns: PropTypes.number.isRequired,
   totalColumns: PropTypes.number.isRequired,

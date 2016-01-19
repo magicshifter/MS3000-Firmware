@@ -12,11 +12,11 @@ import SidebarText from './Text';
 import classes from './Files.scss';
 
 const mapStateToProps =
-  ({imageView, settingsView}) => ({
+  ({imageView, settingsView, pixels}) => ({
     visibleColumns: imageView.get('visibleColumns'),
     totalColumns: imageView.get('totalColumns'),
     rows: imageView.get('rows'),
-    pixels: imageView.get('pixels').toArray().map(px => px.toObject()),
+    pixels: pixels.toArray().map(px => px.toObject()),
     host: settingsView.get('host'),
     protocol: settingsView.get('protocol'),
   });

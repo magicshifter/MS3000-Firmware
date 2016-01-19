@@ -1,7 +1,7 @@
 import React, {PropTypes, Component} from 'react';
 import {connect} from 'react-redux';
 
-import {actions} from 'redux/modules/views/image';
+import {actions} from 'redux/modules/pixels';
 
 import {pixelsType, layoutType} from 'utils/propTypes';
 import {rgba_toString} from 'utils/colors';
@@ -11,9 +11,9 @@ import {multimax} from 'utils/math';
 import classes from './ImageView.scss';
 
 const mapStateToProps = (state) => {
-  const {imageView, layout} = state;
+  const {imageView, pixels, layout} = state;
   return {
-    pixels: makePixelsObject(imageView.get('pixels')),
+    pixels: pixels.toJS(),
     totalColumns: imageView.get('totalColumns'),
     visibleColumns: imageView.get('visibleColumns'),
     rows: imageView.get('rows'),
@@ -28,7 +28,7 @@ export class ImageView extends Component {
     rows: PropTypes.number.isRequired,
     visibleColumns: PropTypes.number.isRequired,
     totalColumns: PropTypes.number.isRequired,
-    layout: layoutType.isRequired,
+    layout: layoutType,
   };
 
   constructor(props) {

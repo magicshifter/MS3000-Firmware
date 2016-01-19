@@ -5,6 +5,7 @@ import Immutable from 'immutable';
 
 import layout from 'redux/modules/layout';
 import colorList from 'redux/modules/colorList';
+import pixels from 'redux/modules/pixels';
 
 import aboutView from 'redux/modules/views/about';
 import imageView from 'redux/modules/views/image';
@@ -16,6 +17,7 @@ export default Immutable.fromJS(combineReducers({
 
   layout,
   colorList,
+  pixels,
 
   aboutView,
   imageView,
