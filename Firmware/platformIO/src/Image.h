@@ -6,9 +6,9 @@
 class MSImage {
 
   int width, height;
-  File file;
 
   MSBitmap _bitmap;
+  //File file;
 
 public:
   MSImage(void)
@@ -262,8 +262,8 @@ public:
 
   void close()
   {
-    if (file)
-      file.close();
+
+    _bitmap.bmFile.close();
   }
 };
 

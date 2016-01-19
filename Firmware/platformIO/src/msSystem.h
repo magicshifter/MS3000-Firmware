@@ -18,14 +18,10 @@
 #include "EEPROMString.h"
 #include "LEDHardware.h"
 #include "Accelerometer.h"
-
+#include "Buttons.h"
 
 // Power management
 #define PIN_PWR_MGT 16
-
-// double features as bootloader button
-#define PIN_BUTTON_A  0
-#define PIN_BUTTON_B 12
 
 void USBPoll();
 
@@ -40,51 +36,22 @@ public:
   // todo: protect
   MagicShifterAccelerometer msAccel;
   MagicShifterLEDs msLEDs;
-  MagicShiftermsEEPROMsing  msEEPROMs;
-
-  int msFrame = 0;
-
-  bool msAccelOK = false;
-
-// TODO: private state
-// state for button timing
-  long msBtnAPressTime = 0;
-  long msBtnPwrPressTime = 0;
-  long msBtnBPressTime = 0;
-
-// state for double click timing
-  long msBtnATTL = 0;
-  long msBtnPwrTTL = 0;
-  long msBtnBTTL = 0;
-
-  bool msLongClickOK = true;
-
-// todo public properties? Logic for consuming buttons?
-// events for consumers true/false;
-  bool msBtnAHit = false;
-  bool msBtnPwrHit = false;
-  bool msBtnBHit = false;
-
-  bool msBtnALongHit = false;
-  bool msBtnPwrLongHit = false;
-  bool msBtnBLongHit = false;
-  
-  bool msBtnADoubleHit = false;
-  bool msBtnPwrDoubleHit = false;
-  bool msBtnBDoubleHit = false;
-
+  MagicShifterEEPROMString  msEEPROMs;
+  MagicShifterButtons msButtons;
   MDNSResponder msDNS;
   ESP8266WebServer msESPServer;
+  WiFiUDP msUDP;
 
-  WiFiUDP udp;
+  int msFrame = 0;
+  bool msAccelOK = false;
 
 public:
   void log(String msg) { 
   // todo:switch log from OFF, to BANNED (MIDI), to UDP .. etc.
     Serial.print(msg); 
-    udp.beginPacket("192.168.1.112", 514); // wks port for syslog
-    udp.print(msg);
-    udp.endPacket();
+    msUDP.beginPacket("192.168.1.112", 514); // wks port for syslog
+    msUDP.print(msg);
+    msUDP.endPacket();
   };
 
   void logln(String msg) { Serial.println(msg); }; 
@@ -178,6 +145,9 @@ public:
     log("Free sketch space: ");
     logln(String(ESP.getFreeSketchSpace()));
 
+    log("uploadfile: "); logln(msGlobals.ggUploadFileName);
+
+
     // log("Reset info: ");
     // logln(String(ESP.getResetInfo()));
     //log("FS mount: ");
@@ -250,12 +220,15 @@ public:
   // gets the basic stuff set up
   void setup()
   {
+
+// !J! todo: enable MIDI, add arp mode
 // #ifdef CONFIG_ENABLE_MIDI
 //     Serial.begin(31250);
 // #else
     Serial.begin(115200);
 // #endif
 
+    // !J! todo: get this from factory config
     delay(1500); // this enables serial consoles to sync
 
     // #endif
@@ -263,7 +236,7 @@ public:
 
     logln(String("\r\nMagicShifter 3000 OS V0.24"));
 
-    // start Modes as necessary ..
+    // ggUploadFile is prepared for display as necessary ..
     msEEPROMs.loadString(msGlobals.ggUploadFileName, MAX_FILENAME_LENGTH);
 
     // wake up filesystem
@@ -273,24 +246,18 @@ public:
       log("done:");
     else
       log("noSPIFFS:");
-
+    // !J! todo: infinite_loop()? 
     //TEST_SPIFFS_bug();
-
-    logSysInfo();
-
-    log("uploadfile: "); logln(msGlobals.ggUploadFileName);
 
     // all engines turn on
     pinMode(PIN_PWR_MGT, INPUT);
     pinMode(PIN_LED_ENABLE, INPUT);
 
-    // init pin modes
-    pinMode(PIN_BUTTON_A, INPUT);
-    pinMode(PIN_BUTTON_B, INPUT);
-
     // reset power controller to stay on
     powerStabilize();
+    // !J! todo: power-management module 
 
+    msButtons.setup();
 
 #ifdef CONFIG_ENABLE_ACCEL
     // accelerometer 
@@ -298,10 +265,10 @@ public:
     msAccelOK = msAccel.resetAccelerometer(); //Test and intialize the MMA8452
 #endif
 
-
     // led controllers and buffer
     msLEDs.initLEDHardware();
     msLEDs.initLEDBuffer();
+
     // boot that we are alive
 
     // // I2C test:
@@ -310,6 +277,8 @@ public:
     // }
 
     msLEDs.bootSwipe();
+
+    logSysInfo();
 
   }
 
@@ -321,107 +290,15 @@ public:
   void loop()
   {
 
-    long deltaMicros = (msGlobals.ggCurrentMicros - msGlobals.ggLastMicros);
-    // handle Buttons:
-    pinMode(PIN_BUTTON_A, INPUT);
-    pinMode(PIN_BUTTON_B, INPUT);
-
-    // reset public button state
-    //msBtnAHit = msBtnALongHit = false;
-    if (!digitalRead(PIN_BUTTON_A))
-    {
-
-      if (msBtnAPressTime)
-        msBtnAPressTime += deltaMicros;
-      else
-        msBtnAPressTime = 1;
-    }
-    else
-    {
-
-    // if (msLongClickOK && msBtnAPressTime >= MIN_TIME_LONG_CLICK)
-      // {
-      //   msBtnALongHit = true;
-      // }
-      // else 
-
-
-    if (msBtnAPressTime >= MIN_TIME_CLICK)
-      {
-        logln("We gots clicks A.");
-        msBtnAHit = true;
-      }
-
-      msBtnAPressTime = 0;
-    }
-
-    // reset public btton state
-    //msBtnBHit = msBtnBLongHit = false;
-    if (!digitalRead(PIN_BUTTON_B))
-    {
-
-      if (msBtnBPressTime)
-        msBtnBPressTime += deltaMicros;
-      else
-        msBtnBPressTime = 1;
-    }
-    else
-    {
-    // if (msLongClickOK && msBtnBPressTime >= MIN_TIME_LONG_CLICK)
-    //   {
-
-    //     msBtnBLongHit = true;
-
-    //   }
-    //   else
-
-     if (msBtnBPressTime >= MIN_TIME_CLICK)
-      {
-        logln("We gots clicks B.");
-        
-        msBtnBHit = true;
-      }
-
-      msBtnBPressTime = 0;
-    }
-
-
-    // reset public btton state
-    //msBtnPwrHit = false;
-    //msBtnPwrLongHit = false;
-
-    //if (msFrame++ % 10 == 0)
-    if (powerButtonPressed())
-    {
-      if (msBtnPwrPressTime)
-        msBtnPwrPressTime += deltaMicros;
-      else
-        msBtnPwrPressTime = 1;
-    }
-    else
-    {
-      // if (msBtnPwrPressTime >= MIN_TIME_LONG_CLICK)
-      // {
-      //   msBtnPwrLongHit = true;
-      //   // logln("Btn Pwr Looong Hit");
-      // }
-      // else 
-      if (msBtnPwrPressTime >= MIN_TIME_CLICK)
-      {
-        logln("We gots clicks Pwr.");
-        msBtnPwrHit = true;
-      }
-
-      msBtnPwrPressTime = 0;
-    }
+    msButtons.loop();
 
     // internal button usage
-    if (msBtnALongHit)
+    if (msButtons.msBtnPwrLongHit)
     {
       powerDown();
     }
 
-    // if (msBtnBHit)
+    // if (msButtons.msBtnBHit)
     // {
     //   msGlobals.ggFactoryIntensity+=2;
     //   if (msGlobals.ggFactoryIntensity > 31)
@@ -435,7 +312,7 @@ public:
     // }
 
 
-    // if (msBtnBLongHit)
+    // if (msButtons.msBtnBLongHit)
     // {
     //   msGlobals.ggFactoryIntensity-=6;
     //   if (msGlobals.ggFactoryIntensity < 1)
@@ -455,7 +332,7 @@ public:
 
   void enableLongClicks(bool enable)
   {
-    msLongClickOK = enable;
+    msButtons.msLongClickOK = enable;
   }
 
   int getADValue(void)
@@ -483,11 +360,6 @@ public:
 
 
 
-  bool powerButtonPressed(void)
-  {
-    return getADValue() > 950;
-  }
-
   IPAddress getIP()
   {
     if (msGlobals.ggModeAP)
@@ -499,6 +371,19 @@ public:
       return WiFi.localIP();
     }
   }
+
+  void hexDump(int len, byte *buf, const char*label) {
+    log(label); 
+    log(String(len)); 
+    log("/");
+
+    for (int x=0;x<len;x++) {
+      if (x % 4 == 0) logln("");
+      log(":"); Serial.print(buf[x], HEX);; 
+    }
+    logln("<<EOF");
+  }
+
 
 };
 
