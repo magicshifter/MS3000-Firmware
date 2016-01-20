@@ -63,7 +63,6 @@ export class Text extends Component {
     ctx.font = '18px ' + (font && font.css || 'Courier');
     ctx.fillStyle = '#FFFFFF';
 
-
     var baseLine = 14;
     var offset = 0;
     ctx.fillText(text, offset, baseLine);
