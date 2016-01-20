@@ -4,9 +4,9 @@ import Immutable from 'immutable';
 import {isObject} from 'utils/types';
 import {createImmutablePixels} from 'utils/pixels';
 
-import {rows, totalColumns, visibleColumns, defaultEditorColor} from 'GLOBALS';
+import {rows, totalColumns, visibleColumns, defaultLedColor} from 'GLOBALS';
 
-const color = Immutable.Map(defaultEditorColor);
+const defaultColor = Immutable.Map(defaultLedColor);
 
 const pixels = createImmutablePixels(totalColumns, visibleColumns, rows);
 
@@ -26,7 +26,7 @@ export const SET_PIXELS = 'SET_PIXELS';
 export const pixelClick =
   createAction(
     PIXEL_CLICK,
-    (value = 1) => value
+    value => value
   );
 
 export const setPixels =
@@ -51,13 +51,14 @@ export default handleActions({
 
   // a pixel has been clicked
   [PIXEL_CLICK]:
-    (state, {payload: pixel}) =>
-      isObject(pixel.color) &&
+    (state, {payload: p}) =>
+      isObject(p.color) &&
       state.setIn(
-        [pixel.id, 'color'],
-          pixel.color === color
-            ? state.get('color')
-            : color
+        [p.pixel.id, 'color'],
+          Immutable.Map(p.pixel.color).equals(defaultColor) ||
+          !Immutable.Map(p.pixel.color).equals(Immutable.Map(p.color))
+            ? p.color
+            : defaultColor
       ) ||
       state,
 
