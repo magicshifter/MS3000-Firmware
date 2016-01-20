@@ -55,7 +55,8 @@ export default handleActions({
       isObject(p.color) &&
       state.setIn(
         [p.pixel.id, 'color'],
-          Immutable.Map(p.pixel.color).equals(defaultColor)
+          Immutable.Map(p.pixel.color).equals(defaultColor) ||
+          !Immutable.Map(p.pixel.color).equals(Immutable.Map(p.color))
             ? p.color
             : defaultColor
       ) ||
