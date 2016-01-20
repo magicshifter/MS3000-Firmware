@@ -5,6 +5,7 @@ import {colorsToObj} from 'utils/colors';
 export const materialColors = colorsToObj(mColors);
 
 export const host = '';
+// export const host = '192.168.4.1';
 export const protocol = 'http';
 
 export const rows = 16;
@@ -52,7 +53,7 @@ export const fonts = [
   },
 ];
 
-export const text = '! MAGIC !';
+export const text = 'Magic';
 
 export const fontId = 0;
 

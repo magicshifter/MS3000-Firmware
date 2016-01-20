@@ -63,13 +63,15 @@ export class Text extends Component {
     ctx.font = '18px ' + (font && font.css || 'Courier');
     ctx.fillStyle = '#FFFFFF';
 
-    // todo find smallest bounding rectangle for font
-    var baseLine = 12;
+
+    var baseLine = 14;
     var offset = 0;
     ctx.fillText(text, offset, baseLine);
+    var textMeasurements = ctx.measureText(text); // TextMetrics object
 
     const h = Math.min(rows, 16);
-    const w = totalColumns;
+    const w = Math.min(Math.round(textMeasurements.width), totalColumns);
+    console.log(w);
 
     let rawData = ctx.getImageData(0, 0, w, h).data;
 
@@ -80,21 +82,13 @@ export class Text extends Component {
           const rawIdx = 4 * (column + row * w);
 
           var pixel = pixels[pixelIdx];
-          // console.log('set pixel with index', pixelIdx, 'in row', row, 'and column', column);
-
           pixel.color = {r: rawData[rawIdx + 0], g: rawData[rawIdx + 1], b: rawData[rawIdx + 2], a: 255};
-
-          // pixel.color = {r: 255, g: 255, b: 0, a: 255};
-          // console.log(pixel.color);
         }
       }
     }
 
     setPixels(pixels);
     setColumns({value: w});
-
-    // console.log({fontStyle, colorStyle});
-    // document.body.appendChild(canvas);
   }
 
   render() {
