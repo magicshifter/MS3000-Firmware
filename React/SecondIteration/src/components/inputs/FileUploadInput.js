@@ -75,7 +75,7 @@ export default class FileUploadInput extends Component {
       for (let y = 0; y < height; y++) {
         const idx = x + (y * totalWidth);
         const pixel = pixels[idx];
-        const fileDataIdx = headerSize + 3 * (y + x * width);
+        const fileDataIdx = headerSize + 3 * (y + x * height);
 
         fileData[fileDataIdx + 0] = pixel.color.r;
         fileData[fileDataIdx + 1] = pixel.color.g;
