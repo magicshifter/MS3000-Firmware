@@ -29,9 +29,14 @@ export const defaultLedColor = {r: 0, b: 0, g: 0, a: 255};
 export const defaultEditorColor = {r: 255, b: 255, g: 255, a: 255};
 
 export const colorList = [
+  {r: 0, g: 0, b: 0, a: 255},
+  {r: 255, g: 0, b: 0, a: 255},
+  {r: 0, g: 255, b: 0, a: 255},
+  {r: 0, g: 0, b: 255, a: 255},
   {r: 255, g: 255, b: 0, a: 255},
+  {r: 255, g: 0, b: 255, a: 255},
   {r: 0, g: 255, b: 255, a: 255},
-  {r: 127, g: 255, b: 127, a: 255},
+  {r: 255, g: 255, b: 255, a: 255},
 ];
 
 export const menuTextColor = materialColors['white'];
