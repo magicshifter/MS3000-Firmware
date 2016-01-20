@@ -44,6 +44,7 @@ public:
 
   int msFrame = 0;
   bool msAccelOK = false;
+  long msPowerCountDown = 0;
 
 public:
   void log(String msg) { 
@@ -254,7 +255,7 @@ public:
     pinMode(PIN_LED_ENABLE, INPUT);
 
     // reset power controller to stay on
-    powerStabilize();
+    // powerStabilize();
     // !J! todo: power-management module 
 
     msButtons.setup();
@@ -295,6 +296,16 @@ public:
     // internal button usage
     if (msButtons.msBtnPwrLongHit)
     {
+      powerDown();
+    }
+
+
+    if (msButtons.msBtnActive) {
+      msPowerCountDown = msGlobals.ggCurrentMicros;
+
+    }
+
+    if (msPowerCountDown < msGlobals.ggCurrentMicros - POWER_TIMEOUT) {
       powerDown();
     }
 

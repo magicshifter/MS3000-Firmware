@@ -7,87 +7,95 @@
 
 class MagicShifterButtons { 
 
-private:
+	private:
 
-public:
+	public:
 
-// TODO: private state
-// state for button timing
-long msBtnAPressTime = 0;
-long msBtnPwrPressTime = 0;
-long msBtnBPressTime = 0;
+	// TODO: private state
+	// state for button timing
+	long msBtnAPressTime = 0;
+	long msBtnPwrPressTime = 0;
+	long msBtnBPressTime = 0;
 
-// state for double click timing
-long msBtnATTL = 0;
-long msBtnPwrTTL = 0;
-long msBtnBTTL = 0;
+	// state for double click timing
+	long msBtnATTL = 0;
+	long msBtnPwrTTL = 0;
+	long msBtnBTTL = 0;
 
-bool msLongClickOK = true;
+	bool msLongClickOK = true;
 
-// todo public properties? Logic for consuming buttons?
-// events for consumers true/false;
-bool msBtnAHit = false;
-bool msBtnPwrHit = false;
-bool msBtnBHit = false;
+	// todo public properties? Logic for consuming buttons?
+	// events for consumers true/false;
+	bool msBtnAHit = false;
+	bool msBtnPwrHit = false;
+	bool msBtnBHit = false;
 
-bool msBtnALongHit = false;
-bool msBtnPwrLongHit = false;
-bool msBtnBLongHit = false;
+	bool msBtnALongHit = false;
+	bool msBtnPwrLongHit = false;
+	bool msBtnBLongHit = false;
 
-bool msBtnADoubleHit = false;
-bool msBtnPwrDoubleHit = false;
-bool msBtnBDoubleHit = false;
+	bool msBtnADoubleHit = false;
+	bool msBtnPwrDoubleHit = false;
+	bool msBtnBDoubleHit = false;
 
-long deltaMicros = 0; // !J! todo: init? (msGlobals.ggCurrentMicros - msGlobals.ggLastMicros);
+	long deltaMicros = 0; // !J! todo: init? (msGlobals.ggCurrentMicros - msGlobals.ggLastMicros);
 
-bool powerButtonPressed(void)
-{
-	return analogRead(A0) > 950;
-}
+	//  button activity 
+	bool msBtnActive = false;
 
-void setup()
-{
-    // init pin modes
-    pinMode(PIN_BUTTON_A, INPUT);
-    pinMode(PIN_BUTTON_B, INPUT);
-}
-
-void loop() 
-{
-    deltaMicros = (msGlobals.ggCurrentMicros - msGlobals.ggLastMicros);
-
-// handle Buttons:
-	pinMode(PIN_BUTTON_A, INPUT);
-	pinMode(PIN_BUTTON_B, INPUT);
-
-	if (!digitalRead(PIN_BUTTON_A))
+	bool powerButtonPressed(void)
 	{
-
-		if (msBtnAPressTime)
-			msBtnAPressTime += deltaMicros;
-		else
-			msBtnAPressTime = 1;
+		return analogRead(A0) > 950;
 	}
-	else
+
+	void setup()
 	{
+	    // init pin modes
+	    pinMode(PIN_BUTTON_A, INPUT);
+	    pinMode(PIN_BUTTON_B, INPUT);
+	}
 
-		if (msLongClickOK && msBtnAPressTime >= MIN_TIME_LONG_CLICK)
-		{
-    // logln("We gots LOON clicks A.");
-			msBtnALongHit = true;
-		}
-		else 
-		if (msBtnAPressTime >= MIN_TIME_CLICK)
-		{
-// logln("We gots clicks A.");
-			msBtnAHit = true;
-		}
+	void loop() 
+	{
+		msBtnActive = false;
 
-			msBtnAPressTime = 0;
+	    deltaMicros = (msGlobals.ggCurrentMicros - msGlobals.ggLastMicros);
+
+	// handle Buttons:
+		pinMode(PIN_BUTTON_A, INPUT);
+		pinMode(PIN_BUTTON_B, INPUT);
+
+		if (!digitalRead(PIN_BUTTON_A))
+		{
+			msBtnActive = true;
+
+			if (msBtnAPressTime)
+				msBtnAPressTime += deltaMicros;
+			else
+				msBtnAPressTime = 1;
+		}
+		else
+		{
+
+			if (msLongClickOK && msBtnAPressTime >= MIN_TIME_LONG_CLICK)
+			{
+	    // logln("We gots LOON clicks A.");
+				msBtnALongHit = true;
+			}
+			else 
+			if (msBtnAPressTime >= MIN_TIME_CLICK)
+			{
+	// logln("We gots clicks A.");
+				msBtnAHit = true;
+			}
+
+				msBtnAPressTime = 0;
 		}
 
 		if (!digitalRead(PIN_BUTTON_B))
 		{
+
+			msBtnActive = true;
 
 			if (msBtnBPressTime)
 				msBtnBPressTime += deltaMicros;
@@ -113,6 +121,9 @@ void loop()
 
 		if (powerButtonPressed())
 		{
+
+			msBtnActive = true;
+
 			if (msBtnPwrPressTime)
 				msBtnPwrPressTime += deltaMicros;
 			else
@@ -123,12 +134,12 @@ void loop()
 			if (msBtnPwrPressTime >= MIN_TIME_LONG_CLICK)
 			{
 				msBtnPwrLongHit = true;
-// logln("Btn Pwr Looong Hit");
+	// logln("Btn Pwr Looong Hit");
 			}
 			else 
 			if (msBtnPwrPressTime >= MIN_TIME_CLICK)
 			{
-// logln("We gots clicks Pwr.");
+	// logln("We gots clicks Pwr.");
 				msBtnPwrHit = true;
 			}
 
