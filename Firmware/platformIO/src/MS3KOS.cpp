@@ -287,6 +287,22 @@ void loop()
       msSystem.msLEDs.loadBuffer(msGlobals.ggRGBLEDBuf);
       msSystem.msLEDs.updatePixels();
       delay(10);
+    }
+    else
+    if (msGlobals.ggCurrentMode == 2) {
+      // swipe colors
+      for (byte idx = 0; idx < MAX_LEDS; idx++)
+      {
+        msSystem.msLEDs.setPixels(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, msGlobals.ggFactoryIntensity / 2);
+        msSystem.msLEDs.updatePixels();
+        delay(10);
+      }
+      for (byte idx = 0; idx < MAX_LEDS; idx++)
+      {
+        msSystem.msLEDs.setPixels(idx, 0, 0, 0, 1 / 2);
+        msSystem.msLEDs.updatePixels();
+        delay(10);
+      }
 
     }
 
