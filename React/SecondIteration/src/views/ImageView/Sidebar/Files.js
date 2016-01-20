@@ -16,7 +16,7 @@ const mapStateToProps =
     visibleColumns: imageView.get('visibleColumns'),
     totalColumns: imageView.get('totalColumns'),
     rows: imageView.get('rows'),
-    pixels: pixels.toArray().map(px => px.toObject()),
+    pixels: pixels.toArray().map(px => px.toJS()),
     host: settingsView.get('host'),
     protocol: settingsView.get('protocol'),
   });

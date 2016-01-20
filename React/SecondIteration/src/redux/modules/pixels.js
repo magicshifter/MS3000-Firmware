@@ -32,8 +32,8 @@ export const pixelClick =
 export const setPixels =
   createAction(
     SET_PIXELS,
-    pixels =>
-      Immutable.List.of(pixels.map(
+    (pixels) =>
+      Immutable.List(pixels.map(
         p => Immutable.fromJS(p)
       ))
   );
@@ -63,7 +63,7 @@ export default handleActions({
 
   // set all pixels
   [SET_PIXELS]:
-    (state, {payload: {pixels, height, width}}) =>
+    (state, {payload: pixels}) =>
       isObject(pixels)
         ? pixels
         : state,

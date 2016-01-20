@@ -35,7 +35,7 @@ export const setColorValue =
 
 export const setColumns = createAction(
   SET_COLUMNS,
-  (value = 1) => value
+  (value = {name: ''}) => value
 );
 
 export const actions = {

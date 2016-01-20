@@ -5,7 +5,7 @@ import {actions} from 'redux/modules/pixels';
 
 import {pixelsType, layoutType} from 'utils/propTypes';
 import {rgba_toString} from 'utils/colors';
-import {getPixelId, makePixelsObject} from 'utils/pixels';
+import {getPixelId, makePixelsArray} from 'utils/pixels';
 import {multimax} from 'utils/math';
 
 import classes from './ImageView.scss';
@@ -13,7 +13,7 @@ import classes from './ImageView.scss';
 const mapStateToProps = (state) => {
   const {imageView, pixels, layout} = state;
   return {
-    pixels: pixels.toJS(),
+    pixels: makePixelsArray(pixels),
     totalColumns: imageView.get('totalColumns'),
     visibleColumns: imageView.get('visibleColumns'),
     rows: imageView.get('rows'),
