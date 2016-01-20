@@ -43,7 +43,7 @@
 
 #define MAX_FILENAME_LENGTH 32
 
-#define NUM_MS_MODES 2
+#define NUM_MS_MODES 3
 
 // MIDI enabled?
 //#define CONFIG_ENABLE_MIDI
