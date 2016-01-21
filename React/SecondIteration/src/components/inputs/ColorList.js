@@ -47,7 +47,7 @@ export class ColorList extends Component {
 
           <FloatingButton
             title='remove color'
-            className={classes['remove']}
+            cssClass={classes['remove']}
             onClick={() => removeColor(key)}
           >
             x
