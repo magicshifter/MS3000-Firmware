@@ -1,8 +1,5 @@
-@import 'base';
-
-html,
-body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
+button,
+input[type=button] {
+  margin: .5em .2em;
+  padding: .2em;
 }

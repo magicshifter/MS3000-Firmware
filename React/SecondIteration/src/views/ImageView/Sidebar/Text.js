@@ -31,8 +31,8 @@ export class Text extends Component {
   static propTypes = {
     setText: PropTypes.func.isRequired, // action
     setFont: PropTypes.func.isRequired, // action
-    setPixels: PropTypes.func.isRequired, // action
     setColumns: PropTypes.func.isRequired, // action
+    setPixels: PropTypes.func.isRequired, // action
 
     text: PropTypes.string,
     pixels: pixelsType.isRequired,
@@ -98,8 +98,6 @@ export class Text extends Component {
 
     return (
       <div className={classes['container']}>
-        <h3>Upload Text</h3>
-
         <FontSelect
           setFont={setFont}
         />

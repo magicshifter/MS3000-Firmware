@@ -73,7 +73,7 @@ export class ImageView extends Component {
 
     const {sidebar, header} = layout;
 
-    const maxWidth = layout.width - (layout.width > 500 ? sidebar.width : 0);
+    const maxWidth = layout.width - (sidebar.width + sidebar.margin);
     const maxHeight = layout.height - header.height;
 
     const pixelListSize = multimax(layout.width, maxWidth, maxHeight);

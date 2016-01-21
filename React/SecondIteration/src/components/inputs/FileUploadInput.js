@@ -135,7 +135,7 @@ export default class FileUploadInput extends Component {
     return (
       <div className={classes['container']}>
 
-        <h3>{header}</h3>
+        <h5>{header}</h5>
 
         <div>
             <label>Filename:</label>
