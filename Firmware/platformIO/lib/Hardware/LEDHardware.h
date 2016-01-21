@@ -22,6 +22,12 @@
 #define PIN_LED_DATA  13
 #define PIN_LED_CLOCK 14
 
+// taken from: 
+//http://electronics.stackexchange.com/questions/1983/correcting-for-non-linear-brightness-in-leds-when-using-pwm/11100
+byte lookupBrightness[16] = { 
+  B00000000, B00000010, B00000100, B00000111, B00001011, B00010010, B00011110, B00101000,
+  B00110010, B01000001, B01010000, B01100100, B01111101, B10100000, B11001000, B11111111
+};
 
 // TODO : Flesh this out?
 class MagicShifterLEDs
@@ -49,6 +55,44 @@ public:
     for (int i = 0; i < RGB_BUFFER_SIZE ; i++)
     {
       RGB_COLORS[i] = buffer[i];
+
+      // i+=4..
+      // RGB_COLORS[i] = buffer[i+3];
+      // RGB_COLORS[i+1] = buffer[i+0];
+      // RGB_COLORS[i+2] = buffer[i+1];
+      // RGB_COLORS[i+3] = buffer[i+2];
+
+    }
+  }
+
+   void loadBufferShort(byte *buffer)
+  {
+    for (int i = 0; i < RGB_BUFFER_SIZE ; i++)
+    {
+      if (i & 4 == 0)
+        RGB_COLORS[i] = buffer[i];
+      else {
+        RGB_COLORS[i] = lookupBrightness[(buffer[i]) & 0xF]>>3;
+      }
+
+      // i+=4..
+      // RGB_COLORS[i] = buffer[i+3];
+      // RGB_COLORS[i+1] = buffer[i+0];
+      // RGB_COLORS[i+2] = buffer[i+1];
+      // RGB_COLORS[i+3] = buffer[i+2];
+
+    }
+  }
+
+  void loadBufferLong(byte *buffer)
+  {
+    for (int i = 0; i < RGB_BUFFER_SIZE ; i++)
+    {
+      if (i & 4 == 0)
+        RGB_COLORS[i] = buffer[i];
+      else {
+        RGB_COLORS[i] = lookupBrightness[buffer[i] >> 4]>>3;
+      }
 
       // i+=4..
       // RGB_COLORS[i] = buffer[i+3];

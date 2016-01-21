@@ -34,6 +34,8 @@ private:
   // the number of files discovered onboard during the scan for POV images..
   int numFiles = 0;
 
+  bool correctBrightness = true;
+
 
 public:
 
@@ -177,6 +179,12 @@ msSystem.log("Would DISP:"); msSystem.logln(toLoad);
       }
     }
 
+    if (msSystem.msButtons.msBtnALongHit == true) {
+      msSystem.msButtons.msBtnALongHit = false;
+
+      correctBrightness = !correctBrightness;
+    }
+
     // msSystem.log("numFiles:"); msSystem.logln(String(numFiles));
 
     if (shakeSync.update(msGlobals.ggAccel[1]))
@@ -198,15 +206,26 @@ msSystem.log("Would DISP:"); msSystem.logln(toLoad);
 
         activeImage.readFrame(frame_index, povData, MAX_LEDS);
 
-        msSystem.msLEDs.loadBuffer(povData);
+        if (correctBrightness) {
 
-        msSystem.msLEDs.updatePixels();
+          msSystem.msLEDs.loadBufferShort(povData);
+          msSystem.msLEDs.updatePixels();
+          //delayMicroseconds(POV_TIME_MICROSECONDS);
+          msSystem.msLEDs.loadBufferLong(povData);
+          msSystem.msLEDs.updatePixels();
+        }
+        else
+        {
+          msSystem.msLEDs.loadBuffer(povData);
+          msSystem.msLEDs.updatePixels();
+          delayMicroseconds(POV_TIME_MICROSECONDS);
+          msSystem.msLEDs.fastClear();
+        }
 
-        delayMicroseconds(POV_TIME_MICROSECONDS);
-        msSystem.msLEDs.fastClear();
       }
       else
       {
+        msSystem.msLEDs.fastClear();
         yield();
       }
 

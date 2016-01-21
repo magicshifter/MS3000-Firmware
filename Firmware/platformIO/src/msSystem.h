@@ -221,6 +221,10 @@ public:
   // gets the basic stuff set up
   void setup()
   {
+     // led controllers and buffer
+    msLEDs.initLEDHardware();
+    msLEDs.initLEDBuffer();
+    msLEDs.bootSwipe();
 
 // !J! todo: enable MIDI, add arp mode
 // #ifdef CONFIG_ENABLE_MIDI
@@ -230,7 +234,7 @@ public:
 // #endif
 
     // !J! todo: get this from factory config
-    delay(1500); // this enables serial consoles to sync
+    delay(700); // this enables serial consoles to sync
 
     // #endif
     EEPROM.begin(512);
@@ -269,6 +273,7 @@ public:
     // led controllers and buffer
     msLEDs.initLEDHardware();
     msLEDs.initLEDBuffer();
+    //msLEDs.bootSwipe();
 
     // boot that we are alive
 
@@ -276,8 +281,6 @@ public:
     // if (!Wire.available() ) {
     //   infinite_swipe(); // todo: explain to user: please reset device
     // }
-
-    msLEDs.bootSwipe();
 
     logSysInfo();
 
