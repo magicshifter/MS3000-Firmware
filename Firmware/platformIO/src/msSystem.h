@@ -234,7 +234,7 @@ public:
     // #endif
     EEPROM.begin(512);
 
-    logln(String("\r\nMagicShifter 3000 OS V0.24"));
+    logln(String("\r\nMagicShifter 3000 OS V0.30"));
 
     // ggUploadFile is prepared for display as necessary ..
     msEEPROMs.loadString(msGlobals.ggUploadFileName, MAX_FILENAME_LENGTH);
