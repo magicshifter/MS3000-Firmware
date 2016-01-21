@@ -1,5 +1,6 @@
 import React, {PropTypes, Component} from 'react';
 import {connect} from 'react-redux';
+import rgba from 'rgba-convert';
 
 import {actions} from 'redux/modules/views/text';
 import {actions as pixelActions} from 'redux/modules/pixels';
@@ -7,14 +8,14 @@ import {actions as imageActions} from 'redux/modules/views/image';
 
 import FontSelect from 'components/inputs/FontSelect';
 
-import {fontType, pixelsType} from 'utils/propTypes';
+import {fontType, pixelsType, colorType} from 'utils/propTypes';
 import {makePixelsArray} from 'utils/pixels';
 
 import classes from './Text.scss';
 
 const mapStateToProps =
   (state) => {
-    const {totalColumns, rows} = state.imageView.toJS();
+    const {totalColumns, rows, color} = state.imageView.toJS();
     const pixels = makePixelsArray(state.pixels);
     const {fonts, fontId, text} = state.textView.toJS();
     return {
@@ -24,6 +25,7 @@ const mapStateToProps =
       totalColumns,
       rows,
       pixels,
+      color,
     };
   };
 
@@ -39,6 +41,7 @@ export class Text extends Component {
     fontId: PropTypes.number,
     totalColumns: PropTypes.number,
     rows: PropTypes.number,
+    color: colorType.isRequired,
     fonts: PropTypes.arrayOf(fontType).isRequired,
   };
 
@@ -50,8 +53,9 @@ export class Text extends Component {
 
   uploadText() {
     const {
-      text, fontId, fonts, pixels,
-      totalColumns, rows,
+      text, fontId, fonts, // text state
+      pixels, // pixel state
+      totalColumns, rows, color, // ImageView state
       setPixels, setColumns, // actions
     } = this.props;
 
@@ -61,7 +65,8 @@ export class Text extends Component {
 
     const font = fonts[fontId];
     ctx.font = '18px ' + (font && font.css || 'Courier');
-    ctx.fillStyle = '#FFFFFF';
+
+    ctx.fillStyle = rgba.css(color) || '#FFFFFF';
 
     var baseLine = 14;
     var offset = 0;
