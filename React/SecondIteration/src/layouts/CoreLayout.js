@@ -9,11 +9,18 @@ import 'styles/core.scss';
 
 import classes from './CoreLayout.scss';
 
+const mapStateToProps =
+  (state) => ({
+    width: state.layout.toJS().sidebar.width,
+  });
+
 class CoreLayout extends Component {
   static propTypes = {
     main: PropTypes.element,
     sidebar: PropTypes.element,
     sidebarMenu: PropTypes.element,
+    footer: PropTypes.element,
+    width: PropTypes.number.isRequired,
     children: PropTypes.element,
     windowResize: PropTypes.func.isRequired,
   };
@@ -25,7 +32,7 @@ class CoreLayout extends Component {
   }
 
   render() {
-    const {children, main, sidebar, sidebarMenu} = this.props;
+    const {children, main, sidebar, footer, sidebarMenu, width} = this.props;
 
     return (
       <div className={classes['container']}>
@@ -37,6 +44,8 @@ class CoreLayout extends Component {
           <Sidebar
             menu={sidebarMenu}
             main={sidebar}
+            footer={footer}
+            width={width}
           />
         </div>
       </div>
@@ -44,4 +53,4 @@ class CoreLayout extends Component {
   }
 }
 
-export default connect(() => ({}), actions)(CoreLayout);
+export default connect(mapStateToProps, actions)(CoreLayout);

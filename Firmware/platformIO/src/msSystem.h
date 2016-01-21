@@ -44,6 +44,7 @@ public:
 
   int msFrame = 0;
   bool msAccelOK = false;
+  long msPowerCountDown = 0;
 
 public:
   void log(String msg) { 
@@ -220,6 +221,10 @@ public:
   // gets the basic stuff set up
   void setup()
   {
+     // led controllers and buffer
+    msLEDs.initLEDHardware();
+    msLEDs.initLEDBuffer();
+    msLEDs.bootSwipe();
 
 // !J! todo: enable MIDI, add arp mode
 // #ifdef CONFIG_ENABLE_MIDI
@@ -229,7 +234,7 @@ public:
 // #endif
 
     // !J! todo: get this from factory config
-    delay(1500); // this enables serial consoles to sync
+    delay(700); // this enables serial consoles to sync
 
     // #endif
     EEPROM.begin(512);
@@ -254,7 +259,7 @@ public:
     pinMode(PIN_LED_ENABLE, INPUT);
 
     // reset power controller to stay on
-    powerStabilize();
+    // powerStabilize();
     // !J! todo: power-management module 
 
     msButtons.setup();
@@ -268,6 +273,7 @@ public:
     // led controllers and buffer
     msLEDs.initLEDHardware();
     msLEDs.initLEDBuffer();
+    //msLEDs.bootSwipe();
 
     // boot that we are alive
 
@@ -275,8 +281,6 @@ public:
     // if (!Wire.available() ) {
     //   infinite_swipe(); // todo: explain to user: please reset device
     // }
-
-    msLEDs.bootSwipe();
 
     logSysInfo();
 
@@ -295,6 +299,16 @@ public:
     // internal button usage
     if (msButtons.msBtnPwrLongHit)
     {
+      powerDown();
+    }
+
+
+    if (msButtons.msBtnActive) {
+      msPowerCountDown = msGlobals.ggCurrentMicros;
+
+    }
+
+    if (msPowerCountDown < msGlobals.ggCurrentMicros - POWER_TIMEOUT) {
       powerDown();
     }
 

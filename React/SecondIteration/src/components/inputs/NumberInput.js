@@ -1,7 +1,5 @@
 import React, {Component, PropTypes} from 'react';
 
-import FloatingButton from './FloatingButton';
-
 import {minmax} from 'utils/math';
 import {isNumber} from 'utils/types';
 
@@ -13,6 +11,7 @@ export default class NumberInput extends Component {
     name: PropTypes.string.isRequired,
     min: PropTypes.number,
     max: PropTypes.number,
+    step: PropTypes.number,
     action: PropTypes.func.isRequired,
     label: PropTypes.string,
   };
@@ -20,6 +19,7 @@ export default class NumberInput extends Component {
   static defaultProps = {
     min: 0,
     max: 9999,
+    step: 1,
   };
 
   constructor(props) {
@@ -41,7 +41,7 @@ export default class NumberInput extends Component {
   }
 
   render() {
-    const {val, name, label, action, min, max} = this.props;
+    const {val, name, label, min, max, step} = this.props;
 
     return (
       <div className={classes['input']}>
@@ -50,21 +50,14 @@ export default class NumberInput extends Component {
           <label>{label}</label>
         }
 
-        <FloatingButton
-          onClick={() => action({name, value: minmax(val - 1, min, max)})}
-          icon='i-minus'
-        />
-
         <input
-          type='text'
+          type='number'
           name={name}
           value={val}
+          step={step || 1}
+          min={min}
+          max={max}
           onChange={this.onChange}
-        />
-
-        <FloatingButton
-          onClick={() => action({name, value: minmax(val + 1, min, max)})}
-          icon='i-plus'
         />
       </div>
     );

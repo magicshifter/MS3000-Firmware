@@ -1,40 +1,25 @@
 import {createAction, handleActions} from 'redux-actions';
 import Immutable from 'immutable';
 
-import {isColor, isNumber, isObject} from 'utils/types';
-import {createImmutablePixels} from 'utils/pixels';
+import {isColor, isNumber} from 'utils/types';
 
 import {rows, visibleColumns, totalColumns, defaultEditorColor} from 'GLOBALS';
 
 const color = Immutable.Map(defaultEditorColor);
 
-const pixels = createImmutablePixels(totalColumns, visibleColumns, rows);
-
-const initialState = Immutable.Map({pixels, rows, visibleColumns, totalColumns, color});
+const initialState = Immutable.Map({rows, visibleColumns, totalColumns, color});
 
 // ------------------------------------
 // Constants
 // ------------------------------------
-export const PIXEL_CLICK = 'PIXEL_CLICK';
+
 export const SET_COLOR = 'SET_COLOR';
 export const SET_COLOR_VALUE = 'SET_COLOR_VALUE';
 export const SET_COLUMNS = 'SET_COLUMNS';
-export const SET_PIXELS = 'SET_PIXELS';
 
 // ------------------------------------
 // Actions
 // ------------------------------------
-export const pixelClick =
-  createAction(
-    PIXEL_CLICK,
-    (value = 1) => value
-  );
-
-export const setPixels =
-  createAction(
-    SET_PIXELS,
-    value => value
-  );
 
 export const setColor =
   createAction(
@@ -50,12 +35,10 @@ export const setColorValue =
 
 export const setColumns = createAction(
   SET_COLUMNS,
-  (value = 1) => value
+  (value = {name: ''}) => value
 );
 
 export const actions = {
-  pixelClick,
-  setPixels,
   setColor,
   setColorValue,
   setColumns,
@@ -64,21 +47,8 @@ export const actions = {
 // ------------------------------------
 // Reducer
 // ------------------------------------
-export default handleActions({
-  [PIXEL_CLICK]:
-    (state, {payload: pixel}) =>
-      state.setIn(
-        ['pixels', pixel.id, 'color'],
-        pixel.color !== color
-          ? color
-          : state.get('color')),
 
-  [SET_PIXELS]:
-    (state, {payload: {pixels, height, width}}) => {
-      return isObject(pixels)
-      ? state.set('pixels', Immutable.List.of(...pixels.map(p => Immutable.fromJS(p)))).set('visibleColumns', width)
-      : state;
-    },
+export default handleActions({
 
   [SET_COLOR]:
     (state, {payload: p}) => {

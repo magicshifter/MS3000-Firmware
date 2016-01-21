@@ -3,10 +3,16 @@ import React, {PropTypes} from 'react';
 import classes from './Sidebar.scss';
 
 export const sidebar =
-  ({menu, main}) =>
-    <aside className={classes['aside']}>
+  ({menu, main, footer, width}) =>
+    <aside
+      className={classes['aside']}
+      style={{
+        width,
+      }}
+    >
       {menu}
       {main}
+      {footer}
     </aside>;
 
 sidebar.propTypes = {

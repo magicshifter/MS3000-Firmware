@@ -1,15 +1,11 @@
 import React, {PropTypes, Component} from 'react';
 import {connect} from 'react-redux';
 
-import {actions} from 'redux/modules/views/image';
-
 import {pixelType} from 'utils/propTypes';
 
-import ImageInput from 'components/inputs/ImageInput';
 import FileUploadInput from 'components/inputs/FileUploadInput';
-import SidebarText from './Text';
 
-import classes from './Files.scss';
+import classes from './Footer.scss';
 
 const mapStateToProps =
   ({imageView, settingsView, pixels}) => ({
@@ -38,27 +34,18 @@ export class Files extends Component {
       <div
         className={classes['container']}
       >
-        <div>
-          <h5>Load Image from disk</h5>
-          <ImageInput />
-        </div>
-
-        <div>
-          <h5>Upload</h5>
-          <FileUploadInput
-            pixels={pixels}
-            height={rows}
-            width={visibleColumns}
-            totalWidth={totalColumns}
-            url={[protocol, host].join('://')}
-            text='send to MS3000'
-          />
-        </div>
-
-        <SidebarText />
+        <FileUploadInput
+          pixels={pixels}
+          height={rows}
+          width={visibleColumns}
+          totalWidth={totalColumns}
+          url={[protocol, host].join('://')}
+          header='Upload:'
+          text='send to MS3000'
+        />
       </div>
     );
   }
 }
 
-export default connect(mapStateToProps, actions)(Files);
+export default connect(mapStateToProps, {})(Files);

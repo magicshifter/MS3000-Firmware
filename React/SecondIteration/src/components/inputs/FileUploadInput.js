@@ -12,6 +12,7 @@ export default class FileUploadInput extends Component {
     totalWidth: PropTypes.number.isRequired,
     label: PropTypes.string,
     text: PropTypes.string,
+    header: PropTypes.string,
   };
 
   constructor(props) {
@@ -27,6 +28,7 @@ export default class FileUploadInput extends Component {
     if (bitPerPixel === 24) {
       return w * h * 3;
     }
+
     if (bitPerPixel === 8) {
       return w * h;
     } else if (bitPerPixel === 1) {
@@ -73,7 +75,7 @@ export default class FileUploadInput extends Component {
       for (let y = 0; y < height; y++) {
         const idx = x + (y * totalWidth);
         const pixel = pixels[idx];
-        const fileDataIdx = headerSize + 3 * (y + x * width);
+        const fileDataIdx = headerSize + 3 * (y + x * height);
 
         fileData[fileDataIdx + 0] = pixel.color.r;
         fileData[fileDataIdx + 1] = pixel.color.g;
@@ -102,11 +104,11 @@ export default class FileUploadInput extends Component {
     const fileName = this.getFileName();
 
     var url = this.props.url;
-    // alert(url);
+    // console.log({url});
     if (url === 'http://') {
       url = '';
     }
-    // alert(url);
+    // console.log({url});
 
     const formData = new FormData();
     formData.append('uploadFile', blob, fileName);
@@ -128,14 +130,21 @@ export default class FileUploadInput extends Component {
   }
 
   render() {
-    const {label, text = 'Upload File'} = this.props;
+    const {label, text = 'Upload File', header} = this.props;
 
     return (
       <div className={classes['container']}>
+
+        <h5>{header}</h5>
+
         <div>
             <label>Filename:</label>
-            <input type='text' defaultValue='userImage' ref='fileName' />
+            <input
+                type='text'
+                defaultValue='userImage'
+                ref='fileName' />
         </div>
+
         {label && <label>{label}</label>}
 
         <input

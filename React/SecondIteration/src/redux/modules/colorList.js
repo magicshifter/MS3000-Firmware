@@ -24,10 +24,12 @@ export const addColor =
   createAction(
     ADD_COLOR,
     (colors = []) =>
-      Immutable.List(colors.sort(
-        (colorA, colorB) =>
-          scColor(rgba_toString(colorA)).hue() - scColor(rgba_toString(colorB)).hue()
-      ))
+      Immutable.List(
+        colors.sort(
+          (colorA, colorB) =>
+            scColor(rgba_toString(colorA)).hue() - scColor(rgba_toString(colorB)).hue()
+        ).map(color => Immutable.Map(color))
+      )
   );
 
 export const removeColor =
@@ -49,7 +51,7 @@ export default handleActions({
 
   [ADD_COLOR]:
     (state, {payload: colors}) =>
-      state.set('colors', colors),
+      colors,
 
   [REMOVE_COLOR]:
     (state, {payload: id}) =>

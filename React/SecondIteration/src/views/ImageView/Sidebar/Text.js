@@ -3,26 +3,29 @@ import {connect} from 'react-redux';
 import rgba from 'rgba-convert';
 
 import {actions} from 'redux/modules/views/text';
-
+import {actions as pixelActions} from 'redux/modules/pixels';
 import {actions as imageActions} from 'redux/modules/views/image';
 
 import FontSelect from 'components/inputs/FontSelect';
 
-import {fontType, colorType, pixelsType} from 'utils/propTypes';
-import {getImagePixels} from 'utils/images';
+import {fontType, pixelsType, colorType} from 'utils/propTypes';
+import {makePixelsArray} from 'utils/pixels';
 
 import classes from './Text.scss';
 
 const mapStateToProps =
   (state) => {
-    const {color, pixels} = state.imageView.toJS();
+    const {totalColumns, rows, color} = state.imageView.toJS();
+    const pixels = makePixelsArray(state.pixels);
     const {fonts, fontId, text} = state.textView.toJS();
     return {
       fonts,
       fontId,
       text,
-      color,
+      totalColumns,
+      rows,
       pixels,
+      color,
     };
   };
 
@@ -30,13 +33,16 @@ export class Text extends Component {
   static propTypes = {
     setText: PropTypes.func.isRequired, // action
     setFont: PropTypes.func.isRequired, // action
+    setColumns: PropTypes.func.isRequired, // action
     setPixels: PropTypes.func.isRequired, // action
 
     text: PropTypes.string,
     pixels: pixelsType.isRequired,
     fontId: PropTypes.number,
+    totalColumns: PropTypes.number,
+    rows: PropTypes.number,
+    color: colorType.isRequired,
     fonts: PropTypes.arrayOf(fontType).isRequired,
-    color: colorType,
   };
 
   constructor(props) {
@@ -46,55 +52,47 @@ export class Text extends Component {
   }
 
   uploadText() {
-    const {text, fontId, color, fonts, pixels, setPixels} = this.props;
-    console.log({text, fontId, color}, this.props);
+    const {
+      text, fontId, fonts, // text state
+      pixels, // pixel state
+      totalColumns, rows, color, // ImageView state
+      setPixels, setColumns, // actions
+    } = this.props;
 
     const canvas = document.createElement('canvas');
 
-    //canvas.height = 16;
-    //canvas.width = 96;
     const ctx = canvas.getContext('2d');
 
+    const font = fonts[fontId];
+    ctx.font = '18px ' + (font && font.css || 'Courier');
 
+    ctx.fillStyle = rgba.css(color) || '#FFFFFF';
 
-   ctx.font = '18px Courier';
-  ctx.fillStyle = '#FFFFFF';
-  // todo find smallest bounding rectangle for font
-  var baseLine = 12;
-  var offset = 0;
-    ctx.fillText("hey", offset, baseLine);
+    var baseLine = 14;
+    var offset = 0;
+    ctx.fillText(text, offset, baseLine);
+    var textMeasurements = ctx.measureText(text); // TextMetrics object
 
+    const h = Math.min(rows, 16);
+    const w = Math.min(Math.round(textMeasurements.width), totalColumns);
+    console.log(w);
 
+    let rawData = ctx.getImageData(0, 0, w, h).data;
 
+    for (let column = 0; column < w; column++) {
+      for (let row = 0; row < h; row++) {
+        if (column < w && row < h) {
+          const pixelIdx = column + (row * totalColumns);
+          const rawIdx = 4 * (column + row * w);
 
-      const w = 40;
-      const h = Math.min(16, 16);
-      const totalColumns = 96;
-
-      let rawData = ctx.getImageData(0, 0, w, h).data;
-
-      for (let column = 0; column < w; column++) {
-        for (let row = 0; row < h; row++) {
-          if (column < w && row < h) {
-            const pixelIdx = column + (row * totalColumns);
-            const rawIdx = 4 * (column + row * w);
-
-            var pixel = pixels[pixelIdx];
-            // console.log('set pixel with index', pixelIdx, 'in row', row, 'and column', column);
-
-            pixel.color = {r: rawData[rawIdx + 0], g: rawData[rawIdx + 1], b: rawData[rawIdx + 2], a: 255};
-
-            //pixel.color = {r: 255, g: 255, b: 0, a: 255};
-            // console.log(pixel.color);
-          }
+          var pixel = pixels[pixelIdx];
+          pixel.color = {r: rawData[rawIdx + 0], g: rawData[rawIdx + 1], b: rawData[rawIdx + 2], a: 255};
         }
       }
+    }
 
-      setPixels({pixels, width:w, height:h});
-
-
-    //console.log({fontStyle, colorStyle});
-    //document.body.appendChild(canvas);
+    setPixels(pixels);
+    setColumns({value: w});
   }
 
   render() {
@@ -105,8 +103,6 @@ export class Text extends Component {
 
     return (
       <div className={classes['container']}>
-        <h3>Upload Text</h3>
-
         <FontSelect
           setFont={setFont}
         />
@@ -133,4 +129,4 @@ export class Text extends Component {
   }
 }
 
-export default connect(mapStateToProps, {...actions, ...imageActions})(Text);
+export default connect(mapStateToProps, {...actions, ...imageActions, ...pixelActions})(Text);

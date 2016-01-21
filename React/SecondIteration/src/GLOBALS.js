@@ -5,6 +5,7 @@ import {colorsToObj} from 'utils/colors';
 export const materialColors = colorsToObj(mColors);
 
 export const host = '';
+// export const host = '192.168.4.1';
 export const protocol = 'http';
 
 export const rows = 16;
@@ -12,8 +13,6 @@ export const totalColumns = 96;
 export const visibleColumns = 16;
 
 export const fontSize = 15;
-
-export const sidebarWidth = 250;
 
 export const links = [
   {to: '/', text: 'paint'},
@@ -28,9 +27,14 @@ export const defaultLedColor = {r: 0, b: 0, g: 0, a: 255};
 export const defaultEditorColor = {r: 255, b: 255, g: 255, a: 255};
 
 export const colorList = [
+  {r: 0, g: 0, b: 0, a: 255},
+  {r: 255, g: 0, b: 0, a: 255},
+  {r: 0, g: 255, b: 0, a: 255},
+  {r: 0, g: 0, b: 255, a: 255},
   {r: 255, g: 255, b: 0, a: 255},
+  {r: 255, g: 0, b: 255, a: 255},
   {r: 0, g: 255, b: 255, a: 255},
-  {r: 127, g: 255, b: 127, a: 255},
+  {r: 255, g: 255, b: 255, a: 255},
 ];
 
 export const menuTextColor = materialColors['white'];
@@ -52,7 +56,17 @@ export const fonts = [
   },
 ];
 
-export const text = '! MAGIC !';
+export const layout = {
+  height: window.innerHeight,
+  width: window.innerWidth,
+};
+
+export const sidebar = {
+  width: layout.height > 500 ? 300 : 250,
+  margin: 25,
+};
+
+export const text = 'Magic';
 
 export const fontId = 0;
 

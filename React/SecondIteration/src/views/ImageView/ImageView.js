@@ -1,19 +1,20 @@
 import React, {PropTypes, Component} from 'react';
 import {connect} from 'react-redux';
 
-import {actions} from 'redux/modules/views/image';
+import {actions} from 'redux/modules/pixels';
 
-import {pixelsType, layoutType} from 'utils/propTypes';
+import {pixelsType, layoutType, colorType} from 'utils/propTypes';
 import {rgba_toString} from 'utils/colors';
-import {getPixelId, makePixelsObject} from 'utils/pixels';
+import {getPixelId, makePixelsArray} from 'utils/pixels';
 import {multimax} from 'utils/math';
 
 import classes from './ImageView.scss';
 
 const mapStateToProps = (state) => {
-  const {imageView, layout} = state;
+  const {imageView, pixels, layout} = state;
   return {
-    pixels: makePixelsObject(imageView.get('pixels')),
+    pixels: makePixelsArray(pixels),
+    color: imageView.get('color'),
     totalColumns: imageView.get('totalColumns'),
     visibleColumns: imageView.get('visibleColumns'),
     rows: imageView.get('rows'),
@@ -26,6 +27,7 @@ export class ImageView extends Component {
     pixelClick: PropTypes.func.isRequired,
     pixels: pixelsType.isRequired,
     rows: PropTypes.number.isRequired,
+    color: colorType.isRequired,
     visibleColumns: PropTypes.number.isRequired,
     totalColumns: PropTypes.number.isRequired,
     layout: layoutType,
@@ -38,14 +40,14 @@ export class ImageView extends Component {
   }
 
   onMouseOver(e, pixel) {
-    const {pixelClick} = this.props;
+    const {pixelClick, color} = this.props;
     if (e.buttons === 1) {
-      pixelClick(pixel);
+      pixelClick({pixel, color});
     }
   }
 
   renderPixel(column, row, pxSize) {
-    const {totalColumns, visibleColumns, pixels, pixelClick} = this.props;
+    const {totalColumns, visibleColumns, pixels, pixelClick, color} = this.props;
 
     const pixelId = getPixelId(totalColumns, column, row);
     const pixel = pixels[pixelId];
@@ -55,7 +57,7 @@ export class ImageView extends Component {
       <td
         className={classes['pixel']}
         key={`r-${row + 1}-c-${column + 1}`}
-        onClick={() => pixelClick(pixel)}
+        onClick={() => pixelClick({pixel, color})}
         onMouseOver={e => this.onMouseOver(e, pixel)}
         style={{
           width: pxSize,
@@ -71,7 +73,7 @@ export class ImageView extends Component {
 
     const {sidebar, header} = layout;
 
-    const maxWidth = layout.width - (layout.width > 500 ? sidebar.width : 0);
+    const maxWidth = layout.width - (sidebar.width + sidebar.margin);
     const maxHeight = layout.height - header.height;
 
     const pixelListSize = multimax(layout.width, maxWidth, maxHeight);

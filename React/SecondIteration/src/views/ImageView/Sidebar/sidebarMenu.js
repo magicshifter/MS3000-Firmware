@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 
 import {imageViewType, settingsViewType, layoutType} from 'utils/propTypes';
 
-import classes from './Menu.scss';
+import classes from './sidebarMenu.scss';
 
 const mapStateToProps = (state) => {
   const {imageView, settingsView, layout} = state;
@@ -53,15 +53,11 @@ export class sidebarMenu extends Component {
         </button>
         <nav>
           <ul>
-            <li>
-              <Link to='/'>controls</Link>
-            </li>
-            <li>
-              <Link to='/paint/files'>files</Link>
-            </li>
-            <li>
-              <Link to='/paint/settings'>settings</Link>
-            </li>
+            <li><Link to='/'>controls</Link></li>
+            <li><Link to='/paint/images'>images</Link></li>
+            <li><Link to='/paint/text'>text</Link></li>
+            <li><Link to='/paint/filters'>filters</Link></li>
+            <li><Link to='/paint/settings'>settings</Link></li>
           </ul>
         </nav>
       </div>
