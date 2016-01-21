@@ -9,3 +9,15 @@ input[type=number] {
   padding: .3em 0 .3em .3em;
   width: 3.5em;
 }
+
+.floating {
+  float: left;
+  height: 1em;
+  width: 1em;
+
+
+  &.small {
+    height: .7em;
+    width: .7em;
+  }
+}
