@@ -1,0 +1,11 @@
+button,
+input {
+  margin: .3em;
+  padding: .3em;
+}
+
+input[type=number] {
+  text-align: right;
+  padding: .3em 0 .3em .3em;
+  width: 3.5em;
+}
