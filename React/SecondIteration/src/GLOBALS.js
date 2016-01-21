@@ -14,8 +14,6 @@ export const visibleColumns = 16;
 
 export const fontSize = 15;
 
-export const sidebarWidth = 250;
-
 export const links = [
   {to: '/', text: 'paint'},
   {to: '/about', text: 'about'},
@@ -57,6 +55,16 @@ export const fonts = [
     css: 'Comic Sans MS',
   },
 ];
+
+export const layout = {
+  height: window.innerHeight,
+  width: window.innerWidth,
+};
+
+export const sidebar = {
+  width: layout.height > 500 ? 300 : 250,
+  margin: 25,
+};
 
 export const text = 'Magic';
 
