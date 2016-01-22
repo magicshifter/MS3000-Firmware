@@ -17,7 +17,7 @@ const mapStateToProps =
     protocol: settingsView.get('protocol'),
   });
 
-export class Files extends Component {
+export class Footer extends Component {
   static propTypes = {
     visibleColumns: PropTypes.number.isRequired,
     totalColumns: PropTypes.number.isRequired,
@@ -48,4 +48,4 @@ export class Files extends Component {
   }
 }
 
-export default connect(mapStateToProps, {})(Files);
+export default connect(mapStateToProps, {})(Footer);

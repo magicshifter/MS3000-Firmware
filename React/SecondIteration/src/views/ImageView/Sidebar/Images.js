@@ -10,7 +10,7 @@ import classes from './Files.scss';
 const mapStateToProps =
   () => ({});
 
-export class Files extends Component {
+export class Images extends Component {
   static propTypes = {};
 
   render() {
@@ -27,4 +27,4 @@ export class Files extends Component {
   }
 }
 
-export default connect(mapStateToProps, actions)(Files);
+export default connect(mapStateToProps, actions)(Images);
