@@ -41,11 +41,7 @@ export const makePixelImmutable =
 
 export const makePixelsImmutable =
   pixels =>
-    Immutable.List(
-      pixels.map(
-        px => makePixelImmutable(px)
-      )
-    );
+    Immutable.fromJS(pixels);
 
 export const makePixelObject =
   immutablePixel =>

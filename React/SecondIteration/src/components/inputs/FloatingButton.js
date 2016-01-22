@@ -9,16 +9,27 @@ export default class FloatingButton extends Component {
     icon: PropTypes.string,
     children: PropTypes.string,
     title: PropTypes.string,
+    cssClass: PropTypes.string,
+  };
+
+  static defaultProps = {
+    cssClass: '',
+    icon: '',
+    title: '',
   };
 
   render() {
     const {onClick, icon, children, title} = this.props;
+    let {cssClass} = this.props;
 
-    let className = `${classes['container']}${icon && ' ' + iconClasses[icon]}`;
+    cssClass += ' ' + classes['container'];
+    if (icon && iconClasses[icon]) {
+      cssClass += ' ' + iconClasses[icon];
+    }
 
     return (
       <button
-        className={className}
+        className={cssClass}
         onClick={onClick}
         title={title}
       >

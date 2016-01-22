@@ -2,7 +2,8 @@ import {createAction, handleActions} from 'redux-actions';
 import Immutable from 'immutable';
 
 import {isObject} from 'utils/types';
-import {createImmutablePixels} from 'utils/pixels';
+import {createImmutablePixels, makePixelsImmutable} from 'utils/pixels';
+import {invert, lighten, darken} from 'utils/colors';
 
 import {rows, totalColumns, visibleColumns, defaultLedColor} from 'GLOBALS';
 
@@ -18,6 +19,9 @@ const initialState = Immutable.List(pixels);
 
 export const PIXEL_CLICK = 'PIXEL_CLICK';
 export const SET_PIXELS = 'SET_PIXELS';
+export const INVERT = 'INVERT';
+export const DARKEN = 'DARKEN';
+export const LIGHTEN = 'LIGHTEN';
 
 // ------------------------------------
 // Actions
@@ -32,15 +36,33 @@ export const pixelClick =
 export const setPixels =
   createAction(
     SET_PIXELS,
-    (pixels) =>
-      Immutable.List(pixels.map(
-        p => Immutable.fromJS(p)
-      ))
+    pixels => makePixelsImmutable(pixels)
+  );
+
+export const invertPixels =
+  createAction(
+    INVERT,
+    pixels => makePixelsImmutable(invert(pixels))
+  );
+
+export const darkenPixels =
+  createAction(
+    DARKEN,
+    pixels => makePixelsImmutable(darken(pixels))
+  );
+
+export const lightenPixels =
+  createAction(
+    LIGHTEN,
+    pixels => makePixelsImmutable(lighten(pixels))
   );
 
 export const actions = {
   pixelClick,
   setPixels,
+  invertPixels,
+  darkenPixels,
+  lightenPixels,
 };
 
 // ------------------------------------
@@ -64,6 +86,27 @@ export default handleActions({
 
   // set all pixels
   [SET_PIXELS]:
+    (state, {payload: pixels}) =>
+      isObject(pixels)
+        ? pixels
+        : state,
+
+  // invert all pixels
+  [INVERT]:
+    (state, {payload: pixels}) =>
+      isObject(pixels)
+        ? pixels
+        : state,
+
+  // darken all pixels
+  [DARKEN]:
+    (state, {payload: pixels}) =>
+      isObject(pixels)
+        ? pixels
+        : state,
+
+  // lighten all pixels
+  [LIGHTEN]:
     (state, {payload: pixels}) =>
       isObject(pixels)
         ? pixels
