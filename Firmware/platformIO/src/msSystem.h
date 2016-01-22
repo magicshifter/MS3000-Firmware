@@ -295,17 +295,14 @@ public:
   {
 
     msButtons.loop();
-
     // internal button usage
     if (msButtons.msBtnPwrLongHit)
     {
       powerDown();
     }
 
-
     if (msButtons.msBtnActive) {
       msPowerCountDown = msGlobals.ggCurrentMicros;
-
     }
 
     if (msPowerCountDown < msGlobals.ggCurrentMicros - POWER_TIMEOUT) {
@@ -314,32 +311,18 @@ public:
 
     if (msButtons.msBtnBHit)
     {
-      msGlobals.ggFactoryIntensity+=2;
-      if (msGlobals.ggFactoryIntensity > 31)
-      {
-        msGlobals.ggFactoryIntensity = 31;
-      }
-
       msGlobals.ggCurrentMode = (msGlobals.ggCurrentMode+1)%NUM_MS_MODES;
-
       msButtons.msBtnBHit = false;
+      log("Changed +Mode:"); logln(String(msGlobals.ggCurrentMode));
     }
-
-
-    if (msButtons.msBtnBLongHit)
+    else
+    if (msButtons.msBtnAHit)
     {
-      msGlobals.ggFactoryIntensity-=6;
-      if (msGlobals.ggFactoryIntensity < 1)
-      {
-        msGlobals.ggFactoryIntensity = 1;
-      }
-
-      msGlobals.ggCurrentMode = (msGlobals.ggCurrentMode+1)%NUM_MS_MODES;
-      
-      log("Changed Mode:"); logln(String(msGlobals.ggCurrentMode));
-
+      msGlobals.ggCurrentMode = (msGlobals.ggCurrentMode-1)%NUM_MS_MODES;
+      msButtons.msBtnBHit = false;
+      log("Changed -Mode:"); logln(String(msGlobals.ggCurrentMode));
     }
-
+    
     USBPoll();
   }
 
