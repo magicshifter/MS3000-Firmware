@@ -277,6 +277,8 @@ void loop()
 
     msGlobals.ggLastFrameMicros = msGlobals.ggCurrentMicros;
 
+
+    // dispatch to the mode handler .. 
     if (msGlobals.ggCurrentMode == 0)
     {
       msModeShake.step();
@@ -305,6 +307,11 @@ void loop()
       }
 
     }
+    else { // mode out of bounds failure
+
+    }
+
+
 
   }
 

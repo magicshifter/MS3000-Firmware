@@ -312,33 +312,33 @@ public:
       powerDown();
     }
 
-    // if (msButtons.msBtnBHit)
-    // {
-    //   msGlobals.ggFactoryIntensity+=2;
-    //   if (msGlobals.ggFactoryIntensity > 31)
-    //   {
-    //     msGlobals.ggFactoryIntensity = 31;
-    //   }
+    if (msButtons.msBtnBHit)
+    {
+      msGlobals.ggFactoryIntensity+=2;
+      if (msGlobals.ggFactoryIntensity > 31)
+      {
+        msGlobals.ggFactoryIntensity = 31;
+      }
 
-    //   msGlobals.ggCurrentMode = (msGlobals.ggCurrentMode+1)%NUM_MS_MODES;
+      msGlobals.ggCurrentMode = (msGlobals.ggCurrentMode+1)%NUM_MS_MODES;
 
-    //   msBtnBHit = false:
-    // }
+      msButtons.msBtnBHit = false;
+    }
 
 
-    // if (msButtons.msBtnBLongHit)
-    // {
-    //   msGlobals.ggFactoryIntensity-=6;
-    //   if (msGlobals.ggFactoryIntensity < 1)
-    //   {
-    //     msGlobals.ggFactoryIntensity = 1;
-    //   }
+    if (msButtons.msBtnBLongHit)
+    {
+      msGlobals.ggFactoryIntensity-=6;
+      if (msGlobals.ggFactoryIntensity < 1)
+      {
+        msGlobals.ggFactoryIntensity = 1;
+      }
 
-    //   msGlobals.ggCurrentMode = (msGlobals.ggCurrentMode+1)%NUM_MS_MODES;
+      msGlobals.ggCurrentMode = (msGlobals.ggCurrentMode+1)%NUM_MS_MODES;
       
-    //   log("Changed Mode:"); logln(String(msGlobals.ggCurrentMode));
+      log("Changed Mode:"); logln(String(msGlobals.ggCurrentMode));
 
-    // }
+    }
 
     USBPoll();
   }
