@@ -34,7 +34,7 @@ private:
   // the number of files discovered onboard during the scan for POV images..
   int numFiles = 0;
 
-  bool correctBrightness = true;
+  bool correctBrightness = false;
 
 
 public:

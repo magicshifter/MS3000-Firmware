@@ -45,7 +45,8 @@ class MagicShifterButtons {
 
 	bool powerButtonPressed(void)
 	{
-		return analogRead(A0) > 950;
+		// had unusual high values on one of the 100x PCBs so this threshold is bigger now
+		return analogRead(A0) > 970;
 	}
 
 	void setup()
