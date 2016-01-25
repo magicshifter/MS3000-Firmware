@@ -259,7 +259,8 @@ public:
     pinMode(PIN_LED_ENABLE, INPUT);
 
     // reset power controller to stay on
-    // powerStabilize();
+    // had some power down troubles so this needs to be further investigated
+    powerStabilize();
     // !J! todo: power-management module 
 
     msButtons.setup();
