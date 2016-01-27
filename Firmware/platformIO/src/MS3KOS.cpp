@@ -247,8 +247,6 @@ void loop()
 
   msSystem.loop();
 
-
-
   msWebServer.loop();
 
   // do some tests

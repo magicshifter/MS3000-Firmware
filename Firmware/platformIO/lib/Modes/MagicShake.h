@@ -59,7 +59,6 @@ public:
 
         delayMicroseconds(POV_TIME_MICROSECONDS);
         msSystem.msLEDs.fastClear();
-        delay(10);
       }
     }
     else
