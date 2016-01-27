@@ -4,8 +4,6 @@
 // web interface, so we refresh our onboard POV files with every
 // user event (except of course, Shaking..)
  
-#include "Modes.h"
-#include "Image.h"
 
 #define FRAME_MULTIPLY 2
 
