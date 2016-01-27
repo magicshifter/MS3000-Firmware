@@ -75,7 +75,7 @@ public:
       msSystem.logln((char * )path.c_str());
     }
 
-    msSystem.msEEPROMs.safeStrncpy(config->hostname, "magicshifter", sizeof(config->hostname));
+    l_safeStrncpy(config->hostname, "magicshifter", sizeof(config->hostname));
     config->port = 80;
     
     return false;
@@ -111,8 +111,8 @@ public:
 
     
 #ifdef AP_NAME_OVERRIDE
-    msSystem.msEEPROMs.safeStrncpy(config->ssid, AP_NAME_OVERRIDE, sizeof(config->ssid));
-    msSystem.msEEPROMs.safeStrncpy(config->password, "", sizeof(config->password));
+    l_safeStrncpy(config->ssid, AP_NAME_OVERRIDE, sizeof(config->ssid));
+    l_safeStrncpy(config->password, "", sizeof(config->password));
 #endif
     
     return false;
@@ -142,8 +142,8 @@ public:
       file.close();
       return true;
     }
-    msSystem.msEEPROMs.safeStrncpy(config->ssid, "", sizeof(config->ssid));
-    msSystem.msEEPROMs.safeStrncpy(config->password, "", sizeof(config->password));
+    l_safeStrncpy(config->ssid, "", sizeof(config->ssid));
+    l_safeStrncpy(config->password, "", sizeof(config->password));
     return false;
     
   }
@@ -227,7 +227,7 @@ public:
     else
     {
       msSystem.logln("appendiong at end");
-      apListFile = SPIFFS.open((char *)path.c_str(), "a");
+      apListFile = SPIFFS.open((char *)path.c_str(), "A");
     }
     apListFile.write((uint8_t *)apInfo, requiredBytes);
     apListFile.close();
@@ -400,11 +400,11 @@ bool parseAPInfoFromServerArgs(APInfo &apInfo)
 
     if (strcmp(msSystem.msESPServer.argName(i).c_str(), "ssid") == 0)
     {
-      msSystem.msEEPROMs.safeStrncpy(apInfo.ssid, msSystem.msESPServer.arg(i).c_str(), sizeof(apInfo.ssid));
+      l_safeStrncpy(apInfo.ssid, msSystem.msESPServer.arg(i).c_str(), sizeof(apInfo.ssid));
     }
     else if (strcmp(msSystem.msESPServer.argName(i).c_str(), "pwd") == 0)
     {
-      msSystem.msEEPROMs.safeStrncpy(apInfo.password, msSystem.msESPServer.arg(i).c_str(), sizeof(apInfo.password));
+      l_safeStrncpy(apInfo.password, msSystem.msESPServer.arg(i).c_str(), sizeof(apInfo.password));
     }
     else
     {
@@ -480,7 +480,7 @@ void handlePOSTServerSettings(void)
 
       if (strcmp(msSystem.msESPServer.argName(i).c_str(), "host") == 0)
       {
-        msSystem.msEEPROMs.safeStrncpy(config.hostname, msSystem.msESPServer.arg(i).c_str(), sizeof(config.hostname));
+        l_safeStrncpy(config.hostname, msSystem.msESPServer.arg(i).c_str(), sizeof(config.hostname));
       }
       else if (strcmp(msSystem.msESPServer.argName(i).c_str(), "port") == 0)
       {

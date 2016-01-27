@@ -3,53 +3,254 @@
 
 #define BYTESPERPIXEL 4
 
-class MagicShifterImage {
-  //File file;
+#define MAX_SHAKE_TEXT 3
+
+typedef struct  {
+  int x;
+  int y;
+} Coordinate_s;
+
+class MagicShifterImageAbstr {
 public:
-  int width, height;
+  int getWidth();
+  void getFrameData(int frameIdx, byte *frameDest);
+};
+
+void PlotBitmapColumn1Bit(const MSBitmap *bitmap, uint16_t absColumn, uint8_t ledIdx, byte *frameDest)
+{
+    uint8_t bitBuffer[3];
+    uint8_t bitBufferIdx = 0;
+
+    uint16_t bitPos = absColumn * bitmap->header.frameHeight;
+    uint32_t offset = MAGIC_BITMAP_PIXEL_OFFSET + (bitPos >> 3);
+    // ReadBytes(offset, bitBuffer, 3); // this could be more efficient
+
+// log("1Bit:offset:"); logln(String(offset));
+// log("1Bit:absColumn:"); logln(String(absColumn));
+// log("1Bit:bitPos:"); logln(String(bitPos));
+// dumpActiveHeader(bitmap->header);
+
+    File lFile = bitmap->bmFile;
+    lFile.seek(offset, SeekSet);
+    // bitmap->bmFile.seek(offset, SeekSet);
+    lFile.read(bitBuffer, 3);
+
+// for (int x=0;x<3;x++) {
+//  log("xx:"); logln(String(bitBuffer[x]));
+// }
+
+    uint8_t bitMask = 1 << (bitPos & 0x07);
+
+     // this could be more efficient
+    uint8_t r = bitmap->color.rgb.r;
+    uint8_t g = bitmap->color.rgb.g;
+    uint8_t b = bitmap->color.rgb.b;
+
+  // log("r:"); logln(String(r));
+  // log("g:"); logln(String(g));
+  // log("b:"); logln(String(b));
+
+    uint8_t endIndex = ledIdx + bitmap->header.frameHeight;
+    if (endIndex > 16)
+      endIndex = 16;
+
+    do
+    {
+      uint8_t currentByte = bitBuffer[bitBufferIdx++];
+      do
+      {
+        int id32 = ledIdx * 4;
+
+        if (bitMask & currentByte)
+        {
+          // msLEDs.setPixels(ledIdx, r, g, b, 255); // this could be more efficient memcopy the structure
+          frameDest[id32 + 3] = r;
+          frameDest[id32 + 2] = g;
+          frameDest[id32 + 1] = b;
+          frameDest[id32 + 0] = 0xff;
+        }
+        else
+        {
+          // msLEDs.setPixels(ledIdx, 0, 0, 0, 0); // this could be more efficient
+          frameDest[id32 + 3] = 0;
+          frameDest[id32 + 2] = 0;
+          frameDest[id32 + 1] = 0;
+          frameDest[id32 + 0] = 0xff;
+        }
+        bitMask <<= 1;
+      } while (++ledIdx < endIndex && bitMask != 0);
+      bitMask = 0x01;
+    } while (ledIdx < endIndex); // this could be more efficient
+  }
+
+void PlotBitmapColumn24Bit(const MSBitmap *bitmap, uint16_t absColumn, uint8_t startLed, byte *frameDest)
+{
+  uint8_t nrOfBytes =  3 * bitmap->header.frameHeight;
+  uint32_t offSet = MAGIC_BITMAP_PIXEL_OFFSET + absColumn * nrOfBytes;
+  if (startLed + bitmap->header.frameHeight > 16)
+    nrOfBytes = (16 - startLed)*3;
+  // ReadBytes(offSet, msGlobals.ggRGBLEDBuf + 3*startLed, nrOfBytes); // never make startLed too big or it will corrupt mem
+
+  File lFile = bitmap->bmFile;
+  lFile.seek(offSet, SeekSet);
+  lFile.read(frameDest, nrOfBytes);
+  for(int x=MAX_LEDS - 1; x>=0; x--) 
+  { 
+    int id24 = x * 3;
+    int id32 = x * 4;
+
+    int r = frameDest[id24 + 0];
+    int g = frameDest[id24 + 1];
+    int b = frameDest[id24 + 2];
+
+    frameDest[id32 + 3] = r;
+    frameDest[id32 + 2] = g;
+    frameDest[id32 + 1] = b;
+    frameDest[id32 + 0] = 0xff;
+
+  }
+}
+
+
+
+void PlotBitmapColumn(const MSBitmap *bitmap, uint8_t frame, uint8_t column, uint8_t startLed, byte *frameDest)
+{
+  uint8_t frameIdx = frame - bitmap->header.firstChar;
+  if (frameIdx <= bitmap->header.maxFrame)
+  {
+    uint16_t absColumn = ((uint16_t)frameIdx) * ((uint16_t)bitmap->header.frameWidth) + column;
+    switch (bitmap->header.pixelFormat)
+    {
+      case 24:
+      PlotBitmapColumn24Bit(bitmap, absColumn, startLed, frameDest);
+      break;
+      case 1:
+      PlotBitmapColumn1Bit(bitmap, absColumn, startLed, frameDest);
+      break;
+    }
+  }
+
+}
+
+void PlotText(const MSBitmap *bitmap, const char *text, uint16_t column, uint8_t startLed, byte *frameDest)
+{
+// if (!bitmap) bitmap = &font10x16;
+
+  uint8_t ascii = text[column / bitmap->header.frameWidth];
+  
+  Serial.print("ascii:");
+  Serial.println(String(ascii));
+
+  PlotBitmapColumn(bitmap, ascii, column % bitmap->header.frameWidth, startLed, frameDest);
+}
+
+
+// textPlotting .. 
+class MagicShifterImageText {
+
+private:
+
+  int txtCount;
+  int txtWidth;
+  char txtCollection[MAX_SHAKE_TEXT][MAX_TEXT_LENGTH];
+  MSBitmap txtFonts[MAX_SHAKE_TEXT];
+  int txtSizes[MAX_SHAKE_TEXT];
+
+  Coordinate_s txtPositions[MAX_SHAKE_TEXT];
+  void resetTexts()
+  {
+    txtCount = 0;
+    txtWidth = 0;
+  }
+
+public:
+
+  void plotTextString(char *text, MSBitmap &font,  Coordinate_s pos)
+  {
+    if (txtCount < MAX_SHAKE_TEXT) {
+      l_safeStrncpy(txtCollection[txtCount], text, MAX_TEXT_LENGTH);
+      txtFonts[txtCount] = font;
+      txtPositions[txtCount] = pos;
+
+
+      int ts = font.header.frameWidth * strlen(text);
+      ts += pos.x;
+
+      txtSizes[txtCount] = ts;
+
+      if (ts > txtWidth) {
+        txtWidth = ts;
+      }
+
+      txtCount++;
+    } 
+  };
+
+  int getWidth()
+  {
+    return txtWidth;
+  };
+
+  void getFrameData(int frameIdx, byte *frameDest)
+  {
+    for (int i = 0; i < txtCount; i++) {
+      int idx = frameIdx - txtPositions[i].x;
+
+      if (idx >= 0  && idx < txtSizes[i]) {
+        PlotText(&txtFonts[i], txtCollection[i], idx, txtPositions[i].y, frameDest);
+      }
+    }
+  };
+};
+
+
+class MagicShifterImage : MagicShifterImageAbstr {
+
+//File file;
+public:
+
   MSBitmap _bitmap;
+  char sv_Filename[100];
+  int width, height;
 
   MagicShifterImage()
   {
     height = width = 0;
   }
 
-  char sv_Filename[100];
-
   void LoadFile(const char *fileName)
   {
-      LoadBitmapFile(fileName, &_bitmap);
-      height = _bitmap.header.frameHeight;
-      width = _bitmap.header.frameWidth;
+    LoadBitmapFile(fileName, &_bitmap);
+    height = _bitmap.header.frameHeight;
+    width = _bitmap.header.frameWidth;
 
+    // file = SPIFFS.open(fileName, "r");
+    // if (file)
+    // {
+    //   // TODO: real file format
+    //   height = MAX_LEDS;
+    //   int size = file.size();
+    //   int frameSize = height * BYTESPERPIXEL;
 
-      // file = SPIFFS.open(fileName, "r");
-      // if (file)
-      // {
-      //   // TODO: real file format
-      //   height = MAX_LEDS;
-      //   int size = file.size();
-      //   int frameSize = height * BYTESPERPIXEL;
+    //   if (size % frameSize != 0)
+    //   {
+    //     mSystem.log("File is no multiple of LED count: "); mSystem.logln(String(fileName));
+    //   }
+    //   width = size / frameSize;
 
-      //   if (size % frameSize != 0)
-      //   {
-      //     mSystem.log("File is no multiple of LED count: "); mSystem.logln(String(fileName));
-      //   }
-      //   width = size / frameSize;
+    //   mSystem.log("loadFile: "); mSystem.logln(String(fileName));
 
-      //   mSystem.log("loadFile: "); mSystem.logln(String(fileName));
+    // }
+    // else
+    // {
+    //   mSystem.log("File could not be opened: ");
+    //   mSystem.logln(String(fileName));
+    //   width = 0;
+    //   height = MAX_LEDS;
+    // }
 
-      // }
-      // else
-      // {
-      //   mSystem.log("File could not be opened: ");
-      //   mSystem.logln(String(fileName));
-      //   width = 0;
-      //   height = MAX_LEDS;
-      // }
-
-      // mSystem.log("image width:"); mSystem.logln(String(width));;
-      // mSystem.log("image height:"); mSystem.logln(String(height));;
+    // mSystem.log("image width:"); mSystem.logln(String(width));;
+    // mSystem.log("image height:"); mSystem.logln(String(height));;
 
   }
 
@@ -63,7 +264,7 @@ public:
       return false;
 
     bmResult = bitmap->bmFile.read((uint8_t *)(&(bitmap->header)), sizeof(MSBitmapHeader));
-    // bitmap->header.fileSize = MAGIC_BITMAP_PIXEL_OFFSET; // !J! ?
+  // bitmap->header.fileSize = MAGIC_BITMAP_PIXEL_OFFSET; // !J! ?
 
     bitmap->color.rgb.r = 255;
     bitmap->color.rgb.g = 255;

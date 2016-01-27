@@ -110,7 +110,7 @@ void CommandInterfacePoll()
 
 			const char *filename = fnA; //filenameStr.c_str();
 
-		    //msSystem.msEEPROMs.safeStrncpy(msGlobals.ggUploadFileName, (char *)upload.filename.c_str(), MAX_FILENAME_LENGTH);//.c_str();
+		    //l_safeStrncpy(msGlobals.ggUploadFileName, (char *)upload.filename.c_str(), MAX_FILENAME_LENGTH);//.c_str();
 		    msSystem.log("upload started: ");
 		    msSystem.log(filename);
 

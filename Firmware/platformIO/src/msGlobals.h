@@ -92,6 +92,14 @@ struct MSBitmap
 };
 
 
+void l_safeStrncpy(char * dest, const char *source, int n)
+{
+  strncpy(dest, source, n);
+  dest[n-1] = '\0';
+}
+
+
+
 
 // #else
 // extern MagicShifterGlobals msGlobals;

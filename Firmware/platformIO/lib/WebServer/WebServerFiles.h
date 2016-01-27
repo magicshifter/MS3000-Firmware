@@ -49,7 +49,7 @@ static bool streamFile(String path){
 void handleNotFound() {
 
   char fName[MAX_FILENAME_LENGTH];
-  msSystem.msEEPROMs.safeStrncpy(fName, msSystem.msESPServer.uri().c_str(), MAX_FILENAME_LENGTH);
+  l_safeStrncpy(fName, msSystem.msESPServer.uri().c_str(), MAX_FILENAME_LENGTH);
 
   msSystem.log("URI to retrieve: ");
   msSystem.logln(msSystem.msESPServer.uri());
@@ -315,7 +315,7 @@ void handleFileUpload(){
 
   if (upload.status == UPLOAD_FILE_START)
   {
-    msSystem.msEEPROMs.safeStrncpy(msGlobals.ggUploadFileName, (char *)upload.filename.c_str(), MAX_FILENAME_LENGTH);//.c_str();
+    l_safeStrncpy(msGlobals.ggUploadFileName, (char *)upload.filename.c_str(), MAX_FILENAME_LENGTH);//.c_str();
     msSystem.logln("upload started: ");
     msSystem.logln(msGlobals.ggUploadFileName);
 

@@ -24,20 +24,22 @@ private:
   int dirCursor = 0;
 
   // the last frame of the Shake
-  MagicShakeText msModeShakeText;
+  MagicShifterImageText msModeShakeText;
 
   // the number of files discovered onboard during the scan for POV images..
   int numFiles = 0;
 
   bool correctBrightness = false;
-
+  MSBitmap tBitmap4x5;
+  MSBitmap tBitmap6x8;
+  MSBitmap tBitmap10x16;
+  MSBitmap tBitmap7x12;
 
 public:
 
   MagicShakeMode()
   {
   }
-
 
   // Get a file from the list of onboard files, filtering only .magicBitmap files
   // fileIndex: the idx of the file in the list
@@ -79,6 +81,11 @@ public:
     shakeSync.setFrames(w);
   }
 
+  void loadText()
+  {
+
+  }
+
   // Start the MagicShake mode:
   //  shake the last-uploaded .magicBitmap (if set)
   //  prime the file list, which may update dynamically during our session
@@ -96,6 +103,34 @@ public:
     getFileNameAtIndex(dirCursor, numFiles);
     msSystem.log("numFiles:"); msSystem.logln(String(numFiles));
     dirCursor = 0;// !J! grr ..
+msSystem.log("MSMGetWidth:"); msSystem.log(String(msModeShakeText.getWidth()));
+
+    loadText();
+
+    MagicShifterImage::LoadBitmapFile("font4x5.magicFont", &tBitmap4x5);
+    MagicShifterImage::LoadBitmapFile("font6x8.magicFont", &tBitmap6x8);
+    MagicShifterImage::LoadBitmapFile("font10x16.magicFont", &tBitmap10x16);
+    MagicShifterImage::LoadBitmapFile("font7x12.magicFont", &tBitmap7x12);
+
+    Coordinate_s tPos;
+    tPos.x = 0; tPos.y = 0;
+
+    msModeShakeText.plotTextString( (char *)"MAGICSHIFTER", tBitmap6x8, tPos);
+
+    tPos.y = 6;
+    
+    MSColor red = {0xff,0x00,0x00};
+    tBitmap4x5.color = red;
+
+    msModeShakeText.plotTextString( (char *)"3000", tBitmap4x5, tPos);
+
+
+    shakeSync.setFrames(msModeShakeText.getWidth() * FRAME_MULTIPLY);
+
+msSystem.dumpActiveHeader(tBitmap4x5.header);
+msSystem.dumpActiveHeader(tBitmap6x8.header);
+msSystem.dumpActiveHeader(tBitmap10x16.header);
+msSystem.dumpActiveHeader(tBitmap7x12.header);
   } 
 
   // stop the MagicShake mode
@@ -165,7 +200,6 @@ msSystem.log("Would DISP:"); msSystem.logln(toLoad);
           toLoad = String("blueghost_png.magicBitmap");
       }
 
-
       if (toLoad.length() > 0) {
 msSystem.log("Would DISP:"); msSystem.logln(toLoad);
         loadShakeFile(toLoad.c_str());
@@ -197,7 +231,8 @@ msSystem.log("Would DISP:"); msSystem.logln(toLoad);
 
         // frame_index = 0; // debug
 
-        msSystem.setCurrentFrame(frame_index, povData, MAX_LEDS);
+        // msSystem.setCurrentFrame(frame_index, povData, MAX_LEDS);
+        msModeShakeText.getFrameData(frame_index, povData);
 
         if (correctBrightness) {
 
@@ -225,20 +260,28 @@ msSystem.log("Would DISP:"); msSystem.logln(toLoad);
     }
     else
     {
-      float fX = msGlobals.ggAccel[0];
-      float fY = msGlobals.ggAccel[1];
-      msModeBouncingBall.applyForce((msGlobals.ggCurrentMicros - msGlobals.ggLastMicros) / 1000.0, fX*3);
-      msModeBouncingBall.simpleBouncingBall();
 
-      delay(30);
+      if (1) {
+        float fX = msGlobals.ggAccel[0];
+        float fY = msGlobals.ggAccel[1];
+        msModeBouncingBall.applyForce((msGlobals.ggCurrentMicros - msGlobals.ggLastMicros) / 1000.0, fX*3);
+        msModeBouncingBall.simpleBouncingBall();
 
-      // static int cIdx = 0;
-      // msModeShakeText.PlotText(NULL, "helloshifter", cIdx++, 0);
-      // if (cIdx > 100) cIdx = 0;
+        delay(30);
+      }
+      else
+      { // !j! text bollox
+          byte txtData[RGB_BUFFER_SIZE];
+          static int cIdx = 0;
+          // msSystem.PlotText(NULL, "helloshifter", cIdx++, 0, txtData);
+          if (cIdx > 100) cIdx = 0;
 
-      // msSystem.msLEDs.updatePixels();
-      // delayMicroseconds(POV_TIME_MICROSECONDS);
-      // msSystem.msLEDs.fastClear();
+          msSystem.msLEDs.loadBuffer(txtData);
+
+          msSystem.msLEDs.updatePixels();
+          delayMicroseconds(POV_TIME_MICROSECONDS);
+          msSystem.msLEDs.fastClear();
+      }
 
     }
     
