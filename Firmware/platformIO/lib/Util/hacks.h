@@ -61,22 +61,22 @@ while (1)
   
 while (0)
 {
-  MSImage activeImage = MSImage(msGlobals.ggUploadFileName);
+  MagicShifterImage msActiveImage = MagicShifterImage(msGlobals.ggUploadFileName);
   msSystem.logln("loaded: ");
   msSystem.logln(msGlobals.ggUploadFileName);
 
   msSystem.logln("width: ");
-  msSystem.logln(activeImage.getWidth());
+  msSystem.logln(msActiveImage.getWidth());
 
-  for (int i = 0; i < activeImage.getWidth(); i++)
+  for (int i = 0; i < msActiveImage.getWidth(); i++)
   {
     byte povData[RGB_BUFFER_SIZE];
-    activeImage.readFrame(i, povData, RGB_BUFFER_SIZE);
+    msActiveImage.readFrame(i, povData, RGB_BUFFER_SIZE);
     loadBuffer(povData);
     msSystem.msLEDs.updatePixels();
     delay(1);
   }
-  activeImage.close();
+  msActiveImage.close();
 } 
 
 #endif

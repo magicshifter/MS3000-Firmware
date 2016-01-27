@@ -3,7 +3,7 @@
 
 #define PREDICT_SAME_DIRECTION true
 
-#include "msGlobals.h"
+// #include "msGlobals.h"
 
 class POVShakeSyncDummyMode
 {

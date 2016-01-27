@@ -1,6 +1,5 @@
 
 #include "BaseMode.h"
-#include "Image.h"
 #include "ShakeSync.h"
 
 #define FRAME_MULTIPLY 1
@@ -27,7 +26,7 @@ class MagicShakeMode : public MagicShifterBaseMode
 {
 private:
   char activeFilename[MAX_FILENAME_LENGTH];
-  MSImage activeImage;
+
   POVShakeSync shakeSync;
 
 public:
@@ -38,8 +37,7 @@ public:
   void start()
   {
     loadAutoFile(msGlobals.ggUploadFileName);
-    
-  } // todo: startActiveFile() with a default filename
+  } // todo: startActiveImage() with a default filename
 
   void stop()
   {}
@@ -49,13 +47,13 @@ public:
     if (shakeSync.update(msGlobals.ggAccel[2]))
     {
       int index = shakeSync.getFrameIndex();
-      msSystem.log("Index:"); msSystem.logln(index);
+      msSystem.log("Index:"); msSystem.logln(String(index));
 
       if (index > 0)
       {
         //msSystem.logln(index);
         byte povData[RGB_BUFFER_SIZE];
-        activeImage->readFrame(index / FRAME_MULTIPLY, povData, RGB_BUFFER_SIZE);
+        msSystem.setCurrentFrame(index / FRAME_MULTIPLY, povData, RGB_BUFFER_SIZE);
         msSystem.msLEDs.loadBuffer(povData);
         msSystem.msLEDs.updatePixels();
 
@@ -77,11 +75,13 @@ public:
 
   void loadAutoFile(char *filename)
   {
-    activeImage->close();
+    msSystem.closeActiveImage();
 
     msSystem.msEEPROMs.safeStrncpy(activeFilename, filename, MAX_FILENAME_LENGTH);
-    activeImage = MSImage(activeFilename);
-    int w = activeImage->getWidth() * FRAME_MULTIPLY;
+    
+    msSystem.loadActiveImage(activeFilename);
+
+    int w = msSystem.getActiveWidth() * FRAME_MULTIPLY;
     shakeSync.setFrames(w);
     msSystem.logln("set frames to: ");
     msSystem.logln(String(w));
