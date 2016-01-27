@@ -15,10 +15,10 @@
 #include <EEPROM.h>
 #include <SPI.h>
 
-#include "EEPROMString.h"
-#include "LEDHardware.h"
-#include "Accelerometer.h"
-#include "Buttons.h"
+#include "Hardware/EEPROMString.h"
+#include "Hardware/LEDHardware.h"
+#include "Hardware/Accelerometer.h"
+#include "Hardware/Buttons.h"
 
 #include "msImage.h"
 
