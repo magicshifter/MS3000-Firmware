@@ -715,9 +715,26 @@ def issueUploadMS3000(ser, sourceFilename, targetFilename):
 		return None	
 
 
-
+def formatMS3000(ser):	
+	try:    
+		start = time.time()
+		ser.write("MAGIC_FORMAT")
+		response = ser.readline()
+		return response
+	except Exception as e:
+		pFail("UNEXPECTED ERROR WHILE sending UPLOAD!")
+		pFail(str(e))
+		return None	
 
 if __name__ == '__main__':
+	if (len(sys.argv) >= 2 and sys.argv[1] == "format"):
+		device = sys.argv[2]
+		start = time.time()
+		ser = openPort(5)
+		formatMS3000(ser)
+		end = time.time()
+		print "time elapsed: ", end - start		
+
 	if (len(sys.argv) >= 2 and sys.argv[1] == "init"):
 		device = sys.argv[2]
 		initMS3000()

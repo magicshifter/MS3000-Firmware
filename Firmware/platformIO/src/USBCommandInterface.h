@@ -51,6 +51,12 @@ void USBPoll()
 		usbBuffer[cmdBufferIdx++]='\0';
 
 		bool executed = false;
+
+		if (!strcmp((const char *)usbBuffer, "MAGIC_FORMAT"))
+		{
+			SPIFFS.format();
+    		Serial.println("Formated FS!!!");
+		}
 	
 		if (!strcmp((const char *)usbBuffer, "MAGIC_DUMP"))
 		{
