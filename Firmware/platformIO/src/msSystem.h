@@ -23,6 +23,7 @@
 // Power management
 #define PIN_PWR_MGT 16
 
+// USB Poll is forward-declared here because it is a client of msSystem ..
 void USBPoll();
 
 // TODO: all init and all sensors and leds in here :)
@@ -50,7 +51,8 @@ public:
   void log(String msg) { 
   // todo:switch log from OFF, to BANNED (MIDI), to UDP .. etc.
     Serial.print(msg); 
-    msUDP.beginPacket("192.168.1.112", 514); // wks port for syslog
+    Serial.print("UDP:");    
+    Serial.print(String(msUDP.beginPacket("192.168.1.112", 514))); // wks port for syslog
     msUDP.print(msg);
     msUDP.endPacket();
   };

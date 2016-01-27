@@ -247,8 +247,6 @@ void loop()
 
   msSystem.loop();
 
-
-
   msWebServer.loop();
 
   // do some tests
@@ -266,17 +264,12 @@ void loop()
     }
 #endif
 
-
   // inside time-frame
-  if (msGlobals.ggLastFrameMicros + msGlobals.ggSpeedMicros 
-    < msGlobals.ggCurrentMicros)
+  if (msGlobals.ggLastFrameMicros + msGlobals.ggSpeedMicros < msGlobals.ggCurrentMicros)
   {
     msGlobals.ggLFrameTime = msGlobals.ggCurrentMicros - msGlobals.ggLastFrameMicros;
-
     msGlobals.ggCurrentFrame++;
-
     msGlobals.ggLastFrameMicros = msGlobals.ggCurrentMicros;
-
 
     // dispatch to the mode handler .. 
     if (msGlobals.ggCurrentMode == 0)
@@ -308,10 +301,7 @@ void loop()
 
     }
     else { // mode out of bounds failure
-
     }
-
-
 
   }
 
