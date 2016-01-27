@@ -1,7 +1,7 @@
 
 extern MagicShifterSystem msSystem;
 
-#define USBBUFFERSIZE 32
+#define CMD_TEXT_MAX_LEN 32
 
 // blocking USB functions
 uint8_t SerialReadByte()
@@ -28,20 +28,20 @@ uint32_t SerialReadLong()
 	return result;
 }
 
-void USBPoll()
+void CommandInterfacePoll()
 {
 	static uint8_t pingStatus;
 
 	if(Serial.available())
 	{
 		uint8_t cmdBufferIdx = 0;
-		uint8_t usbBuffer[USBBUFFERSIZE];
+		uint8_t usbBuffer[CMD_TEXT_MAX_LEN];
 		
 		msSystem.msLEDs.fillPixels(20, 0, 0, 0x0f);
    		msSystem.msLEDs.updatePixels();
 		delay(1);
 
-		while(Serial.available() && cmdBufferIdx < USBBUFFERSIZE-1) 
+		while(Serial.available() && cmdBufferIdx < CMD_TEXT_MAX_LEN-1) 
 		{
 			char b = Serial.read();
 			if (b == '\n' || b == '\r')
@@ -133,10 +133,10 @@ void USBPoll()
 		    {
 		    	msSystem.log("Opened file for writing...");
 				long time = millis();
-				for (uint32_t index = 0; index < dataSize; index += USBBUFFERSIZE)
+				for (uint32_t index = 0; index < dataSize; index += CMD_TEXT_MAX_LEN)
 				{
 					byte byteIndex;
-					for (byteIndex = 0; (byteIndex < USBBUFFERSIZE) && ((index + byteIndex) < dataSize); byteIndex++)
+					for (byteIndex = 0; (byteIndex < CMD_TEXT_MAX_LEN) && ((index + byteIndex) < dataSize); byteIndex++)
 					{
 						usbBuffer[byteIndex] = SerialReadByte();
 					}

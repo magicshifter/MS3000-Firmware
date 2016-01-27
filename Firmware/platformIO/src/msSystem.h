@@ -25,8 +25,8 @@
 // Power management
 #define PIN_PWR_MGT 16
 
-// USB Poll is forward-declared here because it is a client of msSystem ..
-void USBPoll();
+// forward-declared here because it is a client of msSystem ..
+void CommandInterfacePoll();
 
 // TODO: all init and all sensors and leds in here :)
 // (accelerometer wuld also be a class but the MAgicShifter object has one ;)
@@ -510,7 +510,9 @@ public:
       log("Changed -Mode:"); logln(String(msGlobals.ggCurrentMode));
     }
     
-    USBPoll();
+
+    // if (msGlobals.allowCmd) 
+      CommandInterfacePoll();
   }
 
 
@@ -571,7 +573,7 @@ public:
 
 };
 
-#include "USBCommandInterface.h"
+#include "CommandInterface.h"
 
 #else
 extern MagicShifterSystem msSystem;
