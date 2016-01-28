@@ -400,7 +400,6 @@ public:
       msButtons.msBtnALongHit = false;
       log("Changed -Mode:"); logln(String(msGlobals.ggCurrentMode));
     }
-    
 
     // if (msGlobals.allowCmd) 
       CommandInterfacePoll();

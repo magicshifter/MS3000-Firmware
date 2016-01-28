@@ -35,6 +35,8 @@ private:
   MSBitmap tBitmap10x16;
   MSBitmap tBitmap7x12;
 
+  bool shouldDisplayText=false;
+
 public:
 
   MagicShakeMode()
@@ -91,6 +93,10 @@ public:
   //  prime the file list, which may update dynamically during our session
   void start()
   {
+
+    // 0 = picshow, 1 = textshow
+    shouldDisplayText = false;
+
     if (String(msGlobals.ggUploadFileName).endsWith(".magicBitmap")) {
       loadShakeFile(msGlobals.ggUploadFileName);
     }
@@ -116,15 +122,11 @@ msSystem.log("MSMGetHeight:"); msSystem.log(String(msMagicShakeText.getHeight())
     Coordinate_s tPos;
     tPos.x = 0; tPos.y = 0;
 
-    msMagicShakeText.plotTextString( (char *)"MAGIC", tBitmap4x5, tPos);
-
+    msMagicShakeText.plotTextString( (char *)"PRESS", tBitmap4x5, tPos);
     tPos.y += tBitmap4x5.header.frameHeight;
-    
     MSColor red = {0xff,0x00,0x00};
-    tBitmap6x8.color = red;
-
-    msMagicShakeText.plotTextString( (char *)"3000", tBitmap6x8, tPos);
-
+    tBitmap4x5.color = red;
+    msMagicShakeText.plotTextString( (char *)"BUTTONS", tBitmap4x5, tPos);
 
     shakeSync.setFrames(msMagicShakeText.getWidth() * FRAME_MULTIPLY);
 
@@ -148,28 +150,37 @@ msSystem.log("MSMGetHeight:"); msSystem.log(String(msMagicShakeText.getHeight())
   void step()
   {
 
+    // toggle text
+    if (msSystem.msButtons.msBtnPwrHit) {
+      msSystem.msButtons.msBtnPwrHit = false; // !J! todo: button callbacks
+      if (shouldDisplayText)
+        shouldDisplayText=false;
+      else
+        shouldDisplayText=true;
+    }
+
     // !J! TODO: give modes an event queue ..
     if (msGlobals.ggShouldAutoLoad == 1) {
       loadShakeFile(msGlobals.ggUploadFileName);
       msGlobals.ggShouldAutoLoad = 0;
     }
 
-// msSystem.log("accel:"); msSystem.logln(String(msGlobals.ggAccel[1]));
-
+    if (msSystem.msButtons.msBtnALongHit == true) {
+      msSystem.msButtons.msBtnALongHit = false;
+      correctBrightness = !correctBrightness;
+    }
+    else // either a long or a short hit .. 
     if (msSystem.msButtons.msBtnAHit == true) {
       msSystem.msButtons.msBtnAHit = false;
 
       dirCursor++;
       if (dirCursor >= numFiles) dirCursor = 0;
 
-      msSystem.log("A cursor:"); msSystem.logln(String(dirCursor));
 
       String toLoad = getFileNameAtIndex(dirCursor, numFiles);
-      msSystem.log("Would DISP:"); msSystem.logln(toLoad);
 
       // out of bounds
       if (toLoad.length() == 0) { 
-        msSystem.log("RESETDISP:"); msSystem.logln(toLoad);
         dirCursor = 0;
         toLoad = getFileNameAtIndex(0, numFiles);
         if (toLoad.length() == 0) // !J! todo: default
@@ -177,7 +188,6 @@ msSystem.log("MSMGetHeight:"); msSystem.log(String(msMagicShakeText.getHeight())
       }
 
       if (toLoad.length() > 0) {
-msSystem.log("Would DISP:"); msSystem.logln(toLoad);
         loadShakeFile(toLoad.c_str());
       }
 
@@ -189,14 +199,13 @@ msSystem.log("Would DISP:"); msSystem.logln(toLoad);
       dirCursor--;
       if (dirCursor < 0) dirCursor = numFiles - 1; // !J!
 
-      msSystem.log("B cursor:"); msSystem.logln(String(dirCursor));
+      // msSystem.log("B cursor:"); msSystem.logln(String(dirCursor));
 
       String toLoad = getFileNameAtIndex(dirCursor, numFiles);
-      msSystem.log("Would DISP:"); msSystem.logln(toLoad);
+      // msSystem.log("Would DISP:"); msSystem.logln(toLoad);
 
       // out of bounds
       if (toLoad.length() == 0) { 
-        msSystem.log("RESETDISP:"); msSystem.logln(toLoad);
         dirCursor = numFiles;
         toLoad = getFileNameAtIndex(numFiles, numFiles);
         if (toLoad.length() == 0) // !J! todo: default
@@ -204,15 +213,8 @@ msSystem.log("Would DISP:"); msSystem.logln(toLoad);
       }
 
       if (toLoad.length() > 0) {
-msSystem.log("Would DISP:"); msSystem.logln(toLoad);
         loadShakeFile(toLoad.c_str());
       }
-    }
-
-    if (msSystem.msButtons.msBtnALongHit == true) {
-      msSystem.msButtons.msBtnALongHit = false;
-
-      correctBrightness = !correctBrightness;
     }
 
     // msSystem.log("numFiles:"); msSystem.logln(String(numFiles));
@@ -241,11 +243,16 @@ msSystem.log("Would DISP:"); msSystem.logln(toLoad);
 
 // msSystem.log("i:"); msSystem.logln(String(index));
 // msSystem.log("fi:"); msSystem.logln(String(frame_index));
+// frame_index = 0; // debug
+// shouldDisplayText=true;
 
-        // frame_index = 0; // debug
+        if (shouldDisplayText) {
+          msMagicShakeText.getFrameData(frame_index, povData);
+        }
+        else 
+          msSystem.setCurrentFrame(frame_index, povData, MAX_LEDS);
 
-        // msSystem.setCurrentFrame(frame_index, povData, MAX_LEDS);
-        msMagicShakeText.getFrameData(frame_index, povData);
+        msSystem.log("shouldDisplayText:"); msSystem.logln(String(shouldDisplayText));
 
         if (correctBrightness) {
 
