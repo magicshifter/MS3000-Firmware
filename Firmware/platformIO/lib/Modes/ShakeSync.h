@@ -191,17 +191,17 @@ public:
 				if (dDiff < 0) dDiff = -dDiff;
 				if (dSame <= dDiff)
 				{
-					msSystem.logln("same");
+					// msSystem.logln("same");
 					sameCount++;
 				}
 				else
 				{
-					msSystem.logln("diff");
+					// msSystem.logln("diff");
 					diffCount++;
 				}
-				msSystem.logln(String(sameCount-diffCount));
-				//msSystem.logln(dDiff);
-				//msSystem.logln(activeMin.g);
+				// msSystem.logln(String(sameCount-diffCount));
+				// msSystem.logln(dDiff);
+				// msSystem.logln(activeMin.g);
 
 				// reset max
 				activeMax.g = g;
