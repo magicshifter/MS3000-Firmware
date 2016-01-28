@@ -155,15 +155,17 @@ private:
   int txtSizes[MAX_SHAKE_TEXT];
 
   Coordinate_s txtPositions[MAX_SHAKE_TEXT];
+
+public:
+
   void resetTexts()
   {
     txtCount = 0;
     txtWidth = 0;
   }
 
-public:
 
-  void plotTextString(char *text, MSBitmap &font,  Coordinate_s pos)
+  void plotTextString( char *text, MSBitmap &font,  Coordinate_s pos)
   {
     if (txtCount < MAX_SHAKE_TEXT) {
       l_safeStrncpy(txtCollection[txtCount], text, MAX_TEXT_LENGTH);

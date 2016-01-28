@@ -1,6 +1,7 @@
 #ifndef _MSGLOBALS_H
 #define _MSGLOBALS_H
 
+#define DEFAULT_FACTORY_MODE 3
 //
 // Global definitions and the master global struct for the system
 //
@@ -68,7 +69,7 @@ public:
   float ggAccel[3];  // Stores the real accel value in g's
   long ggAccelTime;
   long ggLFrameTime;
-  long ggCurrentMode = 0;  // POV mode
+  long ggCurrentMode = DEFAULT_FACTORY_MODE;  // POV mode
   int ggAccelCounts[3];  // Stores the 12-bit signed value
   int ggBtn1State = 0;
   long ggCurrentMicros = 0;

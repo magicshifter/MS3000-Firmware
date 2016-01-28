@@ -100,26 +100,6 @@ public:
     msSystem.log("numFiles:"); msSystem.logln(String(numFiles));
     dirCursor = 0;// !J! grr ..
 
-#if 0
-    Coordinate_s tPos;
-    tPos.x = 0; tPos.y = 0;
-
-    msMagicShakeText.plotTextString( (char *)"PRESS", msGlobals.tBitmap4x5, tPos);
-
-    tPos.y += tBitmap4x5.header.frameHeight;
-    MSColor red = {0xff,0x00,0x00};
-    tBitmap4x5.color = red;
-    msMagicShakeText.plotTextString( (char *)"BUTTONS", msGlobals.tBitmap4x5, tPos);
-
-    shakeSync.setFrames(msMagicShakeText.getWidth() * FRAME_MULTIPLY);
-#endif
-
-#if 0
-    msSystem.dumpActiveHeader(tBitmap4x5.header);
-    msSystem.dumpActiveHeader(tBitmap6x8.header);
-    msSystem.dumpActiveHeader(tBitmap10x16.header);
-    msSystem.dumpActiveHeader(tBitmap7x12.header);
-#endif
 
   } 
 
