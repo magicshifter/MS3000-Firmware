@@ -270,8 +270,6 @@ void loop()
     msGlobals.ggCurrentFrame++;
     msGlobals.ggLastFrameMicros = msGlobals.ggCurrentMicros;
 
-msGlobals.ggCurrentMode = 2;
-
     // dispatch to the mode handler .. 
     if (msGlobals.ggCurrentMode == 0)
     {
@@ -289,15 +287,13 @@ msGlobals.ggCurrentMode = 2;
       // swipe colors
       for (byte idx = 0; idx < MAX_LEDS; idx++)
       {
-      //   if (idx % 8 == 0) {
-      //     msSystem.msLEDs.setPixels(idx, 255, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
-      //   }
-      // else
-      //   msSystem.msLEDs.setPixels(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
-
-
-        msSystem.msLEDs.setPixels(idx, 255,255,255,20);
-
+        if (idx % 8 == 0) {
+          msSystem.msLEDs.setPixels(idx, 255, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
+        }
+      else
+        msSystem.msLEDs.setPixels(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
+        // super-bright
+        // msSystem.msLEDs.setPixels(idx, 255,255,255,20);
 
         msSystem.msLEDs.updatePixels();
         delay(10);

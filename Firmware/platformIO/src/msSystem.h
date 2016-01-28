@@ -34,7 +34,6 @@ class MagicShifterSystem
 private:
 
 public:
-
   // todo: protect
   MagicShifterAccelerometer msAccel;
   MagicShifterLEDs msLEDs;
@@ -43,7 +42,6 @@ public:
   MDNSResponder msDNS;
   ESP8266WebServer msESPServer;
   WiFiUDP msUDP;
-  MagicShifterImage msActiveImage;
 
   int msFrame = 0;
   bool msAccelOK = false;
@@ -71,52 +69,6 @@ public:
   void logln(unsigned int msg, int base) { logln(String(msg));  }
 //  void logln(bool b) { if (b) logln(String("true")); else logln(String("false")); }
 
-  bool setCurrentFrame(int frameIdx, byte *frameData, int maxHeight)
-  {
-// !J! TODO: validate input
-    PlotBitmapColumn(&msActiveImage._bitmap, 0, frameIdx, 0, frameData);
-// !J! todo: arch:
-//     if (msActiveImage)
-//     {
-
-//       // !J! 16-byte OFFSET due to bug in bitmap generator code
-// #define MAGIC_OFFSET 0
-//       file.seek( (frameIdx * height * BYTESPERPIXEL) + MAGIC_OFFSET, SeekSet);
-
-//       if (height < maxHeight) maxHeight = height;
-
-//         int result = file.read(frameData, maxHeight * BYTESPERPIXEL);
-// #if 0
-// mSystem.log("framedata/"); mSystem.log(String(maxHeight * BYTESPERPIXEL)); mSystem.log("/");
-// for (int x=0;x<maxHeight * BYTESPERPIXEL;x++) {
-//   if (x % 4 == 0) mSystem.logln("");
-//   mSystem.log(":"); Serial.print(frameData[x], HEX);
-// }
-// mSystem.logln("<<EOF");
-// #endif
-//         if (result < maxHeight * BYTESPERPIXEL)
-//         {
-//           return false;
-//         }
-//         return true;
-//       }
-//     return false;
-  }
-
-  void closeActiveImage()
-  {
-    msActiveImage.close();
-  }
-  void loadActiveImage(char activeFilename[MAX_FILENAME_LENGTH]) 
-  {
-    msActiveImage.LoadFile(activeFilename);
-  }   
-
-  int getActiveWidth()
-  { 
-    return msActiveImage.getWidth(); 
-  }
-
   void dumpActiveHeader(const MSBitmapHeader& header)
   {
     logln("Header dump:");
@@ -129,16 +81,6 @@ public:
     log("firstChar:"); logln(String(header.firstChar));
     log("animationDelay:"); logln(String(header.animationDelay));
   }
-
-
-  void loadActiveImage(const char *fileName)
-  {
-      msActiveImage.LoadFile(fileName);
-      log("loadShakeImage:"); logln(String(msActiveImage.sv_Filename));
-    // dumpActiveHeader(bitmap->header);
-
-  }
-
 
   void TEST_SPIFFS_bug()
   {

@@ -22,7 +22,7 @@ public:
 
   void start()
   {
-    setImage(NULL);
+    // setImage(NULL);
   }
 
 // stop the mode

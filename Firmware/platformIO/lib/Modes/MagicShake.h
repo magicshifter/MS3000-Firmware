@@ -24,7 +24,7 @@ private:
   MagicShifterImageText msMagicShakeText;
 
   POVMode lPOVMode;
-  MagicShifterImage lActiveImage;
+  MagicShifterImage lLocalImage;
 
   // the number of files discovered onboard during the scan for POV images..
   int numFiles = 0;
@@ -71,10 +71,9 @@ public:
   void loadShakeFile(const char *filename)
   {
     msSystem.log("loadShakeFile:"); msSystem.logln(filename);
-    msSystem.closeActiveImage();
-    msSystem.loadActiveImage(filename);
-    lActiveImage.LoadFile(filename);
-    lPOVMode.setImage(&lActiveImage);
+    lLocalImage.close();
+    lLocalImage.LoadFile(filename);
+    lPOVMode.setImage(&lLocalImage);
   }
 
   // Start the MagicShake mode:
@@ -83,7 +82,7 @@ public:
   void start()
   {
 
-    lPOVMode.start();
+    // lPOVMode.start();
 
     // 0 = picshow, 1 = textshow
     shouldDisplayText = false;
@@ -127,8 +126,7 @@ public:
   // stop the MagicShake mode
   void stop()
   {
-    msSystem.closeActiveImage();
-    lActiveImage.close();
+    lLocalImage.close();
     lPOVMode.stop();
   }
 
@@ -161,7 +159,6 @@ public:
 
       dirCursor++;
       if (dirCursor >= numFiles) dirCursor = 0;
-
 
       String toLoad = getFileNameAtIndex(dirCursor, numFiles);
 

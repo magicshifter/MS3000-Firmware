@@ -235,25 +235,28 @@ public:
   int getWidth() { return width; }
   void getFrameData(int frameIdx, byte *frameDest)
   {
-    // msSystem.setCurrentFrame(frame_index, frameDest, MAX_LEDS);
     PlotBitmapColumn(&_bitmap, 0, frameIdx, 0, frameDest);
   };
 
 
   void LoadFile(const char *fileName)
   {
-    if (LoadBitmapFile(fileName, &_bitmap))
+    Serial.print("filename:"); Serial.println(fileName);
+    
+    if (LoadBitmapFile(fileName, &_bitmap) == true)
     {
+      Serial.println("loadbitmapfile: 0000");
       height = _bitmap.header.frameHeight;
       width = _bitmap.header.frameWidth;
     }
     else {
+      Serial.println("loadbitmapfile: not okay");
       height = 0;
       width = 0;
     }
 
-    // mSystem.log("image width:"); mSystem.logln(String(width));;
-    // mSystem.log("image height:"); mSystem.logln(String(height));;
+    Serial.print("image width:"); Serial.println(String(width));;
+    Serial.print("image height:"); Serial.println(String(height));;
 
   }
 
