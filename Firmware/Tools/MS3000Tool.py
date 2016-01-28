@@ -656,16 +656,18 @@ def initMS3000():
 	issueUploadMS3000(ser, "../../Assets/MS3000_defaultconfig/admin.html", "admin.html")
 
 	imgs = ["heart.magicBitmap", "smilie.magicBitmap", "star.magicBitmap", "oneup.magicBitmap", "mario.magicBitmap", "mario.magicBitmap", "blueGhost.magicBitmap", "redGhost.magicBitmap", "BubbleBobble.magicBitmap", "invader.magicBitmap", "giraffe.magicBitmap", "cursor.magicBitmap", "nyancat.magicBitmap"]
+
 	for img in imgs:
 		sleep(delay)
 		issueUploadMS3000(ser, "../../Assets/magicBitmaps/" + img, img)
 
+        fonts = ["font10x16.magicFont", "font4x5.magicFont", "font6x8.magicFont", "font7x12.magicFont"]
+	for font in fonts:
+		sleep(delay)
+		issueUploadMS3000(ser, "../../Assets/fonts/" + font, font)
+
 	end = time.time()
 	print "time elapsed: ", end - start
-
-
-
-
 
 def issueUploadMS3000(ser, sourceFilename, targetFilename):	
 
