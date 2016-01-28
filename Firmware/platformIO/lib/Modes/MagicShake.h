@@ -104,33 +104,37 @@ public:
     msSystem.log("numFiles:"); msSystem.logln(String(numFiles));
     dirCursor = 0;// !J! grr ..
 msSystem.log("MSMGetWidth:"); msSystem.log(String(msModeShakeText.getWidth()));
+msSystem.log("MSMGetHeight:"); msSystem.log(String(msModeShakeText.getHeight()));
 
     loadText();
 
     MagicShifterImage::LoadBitmapFile("font4x5.magicFont", &tBitmap4x5);
     MagicShifterImage::LoadBitmapFile("font6x8.magicFont", &tBitmap6x8);
-    MagicShifterImage::LoadBitmapFile("font10x16.magicFont", &tBitmap10x16);
     MagicShifterImage::LoadBitmapFile("font7x12.magicFont", &tBitmap7x12);
+    MagicShifterImage::LoadBitmapFile("font10x16.magicFont", &tBitmap10x16);
 
     Coordinate_s tPos;
     tPos.x = 0; tPos.y = 0;
 
-    msModeShakeText.plotTextString( (char *)"MAGICSHIFTER", tBitmap6x8, tPos);
+    msModeShakeText.plotTextString( (char *)"MAGIC", tBitmap4x5, tPos);
 
-    tPos.y = 6;
+    tPos.y += tBitmap4x5.header.frameHeight;
     
     MSColor red = {0xff,0x00,0x00};
-    tBitmap4x5.color = red;
+    tBitmap6x8.color = red;
 
-    msModeShakeText.plotTextString( (char *)"3000", tBitmap4x5, tPos);
+    msModeShakeText.plotTextString( (char *)"3000", tBitmap6x8, tPos);
 
 
     shakeSync.setFrames(msModeShakeText.getWidth() * FRAME_MULTIPLY);
 
-msSystem.dumpActiveHeader(tBitmap4x5.header);
-msSystem.dumpActiveHeader(tBitmap6x8.header);
-msSystem.dumpActiveHeader(tBitmap10x16.header);
-msSystem.dumpActiveHeader(tBitmap7x12.header);
+#if 0
+    msSystem.dumpActiveHeader(tBitmap4x5.header);
+    msSystem.dumpActiveHeader(tBitmap6x8.header);
+    msSystem.dumpActiveHeader(tBitmap10x16.header);
+    msSystem.dumpActiveHeader(tBitmap7x12.header);
+#endif
+
   } 
 
   // stop the MagicShake mode
@@ -223,6 +227,16 @@ msSystem.log("Would DISP:"); msSystem.logln(toLoad);
       {
 
         byte povData[RGB_BUFFER_SIZE];
+        // !J! todo: compiler do:
+        for (int i=0; i<MAX_LEDS * 4; i+=4) 
+        {
+          povData[i] = 0xff;
+          povData[i+1] = 0x00;
+          povData[i+2] = 0x20;
+          povData[i+3] = 0x00;
+
+          // memset(povData, 0xff, sizeof(povData));
+        }
 
         int frame_index = index / FRAME_MULTIPLY;
 

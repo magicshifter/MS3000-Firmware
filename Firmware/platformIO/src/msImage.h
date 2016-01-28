@@ -25,6 +25,8 @@ void PlotBitmapColumn1Bit(const MSBitmap *bitmap, uint16_t absColumn, uint8_t le
     uint32_t offset = MAGIC_BITMAP_PIXEL_OFFSET + (bitPos >> 3);
     // ReadBytes(offset, bitBuffer, 3); // this could be more efficient
 
+    uint8_t ledOffs = ledIdx;
+
 // log("1Bit:offset:"); logln(String(offset));
 // log("1Bit:absColumn:"); logln(String(absColumn));
 // log("1Bit:bitPos:"); logln(String(bitPos));
@@ -59,7 +61,9 @@ void PlotBitmapColumn1Bit(const MSBitmap *bitmap, uint16_t absColumn, uint8_t le
       uint8_t currentByte = bitBuffer[bitBufferIdx++];
       do
       {
+      
         int id32 = ledIdx * 4;
+
 
         if (bitMask & currentByte)
         {
@@ -134,13 +138,7 @@ void PlotBitmapColumn(const MSBitmap *bitmap, uint8_t frame, uint8_t column, uin
 
 void PlotText(const MSBitmap *bitmap, const char *text, uint16_t column, uint8_t startLed, byte *frameDest)
 {
-// if (!bitmap) bitmap = &font10x16;
-
   uint8_t ascii = text[column / bitmap->header.frameWidth];
-  
-  Serial.print("ascii:");
-  Serial.println(String(ascii));
-
   PlotBitmapColumn(bitmap, ascii, column % bitmap->header.frameWidth, startLed, frameDest);
 }
 
@@ -172,7 +170,6 @@ public:
       txtFonts[txtCount] = font;
       txtPositions[txtCount] = pos;
 
-
       int ts = font.header.frameWidth * strlen(text);
       ts += pos.x;
 
@@ -189,6 +186,11 @@ public:
   int getWidth()
   {
     return txtWidth;
+  };
+
+  int getHeight()
+  {
+    // return txtHeight;
   };
 
   void getFrameData(int frameIdx, byte *frameDest)
