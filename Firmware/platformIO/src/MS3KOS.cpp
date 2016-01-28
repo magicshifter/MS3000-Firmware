@@ -52,7 +52,7 @@
 
  MagicShakeMode msMagicShake;
  POVShakeSyncDummyMode msModePOVShake;
- HackDemoMode msHackDemo;
+ POVMode msHackDemo;
 
 // Begin MagicShifter3000 operation
  void setup()
@@ -270,6 +270,8 @@ void loop()
     msGlobals.ggCurrentFrame++;
     msGlobals.ggLastFrameMicros = msGlobals.ggCurrentMicros;
 
+msGlobals.ggCurrentMode = 2;
+
     // dispatch to the mode handler .. 
     if (msGlobals.ggCurrentMode == 0)
     {
@@ -287,18 +289,28 @@ void loop()
       // swipe colors
       for (byte idx = 0; idx < MAX_LEDS; idx++)
       {
-        msSystem.msLEDs.setPixels(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, msGlobals.ggFactoryIntensity / 2);
+      //   if (idx % 8 == 0) {
+      //     msSystem.msLEDs.setPixels(idx, 255, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
+      //   }
+      // else
+      //   msSystem.msLEDs.setPixels(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
+
+
+        msSystem.msLEDs.setPixels(idx, 255,255,255,20);
+
+
         msSystem.msLEDs.updatePixels();
         delay(10);
       }
-      for (byte idx = 0; idx < MAX_LEDS; idx++)
-      {
-        msSystem.msLEDs.setPixels(idx, 0, 0, 0, 1 / 2);
-        msSystem.msLEDs.updatePixels();
-        delay(10);
-      }
+      // for (byte idx = 0; idx < MAX_LEDS; idx++)
+      // {
+      //   msSystem.msLEDs.setPixels(idx, 0, 0, 0, 1 / 2);
+      //   msSystem.msLEDs.updatePixels();
+      //   delay(10);
+      // }
     }
-    else if (msGlobals.ggCurrentMode = 3)
+    else 
+    if (msGlobals.ggCurrentMode = 3)
     {
       msHackDemo.step();
     }

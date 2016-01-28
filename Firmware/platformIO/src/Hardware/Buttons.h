@@ -3,8 +3,6 @@
 #ifndef __BUTTONS_H
 #define __BUTTONS_H
 
-// #include "msGlobals.h"
-
 class MagicShifterButtons { 
 
 	private:
@@ -107,7 +105,7 @@ class MagicShifterButtons {
 		{
 			if (msLongClickOK && msBtnBPressTime >= MIN_TIME_LONG_CLICK)
 			{
-			    // logln("We gots LOON clicks AAA.");
+			    // logln("We gots LOON clicks B .");
 				msBtnBLongHit = true;
 			}
 			else

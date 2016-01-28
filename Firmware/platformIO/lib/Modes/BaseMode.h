@@ -17,6 +17,8 @@ public:
   void stop(void);
   // step through an event frame of the mode
   void step();
+  // update LED's only
+  void update();
 };
 
 class MagicShifterBaseMode : public IMode

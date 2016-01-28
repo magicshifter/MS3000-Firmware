@@ -83,11 +83,6 @@ public:
     shakeSync.setFrames(w);
   }
 
-  void loadText()
-  {
-
-  }
-
   // Start the MagicShake mode:
   //  shake the last-uploaded .magicBitmap (if set)
   //  prime the file list, which may update dynamically during our session
@@ -109,11 +104,8 @@ public:
     getFileNameAtIndex(dirCursor, numFiles);
     msSystem.log("numFiles:"); msSystem.logln(String(numFiles));
     dirCursor = 0;// !J! grr ..
-msSystem.log("MSMGetWidth:"); msSystem.log(String(msMagicShakeText.getWidth()));
-msSystem.log("MSMGetHeight:"); msSystem.log(String(msMagicShakeText.getHeight()));
 
-    loadText();
-
+   // test shake text ..
     MagicShifterImage::LoadBitmapFile("font4x5.magicFont", &tBitmap4x5);
     MagicShifterImage::LoadBitmapFile("font6x8.magicFont", &tBitmap6x8);
     MagicShifterImage::LoadBitmapFile("font7x12.magicFont", &tBitmap7x12);
