@@ -1,4 +1,5 @@
 
+#define FRAME_MULTIPLY 2
 
 class POVMode : public MagicShifterBaseMode {
 
@@ -31,7 +32,7 @@ public:
   }
 
 // step through a frame of the mode 
-  void step()
+  bool step()
   {
     if (msImage!=NULL){
       // check accelerometer
@@ -68,8 +69,12 @@ public:
           msSystem.msLEDs.fastClear();
           yield();
         }
+        return true;
       }
+      else
+        return false;
     }
+    return false;
   }
 };
 

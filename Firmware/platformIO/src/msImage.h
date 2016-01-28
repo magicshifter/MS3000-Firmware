@@ -12,8 +12,8 @@ typedef struct  {
 
 class MagicShifterImageAbstr {
 public:
-  int getWidth();
-  void getFrameData(int frameIdx, byte *frameDest);
+  virtual int getWidth();
+  virtual void getFrameData(int frameIdx, byte *frameDest);
 };
 
 void PlotBitmapColumn1Bit(const MSBitmap *bitmap, uint16_t absColumn, uint8_t ledIdx, byte *frameDest)
@@ -144,7 +144,7 @@ void PlotText(const MSBitmap *bitmap, const char *text, uint16_t column, uint8_t
 
 
 // textPlotting .. 
-class MagicShifterImageText {
+class MagicShifterImageText : public MagicShifterImageAbstr {
 
 private:
 
@@ -206,7 +206,7 @@ public:
 };
 
 
-class MagicShifterImage : MagicShifterImageAbstr {
+class MagicShifterImage : public MagicShifterImageAbstr {
 
 //File file;
 public:
@@ -220,36 +220,37 @@ public:
     height = width = 0;
   }
 
+  MagicShifterImage(const char *fileName)
+  {
+    LoadFile(fileName);
+  }
+
+  ~MagicShifterImage()
+  {
+    close();
+  }
+
+
+  int getHeight() { return height; }
+  int getWidth() { return width; }
+  void getFrameData(int frameIdx, byte *frameDest)
+  {
+    // msSystem.setCurrentFrame(frame_index, frameDest, MAX_LEDS);
+    PlotBitmapColumn(&_bitmap, 0, frameIdx, 0, frameDest);
+  };
+
+
   void LoadFile(const char *fileName)
   {
-    LoadBitmapFile(fileName, &_bitmap);
-    height = _bitmap.header.frameHeight;
-    width = _bitmap.header.frameWidth;
-
-    // file = SPIFFS.open(fileName, "r");
-    // if (file)
-    // {
-    //   // TODO: real file format
-    //   height = MAX_LEDS;
-    //   int size = file.size();
-    //   int frameSize = height * BYTESPERPIXEL;
-
-    //   if (size % frameSize != 0)
-    //   {
-    //     mSystem.log("File is no multiple of LED count: "); mSystem.logln(String(fileName));
-    //   }
-    //   width = size / frameSize;
-
-    //   mSystem.log("loadFile: "); mSystem.logln(String(fileName));
-
-    // }
-    // else
-    // {
-    //   mSystem.log("File could not be opened: ");
-    //   mSystem.logln(String(fileName));
-    //   width = 0;
-    //   height = MAX_LEDS;
-    // }
+    if (LoadBitmapFile(fileName, &_bitmap))
+    {
+      height = _bitmap.header.frameHeight;
+      width = _bitmap.header.frameWidth;
+    }
+    else {
+      height = 0;
+      width = 0;
+    }
 
     // mSystem.log("image width:"); mSystem.logln(String(width));;
     // mSystem.log("image height:"); mSystem.logln(String(height));;
@@ -274,19 +275,6 @@ public:
 
     return true;
   };
-
-  MagicShifterImage(const char *fileName)
-  {
-    LoadFile(fileName);
-  }
-
-  ~MagicShifterImage()
-  {
-    close();
-  }
-
-  int getWidth() { return width; }
-  int getHeight() { return height; }
 
   void close()
   {

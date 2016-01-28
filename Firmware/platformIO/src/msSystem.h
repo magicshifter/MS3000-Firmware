@@ -356,6 +356,12 @@ public:
     //   infinite_swipe(); // todo: explain to user: please reset device
     // }
 
+    // global font objects
+    MagicShifterImage::LoadBitmapFile("font4x5.magicFont", &msGlobals.tBitmap4x5);
+    MagicShifterImage::LoadBitmapFile("font6x8.magicFont", &msGlobals.tBitmap6x8);
+    MagicShifterImage::LoadBitmapFile("font7x12.magicFont", &msGlobals.tBitmap7x12);
+    MagicShifterImage::LoadBitmapFile("font10x16.magicFont", &msGlobals.tBitmap10x16);
+
     logSysInfo();
 
   }

@@ -1,11 +1,13 @@
 #ifndef _MODES_H
 #define _MODES_H
 
-#include "ShakeSync.h"
+// rudimentary mode for displaying an msImage with POV
 #include "BaseMode.h"
+#include "ShakeSync.h"
+#include "POVMode.h"
+
 #include "BouncingBall.h"
 #include "ShakeText.h"
 #include "MagicShake.h"
-#include "POVMode.h"
 
 #endif

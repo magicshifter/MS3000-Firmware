@@ -16,7 +16,7 @@ public:
   // stop the mode
   void stop(void);
   // step through an event frame of the mode
-  void step();
+  bool step();
   // update LED's only
   void update();
 };
@@ -41,7 +41,7 @@ private:
     }
 
     // step through a frame of the mode 
-    void step()
+    bool step()
     {
       //frame++; &etc.
     }

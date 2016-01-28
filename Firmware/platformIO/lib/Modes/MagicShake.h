@@ -17,24 +17,18 @@ BouncingBallMode msModeBouncingBall(600);
 class MagicShakeMode : public MagicShifterBaseMode
 {
 private:
-  // the sync object used to keep the Image in POV
-  POVShakeSync shakeSync;
-
   // The direction through the filelist which the user is scrolling (-ve/+ve)
   int dirCursor = 0;
 
   // the last frame of the Shake
   MagicShifterImageText msMagicShakeText;
 
+  POVMode lPOVMode;
+  MagicShifterImage lActiveImage;
+
   // the number of files discovered onboard during the scan for POV images..
   int numFiles = 0;
-
   bool correctBrightness = false;
-  MSBitmap tBitmap4x5;
-  MSBitmap tBitmap6x8;
-  MSBitmap tBitmap10x16;
-  MSBitmap tBitmap7x12;
-
   bool shouldDisplayText=false;
 
 public:
@@ -79,8 +73,8 @@ public:
     msSystem.log("loadShakeFile:"); msSystem.logln(filename);
     msSystem.closeActiveImage();
     msSystem.loadActiveImage(filename);
-    int w = msSystem.getActiveWidth() * FRAME_MULTIPLY;
-    shakeSync.setFrames(w);
+    lActiveImage.LoadFile(filename);
+    lPOVMode.setImage(&lActiveImage);
   }
 
   // Start the MagicShake mode:
@@ -88,6 +82,8 @@ public:
   //  prime the file list, which may update dynamically during our session
   void start()
   {
+
+    lPOVMode.start();
 
     // 0 = picshow, 1 = textshow
     shouldDisplayText = false;
@@ -105,22 +101,19 @@ public:
     msSystem.log("numFiles:"); msSystem.logln(String(numFiles));
     dirCursor = 0;// !J! grr ..
 
-   // test shake text ..
-    MagicShifterImage::LoadBitmapFile("font4x5.magicFont", &tBitmap4x5);
-    MagicShifterImage::LoadBitmapFile("font6x8.magicFont", &tBitmap6x8);
-    MagicShifterImage::LoadBitmapFile("font7x12.magicFont", &tBitmap7x12);
-    MagicShifterImage::LoadBitmapFile("font10x16.magicFont", &tBitmap10x16);
-
+#if 0
     Coordinate_s tPos;
     tPos.x = 0; tPos.y = 0;
 
-    msMagicShakeText.plotTextString( (char *)"PRESS", tBitmap4x5, tPos);
+    msMagicShakeText.plotTextString( (char *)"PRESS", msGlobals.tBitmap4x5, tPos);
+
     tPos.y += tBitmap4x5.header.frameHeight;
     MSColor red = {0xff,0x00,0x00};
     tBitmap4x5.color = red;
-    msMagicShakeText.plotTextString( (char *)"BUTTONS", tBitmap4x5, tPos);
+    msMagicShakeText.plotTextString( (char *)"BUTTONS", msGlobals.tBitmap4x5, tPos);
 
     shakeSync.setFrames(msMagicShakeText.getWidth() * FRAME_MULTIPLY);
+#endif
 
 #if 0
     msSystem.dumpActiveHeader(tBitmap4x5.header);
@@ -135,11 +128,12 @@ public:
   void stop()
   {
     msSystem.closeActiveImage();
-    shakeSync.setFrames(0);
+    lActiveImage.close();
+    lPOVMode.stop();
   }
 
   
-  void step()
+  bool step()
   {
 
     // toggle text
@@ -211,92 +205,20 @@ public:
 
     // msSystem.log("numFiles:"); msSystem.logln(String(numFiles));
 
-    if (shakeSync.update(msGlobals.ggAccel[1]))
-    {
-
-      int index = shakeSync.getFrameIndex();
-
-      if (index > 0)
-      {
-
-        byte povData[RGB_BUFFER_SIZE];
-        // !J! todo: compiler do:
-        for (int i=0; i<MAX_LEDS * 4; i+=4) 
-        {
-          povData[i] = 0xff;
-          povData[i+1] = 0x00;
-          povData[i+2] = 0x20;
-          povData[i+3] = 0x00;
-
-          // memset(povData, 0xff, sizeof(povData));
-        }
-
-        int frame_index = index / FRAME_MULTIPLY;
-
-// msSystem.log("i:"); msSystem.logln(String(index));
-// msSystem.log("fi:"); msSystem.logln(String(frame_index));
-// frame_index = 0; // debug
-// shouldDisplayText=true;
-
-        if (shouldDisplayText) {
-          msMagicShakeText.getFrameData(frame_index, povData);
-        }
-        else 
-          msSystem.setCurrentFrame(frame_index, povData, MAX_LEDS);
-
-        msSystem.log("shouldDisplayText:"); msSystem.logln(String(shouldDisplayText));
-
-        if (correctBrightness) {
-
-          msSystem.msLEDs.loadBufferShort(povData);
-          msSystem.msLEDs.updatePixels();
-          //delayMicroseconds(POV_TIME_MICROSECONDS);
-          msSystem.msLEDs.loadBufferLong(povData);
-          msSystem.msLEDs.updatePixels();
-        }
-        else
-        {
-          msSystem.msLEDs.loadBuffer(povData);
-          msSystem.msLEDs.updatePixels();
-          delayMicroseconds(POV_TIME_MICROSECONDS);
-          msSystem.msLEDs.fastClear();
-        }
-
-      }
-      else
-      {
-        msSystem.msLEDs.fastClear();
-        yield();
-      }
-
+     if (lPOVMode.step()) {
+        return true;
     }
     else
     {
+      float fX = msGlobals.ggAccel[0];
+      float fY = msGlobals.ggAccel[1];
+      msModeBouncingBall.applyForce((msGlobals.ggCurrentMicros - msGlobals.ggLastMicros) / 1000.0, fX*3);
+      msModeBouncingBall.simpleBouncingBall();
 
-      if (1) {
-        float fX = msGlobals.ggAccel[0];
-        float fY = msGlobals.ggAccel[1];
-        msModeBouncingBall.applyForce((msGlobals.ggCurrentMicros - msGlobals.ggLastMicros) / 1000.0, fX*3);
-        msModeBouncingBall.simpleBouncingBall();
-
-        delay(30);
-      }
-      else
-      { // !j! text bollox
-          byte txtData[RGB_BUFFER_SIZE];
-          static int cIdx = 0;
-          // msSystem.PlotText(NULL, "helloshifter", cIdx++, 0, txtData);
-          if (cIdx > 100) cIdx = 0;
-
-          msSystem.msLEDs.loadBuffer(txtData);
-
-          msSystem.msLEDs.updatePixels();
-          delayMicroseconds(POV_TIME_MICROSECONDS);
-          msSystem.msLEDs.fastClear();
-      }
-
+      delay(30);
+      return false;
     }
-    
+
   }
 
 };
