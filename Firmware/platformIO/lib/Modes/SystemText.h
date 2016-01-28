@@ -23,13 +23,13 @@ public:
     msMagicShakeText.resetTexts();
     
     tPos.x = 0; tPos.y = 0;
-    msGlobals.tBitmap6x8.color = aBLUE;
-    msMagicShakeText.plotTextString( label, msGlobals.tBitmap6x8, tPos);
+    msGlobals.tBitmap4x5.color = aBLUE;
+    msMagicShakeText.plotTextString( label, msGlobals.tBitmap4x5, tPos);
 
-    tPos.y += msGlobals.tBitmap6x8.header.frameHeight;
-    msGlobals.tBitmap6x8.color = aRED;
+    tPos.y += msGlobals.tBitmap4x5.header.frameHeight;
+    msGlobals.tBitmap4x5.color = aRED;
 
-    msMagicShakeText.plotTextString( value, msGlobals.tBitmap6x8, tPos);
+    msMagicShakeText.plotTextString( value, msGlobals.tBitmap4x5, tPos);
     shakeSync.setFrames(msMagicShakeText.getWidth() * FRAME_MULTIPLY);
 
     Serial.print("label:"); Serial.println(label);
