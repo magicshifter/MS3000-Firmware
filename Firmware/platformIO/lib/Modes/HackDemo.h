@@ -1,4 +1,27 @@
 
+class HackDemoMode : public MagicShifterBaseMode {
+
+  public:
+    // start the mode
+    // void start(MagicShifterSystem &msSystem)
+    void start()
+    {
+      // m_msSystem = msSystem;
+    }
+
+    // stop the mode
+    void stop(void)
+    {
+      //m_msSystem = NULL;
+    }
+
+    // step through a frame of the mode 
+    void step()
+    {
+      //frame++; &etc.
+    }
+
+};
 
 
 #if 0 
@@ -80,3 +103,4 @@ while (0)
 } 
 
 #endif
+

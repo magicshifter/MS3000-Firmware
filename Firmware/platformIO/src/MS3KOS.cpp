@@ -52,6 +52,7 @@
 
  MagicShakeMode msMagicShake;
  POVShakeSyncDummyMode msModePOVShake;
+ HackDemoMode msHackDemo;
 
 // Begin MagicShifter3000 operation
  void setup()
@@ -71,6 +72,7 @@ delay(350); // debug !J!
 
   // initialize the modules ..
   msMagicShake.start();
+  msHackDemo.start();
 
   // !J! set autoload
   // msMagicShake.loadShakeFile("blueghost_png.magicBitmap");
@@ -229,15 +231,12 @@ void testSimpleButtons()
   //return;
 }
 
-
 void logButtons()
 {
   msSystem.log("msBtnA:"); msSystem.logln(String(msSystem.msButtons.msBtnAPressTime));
   msSystem.log("msBtnPwr:"); msSystem.logln(String(msSystem.msButtons.msBtnPwrPressTime));
   msSystem.log("msBtnB:"); msSystem.logln(String(msSystem.msButtons.msBtnBPressTime));
 }
-
-
 
 void loop()
 {
@@ -298,7 +297,10 @@ void loop()
         msSystem.msLEDs.updatePixels();
         delay(10);
       }
-
+    }
+    else if (msGlobals.ggCurrentMode = 3)
+    {
+      msHackDemo.step();
     }
     else { // mode out of bounds failure
     }

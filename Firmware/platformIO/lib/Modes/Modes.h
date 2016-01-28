@@ -6,5 +6,6 @@
 #include "BouncingBall.h"
 #include "ShakeText.h"
 #include "MagicShake.h"
+#include "HackDemo.h"
 
 #endif
