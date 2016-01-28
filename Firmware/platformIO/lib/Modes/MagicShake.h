@@ -24,7 +24,7 @@ private:
   int dirCursor = 0;
 
   // the last frame of the Shake
-  MagicShifterImageText msModeShakeText;
+  MagicShifterImageText msMagicShakeText;
 
   // the number of files discovered onboard during the scan for POV images..
   int numFiles = 0;
@@ -103,8 +103,8 @@ public:
     getFileNameAtIndex(dirCursor, numFiles);
     msSystem.log("numFiles:"); msSystem.logln(String(numFiles));
     dirCursor = 0;// !J! grr ..
-msSystem.log("MSMGetWidth:"); msSystem.log(String(msModeShakeText.getWidth()));
-msSystem.log("MSMGetHeight:"); msSystem.log(String(msModeShakeText.getHeight()));
+msSystem.log("MSMGetWidth:"); msSystem.log(String(msMagicShakeText.getWidth()));
+msSystem.log("MSMGetHeight:"); msSystem.log(String(msMagicShakeText.getHeight()));
 
     loadText();
 
@@ -116,17 +116,17 @@ msSystem.log("MSMGetHeight:"); msSystem.log(String(msModeShakeText.getHeight()))
     Coordinate_s tPos;
     tPos.x = 0; tPos.y = 0;
 
-    msModeShakeText.plotTextString( (char *)"MAGIC", tBitmap4x5, tPos);
+    msMagicShakeText.plotTextString( (char *)"MAGIC", tBitmap4x5, tPos);
 
     tPos.y += tBitmap4x5.header.frameHeight;
     
     MSColor red = {0xff,0x00,0x00};
     tBitmap6x8.color = red;
 
-    msModeShakeText.plotTextString( (char *)"3000", tBitmap6x8, tPos);
+    msMagicShakeText.plotTextString( (char *)"3000", tBitmap6x8, tPos);
 
 
-    shakeSync.setFrames(msModeShakeText.getWidth() * FRAME_MULTIPLY);
+    shakeSync.setFrames(msMagicShakeText.getWidth() * FRAME_MULTIPLY);
 
 #if 0
     msSystem.dumpActiveHeader(tBitmap4x5.header);
@@ -246,7 +246,7 @@ msSystem.log("Would DISP:"); msSystem.logln(toLoad);
         // frame_index = 0; // debug
 
         // msSystem.setCurrentFrame(frame_index, povData, MAX_LEDS);
-        msModeShakeText.getFrameData(frame_index, povData);
+        msMagicShakeText.getFrameData(frame_index, povData);
 
         if (correctBrightness) {
 

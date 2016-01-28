@@ -50,7 +50,7 @@
 // GUI modes, well actually .. modes are more of an 'app' ..
 #include "Modes.h"
 
- MagicShakeMode msModeShake;
+ MagicShakeMode msMagicShake;
  POVShakeSyncDummyMode msModePOVShake;
 
 // Begin MagicShifter3000 operation
@@ -70,10 +70,10 @@ delay(350); // debug !J!
   msSystem.msLEDs.bootSwipe();
 
   // initialize the modules ..
-  msModeShake.start();
+  msMagicShake.start();
 
   // !J! set autoload
-  // msModeShake.loadShakeFile("blueghost_png.magicBitmap");
+  // msMagicShake.loadShakeFile("blueghost_png.magicBitmap");
   // todo: move to module start sequence.
   msModePOVShake.setFrames(32);
 
@@ -274,7 +274,7 @@ void loop()
     // dispatch to the mode handler .. 
     if (msGlobals.ggCurrentMode == 0)
     {
-      msModeShake.step();
+      msMagicShake.step();
     }
     else 
     if (msGlobals.ggCurrentMode == 1)
