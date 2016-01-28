@@ -50,8 +50,9 @@
 // GUI modes, well actually .. modes are more of an 'app' ..
 #include "Modes.h"
 
- MagicShakeMode msMagicShake;
- POVMode msPOVShake;
+MagicShakeMode msMagicShake;
+MagicSystemTextMode msSysText;
+
 
 // Begin MagicShifter3000 operation
  void setup()
@@ -71,7 +72,7 @@ delay(350); // debug !J!
 
   // initialize the modules ..
   msMagicShake.start();
-  msPOVShake.start();
+  msSysText.start();
 }
 
 void loop()
@@ -139,7 +140,7 @@ void loop()
     else 
     if (msGlobals.ggCurrentMode = 3)
     {
-      msPOVShake.step();
+      msSysText.step();
     }
     else { // mode out of bounds failure
     }

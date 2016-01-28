@@ -1,7 +1,7 @@
 
 #define FRAME_MULTIPLY 2
 
-class POVMode : public MagicShifterBaseMode {
+class MagicPOVMode : public MagicShifterBaseMode {
 
 private:
   MagicShifterImageAbstr *msImage;

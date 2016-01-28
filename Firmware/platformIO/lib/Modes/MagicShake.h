@@ -23,7 +23,7 @@ private:
   // the last frame of the Shake
   MagicShifterImageText msMagicShakeText;
 
-  POVMode lPOVMode;
+  MagicPOVMode lPOVMode;
   MagicShifterImage lLocalImage;
 
   // the number of files discovered onboard during the scan for POV images..
@@ -71,8 +71,8 @@ public:
   void loadShakeFile(const char *filename)
   {
     msSystem.log("loadShakeFile:"); msSystem.logln(filename);
-    lLocalImage.close();
-    lLocalImage.LoadFile(filename);
+
+    lLocalImage.close(); lLocalImage.LoadFile(filename);
     lPOVMode.setImage(&lLocalImage);
   }
 
