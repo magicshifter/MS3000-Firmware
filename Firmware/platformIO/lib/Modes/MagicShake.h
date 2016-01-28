@@ -176,7 +176,6 @@ msSystem.log("MSMGetHeight:"); msSystem.log(String(msMagicShakeText.getHeight())
           toLoad = String("blueghost_png.magicBitmap");
       }
 
-
       if (toLoad.length() > 0) {
 msSystem.log("Would DISP:"); msSystem.logln(toLoad);
         loadShakeFile(toLoad.c_str());

@@ -383,17 +383,21 @@ public:
       powerDown();
     }
 
-    if (msButtons.msBtnBHit)
+    if (msButtons.msBtnBLongHit)
     {
-      msGlobals.ggCurrentMode = (msGlobals.ggCurrentMode+1)%NUM_MS_MODES;
-      msButtons.msBtnBHit = false;
+      msGlobals.ggCurrentMode++;
+      if (msGlobals.ggCurrentMode > (NUM_MS_MODES - 1)) // !J! todo: mode-list 
+        msGlobals.ggCurrentMode=0;
+      msButtons.msBtnBLongHit = false;
       log("Changed +Mode:"); logln(String(msGlobals.ggCurrentMode));
     }
     else
-    if (msButtons.msBtnAHit)
+    if (msButtons.msBtnALongHit)
     {
-      msGlobals.ggCurrentMode = (msGlobals.ggCurrentMode-1)%NUM_MS_MODES;
-      msButtons.msBtnBHit = false;
+      msGlobals.ggCurrentMode--;
+      if (msGlobals.ggCurrentMode < 0) 
+        msGlobals.ggCurrentMode = (NUM_MS_MODES - 1);
+      msButtons.msBtnALongHit = false;
       log("Changed -Mode:"); logln(String(msGlobals.ggCurrentMode));
     }
     
