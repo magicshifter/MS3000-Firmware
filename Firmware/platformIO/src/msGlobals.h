@@ -63,6 +63,7 @@ void l_safeStrncpy(char * dest, const char *source, int n)
 }
 
 #define FAULT_NO_ACCELEROMETER 0xf1
+#define FAULT_NEW_FILEUPLOAD    0xf2
 
 class MagicShifterGlobals {
 public:

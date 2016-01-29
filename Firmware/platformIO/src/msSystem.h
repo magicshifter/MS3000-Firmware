@@ -234,47 +234,51 @@ public:
     }
   }
 
-#define BUTTON_LED_A
-#define BUTTON_LED_PWR
-#define BUTTON_LED_B
+#define BUTTON_LED_A (MAX_LEDS - 1)
+#define BUTTON_LED_PWR (MAX_LEDS / 2) 
+#define BUTTON_LED_B 0
+#define BUTTON_DISPLAY_PERIOD 125
+
 
   void displayButtons()
   {
     if (msButtons.msBtnPwrLongHit)
     {
-      msLEDs.setPixels(1, 0, 0, 20, 20);
+      msLEDs.setPixels(BUTTON_LED_PWR, 0, 0, 20, 20);
+      msLEDs.setPixels(BUTTON_LED_PWR + 1, 0, 0, 20, 20);
       msLEDs.updatePixels();
-      delay(200);
+      delay(BUTTON_DISPLAY_PERIOD);
     }
     if (msButtons.msBtnPwrHit)
     {
-      msLEDs.setPixels(1, 20, 20, 0, 15);
+      msLEDs.setPixels(BUTTON_LED_PWR, 20, 20, 0, 15);
+      msLEDs.setPixels(BUTTON_LED_PWR - 1, 20, 20, 0, 15);
       msLEDs.updatePixels();
-      delay(200);
+      delay(BUTTON_DISPLAY_PERIOD);
     }
     if (msButtons.msBtnALongHit)
     {
-      msLEDs.setPixels(0, 20, 0, 20, 20);
+      msLEDs.setPixels(BUTTON_LED_A, 20, 0, 20, 20);
       msLEDs.updatePixels();
-      delay(200);
+      delay(BUTTON_DISPLAY_PERIOD);
     }
     if (msButtons.msBtnAHit)
     {
-      msLEDs.setPixels(0, 20, 20, 0, 20);
+      msLEDs.setPixels(BUTTON_LED_A, 20, 20, 0, 20);
       msLEDs.updatePixels();
-      delay(200);
+      delay(BUTTON_DISPLAY_PERIOD);
     }
     if (msButtons.msBtnBLongHit)
     {
-      msLEDs.setPixels(2, 20, 0, 20, 20);
+      msLEDs.setPixels(BUTTON_LED_B, 20, 0, 20, 20);
       msLEDs.updatePixels();
-      delay(200);
+      delay(BUTTON_DISPLAY_PERIOD);
     }
     if (msButtons.msBtnBHit)
     {
-      msLEDs.setPixels(2, 20, 20, 0, 20);
+      msLEDs.setPixels(BUTTON_LED_B, 20, 20, 0, 20);
       msLEDs.updatePixels();
-      delay(200);
+      delay(BUTTON_DISPLAY_PERIOD);
     }
   }
 

@@ -45,6 +45,12 @@ private:
     {
       //frame++; &etc.
     }
+
+  // update LED's only
+  void update() {};
+  // reset
+  void reset() {};
+
 };
 
 #endif

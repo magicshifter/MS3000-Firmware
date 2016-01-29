@@ -327,7 +327,7 @@ void handleFileUpload(){
       
     }
 
-    msGlobals.ggUploadFile = SPIFFS.open(msGlobals.ggUploadFileName, "w+");
+    msGlobals.ggUploadFile = SPIFFS.open(msGlobals.ggUploadFileName, "w");
     msSystem.log("ggUploadFile opened:");
     msSystem.logln(msGlobals.ggUploadFileName);
 
@@ -367,6 +367,7 @@ void handleFileUpload(){
 
     msSystem.logln("Upload: END, Size: ");
     msSystem.logln(String(upload.totalSize));
+    msGlobals.ggFault = FAULT_NEW_FILEUPLOAD;
   }
 }
 

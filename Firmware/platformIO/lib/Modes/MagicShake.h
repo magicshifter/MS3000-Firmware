@@ -110,6 +110,11 @@ public:
     lPOVMode.stop();
   }
 
+  void reset()
+  {
+    stop();
+    start();
+  }
   
   bool step()
   {

@@ -85,7 +85,6 @@ void loop()
 
   msWebServer.loop();
 
-
   // outside time-frame
 #ifdef CONFIG_ENABLE_ACCEL
     msSystem.msAccel.readAccelData(msGlobals.ggAccelCounts);
@@ -105,6 +104,14 @@ void loop()
     // dispatch to the mode handler .. 
     if (msGlobals.ggCurrentMode == 0)
     {
+
+      if (msGlobals.ggFault == FAULT_NEW_FILEUPLOAD)
+      {
+        msGlobals.ggFault = 0;
+        msMagicShake.reset();
+        
+      }
+
       msMagicShake.step();
     }
     else 
@@ -137,21 +144,23 @@ void loop()
       //   delay(10);
       // }
     }
-    else 
-    if (msGlobals.ggCurrentMode = 3)
-    {
-      msSysText.step();
-    }
-    else { // mode out of bounds failure
-    }
+    // else 
+    // if (msGlobals.ggCurrentMode = 3)
+    // {
+    //   msSysText.step();
+    // }
+    // else { // mode out of bounds failure
+    // }
 
   }
 
   // fault-checks
   if (msGlobals.ggFault > 0)
   {
-    Serial.print("FAULT:"); Serial.println(String(msGlobals.ggFault));
-    msSystem.infinite_swipe();
+    {
+      Serial.print("FAULT:"); Serial.println(String(msGlobals.ggFault));
+      msSystem.infinite_swipe();
+    }
   }
 
 }
