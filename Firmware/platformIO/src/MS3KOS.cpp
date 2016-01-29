@@ -147,5 +147,12 @@ void loop()
 
   }
 
+  // fault-checks
+  if (msGlobals.ggFault > 0)
+  {
+    Serial.print("FAULT:"); Serial.println(String(msGlobals.ggFault));
+    msSystem.infinite_swipe();
+  }
+
 }
 

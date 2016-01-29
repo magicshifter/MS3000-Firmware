@@ -22,6 +22,7 @@
 
 #include "msImage.h"
 
+
 // forward-declared here because it is a client of msSystem ..
 void CommandInterfacePoll();
 
@@ -233,6 +234,52 @@ public:
     }
   }
 
+#define BUTTON_LED_A
+#define BUTTON_LED_PWR
+#define BUTTON_LED_B
+
+  void displayButtons()
+  {
+    if (msButtons.msBtnPwrLongHit)
+    {
+      msLEDs.setPixels(1, 0, 0, 20, 20);
+      msLEDs.updatePixels();
+      delay(200);
+    }
+    if (msButtons.msBtnPwrHit)
+    {
+      msLEDs.setPixels(1, 20, 20, 0, 15);
+      msLEDs.updatePixels();
+      delay(200);
+    }
+    if (msButtons.msBtnALongHit)
+    {
+      msLEDs.setPixels(0, 20, 0, 20, 20);
+      msLEDs.updatePixels();
+      delay(200);
+    }
+    if (msButtons.msBtnAHit)
+    {
+      msLEDs.setPixels(0, 20, 20, 0, 20);
+      msLEDs.updatePixels();
+      delay(200);
+    }
+    if (msButtons.msBtnBLongHit)
+    {
+      msLEDs.setPixels(2, 20, 0, 20, 20);
+      msLEDs.updatePixels();
+      delay(200);
+    }
+    if (msButtons.msBtnBHit)
+    {
+      msLEDs.setPixels(2, 20, 20, 0, 20);
+      msLEDs.updatePixels();
+      delay(200);
+    }
+  }
+
+
+
   // gets the basic stuff set up
   void setup()
   {
@@ -316,7 +363,10 @@ public:
   void loop()
   {
 
-    msButtons.loop();
+    msButtons.step();
+
+    displayButtons();
+
     // internal button usage
     if (msButtons.msBtnPwrLongHit)
     {
@@ -339,7 +389,7 @@ public:
       msButtons.msBtnBLongHit = false;
       log("Changed +Mode:"); logln(String(msGlobals.ggCurrentMode));
     }
-    else
+
     if (msButtons.msBtnALongHit)
     {
       msGlobals.ggCurrentMode--;
@@ -372,7 +422,8 @@ public:
     float avg = 3.2;
 
     //float r1 = 180, r2 = 390, r3 = 330; // gamma??? or (not beta)
-    float r1 = 270, r2 = 1000, r3 = 0; // alpha
+    // !J! todo: magic numbers are bad voodoo
+    float r1 = 220, r2 = 820, r3 = 0; // alpha
 
     float voltage = ((float)(r1 + r2 + r3) * adValue) / (r1 * ad1V);
 

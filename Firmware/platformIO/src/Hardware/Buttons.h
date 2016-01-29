@@ -54,7 +54,7 @@ class MagicShifterButtons {
 	    pinMode(PIN_BUTTON_B, INPUT);
 	}
 
-	void loop() 
+	void step() 
 	{
 		msBtnActive = false;
 
@@ -75,7 +75,6 @@ class MagicShifterButtons {
 		}
 		else
 		{
-
 			if (msLongClickOK && msBtnAPressTime >= MIN_TIME_LONG_CLICK)
 			{
 	    // logln("We gots LOON clicks A.");
@@ -88,7 +87,7 @@ class MagicShifterButtons {
 				msBtnAHit = true;
 			}
 
-				msBtnAPressTime = 0;
+			msBtnAPressTime = 0;
 		}
 
 		if (!digitalRead(PIN_BUTTON_B))

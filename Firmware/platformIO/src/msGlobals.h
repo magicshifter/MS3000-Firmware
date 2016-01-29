@@ -1,7 +1,7 @@
 #ifndef _MSGLOBALS_H
 #define _MSGLOBALS_H
 
-#define DEFAULT_FACTORY_MODE 3
+#define DEFAULT_FACTORY_MODE 0
 //
 // Global definitions and the master global struct for the system
 //
@@ -62,9 +62,12 @@ void l_safeStrncpy(char * dest, const char *source, int n)
   dest[n-1] = '\0';
 }
 
+#define FAULT_NO_ACCELEROMETER 0xf1
+
 class MagicShifterGlobals {
 public:
   // state !J! TODO: clean all this up 
+  long ggFault = 0;  // TODO: reset-reason/test-fault/etc.
   int ggFactoryIntensity = 10;
   float ggAccel[3];  // Stores the real accel value in g's
   long ggAccelTime;

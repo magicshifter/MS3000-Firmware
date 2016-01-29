@@ -50,6 +50,7 @@ public:
     if (Wire.available() < bytesToRead)
     {
       Serial.println("I2C not available. This should NEVER happen!");
+      msGlobals.ggFault = FAULT_NO_ACCELEROMETER;
       delay(10);
     }; //Hang out until we get the # of bytes we expect
 
@@ -71,6 +72,7 @@ public:
 
     if (!Wire.available()){
       Serial.println("I2C not available. This should NEVER happen!");
+      msGlobals.ggFault = FAULT_NO_ACCELEROMETER;
       delay(10);
     } ; //Wait for the data to come back
     return Wire.read(); //Return this one byte
