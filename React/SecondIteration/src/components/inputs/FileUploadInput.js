@@ -132,31 +132,39 @@ export default class FileUploadInput extends Component {
   render() {
     const {label, text = 'Upload File', header} = this.props;
 
+    const simple = true;
+
     return (
       <div className={classes['container']}>
 
-        <h5>{header}</h5>
+        {!simple && <h5>{header}</h5>}
 
-        <div>
-            <label>Filename:</label>
-            <input
-                type='text'
-                defaultValue='userImage'
-                ref='fileName' />
-        </div>
+        {!simple &&
+            <div>
+                <label>Filename:</label>
+                <input
+                  type='text'
+                  defaultValue='userImage'
+                  ref='fileName'
+                />
+            </div>
+        }
 
-        {label && <label>{label}</label>}
+        {!simple && label && <label>{label}</label>}
 
         <input
           type='button'
           onClick={this.onClick}
           value={text}
         />
-        <input
-          type='button'
-          onClick={this.onFileDownload}
-          value='download file'
-        />
+
+        {!simple &&
+          <input
+            type='button'
+            onClick={this.onFileDownload}
+            value='download file'
+          />
+        }
       </div>
     );
   }
