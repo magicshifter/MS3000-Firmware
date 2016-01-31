@@ -14,6 +14,7 @@ class MagicShifterImageAbstr {
 public:
   virtual int getWidth();
   virtual void getFrameData(int frameIdx, byte *frameDest);
+  // virtual void close();
 };
 
 void PlotBitmapColumn1Bit(const MSBitmap *bitmap, uint16_t absColumn, uint8_t ledIdx, byte *frameDest)
@@ -151,12 +152,15 @@ private:
   int txtCount;
   int txtWidth;
   char txtCollection[MAX_SHAKE_TEXT][MAX_TEXT_LENGTH];
+  // !w! todo: should be ref/ptr 
   MSBitmap txtFonts[MAX_SHAKE_TEXT];
   int txtSizes[MAX_SHAKE_TEXT];
 
   Coordinate_s txtPositions[MAX_SHAKE_TEXT];
 
 public:
+  
+  void close () {} 
 
   void resetTexts()
   {
@@ -283,7 +287,6 @@ public:
 
   void close()
   {
-
     _bitmap.bmFile.close();
   }
 };

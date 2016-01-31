@@ -49,22 +49,28 @@ public:
 
     int cnt = 0;
 
-    while(cnt <= fileIndex)
+    String foundFilename = "";
+    String currentFilename = "";
+
+    while(1)
     {
-      if (!POVDir.next()) break; // end of list
-      String foundFilename;
-      foundFilename = POVDir.fileName();
-      if (!foundFilename.endsWith(".magicBitmap")) continue;
+      if (!POVDir.next()) 
+        break; // end of list
+      
+      currentFilename = POVDir.fileName();
+
+      if (!currentFilename.endsWith(".magicBitmap")) 
+        continue;
 
       if (cnt == fileIndex)
-        return foundFilename;
+        foundFilename = currentFilename;
 
       cnt++;
     }
 
     maxFiles = cnt;
 
-    return "";
+    return foundFilename;
   }
 
   // load a magic Shake file for display

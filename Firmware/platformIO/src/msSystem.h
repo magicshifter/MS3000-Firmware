@@ -318,7 +318,7 @@ public:
     else
       log("noSPIFFS:");
     // !J! todo: infinite_loop()? 
-    //TEST_SPIFFS_bug();
+    TEST_SPIFFS_bug();
 
     // all engines turn on
     pinMode(PIN_PWR_MGT, INPUT);
