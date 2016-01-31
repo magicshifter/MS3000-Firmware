@@ -14,7 +14,7 @@ class MagicShifterImageAbstr {
 public:
   virtual int getWidth();
   virtual void getFrameData(int frameIdx, byte *frameDest);
-  // virtual void close();
+  virtual void close();
 };
 
 void PlotBitmapColumn1Bit(const MSBitmap *bitmap, uint16_t absColumn, uint8_t ledIdx, byte *frameDest)
@@ -247,8 +247,11 @@ public:
 
   void LoadFile(const char *fileName)
   {
+
     Serial.print("filename:"); Serial.println(fileName);
     
+    l_safeStrncpy(sv_Filename, fileName, MAX_FILENAME_LENGTH);
+
     if (LoadBitmapFile(fileName, &_bitmap) == true)
     {
       Serial.println("loadbitmapfile: 0000");
@@ -287,7 +290,9 @@ public:
 
   void close()
   {
-    _bitmap.bmFile.close();
+    Serial.print("closefile:"); Serial.println(String(_bitmap.bmFile));
+    if (_bitmap.bmFile)
+      _bitmap.bmFile.close();
   }
 };
 

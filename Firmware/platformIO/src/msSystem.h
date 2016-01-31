@@ -205,6 +205,8 @@ public:
   // tell power controller to power down
   void powerDown()
   {
+    showBatteryStatus(false);
+
     // works even with pulldown but output seems to make more sense
     //pinMode(PIN_PWR_MGT, INPUT_PULLDOWN);
     pinMode(PIN_PWR_MGT, OUTPUT);
@@ -282,6 +284,86 @@ public:
     }
   }
 
+#define LIPO_DISPLAY_LOWER_LIMIT_V         3.1
+#define LIPO_DISPLAY_RED_LIMIT_V           3.65
+#define LIPO_DISPLAY_ORANGE_LIMIT_V        3.9
+#define LIPO_DISPLAY_UPPER_LIMIT_V         4.5
+
+void WaitClearButtons()
+{
+  while (msButtons.powerButtonPressed()) {
+    delay(1);
+  }
+  delay(10);
+}
+
+void showBatteryStatus(bool shouldFadeIn)
+{
+  //v = MAXMV;
+
+  int d = 1000;
+  int gs = 10;
+  float batLevel = 0.0f;
+
+  if (!shouldFadeIn) 
+    d = d * -1;
+
+  WaitClearButtons();
+  delay(50);
+  batLevel = getBatteryVoltage();
+
+  msLEDs.fillPixels(0, 0, 0, 0);;
+
+  for (int i = 0; i >= 0 && i <= 15; i++) {
+    float iV = LIPO_DISPLAY_LOWER_LIMIT_V + (LIPO_DISPLAY_UPPER_LIMIT_V - LIPO_DISPLAY_LOWER_LIMIT_V) * (i / 16.0);
+
+    if (batLevel > iV) {
+      int red, green;
+      if (iV > LIPO_DISPLAY_RED_LIMIT_V) {
+        green = 255 * (iV - LIPO_DISPLAY_RED_LIMIT_V) / (LIPO_DISPLAY_UPPER_LIMIT_V - LIPO_DISPLAY_RED_LIMIT_V);
+      } else
+        green = 0;
+
+      if (iV < LIPO_DISPLAY_ORANGE_LIMIT_V) {
+        red = 255 * (LIPO_DISPLAY_ORANGE_LIMIT_V - iV) / (LIPO_DISPLAY_ORANGE_LIMIT_V - LIPO_DISPLAY_LOWER_LIMIT_V);
+      } else
+        red = 0;
+      msLEDs.setPixels(15 - i, red, green, 0, gs);
+
+      //msLEDs.setPixels(i, 0, iV > LIPO_DISPLAY_RED_LIMIT_V  ? 150 : 0, iV < LIPO_DISPLAY_ORANGE_LIMIT_V ? 150 : 0, gs);
+    }
+
+    if (d > 0) {
+      msLEDs.updatePixels();
+      delay(12);
+    }
+  }
+  msLEDs.updatePixels();
+
+
+  if (d < 0) {
+    d = -d;
+    for (int i = 0; i < d; i += 20) {
+      delay(20);
+    }
+
+    for (int i = 0; i >= 0 && i <= 15; i++) {
+      msLEDs.setPixels(i, 0, 0, 0);
+      msLEDs.updatePixels();
+      delay(12);
+    }
+  } else {
+    delay(100);
+    for (int i = 0; i < d; i += 20) {
+      delay(20);
+    }
+  }
+
+  msLEDs.fillPixels(0, 0, 0, 0);;
+  msLEDs.updatePixels();
+
+}
+
 
 
   // gets the basic stuff set up
@@ -318,7 +400,7 @@ public:
     else
       log("noSPIFFS:");
     // !J! todo: infinite_loop()? 
-    TEST_SPIFFS_bug();
+    // TEST_SPIFFS_bug();
 
     // all engines turn on
     pinMode(PIN_PWR_MGT, INPUT);

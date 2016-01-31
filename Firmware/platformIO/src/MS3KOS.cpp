@@ -68,7 +68,7 @@ delay(350); // debug !J!
   // get the web interface started
   msWebServer.StartWebServer();
 
-  msSystem.msLEDs.bootSwipe();
+  msSystem.showBatteryStatus(true);
 
   // initialize the modules ..
   msMagicShake.start();

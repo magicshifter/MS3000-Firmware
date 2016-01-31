@@ -78,7 +78,8 @@ public:
   {
     msSystem.log("loadShakeFile:"); msSystem.logln(filename);
 
-    lLocalImage.close(); lLocalImage.LoadFile(filename);
+    lLocalImage.close();
+    lLocalImage.LoadFile(filename);
     lPOVMode.setImage(&lLocalImage);
   }
 
@@ -118,6 +119,7 @@ public:
 
   void reset()
   {
+    msSystem.logln("MagicShake reset.");
     stop();
     start();
   }
