@@ -4,7 +4,7 @@
 class MagicPOVMode : public MagicShifterBaseMode {
 
 private:
-  MagicShifterImageAbstr *msImage;
+  MagicShifterImageAbstr *msImage = NULL;
   POVShakeSync shakeSync;
   bool  correctBrightness = false;
 
@@ -12,7 +12,11 @@ public:
 
   void setImage(MagicShifterImageAbstr *lImage)
   {
+    // if (msImage != NULL) 
+    //   msImage->close();
+
     msImage = lImage;
+    
     if (lImage != NULL) {
       shakeSync.setFrames(msImage->getWidth() * FRAME_MULTIPLY);
     }
