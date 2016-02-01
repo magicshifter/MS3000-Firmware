@@ -17,7 +17,7 @@
 
 #include "Hardware/EEPROMString.h"
 #include "Hardware/LEDHardware.h"
-#include "Hardware/Accelerometer.h"
+#include "Hardware/Sensor.h"
 #include "Hardware/Buttons.h"
 
 #include "msImage.h"
@@ -36,7 +36,7 @@ private:
 
 public:
   // todo: protect
-  MagicShifterAccelerometer msAccel;
+  MagicShifterAccelerometer msSensor;
   MagicShifterLEDs msLEDs;
   MagicShifterEEPROMString  msEEPROMs;
   MagicShifterButtons msButtons;
@@ -45,7 +45,7 @@ public:
   WiFiUDP msUDP;
 
   int msFrame = 0;
-  bool msAccelOK = false;
+  bool msSensorOK = false;
   long msPowerCountDown = 0;
 
 public:
@@ -223,7 +223,7 @@ public:
       // swipe colors
       for (byte idx = 0; idx < MAX_LEDS; idx++)
       {
-        msLEDs.setPixels(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, msGlobals.ggFactoryIntensity);
+        msLEDs.setPixels(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, msGlobals.ggBrightness);
         msLEDs.updatePixels();
         delay(30);
       }
@@ -284,6 +284,124 @@ public:
     }
   }
 
+#define BRIGHTNESS_CONTROL_TIME 600
+
+uint8_t BrightnessLevels[16] = { 1,   3,   5, 12,
+                 18,  25,  35, 50,
+                  65,  80, 102, 128,
+                145, 170, 200, 255};
+
+#define  MAXMV 32
+bool vChanged = false; // !J! this is a dirty hack
+
+// -- brightness handling:
+void brightnessControl()
+{
+  int newIdx = msGlobals.ggBrightness;
+  long avgV = 0;
+  int newV = 0, lastV = -1;
+  uint16_t blink = 0;
+  int skip = 100;
+
+  // state: on
+  if ((msButtons.powerButtonPressed()) && 
+      (msButtons.msBtnPwrPressTime > BRIGHTNESS_CONTROL_TIME) )
+  {
+
+    msGlobals.ggBrightness = 255;
+    while (skip)
+    {
+      delay(1);
+      
+      msButtons.step();
+      msSensor.step();
+
+      if (msButtons.powerButtonPressed())
+        skip = 100;
+      else
+      {
+        if (skip >0) skip--;
+      }
+
+      // AccelPoll();
+
+      avgV = (61 * avgV + (-msGlobals.ggAccelCount[XAXIS] + 500))/62;
+
+      newIdx = (avgV) / 35;
+
+      if (newIdx < -5) {
+        newV = 0;
+      }
+      else
+      {
+        blink = 0;
+        if (newIdx < 0) newIdx = 0;
+        if (newIdx >= 15) newIdx = 15;
+        newV = BrightnessLevels[newIdx];
+      }
+      if (newV == 0)
+      {
+        msLEDs.fillPixels(0, 0, 0, 0);
+        blink++;
+        uint16_t bb = blink&0x1FF;
+        if (bb > 255) bb =511-bb;
+        //bb = (v*bb)/255;
+
+        msLEDs.setPixels(4, bb/8, bb/8, bb/8);
+        msLEDs.setPixels(5, bb/4, bb/4, bb/4);
+        msLEDs.setPixels(6, bb/2, bb/2, bb/2);
+        msLEDs.setPixels(7, bb, bb, bb);
+        msLEDs.setPixels(8, bb, bb, bb);
+        msLEDs.setPixels(9, bb/2, bb/2, bb/2);
+        msLEDs.setPixels(10, bb/4, bb/4, bb/4);
+        msLEDs.setPixels(11, bb/8, bb/8, bb/8);
+
+        msLEDs.updatePixels();
+        delayMicroseconds(200);
+      }
+      else if (lastV != newV)
+      {
+        for (uint8_t i = 0; i <= 15; i++) {
+
+          uint8_t lBr = BrightnessLevels[i];
+
+          uint8_t dB = lBr;
+
+          if (dB > MAXMV) dB = MAXMV;
+          //if (dB <= 16) dB = 16;
+
+          if (newV >= lBr)
+            msLEDs.setPixels(15 - i, dB, dB, dB);
+          else
+            msLEDs.setPixels(15 - i, 0, 0, 0);
+        }
+        msLEDs.updatePixels();
+        delayMicroseconds(200);
+      }
+      lastV = newV;
+    }
+
+    if (newV == 0)
+      waitForPowerDown();
+    
+    msGlobals.ggBrightness = newV;
+
+    vChanged = true;
+
+    WaitClearButtons();
+
+    msLEDs.fillPixels(0, 0, 0, 0);
+    msLEDs.updatePixels();
+  }
+}
+
+void waitForPowerDown()
+{
+  showBatteryStatus(true);
+  powerDown();
+}
+
+// -- battery status methods:
 #define LIPO_DISPLAY_LOWER_LIMIT_V         3.1
 #define LIPO_DISPLAY_RED_LIMIT_V           3.65
 #define LIPO_DISPLAY_ORANGE_LIMIT_V        3.9
@@ -312,7 +430,7 @@ void showBatteryStatus(bool shouldFadeIn)
   delay(50);
   batLevel = getBatteryVoltage();
 
-  msLEDs.fillPixels(0, 0, 0, 0);;
+  msLEDs.fillPixels(0, 0, 0, 0);
 
   for (int i = 0; i >= 0 && i <= 15; i++) {
     float iV = LIPO_DISPLAY_LOWER_LIMIT_V + (LIPO_DISPLAY_UPPER_LIMIT_V - LIPO_DISPLAY_LOWER_LIMIT_V) * (i / 16.0);
@@ -415,8 +533,8 @@ void showBatteryStatus(bool shouldFadeIn)
 
 #ifdef CONFIG_ENABLE_ACCEL
     // accelerometer 
-    msAccel.initAccelerometer();
-    msAccelOK = msAccel.resetAccelerometer(); //Test and intialize the MMA8452
+    msSensor.initAccelerometer();
+    msSensorOK = msSensor.resetAccelerometer(); //Test and intialize the MMA8452
 #endif
 
     // led controllers and buffer
@@ -450,14 +568,15 @@ void showBatteryStatus(bool shouldFadeIn)
   {
 
     msButtons.step();
+    msSensor.step();
 
     displayButtons();
 
-    // internal button usage
-    if (msButtons.msBtnPwrLongHit)
-    {
-      powerDown();
-    }
+    // // internal button usage
+    // if (msButtons.msBtnPwrLongHit)
+    // {
+    //   powerDown();
+    // }
 
     if (msButtons.msBtnActive) {
       msPowerCountDown = msGlobals.ggCurrentMicros;
@@ -486,7 +605,10 @@ void showBatteryStatus(bool shouldFadeIn)
     }
 
     // if (msGlobals.allowCmd) 
-      CommandInterfacePoll();
+    CommandInterfacePoll();
+
+    brightnessControl();
+
   }
 
 

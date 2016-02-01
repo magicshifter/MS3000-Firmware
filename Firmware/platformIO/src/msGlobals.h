@@ -71,20 +71,18 @@ class MagicShifterGlobals {
 public:
   // state !J! TODO: clean all this up 
   long ggFault = 0;  // TODO: reset-reason/test-fault/etc.
-  int ggFactoryIntensity = 10;
+  int ggBrightness = 10;
   float ggAccel[3];  // Stores the real accel value in g's
+  int ggAccelCount[3];  // Stores the 12-bit signed value
   long ggAccelTime;
   long ggLFrameTime;
   long ggCurrentMode = DEFAULT_FACTORY_MODE;  // POV mode
-  int ggAccelCounts[3];  // Stores the 12-bit signed value
   int ggBtn1State = 0;
   long ggCurrentMicros = 0;
   long ggLastMicros = 0;
   long ggSpeedMicros = 800;
   long ggLastFrameMicros = 0;
   long ggCurrentFrame = 0;
-  byte ggBright = 0xFF;
-  byte gs = 0x1;
   long ggBootTime = 0;
   bool ggModeAP = false;
   // make it larger to be on the safe side when base64 decoding

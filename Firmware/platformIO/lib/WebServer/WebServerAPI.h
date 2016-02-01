@@ -349,11 +349,11 @@ void handleGETStatus(void)
   float voltage = ((float)(r1 + r2 + r3) * adValue) / (r1 * ad1V);
 
 
-  msSystem.msAccel.readAccelData(msGlobals.ggAccelCounts);
+  msSystem.msSensor.readAccelData(msGlobals.ggAccelCount);
 
   for (int i = 0 ; i < 3 ; i++)
   {
-    msGlobals.ggAccel[i] = (float) msGlobals.ggAccelCounts[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set
+    msGlobals.ggAccel[i] = (float) msGlobals.ggAccelCount[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set
   }
 
   uint32_t ip = (uint32_t)msSystem.getIP();
@@ -369,9 +369,9 @@ void handleGETStatus(void)
     response += "\"ggLastFrameMicros\":" + String(msGlobals.ggLastFrameMicros) + ",";
     response += "\"ggCurrentMicros\":" + String(msGlobals.ggCurrentMicros) + ",";
     response += "\"accelRaw\":[";
-      response += String(msGlobals.ggAccelCounts[0]) + ",";
-      response += String(msGlobals.ggAccelCounts[1]) + ",";
-      response += String(msGlobals.ggAccelCounts[2]);
+      response += String(msGlobals.ggAccelCount[0]) + ",";
+      response += String(msGlobals.ggAccelCount[1]) + ",";
+      response += String(msGlobals.ggAccelCount[2]);
     response += "],";
     response += "\"msGlobals.ggAccel\":[";
       response += String(msGlobals.ggAccel[0]) + ",";

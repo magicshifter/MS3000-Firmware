@@ -84,15 +84,6 @@ void loop()
 
   msWebServer.loop();
 
-  // outside time-frame
-#ifdef CONFIG_ENABLE_ACCEL
-    msSystem.msAccel.readAccelData(msGlobals.ggAccelCounts);
-
-    for (int i = 0 ; i < 3 ; i++) {
-      msGlobals.ggAccel[i] = (float) msGlobals.ggAccelCounts[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set
-    }
-#endif
-
   // inside time-frame
   if (msGlobals.ggLastFrameMicros + msGlobals.ggSpeedMicros < msGlobals.ggCurrentMicros)
   {

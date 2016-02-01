@@ -8,7 +8,7 @@ void testAccelerometer()
   int b = 20;
   while (1)
   {
-    if (msSystem.msAccelOK) 
+    if (msSystem.msSensorOK) 
     {
       msSystem.msLEDs.fillPixels(0, b, 0, 0xff);
     }
@@ -94,31 +94,31 @@ void testSimpleButtons()
 
   if (adVal > 950 )
   {
-    msSystem.msLEDs.setPixels(7, 0, 10, 0, msGlobals.ggFactoryIntensity);
-    msSystem.msLEDs.setPixels(8, 0, 10, 0, msGlobals.ggFactoryIntensity);
+    msSystem.msLEDs.setPixels(7, 0, 10, 0, msGlobals.ggBrightness);
+    msSystem.msLEDs.setPixels(8, 0, 10, 0, msGlobals.ggBrightness);
   }
   else
   {
-    msSystem.msLEDs.setPixels(7, 10, 0, 0, msGlobals.ggFactoryIntensity);
-    msSystem.msLEDs.setPixels(8, 10, 0, 0, msGlobals.ggFactoryIntensity);
+    msSystem.msLEDs.setPixels(7, 10, 0, 0, msGlobals.ggBrightness);
+    msSystem.msLEDs.setPixels(8, 10, 0, 0, msGlobals.ggBrightness);
   }
 
   if (!digitalRead(PIN_BUTTON_A))
   {
-    msSystem.msLEDs.setPixels(9, 0, 10, 0, msGlobals.ggFactoryIntensity);
+    msSystem.msLEDs.setPixels(9, 0, 10, 0, msGlobals.ggBrightness);
   }
   else
   {
-    msSystem.msLEDs.setPixels(9, 10, 0, 0, msGlobals.ggFactoryIntensity);
+    msSystem.msLEDs.setPixels(9, 10, 0, 0, msGlobals.ggBrightness);
   }
 
   if (!digitalRead(PIN_BUTTON_B))
   {
-    msSystem.msLEDs.setPixels(6, 0, 10, 0, msGlobals.ggFactoryIntensity);
+    msSystem.msLEDs.setPixels(6, 0, 10, 0, msGlobals.ggBrightness);
   }
   else
   {
-    msSystem.msLEDs.setPixels(6, 10, 0, 0, msGlobals.ggFactoryIntensity);
+    msSystem.msLEDs.setPixels(6, 10, 0, 0, msGlobals.ggBrightness);
   }
   if (cnt % 300 == 550)
   {

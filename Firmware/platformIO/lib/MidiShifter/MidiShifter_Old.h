@@ -306,20 +306,20 @@ void MIDISync()
 
     if (msBtnBHit)
     {
-      msGlobals.ggFactoryIntensity+=2;
-      if (msGlobals.ggFactoryIntensity > 31)
+      msGlobals.ggBrightness+=2;
+      if (msGlobals.ggBrightness > 31)
       {
-        msGlobals.ggFactoryIntensity = 31;
+        msGlobals.ggBrightness = 31;
       }
 
       //msGlobals.ggCurrentMode = (msGlobals.ggCurrentMode+1)%NUM_MS_MODES;
     }
     if (msBtnBLongHit)
     {
-      msGlobals.ggFactoryIntensity-=6;
-      if (msGlobals.ggFactoryIntensity < 1)
+      msGlobals.ggBrightness-=6;
+      if (msGlobals.ggBrightness < 1)
       {
-        msGlobals.ggFactoryIntensity = 1;
+        msGlobals.ggBrightness = 1;
       }
 
       //msGlobals.ggCurrentMode = (msGlobals.ggCurrentMode+1)%NUM_MS_MODES;
