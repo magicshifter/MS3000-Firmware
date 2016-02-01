@@ -6,6 +6,7 @@
  *          Code prefix- is ms*, as in msConfig, msSystem, etc.
  */
 
+extern "C" {
 #include <stdbool.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -19,13 +20,12 @@
 #include <errno.h>
 #include <time.h>
 #include <math.h> /* for HUGE_VAL */
+#include <json/json.h>
+#include <json/jsonparse.h>
+#include <json/jsontree.h>
+}
 
 //compiler.c.elf.libs=-lm -lgcc -lhal -lphy -lnet80211 -llwip -lwpa -lmain -lpp -lsmartconfig -lc -ljson
- extern "C" {
-  #include <json/json.h>
-  #include <json/jsonparse.h>
-  #include <json/jsontree.h>
- }
 
 #include <FS.h>
 
@@ -52,7 +52,6 @@
 
 MagicShakeMode msMagicShake;
 MagicSystemTextMode msSysText;
-
 
 // Begin MagicShifter3000 operation
  void setup()
