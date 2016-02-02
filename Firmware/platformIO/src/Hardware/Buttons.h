@@ -3,8 +3,6 @@
 #ifndef __BUTTONS_H
 #define __BUTTONS_H
 
-// #include "msGlobals.h"
-
 class MagicShifterButtons { 
 
 	private:
@@ -45,7 +43,8 @@ class MagicShifterButtons {
 
 	bool powerButtonPressed(void)
 	{
-		return analogRead(A0) > 950;
+		// had unusual high values on one of the 100x PCBs so this threshold is bigger now
+		return analogRead(A0) > 970;
 	}
 
 	void setup()
@@ -55,7 +54,7 @@ class MagicShifterButtons {
 	    pinMode(PIN_BUTTON_B, INPUT);
 	}
 
-	void loop() 
+	void step() 
 	{
 		msBtnActive = false;
 
@@ -76,7 +75,6 @@ class MagicShifterButtons {
 		}
 		else
 		{
-
 			if (msLongClickOK && msBtnAPressTime >= MIN_TIME_LONG_CLICK)
 			{
 	    // logln("We gots LOON clicks A.");
@@ -89,7 +87,7 @@ class MagicShifterButtons {
 				msBtnAHit = true;
 			}
 
-				msBtnAPressTime = 0;
+			msBtnAPressTime = 0;
 		}
 
 		if (!digitalRead(PIN_BUTTON_B))
@@ -106,7 +104,7 @@ class MagicShifterButtons {
 		{
 			if (msLongClickOK && msBtnBPressTime >= MIN_TIME_LONG_CLICK)
 			{
-			    // logln("We gots LOON clicks AAA.");
+			    // logln("We gots LOON clicks B .");
 				msBtnBLongHit = true;
 			}
 			else

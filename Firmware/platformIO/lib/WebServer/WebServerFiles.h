@@ -49,7 +49,7 @@ static bool streamFile(String path){
 void handleNotFound() {
 
   char fName[MAX_FILENAME_LENGTH];
-  msSystem.msEEPROMs.safeStrncpy(fName, msSystem.msESPServer.uri().c_str(), MAX_FILENAME_LENGTH);
+  l_safeStrncpy(fName, msSystem.msESPServer.uri().c_str(), MAX_FILENAME_LENGTH);
 
   msSystem.log("URI to retrieve: ");
   msSystem.logln(msSystem.msESPServer.uri());
@@ -306,6 +306,23 @@ void handleFileListJson() {
 }
 */
 
+
+#if 0
+void dumpSPIFFS_info()
+{
+  FSInfo linfo;
+  SPIFFS.info(&linfo);
+  msSystem.log("linfo.maxOpenFiles ="); msSystem.logln(linfo.maxOpenFiles);
+  msSystem.log("linfo.blockSize ="); msSystem.logln(linfo.blockSize);
+  msSystem.log("linfo.pageSize ="); msSystem.logln(linfo.pageSize);
+  msSystem.log("linfo.maxOpenFiles ="); msSystem.logln(linfo.maxOpenFds);
+  msSystem.log("linfo.maxPathLength ="); msSystem.logln(linfo.maxPathLength);
+  msSystem.log("linfo.totalBytes ="); msSystem.logln(linfo.totalBytes);
+  msSystem.log("linfo.usedBytes = "); msSystem.logln(linfo.usedBytes);
+}
+#endif
+
+
 void handleFileUpload(){
 
   msSystem.logln("handle upload!");
@@ -315,21 +332,33 @@ void handleFileUpload(){
 
   if (upload.status == UPLOAD_FILE_START)
   {
-    msSystem.msEEPROMs.safeStrncpy(msGlobals.ggUploadFileName, (char *)upload.filename.c_str(), MAX_FILENAME_LENGTH);//.c_str();
+    l_safeStrncpy(msGlobals.ggUploadFileName, (char *)upload.filename.c_str(), MAX_FILENAME_LENGTH);//.c_str();
     msSystem.logln("upload started: ");
     msSystem.logln(msGlobals.ggUploadFileName);
 
     msSystem.log("upload open.. ");
 
     if (SPIFFS.exists(msGlobals.ggUploadFileName)) {
-      msSystem.logln("Removing previous copy..");
-      SPIFFS.remove(msGlobals.ggUploadFileName);
-      
+      msSystem.log("Removing previous copy:");
+      msSystem.logln(String(SPIFFS.remove(msGlobals.ggUploadFileName)));
     }
 
-    msGlobals.ggUploadFile = SPIFFS.open(msGlobals.ggUploadFileName, "w+");
+    // !J! re-use file..
+    if (msGlobals.ggUploadFile) 
+      msGlobals.ggUploadFile.close();
+
+
     msSystem.log("ggUploadFile opened:");
     msSystem.logln(msGlobals.ggUploadFileName);
+
+    // // !J! hak try 3 times:
+    int cnt=3;
+    while(--cnt>=0) {
+      msSystem.log("try:"); msSystem.logln(String(cnt));
+
+      msGlobals.ggUploadFile = SPIFFS.open(msGlobals.ggUploadFileName, "w");
+      if (msGlobals.ggUploadFile) break;
+    }
 
     if (!msGlobals.ggUploadFile) {
       msSystem.logln("ERROR: COULD NOT open file!!!");
@@ -367,6 +396,7 @@ void handleFileUpload(){
 
     msSystem.logln("Upload: END, Size: ");
     msSystem.logln(String(upload.totalSize));
+    msGlobals.ggFault = FAULT_NEW_FILEUPLOAD;
   }
 }
 

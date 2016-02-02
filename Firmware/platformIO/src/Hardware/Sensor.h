@@ -16,6 +16,12 @@
 #define PIN_I2C_DATA 5 // 5 //blau // labeled 5 on esp12E!!!
 #define PIN_I2C_CLOCK 4 //lila
 
+// !J! todo: confirm axis indices
+#define XAXIS 0
+#define YAXIS 1
+#define ZAXIS 2
+
+
 #ifndef CONFIG_ENABLE_ACCEL
 void resetAccelerometer() {};
 void readAccelData(int *destination) {};
@@ -27,6 +33,19 @@ class MagicShifterAccelerometer
 {
   
 public:
+
+  void step()
+  {
+  // outside time-frame
+#ifdef CONFIG_ENABLE_ACCEL
+    readAccelData(msGlobals.ggAccelCount);
+
+    for (int i = 0 ; i < 3 ; i++) {
+      msGlobals.ggAccel[i] = (float) msGlobals.ggAccelCount[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set
+    }
+#endif
+  }
+
   void initAccelerometer()
   {
     //Wire.pins(PIN_I2C_DATA, PIN_I2C_CLOCK);
@@ -50,6 +69,7 @@ public:
     if (Wire.available() < bytesToRead)
     {
       Serial.println("I2C not available. This should NEVER happen!");
+      msGlobals.ggFault = FAULT_NO_ACCELEROMETER;
       delay(10);
     }; //Hang out until we get the # of bytes we expect
 
@@ -71,6 +91,7 @@ public:
 
     if (!Wire.available()){
       Serial.println("I2C not available. This should NEVER happen!");
+      msGlobals.ggFault = FAULT_NO_ACCELEROMETER;
       delay(10);
     } ; //Wait for the data to come back
     return Wire.read(); //Return this one byte

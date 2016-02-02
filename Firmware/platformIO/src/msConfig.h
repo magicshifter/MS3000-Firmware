@@ -37,11 +37,15 @@
 #define VERSION 0.1
 
 #define MIN_TIME_CLICK 10000
-#define MIN_TIME_LONG_CLICK 2000000
+#define MIN_TIME_LONG_CLICK 1000 * 1200
 
 #define POWER_TIMEOUT 1000 * 1000 * 10 * 60
 
+// Power management pin
+#define PIN_PWR_MGT 16
+
 #define MAX_FILENAME_LENGTH 32
+#define MAX_TEXT_LENGTH 16
 
 #define NUM_MS_MODES 3
 
@@ -55,7 +59,7 @@
 
 #define CONNECTION_TIMEOUT 30000
 
-#define POV_TIME_MICROSECONDS 1
+#define POV_TIME_MICROSECONDS 100
 
 #define USE_MDNS
 
@@ -63,21 +67,21 @@
 
 // which MMA is in use
 #if(HW_ID==HW_ID_MS3000_FSOX8700CQ)
-#warning "HW ID :  HW_ID_MS3000_FSOX8700CQ "
+// #warning "HW ID :  HW_ID_MS3000_FSOX8700CQ "
 #define MAX_LEDS 16
 #define CONFIG_MMA_FSOX
 #elif(HW_ID==HW_ID_MS3000_MMA8452Q)
-#warning "HW ID :  HW_ID_MS3000_MMA8452Q "
+// #warning "HW ID :  HW_ID_MS3000_MMA8452Q "
 #define MAX_LEDS 16
 #define CONFIG_MMA_NORMAL
 #elif(HW_ID==HW_ID_RING)
-#warning "HW ID :  HW_ID_RING "
+// #warning "HW ID :  HW_ID_RING "
 #define MAX_LEDS 160
 #define CONFIG_MMA_FSOX
 #undef LED_TYPE
 #define LED_TYPE LED_TYPE_WS2801
 #elif(HW_ID==HW_ID_SABRE)
-#warning "HW ID :  HW_ID_SABRE "
+// #warning "HW ID :  HW_ID_SABRE "
 #define MAX_LEDS 48
 #define CONFIG_MMA_FSOX
 #else

@@ -656,16 +656,18 @@ def initMS3000():
 	issueUploadMS3000(ser, "../../Assets/MS3000_defaultconfig/admin.html", "admin.html")
 
 	imgs = ["heart.magicBitmap", "smilie.magicBitmap", "star.magicBitmap", "oneup.magicBitmap", "mario.magicBitmap", "mario.magicBitmap", "blueGhost.magicBitmap", "redGhost.magicBitmap", "BubbleBobble.magicBitmap", "invader.magicBitmap", "giraffe.magicBitmap", "cursor.magicBitmap", "nyancat.magicBitmap"]
+
 	for img in imgs:
 		sleep(delay)
 		issueUploadMS3000(ser, "../../Assets/magicBitmaps/" + img, img)
 
+        fonts = ["font10x16.magicFont", "font4x5.magicFont", "font6x8.magicFont", "font7x12.magicFont"]
+	for font in fonts:
+		sleep(delay)
+		issueUploadMS3000(ser, "../../Assets/fonts/" + font, font)
+
 	end = time.time()
 	print "time elapsed: ", end - start
-
-
-
-
 
 def issueUploadMS3000(ser, sourceFilename, targetFilename):	
 
@@ -715,9 +717,26 @@ def issueUploadMS3000(ser, sourceFilename, targetFilename):
 		return None	
 
 
-
+def formatMS3000(ser):	
+	try:    
+		start = time.time()
+		ser.write("MAGIC_FORMAT")
+		response = ser.readline()
+		return response
+	except Exception as e:
+		pFail("UNEXPECTED ERROR WHILE sending UPLOAD!")
+		pFail(str(e))
+		return None	
 
 if __name__ == '__main__':
+	if (len(sys.argv) >= 2 and sys.argv[1] == "format"):
+		device = sys.argv[2]
+		start = time.time()
+		ser = openPort(5)
+		formatMS3000(ser)
+		end = time.time()
+		print "time elapsed: ", end - start		
+
 	if (len(sys.argv) >= 2 and sys.argv[1] == "init"):
 		device = sys.argv[2]
 		initMS3000()

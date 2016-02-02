@@ -40,14 +40,21 @@ Python:	2.7.10
 * Connect your MagicShifter3000 to your computer with the USB cable.
 * Clone the Base Firmware repository (`` git clone https://github.com/MagicShifter3000/whatever.git ``)
 
-
 ##Building a working Firmware
-	
 
-##Debugging Techniques
-	USB
-	Serial
-	esptool
+##Debugging Tools
+	USB		:	MS3000_USB_Tool.py (!J! ??)
+	Serial	:	screen /dev/tty.SLAB_USBtoUART (Mac OSX) 	screen /dev/ttyUSB0 (Linux)
+	esptool	:	https://github.com/themadinventor/esptool
+
+##Flashing an official Firmware release
+	To flash the released .bin's from the MagicShifter team, you can use the esptool (see above) ..
+
+	Linux: 
+	$ ./esptool.py --baud 921600 --port /dev/tty.USB0 write_flash --flash_size 4m 0x0 firmware.bin
+
+	OSX:
+	$ ./esptool.py --baud 921600 --port /dev/tty.SLAB_USBtoUART write_flash --flash_size 4m 0x0 firmware.bin
 
 ##The MagicShifter3000 Filesystem
 	.magicBitmap 
