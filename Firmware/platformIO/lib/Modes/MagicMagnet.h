@@ -47,7 +47,7 @@ private:
       int degrees = int(atan2(msGlobals.ggMagnet[YAXIS], -msGlobals.ggMagnet[XAXIS]) * 180 / M_PI);
       msSystem.msLEDs.fillPixels(0,0,0);
       int lednr = map(abs(degrees), 0, 180, 0, 15);
-      msSystem.msLEDs.setPixels(lednr, 0, 0, 100);
+      msSystem.msLEDs.setPixels(lednr, 0, 0, 255, msGlobals.ggBrightness);
 
       // msSystem.log("LED: "); msSystem.logln(String(lednr));
 

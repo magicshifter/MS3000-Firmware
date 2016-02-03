@@ -64,7 +64,7 @@ public:
           {
             msSystem.msLEDs.loadBuffer(povData);
             msSystem.msLEDs.updatePixels();
-            delayMicroseconds(POV_TIME_MICROSECONDS);
+            delayMicroseconds(msGlobals.ggBrightness * 16);
             msSystem.msLEDs.fastClear();
           }
         }

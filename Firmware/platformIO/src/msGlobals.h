@@ -3,7 +3,7 @@
 
 #include "StackClass.h"
 
-#define DEFAULT_FACTORY_MODE 4
+#define DEFAULT_FACTORY_MODE 0
 //
 // Global definitions and the master global struct for the system
 //
