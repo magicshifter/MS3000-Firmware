@@ -215,6 +215,18 @@ public:
     delay(1000);
   }
 
+  void modeAnimation()
+  {
+    for (int i=0;i<=3;i++)
+    {
+      msLEDs.fillPixels(255, 255, 255, msGlobals.ggBrightness);
+      msLEDs.updatePixels();
+      delay(35);
+      msLEDs.fastClear();
+      delay(35);
+    }
+  }
+
   // for fail-modes ..
   void infinite_swipe()
   { 
@@ -581,6 +593,7 @@ void showBatteryStatus(bool shouldFadeIn)
       if (msGlobals.ggCurrentMode > (NUM_MS_MODES - 1)) // !J! todo: mode-list 
         msGlobals.ggCurrentMode=0;
       msButtons.msBtnBLongHit = false;
+      modeAnimation();
       log("Changed +Mode:"); logln(String(msGlobals.ggCurrentMode));
     }
 
@@ -590,6 +603,7 @@ void showBatteryStatus(bool shouldFadeIn)
       if (msGlobals.ggCurrentMode < 0) 
         msGlobals.ggCurrentMode = (NUM_MS_MODES - 1);
       msButtons.msBtnALongHit = false;
+      modeAnimation();
       log("Changed -Mode:"); logln(String(msGlobals.ggCurrentMode));
     }
 
