@@ -71,7 +71,7 @@ class MagicShifterGlobals {
 public:
   // state !J! TODO: clean all this up 
   long ggFault = 0;  // TODO: reset-reason/test-fault/etc.
-  int ggBrightness = 10;
+  int ggBrightness = 3;
   float ggAccel[3];  // Stores the real accel value in g's
   int ggAccelCount[3];  // Stores the 12-bit signed value
   long ggAccelTime;

@@ -286,19 +286,18 @@ public:
 
 #define BRIGHTNESS_CONTROL_TIME 600
 
-uint8_t BrightnessLevels[16] = { 1,   3,   5, 12,
-                 18,  25,  35, 50,
-                  65,  80, 102, 128,
-                145, 170, 200, 255};
+uint8_t BrightnessLevels[16] = { 1,   2,   3, 4,
+                 5,  6,  7, 8,
+                  10,  12, 14, 16,
+                18, 22, 26, 31};
 
-#define  MAXMV 32
-bool vChanged = false; // !J! this is a dirty hack
+#define BRIGHTNESS_UI_LEVEL 128
 
 // -- brightness handling:
 void brightnessControl()
 {
   int newIdx = msGlobals.ggBrightness;
-  long avgV = 0;
+  float avgV = 0;
   int newV = 0, lastV = -1;
   uint16_t blink = 0;
   int skip = 100;
@@ -325,11 +324,14 @@ void brightnessControl()
 
       // AccelPoll();
 
-      avgV = (61 * avgV + (-msGlobals.ggAccelCount[XAXIS] + 500))/62;
+      // calculate average curve
+      float fFactor = 0.96;
+      avgV = (fFactor * avgV) + msGlobals.ggAccel[XAXIS] * (1 - fFactor);
+      float lLEDRange=((MAX_LEDS - 1.0)/2.0);
+      // calculate LED index
+      newIdx = (int)((lLEDRange * 1.4) +  (lLEDRange * avgV) * 1.8);
 
-      newIdx = (avgV) / 35;
-
-      if (newIdx < -5) {
+      if (newIdx < -1) {
         newV = 0;
       }
       else
@@ -339,6 +341,7 @@ void brightnessControl()
         if (newIdx >= 15) newIdx = 15;
         newV = BrightnessLevels[newIdx];
       }
+
       if (newV == 0)
       {
         msLEDs.fillPixels(0, 0, 0, 0);
@@ -367,11 +370,9 @@ void brightnessControl()
 
           uint8_t dB = lBr;
 
-          if (dB > MAXMV) dB = MAXMV;
           //if (dB <= 16) dB = 16;
-
           if (newV >= lBr)
-            msLEDs.setPixels(15 - i, dB, dB, dB);
+            msLEDs.setPixels(15 - i, BRIGHTNESS_UI_LEVEL, BRIGHTNESS_UI_LEVEL, BRIGHTNESS_UI_LEVEL, dB);
           else
             msLEDs.setPixels(15 - i, 0, 0, 0);
         }
@@ -385,8 +386,6 @@ void brightnessControl()
       waitForPowerDown();
     
     msGlobals.ggBrightness = newV;
-
-    vChanged = true;
 
     WaitClearButtons();
 
@@ -572,11 +571,12 @@ void showBatteryStatus(bool shouldFadeIn)
 
     displayButtons();
 
-    // // internal button usage
-    // if (msButtons.msBtnPwrLongHit)
-    // {
-    //   powerDown();
-    // }
+    // internal button usage
+    if (msButtons.msBtnPwrLongHit)
+    {
+      msButtons.msBtnPwrLongHit = false;
+      // powerDown();
+    }
 
     if (msButtons.msBtnActive) {
       msPowerCountDown = msGlobals.ggCurrentMicros;
