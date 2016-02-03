@@ -177,16 +177,16 @@ public:
       {
         if (smoothLanding)
         {
-          msSystem.msLEDs.setPixels(idx, 0, msGlobals.ggBrightness * scale, 0, msGlobals.ggBrightness);
+          msSystem.msLEDs.setPixels(idx, 0, 255 * scale, 0, msGlobals.ggBrightness);
         }
         else
         {
-          msSystem.msLEDs.setPixels(idx, msGlobals.ggBrightness * scale, msGlobals.ggBrightness * scale, msGlobals.ggBrightness * scale, msGlobals.ggBrightness);
+          msSystem.msLEDs.setPixels(idx, 255 * scale, 255 * scale, 255 * scale, msGlobals.ggBrightness);
         }
       }
       else
       {  
-        msSystem.msLEDs.setPixels(idx, msGlobals.ggBrightness * scale, 0, 0.5 * msGlobals.ggBrightness * scale, msGlobals.ggBrightness);
+        msSystem.msLEDs.setPixels(idx, 255 * scale, 0, 128 * scale, msGlobals.ggBrightness);
       }
     }
     msSystem.msLEDs.updatePixels();
