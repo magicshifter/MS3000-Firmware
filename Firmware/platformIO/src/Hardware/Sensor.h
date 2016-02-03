@@ -7,9 +7,11 @@
 
 //Define a few of the registers that we will be accessing on the MMA8452
 #define OUT_X_MSB 0x01
+#define MAG_REG 0x07
 #define XYZ_DATA_CFG  0x0E
 #define WHO_AM_I   0x0D
 #define CTRL_REG1  0x2A
+#define MAGNETOMETER_REGISTER 0x33
 
 #define GSCALE 8 // Sets full-scale range to +/-2, 4, or 8g. Used to calc real g values.
 
@@ -23,7 +25,7 @@
 
 
 #ifndef CONFIG_ENABLE_ACCEL
-void resetAccelerometer() {};
+void setupSensor() {};
 void readAccelData(int *destination) {};
 #endif
 
@@ -43,14 +45,17 @@ public:
     for (int i = 0 ; i < 3 ; i++) {
       msGlobals.ggAccel[i] = (float) msGlobals.ggAccelCount[i] / ((1 << 12) / (2 * GSCALE)); // get actual g value, this depends on scale being set
     }
+
 #endif
   }
 
-  void initAccelerometer()
+  void initI2C()
   {
     //Wire.pins(PIN_I2C_DATA, PIN_I2C_CLOCK);
     Wire.begin(PIN_I2C_DATA, PIN_I2C_CLOCK); //Join the bus as a master
     Wire.setClock(500000); // crashes if > 200000
+
+
   }
 
 
@@ -121,6 +126,18 @@ public:
     writeRegister(CTRL_REG1, c | 0x01); //Set the active bit to begin detection
   }
 
+  void readMagnetometerData(int *destination)
+  {
+    byte rawData[12];  // x/y/z accel register data stored here
+    readRegisters(MAGNETOMETER_REGISTER, 6, rawData);  // Read the six raw data 
+
+    for (uint8_t i = 0; i < 3; i++) {
+      short val = ((short)rawData[2*i + 0] << 8) | (short)rawData[2*i + 1];
+      destination[i] = val;
+    }
+
+  }
+
   void readAccelData(int *destination)
   {
     long _ti = micros();
@@ -148,10 +165,12 @@ public:
     msGlobals.ggAccelTime = micros() - _ti;
   }
 
+
+
   // Initialize the MMA8452 registers
   // See the many application notes for more info on setting all of these registers:
   // http://www.freescale.com/webapp/sps/site/prod_summary.jsp?code=MMA8452Q
-  bool resetAccelerometer()
+  bool setupSensor()
   {
     bool success = false;
 
@@ -179,15 +198,43 @@ public:
       /* code */
     } while(0); //while(!success);
 
-    MMA8452Standby();  // Must be in standby to change registers
+    // magnetometer
+    bool autoCalibrateMagnetometer = true;
+    if (autoCalibrateMagnetometer) {
+        writeRegister(0x2B, 0x40); // Soft reset
+        delay(1); // Wait for reset
+        // Set threshold. 1000 counts = 100.0uT
+        int magThreshold = 1000;
+        writeRegister(0x6A, 0x80 | magThreshold & 0xFF);
+        writeRegister(0x6B, magThreshold >> 8);
+        
+        // M_VECM_CNT = 1 * 20ms  = 20ms
+        // ! - steps double in hybrid mode
+        writeRegister(0x6C, 0x01);
+        
+        // M_VECM_CFG
+        // m_vecm_ele = 1 => event latching enabled
+        // m_vecm_initm = 1 => use M_VECM_INITX/Y/Z as initial reference
+        // m_vecm_updm = 1 => do not update initial reference
+        // m_vecm_en = 1 => enable magnetometer vector magnitude detection feature
+        writeRegister(0x69, 0x7B);
+    }
 
+    MMA8452Standby();  // Must be in standby to change registers
     // Set up the full scale range to 2, 4, or 8g.
     byte fsr = GSCALE;
     if(fsr > 8) fsr = 8; //Easy error check
     fsr >>= 2; // Neat trick, see page 22. 00 = 2G, 01 = 4A, 10 = 8G
     writeRegister(XYZ_DATA_CFG, fsr);
-
     //The default data rate is 800Hz and we don't modify it in this example code
+
+    // more magnetometer ..
+    // M_CTRL_REG1: Hybrid mode, OS = 32, Auto Cal when set
+    writeRegister(0x5B,
+                  (autoCalibrateMagnetometer ? 0x80 : 0x00) |
+                  0x1F);
+    // M_CTRL_REG2: Hybrid auto increment, maxmin disable threshold
+    writeRegister(0x5C, 0x20);
 
     MMA8452Active();  // Set to active to start reading
 

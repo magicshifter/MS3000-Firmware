@@ -52,6 +52,7 @@ extern "C" {
 
 MagicShakeMode msMagicShake;
 MagicSystemTextMode msSysText;
+MagicMagnetMode msMagicMagnet;
 
 // Begin MagicShifter3000 operation
  void setup()
@@ -72,6 +73,8 @@ delay(350); // debug !J!
   // initialize the modules ..
   msMagicShake.start();
   msSysText.start();
+  msMagicMagnet.start();
+
 }
 
 void loop()
@@ -130,9 +133,14 @@ void loop()
       }
     }
     else 
-    if (msGlobals.ggCurrentMode = 3)
+    if (msGlobals.ggCurrentMode == 3)
     {
       msSysText.step();
+    }
+    else 
+    if (msGlobals.ggCurrentMode == 4)
+    {
+      msMagicMagnet.step();
     }
   }
 

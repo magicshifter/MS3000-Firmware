@@ -3,7 +3,7 @@
 
 #include "StackClass.h"
 
-#define DEFAULT_FACTORY_MODE 0
+#define DEFAULT_FACTORY_MODE 4
 //
 // Global definitions and the master global struct for the system
 //
@@ -74,6 +74,7 @@ public:
   long ggFault = 0;  // TODO: reset-reason/test-fault/etc.
   int ggBrightness = 3;
   float ggAccel[3];  // Stores the real accel value in g's
+  int ggMagnet[3];   // Stores the 16-bit signed value
   int ggAccelCount[3];  // Stores the 12-bit signed value
   long ggAccelTime;
   long ggLFrameTime;

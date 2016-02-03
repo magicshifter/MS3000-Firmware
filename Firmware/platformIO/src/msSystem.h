@@ -528,8 +528,8 @@ void showBatteryStatus(bool shouldFadeIn)
 
 #ifdef CONFIG_ENABLE_ACCEL
     // accelerometer 
-    msSensor.initAccelerometer();
-    msSensorOK = msSensor.resetAccelerometer(); //Test and intialize the MMA8452
+    msSensor.initI2C();
+    msSensorOK = msSensor.setupSensor(); //Test and intialize the MMA8452
 #endif
 
     // led controllers and buffer
