@@ -54,6 +54,8 @@ private:
       // updateLedsWithBrightness();
       msSystem.msLEDs.updatePixels();
 
+      delay(75);
+
     }
 
   void update() {};
