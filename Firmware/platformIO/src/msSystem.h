@@ -383,7 +383,7 @@ void brightnessControl()
     }
 
     if (newV == 0)
-      waitForPowerDown();
+      powerDown();
     
     msGlobals.ggBrightness = newV;
 
@@ -394,11 +394,6 @@ void brightnessControl()
   }
 }
 
-void waitForPowerDown()
-{
-  showBatteryStatus(true);
-  powerDown();
-}
 
 // -- battery status methods:
 #define LIPO_DISPLAY_LOWER_LIMIT_V         3.1
@@ -418,7 +413,7 @@ void showBatteryStatus(bool shouldFadeIn)
 {
   //v = MAXMV;
 
-  int d = 1000;
+  int d = 500;
   int gs = 10;
   float batLevel = 0.0f;
 
