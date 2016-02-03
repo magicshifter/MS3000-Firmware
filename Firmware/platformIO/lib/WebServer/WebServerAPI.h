@@ -642,11 +642,11 @@ void handleGETWLANList(void)
 {
   msSystem.logln("handleGETWLANList");
 
-  if (msGlobals.ggModeAP)
-  {
-    msSystem.msESPServer.send(200, "text/plain", "crash in AP mode...so diusabled for now");
-    return;
-  }
+  // if (msGlobals.ggModeAP)
+  // {
+  //   msSystem.msESPServer.send(200, "text/plain", "crash in AP mode...so diusabled for now");
+  //   return;
+  // }
 
   String response = "[";
 
