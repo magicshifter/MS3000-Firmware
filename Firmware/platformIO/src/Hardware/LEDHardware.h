@@ -140,6 +140,24 @@ public:
       delay(30);
     }
   }
+
+  void  errorSwipe()
+  {
+
+    // swipe colors
+    for (byte idx = 0; idx < MAX_LEDS; idx++)
+    {
+      setPixels(idx, (idx & 1) ? 255 : 0,  0,  0, msGlobals.ggBrightness);
+      updatePixels();
+      delay(30);
+    }
+    for (byte idx = 0; idx < MAX_LEDS; idx++)
+    {
+      setPixels(idx, 0, 0, 0, 1);
+      updatePixels();
+      delay(30);
+    }
+  }
   
   // void fillPixels(byte r, byte g, byte b, byte gs);
 

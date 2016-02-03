@@ -345,6 +345,9 @@ logln("brightnesscontrol EVENT");
       // calculate LED index
       newIdx = (int)((lLEDRange * 1.4) +  (lLEDRange * avgV) * 1.8);
 
+      if (msGlobals.ggFault > 0)
+        newIdx = -2;
+
       if (newIdx < -1) {
         newV = 0;
       }

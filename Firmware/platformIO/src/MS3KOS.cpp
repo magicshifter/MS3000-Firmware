@@ -80,7 +80,6 @@ delay(350); // debug !J!
 void loop()
 {
 
-
   // inside time-frame
   if (msGlobals.ggLastFrameMicros + msGlobals.ggSpeedMicros < micros())
   {
@@ -148,7 +147,7 @@ void loop()
   if (msGlobals.ggFault > 0)
   {
     Serial.print("FAULT:"); Serial.println(String(msGlobals.ggFault));
-    msSystem.infinite_swipe();
+    msSystem.msLEDs.errorSwipe();
   }
 
 }
