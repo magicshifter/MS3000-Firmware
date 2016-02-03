@@ -56,6 +56,7 @@ struct MSBitmap
   MSBitmapHeader header;
   MSColor color;
   File bmFile;
+  byte *bmBuffer;
 };
 
 void l_safeStrncpy(char * dest, const char *source, int n)

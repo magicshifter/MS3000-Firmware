@@ -77,16 +77,18 @@ delay(350); // debug !J!
 void loop()
 {
 
-  msGlobals.ggLastMicros = msGlobals.ggCurrentMicros;
-  msGlobals.ggCurrentMicros = micros();
-
-  msSystem.loop();
-
-  msWebServer.loop();
 
   // inside time-frame
-  if (msGlobals.ggLastFrameMicros + msGlobals.ggSpeedMicros < msGlobals.ggCurrentMicros)
+  if (msGlobals.ggLastFrameMicros + msGlobals.ggSpeedMicros < micros())
   {
+
+    msGlobals.ggLastMicros = msGlobals.ggCurrentMicros;
+    msGlobals.ggCurrentMicros = micros();
+
+    msSystem.loop();
+
+    msWebServer.loop();
+
     msGlobals.ggLFrameTime = msGlobals.ggCurrentMicros - msGlobals.ggLastFrameMicros;
     msGlobals.ggCurrentFrame++;
     msGlobals.ggLastFrameMicros = msGlobals.ggCurrentMicros;
@@ -94,7 +96,6 @@ void loop()
     // dispatch to the mode handler .. 
     if (msGlobals.ggCurrentMode == 0)
     {
-
       if (msGlobals.ggFault == FAULT_NEW_FILEUPLOAD)
       {
         msGlobals.ggFault = 0;
@@ -113,44 +114,33 @@ void loop()
     }
     else
     if (msGlobals.ggCurrentMode == 2) {
-      // swipe colors
+    // swipe colors
       for (byte idx = 0; idx < MAX_LEDS; idx++)
       {
         if (idx % 8 == 0) {
           msSystem.msLEDs.setPixels(idx, 255, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
         }
-      else
-        msSystem.msLEDs.setPixels(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
+        else
+          msSystem.msLEDs.setPixels(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
         // super-bright
         // msSystem.msLEDs.setPixels(idx, 255,255,255,20);
 
         msSystem.msLEDs.updatePixels();
         delay(10);
       }
-      // for (byte idx = 0; idx < MAX_LEDS; idx++)
-      // {
-      //   msSystem.msLEDs.setPixels(idx, 0, 0, 0, 1 / 2);
-      //   msSystem.msLEDs.updatePixels();
-      //   delay(10);
-      // }
     }
-    // else 
-    // if (msGlobals.ggCurrentMode = 3)
-    // {
-    //   msSysText.step();
-    // }
-    // else { // mode out of bounds failure
-    // }
-
+    else 
+    if (msGlobals.ggCurrentMode = 3)
+    {
+      msSysText.step();
+    }
   }
 
   // fault-checks
   if (msGlobals.ggFault > 0)
   {
-    {
-      Serial.print("FAULT:"); Serial.println(String(msGlobals.ggFault));
-      msSystem.infinite_swipe();
-    }
+    Serial.print("FAULT:"); Serial.println(String(msGlobals.ggFault));
+    msSystem.infinite_swipe();
   }
 
 }

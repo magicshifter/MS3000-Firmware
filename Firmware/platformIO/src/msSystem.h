@@ -307,6 +307,8 @@ void brightnessControl()
       (msButtons.msBtnPwrPressTime > BRIGHTNESS_CONTROL_TIME) )
   {
 
+logln("brightnesscontrol EVENT");
+
     msGlobals.ggBrightness = 255;
     while (skip)
     {
@@ -406,7 +408,6 @@ void WaitClearButtons()
   while (msButtons.powerButtonPressed()) {
     delay(1);
   }
-  delay(10);
 }
 
 void showBatteryStatus(bool shouldFadeIn)
@@ -544,10 +545,10 @@ void showBatteryStatus(bool shouldFadeIn)
     // }
 
     // global font objects
-    // MagicShifterImage::LoadBitmapFile("font4x5.magicFont", &msGlobals.tBitmap4x5);
-    // MagicShifterImage::LoadBitmapFile("font6x8.magicFont", &msGlobals.tBitmap6x8);
-    // MagicShifterImage::LoadBitmapFile("font7x12.magicFont", &msGlobals.tBitmap7x12);
-    // MagicShifterImage::LoadBitmapFile("font10x16.magicFont", &msGlobals.tBitmap10x16);
+    MagicShifterImage::LoadBitmapBuffer("font4x5.magicFont", &msGlobals.tBitmap4x5);
+    MagicShifterImage::LoadBitmapBuffer("font6x8.magicFont", &msGlobals.tBitmap6x8);
+    MagicShifterImage::LoadBitmapBuffer("font7x12.magicFont", &msGlobals.tBitmap7x12);
+    MagicShifterImage::LoadBitmapBuffer("font10x16.magicFont", &msGlobals.tBitmap10x16);
 
     logSysInfo();
 
@@ -565,13 +566,6 @@ void showBatteryStatus(bool shouldFadeIn)
     msSensor.step();
 
     displayButtons();
-
-    // internal button usage
-    if (msButtons.msBtnPwrLongHit)
-    {
-      msButtons.msBtnPwrLongHit = false;
-      // powerDown();
-    }
 
     if (msButtons.msBtnActive) {
       msPowerCountDown = msGlobals.ggCurrentMicros;

@@ -53,7 +53,7 @@ public:
   {
 
     // cycle through the texts ..
-    if (msSystem.msButtons.msBtnAHit) {
+    if (msSystem.msButtons.msBtnPwrHit) {
       msSystem.msButtons.msBtnAHit = false; // !J! todo: button callbacks
       sysCursor++;
       if (sysCursor > 2) sysCursor = 0;

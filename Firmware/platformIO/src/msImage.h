@@ -33,10 +33,17 @@ void PlotBitmapColumn1Bit(const MSBitmap *bitmap, uint16_t absColumn, uint8_t le
 // log("1Bit:bitPos:"); logln(String(bitPos));
 // dumpActiveHeader(bitmap->header);
 
-    File lFile = bitmap->bmFile;
-    lFile.seek(offset, SeekSet);
-    // bitmap->bmFile.seek(offset, SeekSet);
-    lFile.read(bitBuffer, 3);
+    if (bitmap->bmBuffer == NULL) {
+      File lFile = bitmap->bmFile;
+      lFile.seek(offset, SeekSet);
+      // bitmap->bmFile.seek(offset, SeekSet);
+      lFile.read(bitBuffer, 3);
+    }
+    else {
+      for (int i = 0; i < 3; i++) {
+        bitBuffer[i] = bitmap->bmBuffer[offset + i];
+      }
+    }
 
 // for (int x=0;x<3;x++) {
 //  log("xx:"); logln(String(bitBuffer[x]));
@@ -96,9 +103,22 @@ void PlotBitmapColumn24Bit(const MSBitmap *bitmap, uint16_t absColumn, uint8_t s
     nrOfBytes = (16 - startLed)*3;
   // ReadBytes(offSet, msGlobals.ggRGBLEDBuf + 3*startLed, nrOfBytes); // never make startLed too big or it will corrupt mem
 
-  File lFile = bitmap->bmFile;
-  lFile.seek(offSet, SeekSet);
-  lFile.read(frameDest, nrOfBytes);
+
+
+
+  if (bitmap->bmBuffer == NULL) {
+    File lFile = bitmap->bmFile;
+    lFile.seek(offSet, SeekSet);
+    lFile.read(frameDest, nrOfBytes);
+  }
+  else {
+    for (int i = 0; i < nrOfBytes; i++) {
+      frameDest[i] = bitmap->bmBuffer[offSet + i];
+    }
+  }
+
+
+
   for(int x=MAX_LEDS - 1; x>=0; x--) 
   { 
     int id24 = x * 3;
@@ -288,11 +308,38 @@ public:
     return true;
   };
 
+  static bool LoadBitmapBuffer(const char *filename, MSBitmap *bitmap)
+  {
+    int bmResult;
+    int bmSize;
+
+    if (LoadBitmapFile(filename, bitmap)) {
+      bmSize = bitmap->bmFile.size();
+
+      bitmap->bmBuffer = (byte *)malloc(bmSize);
+
+      if (bitmap->bmBuffer) {
+        bitmap->bmFile.seek(0, SeekSet);;
+        bmResult = bitmap->bmFile.read(bitmap->bmBuffer, bmSize);
+      }
+
+      bitmap->bmFile.close();
+
+      return true;
+    }
+
+    return false;
+  };
+
   void close()
   {
     Serial.print("closefile:"); Serial.println(String(_bitmap.bmFile));
     if (_bitmap.bmFile)
       _bitmap.bmFile.close();
+    if(_bitmap.bmBuffer != NULL) {
+      free(_bitmap.bmBuffer);
+      _bitmap.bmBuffer = NULL;
+    }
   }
 };
 
