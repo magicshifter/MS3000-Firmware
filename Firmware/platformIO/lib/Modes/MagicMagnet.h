@@ -9,6 +9,7 @@ class MagicMagnetMode : public MagicShifterBaseMode
 {
 private:
   int frame = 0;
+  int lMode = 0;
 
   public:
     void start()
@@ -25,7 +26,16 @@ private:
 
       frame++;
       // AccelPoll();
-                  
+      if (msSystem.msButtons.msBtnAHit) {
+        lMode=0;
+        msSystem.msButtons.msBtnAHit = false;
+      }
+      if (msSystem.msButtons.msBtnBHit) {
+        lMode=1;
+        msSystem.msButtons.msBtnBHit = false;
+      }
+
+
       msSystem.msSensor.readMagnetometerData(msGlobals.ggMagnet);
 
       if ((msSystem.msSensor.readRegister(0x5E) & 0x02)) {
@@ -53,11 +63,13 @@ private:
       int lednr = map(abs(degrees), 0, 180, 0, 15);
       msSystem.msLEDs.setPixels(lednr, 0, 0, 255, msGlobals.ggBrightness);
 
-      for (int lC=0;lC<lednr;lC++) 
-        msSystem.msLEDs.setPixels(lC, 0, 255, 0, msGlobals.ggBrightness / 2); // !J! hack
+      if (lMode == 0) {
+        for (int lC=0;lC<lednr;lC++) 
+          msSystem.msLEDs.setPixels(lC, 0, 255, 0, msGlobals.ggBrightness / 2); // !J! hack
 
-      for (int lC=lednr+1;lC<MAX_LEDS;lC++) 
-        msSystem.msLEDs.setPixels(lC, 255, 0, 0, msGlobals.ggBrightness / 2); // !J! hack
+        for (int lC=lednr+1;lC<MAX_LEDS;lC++) 
+          msSystem.msLEDs.setPixels(lC, 255, 0, 0, msGlobals.ggBrightness / 2); // !J! hack
+      }
 
       // msSystem.log("LED: "); msSystem.logln(String(lednr));
 
