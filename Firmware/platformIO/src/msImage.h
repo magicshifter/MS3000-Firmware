@@ -75,7 +75,7 @@ void PlotBitmapColumn1Bit(const MSBitmap *bitmap, uint16_t absColumn, uint8_t le
 
         if (bitMask & currentByte)
         {
-          // msLEDs.setPixel(ledIdx, r, g, b, 255); // this could be more efficient memcopy the structure
+          // msLEDs.setLED(ledIdx, r, g, b, 255); // this could be more efficient memcopy the structure
           frameDest[id32 + 3] = r;
           frameDest[id32 + 2] = g;
           frameDest[id32 + 1] = b;
@@ -83,7 +83,7 @@ void PlotBitmapColumn1Bit(const MSBitmap *bitmap, uint16_t absColumn, uint8_t le
         }
         else
         {
-          // msLEDs.setPixel(ledIdx, 0, 0, 0, 0); // this could be more efficient
+          // msLEDs.setLED(ledIdx, 0, 0, 0, 0); // this could be more efficient
           frameDest[id32 + 3] = 0;
           frameDest[id32 + 2] = 0;
           frameDest[id32 + 1] = 0;

@@ -99,7 +99,7 @@ else
 
 void handleReadFile()
 {
-  msSystem.msLEDs.fillPixels(0, 0, 1, 0x1F);
+  msSystem.msLEDs.fillLEDs(0, 0, 1, 0x1F);
   msSystem.msLEDs.updatePixels();
 
   msSystem.logln("Free heap: ");
@@ -164,7 +164,7 @@ void handleReadFile()
 
 void handleDeleteFile()
 {
-  msSystem.msLEDs.fillPixels(0, 0, 1, 0x1F);
+  msSystem.msLEDs.fillLEDs(0, 0, 1, 0x1F);
   msSystem.msLEDs.updatePixels();
 
   String message = "handleDeleteFile\n";

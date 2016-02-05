@@ -121,14 +121,14 @@ void loop()
       static int xx = 0;
       int gs = msGlobals.ggBrightness;
 
-    msSystem.msLEDs.fillPixels(0, 0, 0);
-    msSystem.msLEDs.setPixel((xx + 0 * 3) & 0xF, 255, 0, 0, gs);
+    msSystem.msLEDs.fillLEDs(0, 0, 0);
+    msSystem.msLEDs.setLED((xx + 0 * 3) & 0xF, 255, 0, 0, gs);
 
-    msSystem.msLEDs.setPixel((xx + 1 * 3) & 0xF, 255, 255, 0, gs);
-    msSystem.msLEDs.setPixel((xx + 2 * 3) & 0xF, 0, 255, 0, gs);
+    msSystem.msLEDs.setLED((xx + 1 * 3) & 0xF, 255, 255, 0, gs);
+    msSystem.msLEDs.setLED((xx + 2 * 3) & 0xF, 0, 255, 0, gs);
 
-    msSystem.msLEDs.setPixel((xx + 3 * 3) & 0xF, 0, 255, 255, gs);
-    msSystem.msLEDs.setPixel((xx + 4 * 3) & 0xF, 0, 0, 255, gs);
+    msSystem.msLEDs.setLED((xx + 3 * 3) & 0xF, 0, 255, 255, gs);
+    msSystem.msLEDs.setLED((xx + 4 * 3) & 0xF, 0, 0, 255, gs);
 
     msSystem.msLEDs.updatePixels();
 
@@ -141,12 +141,12 @@ void loop()
       for (byte idx = 0; idx < MAX_LEDS; idx++)
       {
         if (idx % 8 == 0) {
-          msSystem.msLEDs.setPixel(idx, 255, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
+          msSystem.msLEDs.setLED(idx, 255, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
         }
         else
-          msSystem.msLEDs.setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
+          msSystem.msLEDs.setLED(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
         // super-bright
-        // msSystem.msLEDs.setPixel(idx, 255,255,255,20);
+        // msSystem.msLEDs.setLED(idx, 255,255,255,20);
 
         msSystem.msLEDs.updatePixels();
         delay(10);
