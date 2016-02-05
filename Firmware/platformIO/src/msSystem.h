@@ -225,6 +225,11 @@ public:
       msLEDs.fastClear();
       delay(35);
     }
+
+    msLEDs.setLED(msGlobals.ggCurrentMode, 128, 128, 128, msGlobals.ggBrightness / 2);
+    delay(35);
+    msLEDs.fastClear();
+
   }
 
   // for fail-modes ..
@@ -251,11 +256,17 @@ public:
 #define BUTTON_LED_A (MAX_LEDS - 1)
 #define BUTTON_LED_PWR (MAX_LEDS / 2) 
 #define BUTTON_LED_B 0
-#define BUTTON_DISPLAY_PERIOD 125
+#define BUTTON_DISPLAY_PERIOD 1
 
 
   void displayButtons()
   {
+    if (msButtons.msBtnPwrDoubleHit) {
+      msLEDs.fillLEDs(0, 200, 0, msGlobals.ggBrightness);
+      msLEDs.updateLEDs();
+      delay(BUTTON_DISPLAY_PERIOD);
+    }
+
     if (msButtons.msBtnPwrLongHit)
     {
       msLEDs.setLED(BUTTON_LED_PWR, 0, 0, 20, 20);
@@ -610,10 +621,17 @@ void showBatteryStatus(bool shouldFadeIn)
       log("Changed -Mode:"); logln(String(msGlobals.ggCurrentMode));
     }
 
+    if (msButtons.msBtnPwrDoubleHit)
+    {
+      logln("Double Power HIT!");
+      brightnessControl();
+      msButtons.msBtnPwrDoubleHit = false;
+    }
+
     // if (msGlobals.allowCmd) 
     CommandInterfacePoll();
 
-    brightnessControl();
+    // brightnessControl();
 
   }
 

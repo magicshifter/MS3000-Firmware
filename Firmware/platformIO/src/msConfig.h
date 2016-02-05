@@ -39,6 +39,8 @@
 #define MIN_TIME_CLICK 10000
 #define MIN_TIME_LONG_CLICK 1000 * 750
 
+#define MAX_TIME_DOUBLE_CLICK 650
+
 #define POWER_TIMEOUT 1000 * 1000 * 10 * 60
 
 // Power management pin

@@ -55,6 +55,29 @@ MagicShakeMode msMagicShake;
 MagicSystemTextMode msSysText;
 MagicMagnetMode msMagicMagnet;
 
+
+void moduleIter()
+{
+  typedef std::vector<MagicShifterBaseMode> ggModuleList_t;
+  ggModuleList_t ggModules;
+  ggModuleList_t::const_iterator ggModulesIter;
+
+  // set up the vector of modules in use
+  ggModules.push_back(msMagicShake);
+  ggModules.push_back(msSysText);
+  ggModules.push_back(msMagicMagnet);
+
+  // dump info:
+  for (ggModulesIter=ggModules.begin();
+       ggModulesIter!=ggModules.end();
+       ++ggModulesIter) {
+      msSystem.log("TestModul-:");
+      msSystem.logln( String((char *)ggModulesIter->modeName) );
+  }
+
+}
+
+
 // Begin MagicShifter3000 operation
  void setup()
  {
@@ -65,7 +88,6 @@ delay(350); // debug !J!
 
   // start the system
   msSystem.setup();
-
   
   // get the web interface started
   msWebServer.StartWebServer();
