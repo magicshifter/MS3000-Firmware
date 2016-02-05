@@ -628,14 +628,14 @@ void showBatteryStatus(bool shouldFadeIn)
     if (msButtons.msBtnPwrDoubleHit)
     {
       logln("Double Power HIT!");
-      brightnessControl();
+      //brightnessControl(); // brightnessControl will not show up because it checks the button being pressed inside
+      // !w! double power hit does not conflict with brightness menu for me 
       msButtons.msBtnPwrDoubleHit = false;
     }
 
     // if (msGlobals.allowCmd) 
     CommandInterfacePoll();
-
-    // brightnessControl();
+    brightnessControl();
 
   }
 
