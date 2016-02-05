@@ -55,6 +55,8 @@ MagicShakeMode msMagicShake;
 MagicSystemTextMode msSysText;
 MagicMagnetMode msMagicMagnet;
 
+ModeSelectorMode msModeSelector;
+
 // Begin MagicShifter3000 operation
  void setup()
  {
@@ -76,6 +78,7 @@ delay(350); // debug !J!
   msMagicShake.start();
   msSysText.start();
   msMagicMagnet.start();
+  msModeSelector.start();
 
 }
 
@@ -97,79 +100,86 @@ void loop()
     msGlobals.ggCurrentFrame++;
     msGlobals.ggLastFrameMicros = msGlobals.ggCurrentMicros;
 
-    // dispatch to the mode handler .. 
-    if (msGlobals.ggCurrentMode == 0)
-    {
-      if (msGlobals.ggFault == FAULT_NEW_FILEUPLOAD)
-      {
-        msGlobals.ggFault = 0;
-        msMagicShake.reset();
-        
+    if (msSystem.modeMenuActivated) {
+      int newMode = msModeSelector.step();
+      if (newMode >= 0) {
+        msSystem.modeMenuActivated = false;
+        msGlobals.ggCurrentMode = newMode;
       }
-
-      msMagicShake.step();
     }
-    else 
-    if (msGlobals.ggCurrentMode == 1)
-    {
-
-      // msSystem.msLEDs.loadBuffer(msGlobals.ggRGBLEDBuf);
-      // msSystem.msLEDs.updateLEDs();
-      // delay(10);
-
-      // W: hijacked mode 1 for video
-      static int xx = 0;
-      int gs = msGlobals.ggBrightness;
-
-    msSystem.msLEDs.fillLEDs(0, 0, 0);
-    msSystem.msLEDs.setLED((xx + 0 * 3) & 0xF, 255, 0, 0, gs);
-
-    msSystem.msLEDs.setLED((xx + 1 * 3) & 0xF, 255, 255, 0, gs);
-    msSystem.msLEDs.setLED((xx + 2 * 3) & 0xF, 0, 255, 0, gs);
-
-    msSystem.msLEDs.setLED((xx + 3 * 3) & 0xF, 0, 255, 255, gs);
-    msSystem.msLEDs.setLED((xx + 4 * 3) & 0xF, 0, 0, 255, gs);
-
-    msSystem.msLEDs.updateLEDs();
-
-    xx++;
-      delay(350);
-    }
-    else
-    if (msGlobals.ggCurrentMode == 2) {
-    // swipe colors
-      for (byte idx = 0; idx < MAX_LEDS; idx++)
+    else {
+      // dispatch to the mode handler .. 
+      if (msGlobals.ggCurrentMode == 0)
       {
-        if (idx % 8 == 0) {
-          msSystem.msLEDs.setLED(idx, 255, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
+        if (msGlobals.ggFault == FAULT_NEW_FILEUPLOAD)
+        {
+          msGlobals.ggFault = 0;
+          msMagicShake.reset();   
         }
-        else
-          msSystem.msLEDs.setLED(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
-        // super-bright
-        // msSystem.msLEDs.setLED(idx, 255,255,255,20);
 
-        msSystem.msLEDs.updateLEDs();
-        delay(10);
+        msMagicShake.step();
+      }
+      else 
+      if (msGlobals.ggCurrentMode == 1)
+      {
+
+        // msSystem.msLEDs.loadBuffer(msGlobals.ggRGBLEDBuf);
+        // msSystem.msLEDs.updateLEDs();
+        // delay(10);
+
+        // W: hijacked mode 1 for video
+        static int xx = 0;
+        int gs = msGlobals.ggBrightness;
+
+      msSystem.msLEDs.fillLEDs(0, 0, 0);
+      msSystem.msLEDs.setLED((xx + 0 * 3) & 0xF, 255, 0, 0, gs);
+
+      msSystem.msLEDs.setLED((xx + 1 * 3) & 0xF, 255, 255, 0, gs);
+      msSystem.msLEDs.setLED((xx + 2 * 3) & 0xF, 0, 255, 0, gs);
+
+      msSystem.msLEDs.setLED((xx + 3 * 3) & 0xF, 0, 255, 255, gs);
+      msSystem.msLEDs.setLED((xx + 4 * 3) & 0xF, 0, 0, 255, gs);
+
+      msSystem.msLEDs.updateLEDs();
+
+      xx++;
+        delay(350);
+      }
+      else
+      if (msGlobals.ggCurrentMode == 2) {
+      // swipe colors
+        for (byte idx = 0; idx < MAX_LEDS; idx++)
+        {
+          if (idx % 8 == 0) {
+            msSystem.msLEDs.setLED(idx, 255, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
+          }
+          else
+            msSystem.msLEDs.setLED(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
+          // super-bright
+          // msSystem.msLEDs.setLED(idx, 255,255,255,20);
+
+          msSystem.msLEDs.updateLEDs();
+          delay(10);
+        }
+      }
+      else 
+      if (msGlobals.ggCurrentMode == 3)
+      {
+        msSysText.step();
+      }
+      else 
+      if (msGlobals.ggCurrentMode == 4)
+      {
+        msMagicMagnet.step();
       }
     }
-    else 
-    if (msGlobals.ggCurrentMode == 3)
+
+    // fault-checks
+    if (msGlobals.ggFault > 0)
     {
-      msSysText.step();
-    }
-    else 
-    if (msGlobals.ggCurrentMode == 4)
-    {
-      msMagicMagnet.step();
+      Serial.print("FAULT:"); Serial.println(String(msGlobals.ggFault));
+      msSystem.msLEDs.errorSwipe();
     }
   }
-
-  // fault-checks
-  if (msGlobals.ggFault > 0)
-  {
-    Serial.print("FAULT:"); Serial.println(String(msGlobals.ggFault));
-    msSystem.msLEDs.errorSwipe();
-  }
-
 }
 

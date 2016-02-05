@@ -48,6 +48,8 @@ public:
   bool msSensorOK = false;
   long msPowerCountDown = 0;
 
+  int modeMenuActivated = false;
+
 public:
   void log(String msg) { 
   // todo:switch log from OFF, to BANNED (MIDI), to UDP .. etc.
@@ -296,7 +298,7 @@ public:
     }
   }
 
-#define BRIGHTNESS_CONTROL_TIME 600
+#define BRIGHTNESS_CONTROL_TIME (600 * 1000)
 
 uint8_t BrightnessLevels[16] = { 1,   2,   3, 4,
                  5,  6,  7, 8,
@@ -592,22 +594,24 @@ void showBatteryStatus(bool shouldFadeIn)
 
     if (msButtons.msBtnBLongHit)
     {
-      msGlobals.ggCurrentMode++;
-      if (msGlobals.ggCurrentMode > (NUM_MS_MODES - 1)) // !J! todo: mode-list 
-        msGlobals.ggCurrentMode=0;
-      msButtons.msBtnBLongHit = false;
-      modeAnimation();
-      log("Changed +Mode:"); logln(String(msGlobals.ggCurrentMode));
+      // msGlobals.ggCurrentMode++;
+      // if (msGlobals.ggCurrentMode > (NUM_MS_MODES - 1)) // !J! todo: mode-list 
+      //   msGlobals.ggCurrentMode=0;
+      // msButtons.msBtnBLongHit = false;
+      // modeAnimation();
+      // log("Changed +Mode:"); logln(String(msGlobals.ggCurrentMode));
+      modeMenuActivated = true;
     }
 
     if (msButtons.msBtnALongHit)
     {
-      msGlobals.ggCurrentMode--;
-      if (msGlobals.ggCurrentMode < 0) 
-        msGlobals.ggCurrentMode = (NUM_MS_MODES - 1);
-      msButtons.msBtnALongHit = false;
-      modeAnimation();
-      log("Changed -Mode:"); logln(String(msGlobals.ggCurrentMode));
+      // msGlobals.ggCurrentMode--;
+      // if (msGlobals.ggCurrentMode < 0) 
+      //   msGlobals.ggCurrentMode = (NUM_MS_MODES - 1);
+      // msButtons.msBtnALongHit = false;
+      // modeAnimation();
+      // log("Changed -Mode:"); logln(String(msGlobals.ggCurrentMode));
+      modeMenuActivated = true;
     }
 
     // if (msGlobals.allowCmd) 

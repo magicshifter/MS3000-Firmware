@@ -12,4 +12,6 @@
 #include "ShakeText.h"
 #include "MagicShake.h"
 
+#include "ModeSelectorMode.h"
+
 #endif
