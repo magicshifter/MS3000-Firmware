@@ -129,13 +129,13 @@ public:
     // swipe colors
     for (byte idx = 0; idx < MAX_LEDS; idx++)
     {
-      setPixels(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 2); //msGlobals.ggBrightness);
+      setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 2); //msGlobals.ggBrightness);
       updatePixels();
       delay(30);
     }
     for (byte idx = 0; idx < MAX_LEDS; idx++)
     {
-      setPixels(idx, 0, 0, 0, 1);
+      setPixel(idx, 0, 0, 0, 1);
       updatePixels();
       delay(30);
     }
@@ -147,13 +147,13 @@ public:
     // swipe colors
     for (byte idx = 0; idx < MAX_LEDS; idx++)
     {
-      setPixels(idx, (idx & 1) ? 255 : 0,  0,  0, msGlobals.ggBrightness);
+      setPixel(idx, (idx & 1) ? 255 : 0,  0,  0, msGlobals.ggBrightness);
       updatePixels();
       delay(30);
     }
     for (byte idx = 0; idx < MAX_LEDS; idx++)
     {
-      setPixels(idx, 0, 0, 0, 1);
+      setPixel(idx, 0, 0, 0, 1);
       updatePixels();
       delay(30);
     }
@@ -186,7 +186,7 @@ public:
     fillPixels(0,0,0, 0);
   }
 
-  void setPixelsChannel(int index, int channel, int value)
+  void setPixelChannel(int index, int channel, int value)
   {
 #if (LED_TYPE == LED_TYPE_APA102)
     int idx = index << 2;
@@ -201,7 +201,7 @@ public:
   }
 
 
-  void setPixels(int index, byte r, byte g, byte b, byte gs = 0x1F)
+  void setPixel(int index, byte r, byte g, byte b, byte gs = 0x1F)
   {
 #if (LED_TYPE == LED_TYPE_APA102)
     int idx = index << 2;
@@ -221,7 +221,7 @@ public:
   {
     for (int idx = 0; idx < MAX_LEDS; idx++)
     {
-      setPixels(idx, r, g, b, gs);
+      setPixel(idx, r, g, b, gs);
     }
   }
 

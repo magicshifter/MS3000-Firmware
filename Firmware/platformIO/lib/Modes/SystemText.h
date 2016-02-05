@@ -13,6 +13,7 @@ private:
   bool shouldBlackenBackground = true;
 
 public:
+  const char *modeName="SystemText";
 
   void setText(  char *label,   char *value)
   {

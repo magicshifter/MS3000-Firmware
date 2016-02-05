@@ -1,6 +1,7 @@
 #ifndef _MAGICSHIFTERBASEMODE_H
 #define _MAGICSHIFTERBASEMODE_H
 
+
 // #include "msSystem.h"
 
 // A MagicShifter mode can be activated by the user through system-events, i.e. buttons, shaking, etc.
@@ -10,6 +11,7 @@
 class IMode
 {
 public:
+  // name of the mode - overwrite
   // start the mode
   // void start(MagicShifterSystem &msSystem);
   void start();
@@ -23,15 +25,18 @@ public:
 
 class MagicShifterBaseMode : public IMode
 {
-private:
-  // MagicShifterSystem &m_msSystem;
 
-  public:
+private:
+
+public:
+    const char *modeName="BaseMode";
+
     // start the mode
     // void start(MagicShifterSystem &msSystem)
     void start()
     {
       // m_msSystem = msSystem;
+
     }
 
     // stop the mode

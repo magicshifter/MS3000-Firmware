@@ -32,6 +32,7 @@ private:
   bool shouldDisplayText=false;
 
 public:
+  const char *modeName="MagicShake";
 
   MagicShakeMode()
   {

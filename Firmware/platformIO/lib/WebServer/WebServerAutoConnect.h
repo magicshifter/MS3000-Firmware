@@ -26,9 +26,9 @@ bool TryConnect(struct APInfo &apInfo, int timeoutMs)
     for (int i = 0; i < MAX_LEDS; i++)
     {
       if (i < frame % MAX_LEDS)
-        msSystem.msLEDs.setPixels(i, 5, 5, 5, 0x10);
+        msSystem.msLEDs.setPixel(i, 5, 5, 5, 0x10);
       else
-        msSystem.msLEDs.setPixels(i, 0, 0, 0, 0);
+        msSystem.msLEDs.setPixel(i, 0, 0, 0, 0);
     }
     msSystem.msLEDs.updatePixels();
     frame++;

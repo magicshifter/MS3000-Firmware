@@ -25,6 +25,7 @@ extern "C" {
 #include <json/jsontree.h>
 }
 
+
 //compiler.c.elf.libs=-lm -lgcc -lhal -lphy -lnet80211 -llwip -lwpa -lmain -lpp -lsmartconfig -lc -ljson
 
 #include <FS.h>
@@ -64,6 +65,7 @@ delay(350); // debug !J!
 
   // start the system
   msSystem.setup();
+
   
   // get the web interface started
   msWebServer.StartWebServer();
@@ -120,12 +122,12 @@ void loop()
       for (byte idx = 0; idx < MAX_LEDS; idx++)
       {
         if (idx % 8 == 0) {
-          msSystem.msLEDs.setPixels(idx, 255, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
+          msSystem.msLEDs.setPixel(idx, 255, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
         }
         else
-          msSystem.msLEDs.setPixels(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
+          msSystem.msLEDs.setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
         // super-bright
-        // msSystem.msLEDs.setPixels(idx, 255,255,255,20);
+        // msSystem.msLEDs.setPixel(idx, 255,255,255,20);
 
         msSystem.msLEDs.updatePixels();
         delay(10);

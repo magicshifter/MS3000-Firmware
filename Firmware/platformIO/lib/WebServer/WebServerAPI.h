@@ -846,7 +846,7 @@ void handleLedSet()
 
     for (int i = 0; i < dataLen; i += 5)
     {
-      //msSystem.msLEDs.setPixels(ledData[i], ledData[i+1], ledData[i+2], ledData[i+3], ledData[i+4]);
+      //msSystem.msLEDs.setPixel(ledData[i], ledData[i+1], ledData[i+2], ledData[i+3], ledData[i+4]);
       byte idx = ledData[i];
       msSystem.logln("idx: ");
       msSystem.logln(String((int)idx));
