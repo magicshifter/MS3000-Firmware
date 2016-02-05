@@ -1,6 +1,9 @@
 #ifndef _MSGLOBALS_H
 #define _MSGLOBALS_H
 
+#include <vector>
+
+
 #include "StackClass.h"
 
 #define DEFAULT_FACTORY_MODE 0
@@ -56,6 +59,7 @@ struct MSBitmap
   MSBitmapHeader header;
   MSColor color;
   File bmFile;
+  byte *bmBuffer;
 };
 
 void l_safeStrncpy(char * dest, const char *source, int n)
@@ -71,8 +75,9 @@ class MagicShifterGlobals {
 public:
   // state !J! TODO: clean all this up 
   long ggFault = 0;  // TODO: reset-reason/test-fault/etc.
-  int ggBrightness = 10;
+  int ggBrightness = 3;
   float ggAccel[3];  // Stores the real accel value in g's
+  int ggMagnet[3];   // Stores the 16-bit signed value
   int ggAccelCount[3];  // Stores the 12-bit signed value
   long ggAccelTime;
   long ggLFrameTime;

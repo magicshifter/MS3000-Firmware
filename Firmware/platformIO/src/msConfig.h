@@ -37,7 +37,7 @@
 #define VERSION 0.1
 
 #define MIN_TIME_CLICK 10000
-#define MIN_TIME_LONG_CLICK 1000 * 1200
+#define MIN_TIME_LONG_CLICK 1000 * 750
 
 #define POWER_TIMEOUT 1000 * 1000 * 10 * 60
 
@@ -47,7 +47,7 @@
 #define MAX_FILENAME_LENGTH 32
 #define MAX_TEXT_LENGTH 16
 
-#define NUM_MS_MODES 3
+#define NUM_MS_MODES 5
 
 // MIDI enabled?
 //#define CONFIG_ENABLE_MIDI

@@ -131,11 +131,11 @@ public:
 			{
 				if (bitMask & currentByte)
 				{
-					msSystem.msLEDs.setPixels(ledIdx, r, g, b, 255); // this could be more efficient memcopy the structure
+					msSystem.msLEDs.setPixel(ledIdx, r, g, b, 255); // this could be more efficient memcopy the structure
 				}
 				else
 				{
-					msSystem.msLEDs.setPixels(ledIdx, 0, 0, 0, 0); // this could be more efficient
+					msSystem.msLEDs.setPixel(ledIdx, 0, 0, 0, 0); // this could be more efficient
 				}
 				bitMask <<= 1;
 			} while (++ledIdx < endIndex && bitMask != 0);

@@ -25,6 +25,7 @@ extern "C" {
 #include <json/jsontree.h>
 }
 
+
 //compiler.c.elf.libs=-lm -lgcc -lhal -lphy -lnet80211 -llwip -lwpa -lmain -lpp -lsmartconfig -lc -ljson
 
 #include <FS.h>
@@ -52,6 +53,7 @@ extern "C" {
 
 MagicShakeMode msMagicShake;
 MagicSystemTextMode msSysText;
+MagicMagnetMode msMagicMagnet;
 
 // Begin MagicShifter3000 operation
  void setup()
@@ -63,6 +65,7 @@ delay(350); // debug !J!
 
   // start the system
   msSystem.setup();
+
   
   // get the web interface started
   msWebServer.StartWebServer();
@@ -72,21 +75,24 @@ delay(350); // debug !J!
   // initialize the modules ..
   msMagicShake.start();
   msSysText.start();
+  msMagicMagnet.start();
+
 }
 
 void loop()
 {
 
-  msGlobals.ggLastMicros = msGlobals.ggCurrentMicros;
-  msGlobals.ggCurrentMicros = micros();
-
-  msSystem.loop();
-
-  msWebServer.loop();
-
   // inside time-frame
-  if (msGlobals.ggLastFrameMicros + msGlobals.ggSpeedMicros < msGlobals.ggCurrentMicros)
+  if (msGlobals.ggLastFrameMicros + msGlobals.ggSpeedMicros < micros())
   {
+
+    msGlobals.ggLastMicros = msGlobals.ggCurrentMicros;
+    msGlobals.ggCurrentMicros = micros();
+
+    msSystem.loop();
+
+    msWebServer.loop();
+
     msGlobals.ggLFrameTime = msGlobals.ggCurrentMicros - msGlobals.ggLastFrameMicros;
     msGlobals.ggCurrentFrame++;
     msGlobals.ggLastFrameMicros = msGlobals.ggCurrentMicros;
@@ -94,7 +100,6 @@ void loop()
     // dispatch to the mode handler .. 
     if (msGlobals.ggCurrentMode == 0)
     {
-
       if (msGlobals.ggFault == FAULT_NEW_FILEUPLOAD)
       {
         msGlobals.ggFault = 0;
@@ -107,50 +112,63 @@ void loop()
     else 
     if (msGlobals.ggCurrentMode == 1)
     {
-      msSystem.msLEDs.loadBuffer(msGlobals.ggRGBLEDBuf);
-      msSystem.msLEDs.updatePixels();
-      delay(10);
+
+      // msSystem.msLEDs.loadBuffer(msGlobals.ggRGBLEDBuf);
+      // msSystem.msLEDs.updatePixels();
+      // delay(10);
+
+      // W: hijacked mode 1 for video
+      static int xx = 0;
+      int gs = msGlobals.ggBrightness;
+
+    msSystem.msLEDs.fillPixels(0, 0, 0);
+    msSystem.msLEDs.setPixel((xx + 0 * 3) & 0xF, 255, 0, 0, gs);
+
+    msSystem.msLEDs.setPixel((xx + 1 * 3) & 0xF, 255, 255, 0, gs);
+    msSystem.msLEDs.setPixel((xx + 2 * 3) & 0xF, 0, 255, 0, gs);
+
+    msSystem.msLEDs.setPixel((xx + 3 * 3) & 0xF, 0, 255, 255, gs);
+    msSystem.msLEDs.setPixel((xx + 4 * 3) & 0xF, 0, 0, 255, gs);
+
+    msSystem.msLEDs.updatePixels();
+
+    xx++;
+      delay(350);
     }
     else
     if (msGlobals.ggCurrentMode == 2) {
-      // swipe colors
+    // swipe colors
       for (byte idx = 0; idx < MAX_LEDS; idx++)
       {
         if (idx % 8 == 0) {
-          msSystem.msLEDs.setPixels(idx, 255, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
+          msSystem.msLEDs.setPixel(idx, 255, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
         }
-      else
-        msSystem.msLEDs.setPixels(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
+        else
+          msSystem.msLEDs.setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 1);
         // super-bright
-        // msSystem.msLEDs.setPixels(idx, 255,255,255,20);
+        // msSystem.msLEDs.setPixel(idx, 255,255,255,20);
 
         msSystem.msLEDs.updatePixels();
         delay(10);
       }
-      // for (byte idx = 0; idx < MAX_LEDS; idx++)
-      // {
-      //   msSystem.msLEDs.setPixels(idx, 0, 0, 0, 1 / 2);
-      //   msSystem.msLEDs.updatePixels();
-      //   delay(10);
-      // }
     }
-    // else 
-    // if (msGlobals.ggCurrentMode = 3)
-    // {
-    //   msSysText.step();
-    // }
-    // else { // mode out of bounds failure
-    // }
-
+    else 
+    if (msGlobals.ggCurrentMode == 3)
+    {
+      msSysText.step();
+    }
+    else 
+    if (msGlobals.ggCurrentMode == 4)
+    {
+      msMagicMagnet.step();
+    }
   }
 
   // fault-checks
   if (msGlobals.ggFault > 0)
   {
-    {
-      Serial.print("FAULT:"); Serial.println(String(msGlobals.ggFault));
-      msSystem.infinite_swipe();
-    }
+    Serial.print("FAULT:"); Serial.println(String(msGlobals.ggFault));
+    msSystem.msLEDs.errorSwipe();
   }
 
 }

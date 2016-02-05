@@ -32,6 +32,7 @@ private:
   bool shouldDisplayText=false;
 
 public:
+  const char *modeName="MagicShake";
 
   MagicShakeMode()
   {
@@ -128,13 +129,6 @@ public:
   {
 
     // toggle text
-    if (msSystem.msButtons.msBtnPwrHit) {
-      msSystem.msButtons.msBtnPwrHit = false; // !J! todo: button callbacks
-      if (shouldDisplayText)
-        shouldDisplayText=false;
-      else
-        shouldDisplayText=true;
-    }
 
     // !J! TODO: give modes an event queue ..
     if (msGlobals.ggShouldAutoLoad == 1) {

@@ -35,37 +35,37 @@ void testButtonForBOM_X()
 
   if (msSystem.msButtons.msBtnPwrLongHit)
   {
-    msSystem.msLEDs.setPixels(1, 0, 0, 20, 20);
+    msSystem.msLEDs.setPixel(1, 0, 0, 20, 20);
     msSystem.msLEDs.updatePixels();
     delay(200);
   }
   if (msSystem.msButtons.msBtnPwrHit)
   {
-    msSystem.msLEDs.setPixels(1, 20, 20, 0, 15);
+    msSystem.msLEDs.setPixel(1, 20, 20, 0, 15);
     msSystem.msLEDs.updatePixels();
     delay(200);
   }
   if (msSystem.msButtons.msBtnALongHit)
   {
-    msSystem.msLEDs.setPixels(0, 20, 0, 20, 20);
+    msSystem.msLEDs.setPixel(0, 20, 0, 20, 20);
     msSystem.msLEDs.updatePixels();
     delay(200);
   }
   if (msSystem.msButtons.msBtnAHit)
   {
-    msSystem.msLEDs.setPixels(0, 20, 20, 0, 20);
+    msSystem.msLEDs.setPixel(0, 20, 20, 0, 20);
     msSystem.msLEDs.updatePixels();
     delay(200);
   }
   if (msSystem.msButtons.msBtnBLongHit)
   {
-    msSystem.msLEDs.setPixels(2, 20, 0, 20, 20);
+    msSystem.msLEDs.setPixel(2, 20, 0, 20, 20);
     msSystem.msLEDs.updatePixels();
     delay(200);
   }
   if (msSystem.msButtons.msBtnBHit)
   {
-    msSystem.msLEDs.setPixels(2, 20, 20, 0, 20);
+    msSystem.msLEDs.setPixel(2, 20, 20, 0, 20);
     msSystem.msLEDs.updatePixels();
     delay(200);
   }
@@ -94,31 +94,31 @@ void testSimpleButtons()
 
   if (adVal > 950 )
   {
-    msSystem.msLEDs.setPixels(7, 0, 10, 0, msGlobals.ggBrightness);
-    msSystem.msLEDs.setPixels(8, 0, 10, 0, msGlobals.ggBrightness);
+    msSystem.msLEDs.setPixel(7, 0, 10, 0, msGlobals.ggBrightness);
+    msSystem.msLEDs.setPixel(8, 0, 10, 0, msGlobals.ggBrightness);
   }
   else
   {
-    msSystem.msLEDs.setPixels(7, 10, 0, 0, msGlobals.ggBrightness);
-    msSystem.msLEDs.setPixels(8, 10, 0, 0, msGlobals.ggBrightness);
+    msSystem.msLEDs.setPixel(7, 10, 0, 0, msGlobals.ggBrightness);
+    msSystem.msLEDs.setPixel(8, 10, 0, 0, msGlobals.ggBrightness);
   }
 
   if (!digitalRead(PIN_BUTTON_A))
   {
-    msSystem.msLEDs.setPixels(9, 0, 10, 0, msGlobals.ggBrightness);
+    msSystem.msLEDs.setPixel(9, 0, 10, 0, msGlobals.ggBrightness);
   }
   else
   {
-    msSystem.msLEDs.setPixels(9, 10, 0, 0, msGlobals.ggBrightness);
+    msSystem.msLEDs.setPixel(9, 10, 0, 0, msGlobals.ggBrightness);
   }
 
   if (!digitalRead(PIN_BUTTON_B))
   {
-    msSystem.msLEDs.setPixels(6, 0, 10, 0, msGlobals.ggBrightness);
+    msSystem.msLEDs.setPixel(6, 0, 10, 0, msGlobals.ggBrightness);
   }
   else
   {
-    msSystem.msLEDs.setPixels(6, 10, 0, 0, msGlobals.ggBrightness);
+    msSystem.msLEDs.setPixel(6, 10, 0, 0, msGlobals.ggBrightness);
   }
   if (cnt % 300 == 550)
   {
