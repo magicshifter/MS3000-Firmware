@@ -112,9 +112,28 @@ void loop()
     else 
     if (msGlobals.ggCurrentMode == 1)
     {
-      msSystem.msLEDs.loadBuffer(msGlobals.ggRGBLEDBuf);
-      msSystem.msLEDs.updatePixels();
-      delay(10);
+
+      // msSystem.msLEDs.loadBuffer(msGlobals.ggRGBLEDBuf);
+      // msSystem.msLEDs.updatePixels();
+      // delay(10);
+
+      // W: hijacked mode 1 for video
+      static int xx = 0;
+      int gs = msGlobals.ggBrightness;
+
+    msSystem.msLEDs.fillPixels(0, 0, 0);
+    msSystem.msLEDs.setPixel((xx + 0 * 3) & 0xF, 255, 0, 0, gs);
+
+    msSystem.msLEDs.setPixel((xx + 1 * 3) & 0xF, 255, 255, 0, gs);
+    msSystem.msLEDs.setPixel((xx + 2 * 3) & 0xF, 0, 255, 0, gs);
+
+    msSystem.msLEDs.setPixel((xx + 3 * 3) & 0xF, 0, 255, 255, gs);
+    msSystem.msLEDs.setPixel((xx + 4 * 3) & 0xF, 0, 0, 255, gs);
+
+    msSystem.msLEDs.updatePixels();
+
+    xx++;
+      delay(350);
     }
     else
     if (msGlobals.ggCurrentMode == 2) {

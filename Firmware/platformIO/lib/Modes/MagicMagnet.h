@@ -65,22 +65,21 @@ private:
       int degrees = int(atan2(msGlobals.ggMagnet[YAXIS], -msGlobals.ggMagnet[XAXIS]) * 180 / M_PI);
       msSystem.msLEDs.fillPixels(0,0,0);
       int lednr = map(abs(degrees), 0, 180, 0, 15);
-      msSystem.msLEDs.setPixel(lednr, 0, 0, 255, msGlobals.ggBrightness);
 
-      if (lMode == 0) {
-        for (int lC=0;lC<lednr;lC++) 
-          msSystem.msLEDs.setPixel(lC, 0, 255, 0, msGlobals.ggBrightness / 2); // !J! hack
+      msSystem.msLEDs.setPixel(lednr, 0, 255, 0, msGlobals.ggBrightness);
 
-        for (int lC=lednr+1;lC<MAX_LEDS;lC++) 
-          msSystem.msLEDs.setPixel(lC, 255, 0, 0, msGlobals.ggBrightness / 2); // !J! hack
-      }
+      for (int lC=0;lC<lednr;lC++) 
+        msSystem.msLEDs.setPixel(lC, 0, 255, 0, msGlobals.ggBrightness); // !J! hack
+
+      for (int lC=lednr+1;lC<MAX_LEDS;lC++) 
+        msSystem.msLEDs.setPixel(lC, 255, 0, 0, msGlobals.ggBrightness); // !J! hack
 
       // msSystem.log("LED: "); msSystem.logln(String(lednr));
 
       // updateLedsWithBrightness();
       msSystem.msLEDs.updatePixels();
 
-      delay(75);
+      delay(35);
 
     }
 
