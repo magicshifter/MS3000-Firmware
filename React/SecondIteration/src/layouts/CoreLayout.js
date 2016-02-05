@@ -1,5 +1,6 @@
 import React, {PropTypes, Component} from 'react';
 import {connect} from 'react-redux';
+
 import {actions} from 'redux/modules/layout';
 
 import Header from './Header';
@@ -25,12 +26,14 @@ class CoreLayout extends Component {
     width: PropTypes.number.isRequired,
     children: PropTypes.element,
     windowResize: PropTypes.func.isRequired,
+    scrollEvent: PropTypes.func.isRequired,
   };
 
   constructor(props) {
     super(props);
 
     window.addEventListener('resize', props.windowResize);
+    window.addEventListener('mousewheel', props.scrollEvent);
   }
 
   render() {
