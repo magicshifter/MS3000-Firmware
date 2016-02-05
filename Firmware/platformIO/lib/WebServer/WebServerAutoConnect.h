@@ -30,7 +30,7 @@ bool TryConnect(struct APInfo &apInfo, int timeoutMs)
       else
         msSystem.msLEDs.setLED(i, 0, 0, 0, 0);
     }
-    msSystem.msLEDs.updatePixels();
+    msSystem.msLEDs.updateLEDs();
     frame++;
 
     if (frame%50 == 0) msSystem.logln(".");

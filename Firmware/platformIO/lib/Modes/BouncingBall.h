@@ -131,7 +131,7 @@ class BouncingBallMode
     for (byte idx = start; !stopLoop ; idx += delta)
     {
       msSystem.msLEDs.setLED(idx, 255, 255, 255, msGlobals.ggBrightness);
-      msSystem.msLEDs.updatePixels();
+      msSystem.msLEDs.updateLEDs();
       delay(2);
 
       if (idx == end)
@@ -189,7 +189,7 @@ public:
         msSystem.msLEDs.setLED(idx, 255 * scale, 0, 128 * scale, msGlobals.ggBrightness);
       }
     }
-    msSystem.msLEDs.updatePixels();
+    msSystem.msLEDs.updateLEDs();
   }
 
   void applyForce(float sec, float g)

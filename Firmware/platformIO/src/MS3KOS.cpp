@@ -114,7 +114,7 @@ void loop()
     {
 
       // msSystem.msLEDs.loadBuffer(msGlobals.ggRGBLEDBuf);
-      // msSystem.msLEDs.updatePixels();
+      // msSystem.msLEDs.updateLEDs();
       // delay(10);
 
       // W: hijacked mode 1 for video
@@ -130,7 +130,7 @@ void loop()
     msSystem.msLEDs.setLED((xx + 3 * 3) & 0xF, 0, 255, 255, gs);
     msSystem.msLEDs.setLED((xx + 4 * 3) & 0xF, 0, 0, 255, gs);
 
-    msSystem.msLEDs.updatePixels();
+    msSystem.msLEDs.updateLEDs();
 
     xx++;
       delay(350);
@@ -148,7 +148,7 @@ void loop()
         // super-bright
         // msSystem.msLEDs.setLED(idx, 255,255,255,20);
 
-        msSystem.msLEDs.updatePixels();
+        msSystem.msLEDs.updateLEDs();
         delay(10);
       }
     }

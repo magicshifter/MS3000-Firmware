@@ -18,7 +18,7 @@ int fcount = 0;
     /*
     for (int i = 0; i < 0; i++)
     {
-      msSystem.msLEDs.updatePixels();
+      msSystem.msLEDs.updateLEDs();
     }*/
     int t1 = micros();
 

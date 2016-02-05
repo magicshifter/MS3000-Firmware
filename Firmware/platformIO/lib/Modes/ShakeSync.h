@@ -267,7 +267,7 @@ public:
 			}
 		}
 
-		msSystem.msLEDs.updatePixels();
+		msSystem.msLEDs.updateLEDs();
 
     return isActive;
 	}

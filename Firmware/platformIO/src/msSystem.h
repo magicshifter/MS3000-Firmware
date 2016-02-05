@@ -220,7 +220,7 @@ public:
     for (int i=0;i<=3;i++)
     {
       msLEDs.fillLEDs(255, 255, 255, msGlobals.ggBrightness);
-      msLEDs.updatePixels();
+      msLEDs.updateLEDs();
       delay(35);
       msLEDs.fastClear();
       delay(35);
@@ -236,13 +236,13 @@ public:
       for (byte idx = 0; idx < MAX_LEDS; idx++)
       {
         msLEDs.setLED(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, msGlobals.ggBrightness);
-        msLEDs.updatePixels();
+        msLEDs.updateLEDs();
         delay(30);
       }
       for (byte idx = 0; idx < MAX_LEDS; idx++)
       {
         msLEDs.setLED(idx, 0, 0, 0, 1);
-        msLEDs.updatePixels();
+        msLEDs.updateLEDs();
         delay(30);
       }
     }
@@ -260,38 +260,38 @@ public:
     {
       msLEDs.setLED(BUTTON_LED_PWR, 0, 0, 20, 20);
       msLEDs.setLED(BUTTON_LED_PWR + 1, 0, 0, 20, 20);
-      msLEDs.updatePixels();
+      msLEDs.updateLEDs();
       delay(BUTTON_DISPLAY_PERIOD);
     }
     if (msButtons.msBtnPwrHit)
     {
       msLEDs.setLED(BUTTON_LED_PWR, 20, 20, 0, 15);
       msLEDs.setLED(BUTTON_LED_PWR - 1, 20, 20, 0, 15);
-      msLEDs.updatePixels();
+      msLEDs.updateLEDs();
       delay(BUTTON_DISPLAY_PERIOD);
     }
     if (msButtons.msBtnALongHit)
     {
       msLEDs.setLED(BUTTON_LED_A, 20, 0, 20, 20);
-      msLEDs.updatePixels();
+      msLEDs.updateLEDs();
       delay(BUTTON_DISPLAY_PERIOD);
     }
     if (msButtons.msBtnAHit)
     {
       msLEDs.setLED(BUTTON_LED_A, 20, 20, 0, 20);
-      msLEDs.updatePixels();
+      msLEDs.updateLEDs();
       delay(BUTTON_DISPLAY_PERIOD);
     }
     if (msButtons.msBtnBLongHit)
     {
       msLEDs.setLED(BUTTON_LED_B, 20, 0, 20, 20);
-      msLEDs.updatePixels();
+      msLEDs.updateLEDs();
       delay(BUTTON_DISPLAY_PERIOD);
     }
     if (msButtons.msBtnBHit)
     {
       msLEDs.setLED(BUTTON_LED_B, 20, 20, 0, 20);
-      msLEDs.updatePixels();
+      msLEDs.updateLEDs();
       delay(BUTTON_DISPLAY_PERIOD);
     }
   }
@@ -376,7 +376,7 @@ logln("brightnesscontrol EVENT");
         msLEDs.setLED(10, bb/4, bb/4, bb/4);
         msLEDs.setLED(11, bb/8, bb/8, bb/8);
 
-        msLEDs.updatePixels();
+        msLEDs.updateLEDs();
         delayMicroseconds(200);
       }
       else if (lastV != newV)
@@ -393,7 +393,7 @@ logln("brightnesscontrol EVENT");
           else
             msLEDs.setLED(15 - i, 0, 0, 0);
         }
-        msLEDs.updatePixels();
+        msLEDs.updateLEDs();
         delayMicroseconds(200);
       }
       lastV = newV;
@@ -407,7 +407,7 @@ logln("brightnesscontrol EVENT");
     WaitClearButtons();
 
     msLEDs.fillLEDs(0, 0, 0, 0);
-    msLEDs.updatePixels();
+    msLEDs.updateLEDs();
   }
 }
 
@@ -462,11 +462,11 @@ void showBatteryStatus(bool shouldFadeIn)
     }
 
     if (d > 0) {
-      msLEDs.updatePixels();
+      msLEDs.updateLEDs();
       delay(12);
     }
   }
-  msLEDs.updatePixels();
+  msLEDs.updateLEDs();
 
 
   if (d < 0) {
@@ -477,7 +477,7 @@ void showBatteryStatus(bool shouldFadeIn)
 
     for (int i = 0; i >= 0 && i <= 15; i++) {
       msLEDs.setLED(i, 0, 0, 0);
-      msLEDs.updatePixels();
+      msLEDs.updateLEDs();
       delay(12);
     }
   } else {
@@ -488,7 +488,7 @@ void showBatteryStatus(bool shouldFadeIn)
   }
 
   msLEDs.fillLEDs(0, 0, 0, 0);;
-  msLEDs.updatePixels();
+  msLEDs.updateLEDs();
 
 }
 

@@ -77,7 +77,7 @@ private:
       // msSystem.log("LED: "); msSystem.logln(String(lednr));
 
       // updateLedsWithBrightness();
-      msSystem.msLEDs.updatePixels();
+      msSystem.msLEDs.updateLEDs();
 
       delay(35);
 

@@ -130,13 +130,13 @@ public:
     for (byte idx = 0; idx < MAX_LEDS; idx++)
     {
       setLED(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 2); //msGlobals.ggBrightness);
-      updatePixels();
+      updateLEDs();
       delay(30);
     }
     for (byte idx = 0; idx < MAX_LEDS; idx++)
     {
       setLED(idx, 0, 0, 0, 1);
-      updatePixels();
+      updateLEDs();
       delay(30);
     }
   }
@@ -148,13 +148,13 @@ public:
     for (byte idx = 0; idx < MAX_LEDS; idx++)
     {
       setLED(idx, (idx & 1) ? 255 : 0,  0,  0, msGlobals.ggBrightness);
-      updatePixels();
+      updateLEDs();
       delay(30);
     }
     for (byte idx = 0; idx < MAX_LEDS; idx++)
     {
       setLED(idx, 0, 0, 0, 1);
-      updatePixels();
+      updateLEDs();
       delay(30);
     }
   }
@@ -225,7 +225,7 @@ public:
     }
   }
 
-  void updatePixels()
+  void updateLEDs()
   {
 #if (LED_TYPE == LED_TYPE_APA102)
     SPI.writeBytes(ledBuffer, RGB_BUFFER_SIZE + 8);

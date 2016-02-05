@@ -16,11 +16,11 @@ void testAccelerometer()
     {
      msSystem.msLEDs.fillLEDs(b, 0, 0, 0xff);
    }
-   msSystem.msLEDs.updatePixels();
+   msSystem.msLEDs.updateLEDs();
    delay(d);
 
    msSystem.msLEDs.fillLEDs(b, b, b, 0xff);
-   msSystem.msLEDs.updatePixels();
+   msSystem.msLEDs.updateLEDs();
    delay(d);
  }
 }
@@ -36,37 +36,37 @@ void testButtonForBOM_X()
   if (msSystem.msButtons.msBtnPwrLongHit)
   {
     msSystem.msLEDs.setLED(1, 0, 0, 20, 20);
-    msSystem.msLEDs.updatePixels();
+    msSystem.msLEDs.updateLEDs();
     delay(200);
   }
   if (msSystem.msButtons.msBtnPwrHit)
   {
     msSystem.msLEDs.setLED(1, 20, 20, 0, 15);
-    msSystem.msLEDs.updatePixels();
+    msSystem.msLEDs.updateLEDs();
     delay(200);
   }
   if (msSystem.msButtons.msBtnALongHit)
   {
     msSystem.msLEDs.setLED(0, 20, 0, 20, 20);
-    msSystem.msLEDs.updatePixels();
+    msSystem.msLEDs.updateLEDs();
     delay(200);
   }
   if (msSystem.msButtons.msBtnAHit)
   {
     msSystem.msLEDs.setLED(0, 20, 20, 0, 20);
-    msSystem.msLEDs.updatePixels();
+    msSystem.msLEDs.updateLEDs();
     delay(200);
   }
   if (msSystem.msButtons.msBtnBLongHit)
   {
     msSystem.msLEDs.setLED(2, 20, 0, 20, 20);
-    msSystem.msLEDs.updatePixels();
+    msSystem.msLEDs.updateLEDs();
     delay(200);
   }
   if (msSystem.msButtons.msBtnBHit)
   {
     msSystem.msLEDs.setLED(2, 20, 20, 0, 20);
-    msSystem.msLEDs.updatePixels();
+    msSystem.msLEDs.updateLEDs();
     delay(200);
   }
 }
@@ -136,7 +136,7 @@ void testSimpleButtons()
     Serial.print("/");
     Serial.println(avgVal);
   }
-  msSystem.msLEDs.updatePixels();
+  msSystem.msLEDs.updateLEDs();
   delay(10);
   //return;
 }
