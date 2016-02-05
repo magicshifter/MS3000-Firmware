@@ -99,8 +99,8 @@ else
 
 void handleReadFile()
 {
-  msSystem.msLEDs.fillPixels(0, 0, 1, 0x1F);
-  msSystem.msLEDs.updatePixels();
+  msSystem.msLEDs.fillLEDs(0, 0, 1, 0x1F);
+  msSystem.msLEDs.updateLEDs();
 
   msSystem.logln("Free heap: ");
   msSystem.logln(String(ESP.getFreeHeap()));
@@ -164,8 +164,8 @@ void handleReadFile()
 
 void handleDeleteFile()
 {
-  msSystem.msLEDs.fillPixels(0, 0, 1, 0x1F);
-  msSystem.msLEDs.updatePixels();
+  msSystem.msLEDs.fillLEDs(0, 0, 1, 0x1F);
+  msSystem.msLEDs.updateLEDs();
 
   String message = "handleDeleteFile\n";
   if (msSystem.msESPServer.args() >= 1)

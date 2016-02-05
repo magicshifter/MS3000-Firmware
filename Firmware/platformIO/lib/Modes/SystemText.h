@@ -100,15 +100,15 @@ public:
         if (correctBrightness) {
 
           msSystem.msLEDs.loadBufferShort(povData);
-          msSystem.msLEDs.updatePixels();
+          msSystem.msLEDs.updateLEDs();
           //delayMicroseconds(POV_TIME_MICROSECONDS);
           msSystem.msLEDs.loadBufferLong(povData);
-          msSystem.msLEDs.updatePixels();
+          msSystem.msLEDs.updateLEDs();
         }
         else
         {
           msSystem.msLEDs.loadBuffer(povData);
-          msSystem.msLEDs.updatePixels();
+          msSystem.msLEDs.updateLEDs();
           delayMicroseconds(POV_TIME_MICROSECONDS);
           msSystem.msLEDs.fastClear();
         }

@@ -48,6 +48,8 @@ public:
   bool msSensorOK = false;
   long msPowerCountDown = 0;
 
+  int modeMenuActivated = false;
+
 public:
   void log(String msg) { 
   // todo:switch log from OFF, to BANNED (MIDI), to UDP .. etc.
@@ -219,8 +221,8 @@ public:
   {
     for (int i=0;i<=3;i++)
     {
-      msLEDs.fillPixels(255, 255, 255, msGlobals.ggBrightness);
-      msLEDs.updatePixels();
+      msLEDs.fillLEDs(255, 255, 255, msGlobals.ggBrightness);
+      msLEDs.updateLEDs();
       delay(35);
       msLEDs.fastClear();
       delay(35);
@@ -235,14 +237,14 @@ public:
       // swipe colors
       for (byte idx = 0; idx < MAX_LEDS; idx++)
       {
-        msLEDs.setPixel(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, msGlobals.ggBrightness);
-        msLEDs.updatePixels();
+        msLEDs.setLED(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, msGlobals.ggBrightness);
+        msLEDs.updateLEDs();
         delay(30);
       }
       for (byte idx = 0; idx < MAX_LEDS; idx++)
       {
-        msLEDs.setPixel(idx, 0, 0, 0, 1);
-        msLEDs.updatePixels();
+        msLEDs.setLED(idx, 0, 0, 0, 1);
+        msLEDs.updateLEDs();
         delay(30);
       }
     }
@@ -258,45 +260,45 @@ public:
   {
     if (msButtons.msBtnPwrLongHit)
     {
-      msLEDs.setPixel(BUTTON_LED_PWR, 0, 0, 20, 20);
-      msLEDs.setPixel(BUTTON_LED_PWR + 1, 0, 0, 20, 20);
-      msLEDs.updatePixels();
+      msLEDs.setLED(BUTTON_LED_PWR, 0, 0, 20, 20);
+      msLEDs.setLED(BUTTON_LED_PWR + 1, 0, 0, 20, 20);
+      msLEDs.updateLEDs();
       delay(BUTTON_DISPLAY_PERIOD);
     }
     if (msButtons.msBtnPwrHit)
     {
-      msLEDs.setPixel(BUTTON_LED_PWR, 20, 20, 0, 15);
-      msLEDs.setPixel(BUTTON_LED_PWR - 1, 20, 20, 0, 15);
-      msLEDs.updatePixels();
+      msLEDs.setLED(BUTTON_LED_PWR, 20, 20, 0, 15);
+      msLEDs.setLED(BUTTON_LED_PWR - 1, 20, 20, 0, 15);
+      msLEDs.updateLEDs();
       delay(BUTTON_DISPLAY_PERIOD);
     }
     if (msButtons.msBtnALongHit)
     {
-      msLEDs.setPixel(BUTTON_LED_A, 20, 0, 20, 20);
-      msLEDs.updatePixels();
+      msLEDs.setLED(BUTTON_LED_A, 20, 0, 20, 20);
+      msLEDs.updateLEDs();
       delay(BUTTON_DISPLAY_PERIOD);
     }
     if (msButtons.msBtnAHit)
     {
-      msLEDs.setPixel(BUTTON_LED_A, 20, 20, 0, 20);
-      msLEDs.updatePixels();
+      msLEDs.setLED(BUTTON_LED_A, 20, 20, 0, 20);
+      msLEDs.updateLEDs();
       delay(BUTTON_DISPLAY_PERIOD);
     }
     if (msButtons.msBtnBLongHit)
     {
-      msLEDs.setPixel(BUTTON_LED_B, 20, 0, 20, 20);
-      msLEDs.updatePixels();
+      msLEDs.setLED(BUTTON_LED_B, 20, 0, 20, 20);
+      msLEDs.updateLEDs();
       delay(BUTTON_DISPLAY_PERIOD);
     }
     if (msButtons.msBtnBHit)
     {
-      msLEDs.setPixel(BUTTON_LED_B, 20, 20, 0, 20);
-      msLEDs.updatePixels();
+      msLEDs.setLED(BUTTON_LED_B, 20, 20, 0, 20);
+      msLEDs.updateLEDs();
       delay(BUTTON_DISPLAY_PERIOD);
     }
   }
 
-#define BRIGHTNESS_CONTROL_TIME 600
+#define BRIGHTNESS_CONTROL_TIME (600 * 1000)
 
 uint8_t BrightnessLevels[16] = { 1,   2,   3, 4,
                  5,  6,  7, 8,
@@ -361,22 +363,22 @@ logln("brightnesscontrol EVENT");
 
       if (newV == 0)
       {
-        msLEDs.fillPixels(0, 0, 0, 0);
+        msLEDs.fillLEDs(0, 0, 0, 0);
         blink++;
         uint16_t bb = blink&0x1FF;
         if (bb > 255) bb =511-bb;
         //bb = (v*bb)/255;
 
-        msLEDs.setPixel(4, bb/8, bb/8, bb/8);
-        msLEDs.setPixel(5, bb/4, bb/4, bb/4);
-        msLEDs.setPixel(6, bb/2, bb/2, bb/2);
-        msLEDs.setPixel(7, bb, bb, bb);
-        msLEDs.setPixel(8, bb, bb, bb);
-        msLEDs.setPixel(9, bb/2, bb/2, bb/2);
-        msLEDs.setPixel(10, bb/4, bb/4, bb/4);
-        msLEDs.setPixel(11, bb/8, bb/8, bb/8);
+        msLEDs.setLED(4, bb/8, bb/8, bb/8);
+        msLEDs.setLED(5, bb/4, bb/4, bb/4);
+        msLEDs.setLED(6, bb/2, bb/2, bb/2);
+        msLEDs.setLED(7, bb, bb, bb);
+        msLEDs.setLED(8, bb, bb, bb);
+        msLEDs.setLED(9, bb/2, bb/2, bb/2);
+        msLEDs.setLED(10, bb/4, bb/4, bb/4);
+        msLEDs.setLED(11, bb/8, bb/8, bb/8);
 
-        msLEDs.updatePixels();
+        msLEDs.updateLEDs();
         delayMicroseconds(200);
       }
       else if (lastV != newV)
@@ -389,11 +391,11 @@ logln("brightnesscontrol EVENT");
 
           //if (dB <= 16) dB = 16;
           if (newV >= lBr)
-            msLEDs.setPixel(15 - i, BRIGHTNESS_UI_LEVEL, BRIGHTNESS_UI_LEVEL, BRIGHTNESS_UI_LEVEL, dB);
+            msLEDs.setLED(15 - i, BRIGHTNESS_UI_LEVEL, BRIGHTNESS_UI_LEVEL, BRIGHTNESS_UI_LEVEL, dB);
           else
-            msLEDs.setPixel(15 - i, 0, 0, 0);
+            msLEDs.setLED(15 - i, 0, 0, 0);
         }
-        msLEDs.updatePixels();
+        msLEDs.updateLEDs();
         delayMicroseconds(200);
       }
       lastV = newV;
@@ -406,8 +408,8 @@ logln("brightnesscontrol EVENT");
 
     WaitClearButtons();
 
-    msLEDs.fillPixels(0, 0, 0, 0);
-    msLEDs.updatePixels();
+    msLEDs.fillLEDs(0, 0, 0, 0);
+    msLEDs.updateLEDs();
   }
 }
 
@@ -440,7 +442,7 @@ void showBatteryStatus(bool shouldFadeIn)
   delay(50);
   batLevel = getBatteryVoltage();
 
-  msLEDs.fillPixels(0, 0, 0, 0);
+  msLEDs.fillLEDs(0, 0, 0, 0);
 
   for (int i = 0; i >= 0 && i <= 15; i++) {
     float iV = LIPO_DISPLAY_LOWER_LIMIT_V + (LIPO_DISPLAY_UPPER_LIMIT_V - LIPO_DISPLAY_LOWER_LIMIT_V) * (i / 16.0);
@@ -456,17 +458,17 @@ void showBatteryStatus(bool shouldFadeIn)
         red = 255 * (LIPO_DISPLAY_ORANGE_LIMIT_V - iV) / (LIPO_DISPLAY_ORANGE_LIMIT_V - LIPO_DISPLAY_LOWER_LIMIT_V);
       } else
         red = 0;
-      msLEDs.setPixel(15 - i, red, green, 0, gs);
+      msLEDs.setLED(15 - i, red, green, 0, gs);
 
-      //msLEDs.setPixel(i, 0, iV > LIPO_DISPLAY_RED_LIMIT_V  ? 150 : 0, iV < LIPO_DISPLAY_ORANGE_LIMIT_V ? 150 : 0, gs);
+      //msLEDs.setLED(i, 0, iV > LIPO_DISPLAY_RED_LIMIT_V  ? 150 : 0, iV < LIPO_DISPLAY_ORANGE_LIMIT_V ? 150 : 0, gs);
     }
 
     if (d > 0) {
-      msLEDs.updatePixels();
+      msLEDs.updateLEDs();
       delay(12);
     }
   }
-  msLEDs.updatePixels();
+  msLEDs.updateLEDs();
 
 
   if (d < 0) {
@@ -476,8 +478,8 @@ void showBatteryStatus(bool shouldFadeIn)
     }
 
     for (int i = 0; i >= 0 && i <= 15; i++) {
-      msLEDs.setPixel(i, 0, 0, 0);
-      msLEDs.updatePixels();
+      msLEDs.setLED(i, 0, 0, 0);
+      msLEDs.updateLEDs();
       delay(12);
     }
   } else {
@@ -487,8 +489,8 @@ void showBatteryStatus(bool shouldFadeIn)
     }
   }
 
-  msLEDs.fillPixels(0, 0, 0, 0);;
-  msLEDs.updatePixels();
+  msLEDs.fillLEDs(0, 0, 0, 0);;
+  msLEDs.updateLEDs();
 
 }
 
@@ -592,22 +594,24 @@ void showBatteryStatus(bool shouldFadeIn)
 
     if (msButtons.msBtnBLongHit)
     {
-      msGlobals.ggCurrentMode++;
-      if (msGlobals.ggCurrentMode > (NUM_MS_MODES - 1)) // !J! todo: mode-list 
-        msGlobals.ggCurrentMode=0;
-      msButtons.msBtnBLongHit = false;
-      modeAnimation();
-      log("Changed +Mode:"); logln(String(msGlobals.ggCurrentMode));
+      // msGlobals.ggCurrentMode++;
+      // if (msGlobals.ggCurrentMode > (NUM_MS_MODES - 1)) // !J! todo: mode-list 
+      //   msGlobals.ggCurrentMode=0;
+      // msButtons.msBtnBLongHit = false;
+      // modeAnimation();
+      // log("Changed +Mode:"); logln(String(msGlobals.ggCurrentMode));
+      modeMenuActivated = true;
     }
 
     if (msButtons.msBtnALongHit)
     {
-      msGlobals.ggCurrentMode--;
-      if (msGlobals.ggCurrentMode < 0) 
-        msGlobals.ggCurrentMode = (NUM_MS_MODES - 1);
-      msButtons.msBtnALongHit = false;
-      modeAnimation();
-      log("Changed -Mode:"); logln(String(msGlobals.ggCurrentMode));
+      // msGlobals.ggCurrentMode--;
+      // if (msGlobals.ggCurrentMode < 0) 
+      //   msGlobals.ggCurrentMode = (NUM_MS_MODES - 1);
+      // msButtons.msBtnALongHit = false;
+      // modeAnimation();
+      // log("Changed -Mode:"); logln(String(msGlobals.ggCurrentMode));
+      modeMenuActivated = true;
     }
 
     // if (msGlobals.allowCmd) 

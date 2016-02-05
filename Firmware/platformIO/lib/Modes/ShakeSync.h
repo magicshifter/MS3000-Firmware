@@ -150,7 +150,7 @@ public:
         isActive = true;
     }
 
-		msSystem.msLEDs.fillPixels(0, 0, 0);
+		msSystem.msLEDs.fillLEDs(0, 0, 0);
 
     activeFramesMin2Max++;
     activeFramesMax2Min++;
@@ -207,7 +207,7 @@ public:
 				activeMax.g = g;
 				activeMax.micros = msGlobals.ggCurrentMicros;
 
-				//fillPixels(3, 0, 3);
+				//fillLEDs(3, 0, 3);
 			}
 			// last this dir or last other dir
 			//else if (!firedPredictedZero && (msGlobals.ggCurrentMicros > lastMax.micros + min2maxDelta/2)) // ikes
@@ -218,12 +218,12 @@ public:
         isFrameIndexActive = true;
 			  firedPredictedZero = true;
 
-			  //fillPixels(5, 0, 0);
+			  //fillLEDs(5, 0, 0);
 			}
 			else if (!firedPredictedExtremum && msGlobals.ggCurrentMicros >= lastMax.micros + max2minDelta)
 			{
 				firedPredictedExtremum = true;
-				//fillPixels(20, 0, 0);
+				//fillLEDs(20, 0, 0);
 			}
 		}
 		else {
@@ -254,7 +254,7 @@ public:
 				activeMin.g = g;
 				activeMin.micros = msGlobals.ggCurrentMicros;
 
-				//fillPixels(0, 3, 3);
+				//fillLEDs(0, 3, 3);
 			}
 			//else if (!firedPredictedZero && (msGlobals.ggCurrentMicros > lastMin.micros + max2minDelta/2)) // ikes
 			//else if (!firedPredictedZero && (msGlobals.ggCurrentMicros > lastMin.micros + min2maxDelta/2)) // ok
@@ -263,11 +263,11 @@ public:
         frameIndex = 0;
         isFrameIndexActive = true;
 			  firedPredictedZero = true;
-			  //fillPixels(0, 5, 0);
+			  //fillLEDs(0, 5, 0);
 			}
 		}
 
-		msSystem.msLEDs.updatePixels();
+		msSystem.msLEDs.updateLEDs();
 
     return isActive;
 	}

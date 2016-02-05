@@ -37,8 +37,8 @@ void CommandInterfacePoll()
 		uint8_t cmdBufferIdx = 0;
 		uint8_t usbBuffer[CMD_TEXT_MAX_LEN];
 		
-		msSystem.msLEDs.fillPixels(20, 0, 0, 0x0f);
-   		msSystem.msLEDs.updatePixels();
+		msSystem.msLEDs.fillLEDs(20, 0, 0, 0x0f);
+   		msSystem.msLEDs.updateLEDs();
 		delay(1);
 
 		while(Serial.available() && cmdBufferIdx < CMD_TEXT_MAX_LEN-1) 
@@ -164,7 +164,7 @@ void CommandInterfacePoll()
 			Serial.print((const char *)usbBuffer);
 			Serial.println("\"");
 		}
-		msSystem.msLEDs.fillPixels(0, 20, 0, 0x0f);
-   		msSystem.msLEDs.updatePixels();
+		msSystem.msLEDs.fillLEDs(0, 20, 0, 0x0f);
+   		msSystem.msLEDs.updateLEDs();
 	}
 }
