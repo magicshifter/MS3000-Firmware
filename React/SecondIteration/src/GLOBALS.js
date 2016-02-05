@@ -37,7 +37,7 @@ export const colorList = [
   {r: 255, g: 255, b: 255, a: 255},
 ];
 
-export const menuTextColor = materialColors['white'];
+export const menuTextColor = materialColors['black'];
 
 export const currentColor = materialColors[currentColorName];
 
