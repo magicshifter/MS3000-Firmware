@@ -5,6 +5,8 @@ import {actions} from 'redux/modules/layout';
 import Header from './Header';
 import Sidebar from './Sidebar';
 
+import PixelEditor from 'components/PixelEditor/PixelEditor';
+
 import 'styles/core.scss';
 
 import classes from './CoreLayout.scss';
@@ -32,14 +34,15 @@ class CoreLayout extends Component {
   }
 
   render() {
-    const {children, main, sidebar, footer, sidebarMenu, width} = this.props;
+    const {children, sidebar, footer, sidebarMenu, width} = this.props;
 
     return (
       <div className={classes['container']}>
         <Header />
         <div className={classes['view']}>
           <div className={classes['content']}>
-            {main || children}
+            <PixelEditor />
+            {children}
           </div>
           <Sidebar
             menu={sidebarMenu}

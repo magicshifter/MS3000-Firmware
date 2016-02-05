@@ -5,7 +5,6 @@ import CoreLayout from 'layouts/CoreLayout';
 
 import AboutView from 'views/AboutView/AboutView';
 
-import ImageView from 'views/ImageView/ImageView';
 import ImageSidebarControls from 'views/ImageView/Sidebar/Controls';
 import ImageSidebarImages from 'views/ImageView/Sidebar/Images';
 import ImageSidebarText from 'views/ImageView/Sidebar/Text';
@@ -18,7 +17,6 @@ import SettingsView from 'views/SettingsView/SettingsView';
 import NotFoundView from 'views/NotFoundView/NotFoundView';
 
 const components = {
-  main: ImageView,
   sidebarMenu,
   footer: sidebarFooter,
 };
