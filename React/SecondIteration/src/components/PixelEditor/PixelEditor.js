@@ -4,11 +4,12 @@ import {connect} from 'react-redux';
 import {actions} from 'redux/modules/pixels';
 
 import {pixelsType, layoutType, colorType} from 'utils/propTypes';
-import {rgba_toString} from 'utils/colors';
 import {getPixelId, makePixelsArray} from 'utils/pixels';
 import {multimax} from 'utils/math';
 
-import classes from './ImageView.scss';
+import Pixel from 'components/PixelEditor/Pixel';
+
+import classes from './PixelEditor.scss';
 
 const mapStateToProps =
   state => {
@@ -23,9 +24,8 @@ const mapStateToProps =
     };
   };
 
-export class ImageView extends Component {
+export class PixelEditor extends Component {
   static propTypes = {
-    pixelClick: PropTypes.func.isRequired,
     pixels: pixelsType.isRequired,
     rows: PropTypes.number.isRequired,
     color: colorType.isRequired,
@@ -37,40 +37,14 @@ export class ImageView extends Component {
   constructor(props) {
     super(props);
 
-    this.onMouseOver = this.onMouseOver.bind(this);
+    this.defaultStyle = {
+      table: {},
+      tr: {},
+    };
   }
 
-  onMouseOver(e, pixel) {
-    const {pixelClick, color} = this.props;
-    if (e.buttons === 1) {
-      pixelClick({pixel, color});
-    }
-  }
-
-  renderPixel(column, row, pxSize) {
-    const {totalColumns, visibleColumns, pixels, pixelClick, color} = this.props;
-
-    const pixelId = getPixelId(totalColumns, column, row);
-    const pixel = pixels[pixelId];
-
-    return (
-      column < visibleColumns &&
-      <td
-        className={classes['pixel']}
-        key={`r-${row + 1}-c-${column + 1}`}
-        onClick={() => pixelClick({pixel, color})}
-        onMouseOver={e => this.onMouseOver(e, pixel)}
-        style={{
-          width: pxSize,
-          height: pxSize,
-          backgroundColor: rgba_toString(pixel.color),
-        }}
-      ></td>
-    );
-  }
-
-  renderPixels() {
-    const {layout, rows, totalColumns, visibleColumns} = this.props;
+  render() {
+    const {layout, rows, totalColumns, visibleColumns, pixels} = this.props;
 
     const widthMargin = layout.width * 0.2;
     const heightMargin = layout.height * 0.2;
@@ -90,32 +64,9 @@ export class ImageView extends Component {
       columnArray.push(i);
     }
 
-    const style = {
-      tr: {
-        height: pxSize,
-      },
-    };
+    const style = this.defaultStyle;
 
-    return rowArray.map(
-      row => (
-        <tr
-          key={`r-${row + 1}`}
-          style={style.tr}
-        >
-          {columnArray.map(column => this.renderPixel(column, row, pxSize))}
-        </tr>
-      )
-    );
-  }
-
-  render() {
-    const {
-      layout, // layout state object
-    } = this.props;
-
-    const style = {
-      table: {},
-    };
+    style.tr.height = pxSize;
 
     if (layout.width < 500) {
       style.table = {
@@ -131,7 +82,30 @@ export class ImageView extends Component {
           style={style.table}
         >
           <tbody>
-            {this.renderPixels()}
+            {rowArray.map(
+              row => (
+                <tr
+                  key={`r-${row + 1}`}
+                  style={style.tr}
+                >
+                  {columnArray.map(
+                    column => {
+                      const pixelId = getPixelId(totalColumns, column, row);
+                      const pixel = pixels[pixelId];
+                      if (column < visibleColumns) {
+                        return (
+                          <Pixel
+                            key={`r-${row + 1}-c-${column + 1}`}
+                            pixel={pixel}
+                            size={pxSize}
+                          />
+                        );
+                      }
+                    }
+                  )}
+                </tr>
+              )
+            )}
           </tbody>
         </table>
       </div>
@@ -139,4 +113,4 @@ export class ImageView extends Component {
   }
 }
 
-export default connect(mapStateToProps, actions)(ImageView);
+export default connect(mapStateToProps, actions)(PixelEditor);

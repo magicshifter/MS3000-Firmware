@@ -14,6 +14,8 @@ export const visibleColumns = 16;
 
 export const fontSize = 15;
 
+export const zoom = 1;
+
 export const links = [
   {to: '/', text: 'paint'},
   {to: '/about', text: 'about'},
@@ -37,7 +39,7 @@ export const colorList = [
   {r: 255, g: 255, b: 255, a: 255},
 ];
 
-export const menuTextColor = materialColors['white'];
+export const menuTextColor = materialColors['black'];
 
 export const currentColor = materialColors[currentColorName];
 

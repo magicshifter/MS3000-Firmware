@@ -1,12 +1,10 @@
 .container {
   text-align: left;
-}
-
-.view {
-  margin: .75em 0 .75em 1em;
-  display: inline-block;
+  height: 100%;
+  position: fixed;
+  width: 100%;
 }
 
 .content {
-  float: left;
+  width: 100%;
 }
