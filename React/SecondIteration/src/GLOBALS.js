@@ -15,6 +15,8 @@ export const visibleColumns = 16;
 export const fontSize = 15;
 
 export const zoom = 1;
+export const minZoom = 0.5;
+export const maxZoom = 3;
 
 export const links = [
   {to: '/', text: 'paint'},
