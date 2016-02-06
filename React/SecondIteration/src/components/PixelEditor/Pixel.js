@@ -49,16 +49,18 @@ export class Pixel extends Component {
   render() {
     const {pixel, pixelClick, color, size} = this.props;
 
+    const style = {
+      backgroundColor: rgba_toString(pixel.color),
+      width: size,
+      height: size,
+    };
+
     return (
       <td
         className={classes['container']}
         onClick={() => pixelClick({pixel, color})}
         onMouseOver={e => this.onMouseOver({e, pixel})}
-        style={{
-          width: size,
-          height: size,
-          backgroundColor: rgba_toString(pixel.color),
-        }}
+        style={style}
       ></td>
     );
   }
