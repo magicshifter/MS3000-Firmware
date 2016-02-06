@@ -8,10 +8,10 @@ private:
 
 public:
   const int maxModes = 5;
-  char *modeNames[5]= {"Magic", "Remote", "RGB", "SysVals",  "Compass"};
+  const char *modeNames[5]= {"Magic", "Remote", "RGB", "SysVals",  "Compass"};
 
 
-  void setText(  char *label)
+  void setText(  const char *label)
   {
     MSColor aRED = {0xff,0x00,0x00};
     MSColor aWhile = {0xFF,0xFF,0xFF};
@@ -21,7 +21,7 @@ public:
     
     tPos.x = 0; tPos.y = 0;
     msGlobals.tBitmap6x8.color = aWhile;
-    msMagicShakeText.plotTextString( label, msGlobals.tBitmap6x8, tPos);
+    msMagicShakeText.plotTextString( (char *)label, msGlobals.tBitmap6x8, tPos);
 
     shakeSync.setFrames(msMagicShakeText.getWidth() * FRAME_MULTIPLY);
   }
