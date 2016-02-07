@@ -21,7 +21,6 @@ class CoreLayout extends Component {
   static propTypes = {
     main: PropTypes.element,
     sidebar: PropTypes.element,
-    sidebarMenu: PropTypes.element,
     footer: PropTypes.element,
     width: PropTypes.number.isRequired,
     children: PropTypes.element,
@@ -37,7 +36,7 @@ class CoreLayout extends Component {
   }
 
   render() {
-    const {children, sidebar, footer, sidebarMenu, width} = this.props;
+    const {children, sidebar, footer, width} = this.props;
 
     return (
       <div className={classes['container']}>
@@ -48,7 +47,6 @@ class CoreLayout extends Component {
             {children}
           </div>
           <Sidebar
-            menu={sidebarMenu}
             main={sidebar}
             footer={footer}
             width={width}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, IndexRoute, Redirect } from 'react-router';
+import {Route, IndexRoute, Redirect} from 'react-router';
 
 import CoreLayout from 'layouts/CoreLayout';
 
@@ -10,15 +10,14 @@ import ImageSidebarImages from 'views/ImageView/Sidebar/Images';
 import ImageSidebarText from 'views/ImageView/Sidebar/Text';
 import ImageSidebarFilters from 'views/ImageView/Sidebar/Filters';
 import ImageSidebarSettings from 'views/ImageView/Sidebar/Settings';
-import sidebarMenu from 'views/ImageView/Sidebar/sidebarMenu';
-import sidebarFooter from 'views/ImageView/Sidebar/Footer';
+import SidebarMenu from 'views/ImageView/Sidebar/SidebarMenu';
+import SidebarFooter from 'views/ImageView/Sidebar/Footer';
 
 import SettingsView from 'views/SettingsView/SettingsView';
 import NotFoundView from 'views/NotFoundView/NotFoundView';
 
 const components = {
-  sidebarMenu,
-  footer: sidebarFooter,
+  footer: SidebarFooter,
 };
 
 export default (
