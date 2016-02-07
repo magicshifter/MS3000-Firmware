@@ -531,7 +531,7 @@ void showBatteryStatus(bool shouldFadeIn)
     logln(String("\r\nMagicShifter 3000 OS V0.30"));
 
     // ggUploadFile is prepared for display as necessary ..
-    msEEPROMs.loadString(msGlobals.ggUploadFileName, MAX_FILENAME_LENGTH);
+    //msEEPROMs.loadString(msGlobals.ggUploadFileName, MAX_FILENAME_LENGTH);
 
     // wake up filesystem
     log("SPIFFS:");
