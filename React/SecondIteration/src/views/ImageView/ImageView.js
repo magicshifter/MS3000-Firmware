@@ -13,6 +13,7 @@ import classes from './ImageView.scss';
 const mapStateToProps =
   state => {
     const {imageView, pixels, layout} = state;
+
     return {
       pixels: makePixelsArray(pixels),
       color: imageView.get('color'),
