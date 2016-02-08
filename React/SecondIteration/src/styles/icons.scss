@@ -1,46 +1,77 @@
-@charset 'UTF-8';
+$i-color: "\63";
+$i-effects: "\65";
+$i-font: "\66";
+$i-image: "\62";
+$i-info: "\69";
+$i-settings: "\73";
+$i-upload: "\75";
+$i-zoom_in: "\2b";
+$i-zoom_out: "\2d";
 
 @font-face {
-  font-family: 'ms-icons';
-  font-style: normal;
+  font-family: 'MS3000';
   font-weight: normal;
-  src: url('../static/font/ms-icons.woff') format('woff');
+  font-style: normal;
+  src: url('/font/ms-ico.woff?pt8xw1') format('woff');
 }
 
-[class^='']:before,
-[class*=' ']:before {
-  font-family: 'ms-icons';
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
+i.icon {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'MS3000';
   font-style: normal;
-  font-variant: normal;
   font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
   line-height: 1;
   speak: none;
-  text-transform: none;
-  vertical-align: text-bottom;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.i-colors:before {
-  content: '\69';
+.color {
+    &:before {
+        content: $i-color;
+    }
 }
-
-.i-plus:before {
-  content: '\6d';
+.effects {
+    &:before {
+        content: $i-effects;
+    }
 }
-
-.i-minus:before {
-  content: '\6e';
+.font {
+    &:before {
+        content: $i-font;
+    }
 }
-
-.i-upload:before {
-  content: '\6f';
+.image {
+    &:before {
+        content: $i-image;
+    }
 }
-
-.i-load:before {
-  content: '\70';
+.info {
+    &:before {
+        content: $i-info;
+    }
 }
-
-.i-settings:before {
-  content: '\6c';
+.settings {
+    &:before {
+        content: $i-settings;
+    }
+}
+.upload {
+    &:before {
+        content: $i-upload;
+    }
+}
+.zoom_in {
+    &:before {
+        content: $i-zoom_in;
+    }
+}
+.zoom_out {
+    &:before {
+        content: $i-zoom_out;
+    }
 }
