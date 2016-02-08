@@ -97,7 +97,7 @@ public:
   long ggTimePostedAt = 0;
   bool ggDebugSerial = true;
   
-  struct APInfo ggAPInfo;
+  struct APConfig ggAPConfig;
 
   MSBitmap tBitmap4x5;
   MSBitmap tBitmap6x8;

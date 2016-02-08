@@ -20,7 +20,6 @@ struct APInfo
     }
 };
 
-
 struct ServerConfig
 {
   char hostname[48];
