@@ -1,0 +1,37 @@
+.container {
+  position: absolute;
+  top: 10vh;
+  left: 0;
+  padding: 0 50px 0;
+  height: 90vh;
+  background-color: #fff;
+
+  nav {
+    display: inline-block;
+    font-size: .8em;
+    margin: 0 0 .2em;
+  }
+
+  li {
+    margin: 20px 0;
+  }
+
+  a {
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  i {
+    background-color: #353535;
+    border-radius: 100%;
+    color: #1cfffa;
+    font-size: 30px;
+    padding: 5px;
+    float: left;
+  }
+
+  span {
+    float: left;
+    margin: 11px 0 0 5px;
+  }
+}
