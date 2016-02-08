@@ -93,7 +93,7 @@ public:
   // make it larger to be on the safe side when base64 decoding
   byte ggRGBLEDBuf[RGB_BUFFER_SIZE + 4];
   int ggShouldAutoLoad = 0; // is there a new file to activate?
-  char ggUploadFileName[MAX_FILENAME_LENGTH + 1];
+  char ggUploadFileName[MAX_FILENAME_LENGTH + 1] = DEFAULT_SHAKE_IMAGE;
   File ggUploadFile;
   long ggTime = 76500000;
   long ggTimePostedAt = 0;
