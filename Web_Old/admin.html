@@ -1,10 +1,35 @@
 <!DOCTYPE html>
 <html>
 <body>
-  <form enctype="multipart/form-data" action="upload" method="post">
     <a href="download?file=MagicShifter.html#settings">MagicShifter.html Jaschas Interface</a><br>
+  <a href="/">MagicShifter Web Interface</a><br>
+
+  <form enctype="multipart/form-data" action="upload" method="post">
     <input type="file" id="fileUpload" name="fileUpload" />
     <input type="submit" value="submit edit" />
+  </form>
+
+  <a href="settings/ap">settings/ap</a><br>
+  <form enctype="multipart/form-data" action="settings/ap" method="post">
+    ssid <input type="text" name="ssid" />
+    pwd <input type="text" name="pwd" />
+    <input type="submit" value="set AP config" />
+  </form>
+  
+  <a href="settings/wifi/list">settings/wifi/list</a><br>
+  <form enctype="multipart/form-data" action="settings/wifi/add" method="get">
+    ssid <input type="text" name="ssid" />
+    pwd <input type="text" name="pwd" />
+    <input type="submit" value="add AP to connect to" />
+  </form>
+
+  <a href="settings/syslog">settings/syslog</a><br>
+  <form enctype="multipart/form-data" action="settings/syslog" method="post">
+    host <input type="text" name="host" />
+    port <input type="text" name="port" />
+    <input type="submit" value="set syslog config" />
+  </form>
+
     <br>
     <a href="list?dir=">list files</a><br>
     <br>
@@ -16,6 +41,7 @@
     <a href="settings/server">settings/server</a><br>
     <a href="settings/wifi/list">settings/wifi/list</a><br>
     <a href="settings/wifi/prefered">settings/wifi/prefered</a><br>
+    <a href="settings/syslog">settings/syslog</a><br>
     <br>
     <a href="/led?l=AP////8=">
       set led max</a><br>
@@ -50,6 +76,5 @@
       clear leds</a>
 
     </p>
-  </form>
 </body>
 </html>
