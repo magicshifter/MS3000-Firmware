@@ -45,7 +45,7 @@ public:
   String getFileNameAtIndex(int fileIndex, int &maxFiles)
   {
     Dir POVDir;
-    msSystem.log("getFileNameAtIndex:"); msSystem.logln(String(fileIndex));
+    msSystem.slog("getFileNameAtIndex:"); msSystem.slogln(String(fileIndex));
     POVDir = SPIFFS.openDir("");
 
     int cnt = 0;
@@ -77,7 +77,7 @@ public:
   // load a magic Shake file for display
   void loadShakeFile(const char *filename)
   {
-    msSystem.log("loadShakeFile:"); msSystem.logln(filename);
+    msSystem.slog("loadShakeFile:"); msSystem.slogln(filename);
 
     lLocalImage.close();
     lLocalImage.LoadFile(filename);
@@ -105,7 +105,7 @@ public:
     // prime numFiles at Start
     dirCursor = 999999;// !J! grr ..
     getFileNameAtIndex(dirCursor, numFiles);
-    msSystem.log("numFiles:"); msSystem.logln(String(numFiles));
+    msSystem.slog("numFiles:"); msSystem.slogln(String(numFiles));
     dirCursor = 0;// !J! grr ..
 
 
@@ -120,7 +120,7 @@ public:
 
   void reset()
   {
-    msSystem.logln("MagicShake reset.");
+    msSystem.slogln("MagicShake reset.");
     stop();
     start();
   }
@@ -169,10 +169,10 @@ public:
       dirCursor--;
       if (dirCursor < 0) dirCursor = numFiles - 1; // !J!
 
-      // msSystem.log("B cursor:"); msSystem.logln(String(dirCursor));
+      // msSystem.slog("B cursor:"); msSystem.slogln(String(dirCursor));
 
       String toLoad = getFileNameAtIndex(dirCursor, numFiles);
-      // msSystem.log("Would DISP:"); msSystem.logln(toLoad);
+      // msSystem.slog("Would DISP:"); msSystem.slogln(toLoad);
 
       // out of bounds
       if (toLoad.length() == 0) { 
@@ -187,7 +187,7 @@ public:
       }
     }
 
-    // msSystem.log("numFiles:"); msSystem.logln(String(numFiles));
+    // msSystem.slog("numFiles:"); msSystem.slogln(String(numFiles));
 
      if (lPOVMode.step()) {
         return true;

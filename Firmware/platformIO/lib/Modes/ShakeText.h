@@ -35,21 +35,21 @@ public:
 
 	void dumpHeader(const MSBitmapHeader& header)
 	{
-		msSystem.logln("Header dump:");
-		msSystem.log("fileSize:"); msSystem.logln(String(header.fileSize));
-		msSystem.log("pixelFormat:"); msSystem.logln(String(header.pixelFormat));
-		msSystem.log("maxFrame:"); msSystem.logln(String(header.maxFrame));
-		msSystem.log("frameWidth:"); msSystem.logln(String(header.frameWidth));
-		msSystem.log("frameHeight:"); msSystem.logln(String(header.frameHeight));
-		msSystem.log("subType:"); msSystem.logln(String(header.subType));
-		msSystem.log("firstChar:"); msSystem.logln(String(header.firstChar));
-		msSystem.log("animationDelay:"); msSystem.logln(String(header.animationDelay));
+		msSystem.slogln("Header dump:");
+		msSystem.slog("fileSize:"); msSystem.slogln(String(header.fileSize));
+		msSystem.slog("pixelFormat:"); msSystem.slogln(String(header.pixelFormat));
+		msSystem.slog("maxFrame:"); msSystem.slogln(String(header.maxFrame));
+		msSystem.slog("frameWidth:"); msSystem.slogln(String(header.frameWidth));
+		msSystem.slog("frameHeight:"); msSystem.slogln(String(header.frameHeight));
+		msSystem.slog("subType:"); msSystem.slogln(String(header.subType));
+		msSystem.slog("firstChar:"); msSystem.slogln(String(header.firstChar));
+		msSystem.slog("animationDelay:"); msSystem.slogln(String(header.animationDelay));
 	}
 
 	void init()
 	{
-		// msSystem.log("Load font 16:"); 
-		msSystem.logln(String(LoadBitmapFile("font10x16.magicFont", &font10x16)));
+		// msSystem.slog("Load font 16:"); 
+		msSystem.slogln(String(LoadBitmapFile("font10x16.magicFont", &font10x16)));
 		
 		// dumpHeader(font10x16.header);
 
@@ -95,9 +95,9 @@ public:
 		uint32_t offset = MAGIC_BITMAP_PIXEL_OFFSET + (bitPos >> 3);
 		// ReadBytes(offset, bitBuffer, 3); // this could be more efficient
 
-// msSystem.log("1Bit:offset:"); msSystem.logln(String(offset));
-// msSystem.log("1Bit:absColumn:"); msSystem.logln(String(absColumn));
-// msSystem.log("1Bit:bitPos:"); msSystem.logln(String(bitPos));
+// msSystem.slog("1Bit:offset:"); msSystem.slogln(String(offset));
+// msSystem.slog("1Bit:absColumn:"); msSystem.slogln(String(absColumn));
+// msSystem.slog("1Bit:bitPos:"); msSystem.slogln(String(bitPos));
 // dumpHeader(bitmap->header);
 
 		File lFile = bitmap->bmFile;
@@ -106,7 +106,7 @@ public:
 		lFile.read(bitBuffer, 3);
 
 // for (int x=0;x<3;x++) {
-// 	msSystem.log("xx:"); msSystem.logln(String(bitBuffer[x]));
+// 	msSystem.slog("xx:"); msSystem.slogln(String(bitBuffer[x]));
 // }
 
 		uint8_t bitMask = 1 << (bitPos & 0x07);
@@ -116,9 +116,9 @@ public:
 		uint8_t g = bitmap->color.rgb.g;
 		uint8_t b = bitmap->color.rgb.b;
 
-	// msSystem.log("r:"); msSystem.logln(String(r));
-	// msSystem.log("g:"); msSystem.logln(String(g));
-	// msSystem.log("b:"); msSystem.logln(String(b));
+	// msSystem.slog("r:"); msSystem.slogln(String(r));
+	// msSystem.slog("g:"); msSystem.slogln(String(g));
+	// msSystem.slog("b:"); msSystem.slogln(String(b));
 
 		uint8_t endIndex = ledIdx + bitmap->header.frameHeight;
 		if (endIndex > 16)

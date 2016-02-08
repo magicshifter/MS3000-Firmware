@@ -10,7 +10,7 @@ int fcount = 0;
     frequ = fcount * 1000000;
     SPI.setFrequency(frequ);
 
-    msSystem.logln(frequ);
+    msSystem.slogln(frequ);
 
     byte data[RGB_BUFFER_SIZE];
     int t0 = micros();
@@ -22,7 +22,7 @@ int fcount = 0;
     }*/
     int t1 = micros();
 
-    msSystem.logln(t1-t0);
+    msSystem.slogln(t1-t0);
     delay(100);
 
   }

@@ -22,6 +22,7 @@
 
 #include "msImage.h"
 
+#include "msSysLog.h"
 
 // forward-declared here because it is a client of msSystem ..
 void CommandInterfacePoll();
@@ -51,8 +52,8 @@ public:
   int modeMenuActivated = false;
 
 public:
-  void log(String msg) { 
-  // todo:switch log from OFF, to BANNED (MIDI), to UDP .. etc.
+  void slog(String msg) { 
+  // todo:switch slog from OFF, to BANNED (MIDI), to UDP .. etc.
     Serial.print(msg); 
     // Serial.print("UDP:");    
     // Serial.print(String(msUDP.beginPacket("192.168.1.112", 514))); // wks port for syslog
@@ -60,29 +61,29 @@ public:
     // msUDP.endPacket();
   };
 
-  void logln(String msg) { Serial.println(msg); }; 
+  void slogln(String msg) { Serial.println(msg); }; 
 
-  void log(int8_t &msg, int base) { log(String(msg)); } 
-  void log(uint16_t &msg, int base) { log(String(msg));  }
-  void log(unsigned int msg, int base) { log(String(msg)); } 
-//  void log(bool b) { if (b) log(String("true")); else log (String("false")); }
+  void slog(int8_t &msg, int base) { slog(String(msg)); } 
+  void slog(uint16_t &msg, int base) { slog(String(msg));  }
+  void slog(unsigned int msg, int base) { slog(String(msg)); } 
+//  void slog(bool b) { if (b) slog(String("true")); else slog(String("false")); }
   
-  void logln(int8_t &msg, int base) { logln(String(msg)); }
-  void logln(uint16_t &msg, int base) { logln(String(msg));  }
-  void logln(unsigned int msg, int base) { logln(String(msg));  }
-//  void logln(bool b) { if (b) logln(String("true")); else logln(String("false")); }
+  void slogln(int8_t &msg, int base) { slogln(String(msg)); }
+  void slogln(uint16_t &msg, int base) { slogln(String(msg));  }
+  void slogln(unsigned int msg, int base) { slogln(String(msg));  }
+//  void slogln(bool b) { if (b) slogln(String("true")); else slogln(String("false")); }
 
   void dumpActiveHeader(const MSBitmapHeader& header)
   {
-    logln("Header dump:");
-    log("fileSize:"); logln(String(header.fileSize));
-    log("pixelFormat:"); logln(String(header.pixelFormat));
-    log("maxFrame:"); logln(String(header.maxFrame));
-    log("frameWidth:"); logln(String(header.frameWidth));
-    log("frameHeight:"); logln(String(header.frameHeight));
-    log("subType:"); logln(String(header.subType));
-    log("firstChar:"); logln(String(header.firstChar));
-    log("animationDelay:"); logln(String(header.animationDelay));
+    slogln("Header dump:");
+    slog("fileSize:"); slogln(String(header.fileSize));
+    slog("pixelFormat:"); slogln(String(header.pixelFormat));
+    slog("maxFrame:"); slogln(String(header.maxFrame));
+    slog("frameWidth:"); slogln(String(header.frameWidth));
+    slog("frameHeight:"); slogln(String(header.frameHeight));
+    slog("subType:"); slogln(String(header.subType));
+    slog("firstChar:"); slogln(String(header.firstChar));
+    slog("animationDelay:"); slogln(String(header.animationDelay));
   }
 
   void TEST_SPIFFS_bug()
@@ -93,105 +94,105 @@ public:
     uint8_t readBuffer[] = {0,0,0,0};
     //File file = SPIFFS.open((char *)debugPath.c_str(), "w");
     
-    log("openin for w: ");
-    logln(String(debugPath));
+    slog("openin for w: ");
+    slogln(String(debugPath));
     
     File file = SPIFFS.open(debugPath, "w");
 
-    log("opended for w: ");
-    logln(String((bool)file));
+    slog("opended for w: ");
+    slogln(String((bool)file));
 
-    log("writin: ");
-    logln(String(testVals[1]));
+    slog("writin: ");
+    slogln(String(testVals[1]));
 
     file.write((uint8_t *)testVals, sizeof testVals);
     file.close();
 
-    log("openin for r: ");
-    logln(String(debugPath));
+    slog("openin for r: ");
+    slogln(String(debugPath));
     
     File fileR = SPIFFS.open(debugPath, "r");
 
-    log("opended for r: ");
-    logln(String((bool)fileR));
+    slog("opended for r: ");
+    slogln(String((bool)fileR));
 
-    logln("readin: ");
+    slogln("readin: ");
 
     fileR.read((uint8_t *)readBuffer, sizeof readBuffer);
     fileR.close();
 
-    log("readback: ");
-    logln(String(readBuffer[1]));
+    slog("readback: ");
+    slogln(String(readBuffer[1]));
   };
 
-  void logSysInfo()
+  void slogSysInfo()
   {
-    logln("System config:");
-    log("Vcc: ");
-    logln(String(ESP.getVcc()));
-    log("Free heap: ");
-    logln(String(ESP.getFreeHeap()));
-    log("Chip ID: ");
-    logln(String(ESP.getChipId()));
-    log("SDK version: ");
-    logln(String(ESP.getSdkVersion()));
-    log("Boot version: ");
-    logln(String(ESP.getBootVersion()));
-    log("Boot mode: ");
-    logln(String(ESP.getBootMode()));
-    log("CPU freq.: ");
-    logln(String(ESP.getCpuFreqMHz()));
-    log("Flash chip ID: ");
-    logln(String(ESP.getFlashChipId(), HEX));
+    slogln("System config:");
+    slog("Vcc: ");
+    slogln(String(ESP.getVcc()));
+    slog("Free heap: ");
+    slogln(String(ESP.getFreeHeap()));
+    slog("Chip ID: ");
+    slogln(String(ESP.getChipId()));
+    slog("SDK version: ");
+    slogln(String(ESP.getSdkVersion()));
+    slog("Boot version: ");
+    slogln(String(ESP.getBootVersion()));
+    slog("Boot mode: ");
+    slogln(String(ESP.getBootMode()));
+    slog("CPU freq.: ");
+    slogln(String(ESP.getCpuFreqMHz()));
+    slog("Flash chip ID: ");
+    slogln(String(ESP.getFlashChipId(), HEX));
     // // gets the actual chip size based on the flash id
-    log("Flash real size: ");
-    logln(String(ESP.getFlashChipRealSize()));
-    log("Flash real size (method b): ");
-    logln(String(ESP.getFlashChipSizeByChipId()));
+    slog("Flash real size: ");
+    slogln(String(ESP.getFlashChipRealSize()));
+    slog("Flash real size (method b): ");
+    slogln(String(ESP.getFlashChipSizeByChipId()));
     // // gets the size of the flash as set by the compiler
-    log("flash configured size: ");
-    logln(String(ESP.getFlashChipSize()));
+    slog("flash configured size: ");
+    slogln(String(ESP.getFlashChipSize()));
     // if (ESP.getFlashChipSize() != ESP.getFlashChipRealSize())
     // {
-    //   logln(String("WARNING: configured flash size does not match real flash size!"));
+    //   slogln(String("WARNING: configured flash size does not match real flash size!"));
     // }
-    log("flash speed: ");
-    logln(String(ESP.getFlashChipSpeed()));
-    log("flash mode: ");
-    logln(String(ESP.getFlashChipMode()));
-    log("Sketch size: ");
-    logln(String(ESP.getSketchSize()));
-    log("Free sketch space: ");
-    logln(String(ESP.getFreeSketchSpace()));
+    slog("flash speed: ");
+    slogln(String(ESP.getFlashChipSpeed()));
+    slog("flash mode: ");
+    slogln(String(ESP.getFlashChipMode()));
+    slog("Sketch size: ");
+    slogln(String(ESP.getSketchSize()));
+    slog("Free sketch space: ");
+    slogln(String(ESP.getFreeSketchSpace()));
 
-    log("uploadfile: "); logln(msGlobals.ggUploadFileName);
+    slog("uploadfile: "); slogln(msGlobals.ggUploadFileName);
 
 
-    // log("Reset info: ");
-    // logln(String(ESP.getResetInfo()));
-    //log("FS mount: ");
-    //logln(String(FS.mount() ? "OK" : "ERROR!"));
+    // slog("Reset info: ");
+    // slogln(String(ESP.getResetInfo()));
+    //slog("FS mount: ");
+    //slogln(String(FS.mount() ? "OK" : "ERROR!"));
     
 #if 0
-    log(F("Heap: ")); 
-    logln(String(system_get_free_heap_size()));
-    log(F("Boot Vers: ")); 
-    logln(String(system_get_boot_version()));
-    log(F("CPU: ")); 
-    logln(String(system_get_cpu_freq()));
-    log(F("SDK: ")); 
-    logln(String(system_get_sdk_version()));
-    log(F("Chip ID: ")); 
-    logln(String(system_get_chip_id()));
-    log(F("Flash ID: ")); 
-    logln(String(spi_flash_get_id()));
-    log(F("Vcc: ")); 
-    logln(String(readvdd33()));
+    slog(F("Heap: ")); 
+    slogln(String(system_get_free_heap_size()));
+    slog(F("Boot Vers: ")); 
+    slogln(String(system_get_boot_version()));
+    slog(F("CPU: ")); 
+    slogln(String(system_get_cpu_freq()));
+    slog(F("SDK: ")); 
+    slogln(String(system_get_sdk_version()));
+    slog(F("Chip ID: ")); 
+    slogln(String(system_get_chip_id()));
+    slog(F("Flash ID: ")); 
+    slogln(String(spi_flash_get_id()));
+    slog(F("Vcc: ")); 
+    slogln(String(readvdd33()));
 #endif
 
     // chercking crashes the ESP so its disabled atm
-    //log("FS check: ");
-    //logln(String(FS.check() ? "OK" : "ERROR!"));
+    //slog("FS check: ");
+    //slogln(String(FS.check() ? "OK" : "ERROR!"));
 
   };
 
@@ -332,7 +333,7 @@ void brightnessControl()
       (msButtons.msBtnPwrPressTime > BRIGHTNESS_CONTROL_TIME) )
   {
 
-logln("brightnesscontrol EVENT");
+slogln("brightnesscontrol EVENT");
 
     msGlobals.ggBrightness = 255;
     while (skip)
@@ -528,18 +529,18 @@ void showBatteryStatus(bool shouldFadeIn)
     // #endif
     EEPROM.begin(512);
 
-    logln(String("\r\nMagicShifter 3000 OS V0.30"));
+    slogln(String("\r\nMagicShifter 3000 OS V0.30"));
 
     // ggUploadFile is prepared for display as necessary ..
     //msEEPROMs.loadString(msGlobals.ggUploadFileName, MAX_FILENAME_LENGTH);
 
     // wake up filesystem
-    log("SPIFFS:");
+    slog("SPIFFS:");
 
     if (SPIFFS.begin()) 
-      log("done:");
+      slog("done:");
     else
-      log("noSPIFFS:");
+      slog("noSPIFFS:");
     // !J! todo: infinite_loop()? 
     // TEST_SPIFFS_bug();
 
@@ -578,7 +579,7 @@ void showBatteryStatus(bool shouldFadeIn)
     MagicShifterImage::LoadBitmapBuffer("font7x12.magicFont", &msGlobals.tBitmap7x12);
     MagicShifterImage::LoadBitmapBuffer("font10x16.magicFont", &msGlobals.tBitmap10x16);
 
-    logSysInfo();
+    slogSysInfo();
 
   }
 
@@ -610,7 +611,7 @@ void showBatteryStatus(bool shouldFadeIn)
       //   msGlobals.ggCurrentMode=0;
       // msButtons.msBtnBLongHit = false;
       // modeAnimation();
-      // log("Changed +Mode:"); logln(String(msGlobals.ggCurrentMode));
+      // slog("Changed +Mode:"); slogln(String(msGlobals.ggCurrentMode));
       modeMenuActivated = true;
     }
 
@@ -621,13 +622,13 @@ void showBatteryStatus(bool shouldFadeIn)
       //   msGlobals.ggCurrentMode = (NUM_MS_MODES - 1);
       // msButtons.msBtnALongHit = false;
       // modeAnimation();
-      // log("Changed -Mode:"); logln(String(msGlobals.ggCurrentMode));
+      // slog("Changed -Mode:"); slogln(String(msGlobals.ggCurrentMode));
       modeMenuActivated = true;
     }
 
     if (msButtons.msBtnPwrDoubleHit)
     {
-      logln("Double Power HIT!");
+      slogln("Double Power HIT!");
       //brightnessControl(); // brightnessControl will not show up because it checks the button being pressed inside
       // !w! double power hit does not conflict with brightness menu for me 
       msButtons.msBtnPwrDoubleHit = false;
@@ -682,15 +683,15 @@ void showBatteryStatus(bool shouldFadeIn)
   }
 
   void hexDump(int len, byte *buf, const char*label) {
-    log(label); 
-    log(String(len)); 
-    log("/");
+    slog(label); 
+    slog(String(len)); 
+    slog("/");
 
     for (int x=0;x<len;x++) {
-      if (x % 4 == 0) logln("");
-      log(":"); Serial.print(buf[x], HEX);; 
+      if (x % 4 == 0) slogln("");
+      slog(":"); Serial.print(buf[x], HEX);; 
     }
-    logln("<<EOF");
+    slogln("<<EOF");
   }
 
 };

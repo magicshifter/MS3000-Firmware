@@ -58,7 +58,7 @@ public:
       msSystem.msButtons.msBtnAHit = false; // !J! todo: button callbacks
       sysCursor++;
       if (sysCursor > 2) sysCursor = 0;
-      msSystem.log("cursor:"); msSystem.logln(String(sysCursor));
+      msSystem.slog("cursor:"); msSystem.slogln(String(sysCursor));
 
       if (sysCursor==0){
         setText((char *)String("IP").c_str(), (char *)WiFi.localIP().toString().c_str());

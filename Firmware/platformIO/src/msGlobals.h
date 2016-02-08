@@ -1,9 +1,7 @@
 #ifndef _MSGLOBALS_H
 #define _MSGLOBALS_H
 
-#include <vector>
-
-
+#include "msAPInfo.h"
 #include "StackClass.h"
 
 #define DEFAULT_FACTORY_MODE 0
@@ -97,6 +95,10 @@ public:
   File ggUploadFile;
   long ggTime = 76500000;
   long ggTimePostedAt = 0;
+  bool ggDebugSerial = true;
+  
+  struct APInfo ggAPInfo;
+
   MSBitmap tBitmap4x5;
   MSBitmap tBitmap6x8;
   MSBitmap tBitmap10x16;
