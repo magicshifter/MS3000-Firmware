@@ -6,16 +6,18 @@
 class SettingsManager
 {
 private:
-  const String apConfigPath = "settings/ap.bin";
-  const String apServerConfigPath = "settings/server1.bin";
-  const String apListConfigPath = "settings/aplist1.bin";
-  const String preferredAPConfigPath = "settings/preferredap.bin";
-
   // used in resetAPList & getNextAP
   int apListIndex = -1;
   File apListFile;
 
 public:
+  const String apConfigPath = "settings/ap.bin";
+  const String apServerConfigPath = "settings/server1.bin";
+  const String apListConfigPath = "settings/aplist1.bin";
+  const String apSysLogConfigPath = "settings/syslog.bin";
+  const String preferredAPConfigPath = "settings/preferredap.bin";
+
+
   bool getServerConfig(struct ServerConfig *config)
   {
     
@@ -33,9 +35,6 @@ public:
       msSystem.slogln((char * )path.c_str());
     }
 
-    l_safeStrncpy(config->hostname, "magicshifter", sizeof(config->hostname));
-    config->port = 80;
-    
     return false;
   }
 
@@ -43,6 +42,37 @@ public:
   {
     
     String path = apServerConfigPath;
+    File file = SPIFFS.open((char *)path.c_str(), "w");
+    file.write((uint8_t *)config, sizeof(*config));
+    
+    file.close();
+  
+  }
+
+  bool getSyslogConfig(struct ServerConfig *config)
+  {
+    
+    String path = apSysLogConfigPath;
+    if (SPIFFS.exists((char *)path.c_str()))
+    {
+      File file = SPIFFS.open((char *)path.c_str(), "r");
+      file.read((uint8_t *)config, sizeof(*config));
+      file.close();
+      return true;
+    }
+    else 
+    {
+      msSystem.slog("webserver: no syslog config file? ");
+      msSystem.slogln((char * )path.c_str());
+    }
+
+    return false;
+  }
+
+  void setSyslogConfig(struct ServerConfig *config)
+  {
+    
+    String path = apSysLogConfigPath;
     File file = SPIFFS.open((char *)path.c_str(), "w");
     file.write((uint8_t *)config, sizeof(*config));
     
@@ -396,6 +426,31 @@ bool parseAPInfoFromServerArgs(APInfo &apInfo)
   return success;
 }
 
+bool parseSysLogInfoFromServerArgs(ServerConfig &sysLogHost)
+{
+  bool success = true;
+  for (int i = 0; i < msSystem.msESPServer.args(); i++)
+  {
+    msSystem.slogln("argName: ");
+    msSystem.slogln(msSystem.msESPServer.argName(i));
+
+    msSystem.slogln("arg: ");
+    msSystem.slogln(msSystem.msESPServer.arg(i));
+
+    if (strcmp(msSystem.msESPServer.argName(i).c_str(), "host") == 0)
+    {
+      l_safeStrncpy(sysLogHost.hostname, msSystem.msESPServer.arg(i).c_str(), sizeof(sysLogHost.hostname));
+    }
+    else
+    {
+      msSystem.slogln("arg is not known!");
+      success = false;
+    }
+  }
+  return success;
+}
+
+
 void handleGetSettings(void)
 {
   msSystem.slogln("handleGetSettings");
@@ -534,6 +589,51 @@ void handlePOSTAPSettings(void)
     msSystem.msESPServer.send ( 500, "text/plain", "argument missing!");
   }
 }
+
+
+void handleGETSysLogHostSettings(void)
+{
+  msSystem.slogln("handleGETSysLogHostSettings");
+
+  ServerConfig sysLogInfo;
+  Settings.getSyslogConfig(&sysLogInfo);
+
+  String response = "{";
+    response += "\"syslog_host\":";
+    response += "\"";
+    response += sysLogInfo.hostname;
+    response += "\"";
+  response += "}";
+  msSystem.msESPServer.send(200, "text/plain", response);
+}
+
+void handlePOSTSysLogSettings(void)
+{
+  msSystem.slogln("handlePOSTSysLogSettings");
+
+  if (msSystem.msESPServer.args() >= 2)
+  {
+    // load old settings
+    ServerConfig sysLogInfo;
+    Settings.getSyslogConfig(&sysLogInfo);
+
+    if (parseSysLogInfoFromServerArgs(sysLogInfo))
+    {
+      msSystem.slogln("saving setSysLogConfig");
+      Settings.setSyslogConfig(&sysLogInfo);
+      msSystem.msESPServer.send (200, "text/plain", "OK");
+    }
+    else
+    {
+      msSystem.msESPServer.send(500, "text/plain", "unknown args!");
+    }
+  }
+  else
+  {
+    msSystem.msESPServer.send ( 500, "text/plain", "argument missing!");
+  }
+}
+
 
 
 void handleGETPreferredAPSettings(void)
