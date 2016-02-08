@@ -162,8 +162,10 @@ bool AutoConnect()
   msSystem.slogln("wifi: fallback to standalone access point.");
   // WiFi.disconnect(false);
 
-  Settings.getAPConfig(&msGlobals.ggAPConfig.apInfo);
-  if (TrySoftAP(msGlobals.ggAPConfig.apInfo))
+  APInfo softAPInfo;
+  
+  Settings.getAPConfig(&softAPInfo);
+  if (TrySoftAP(softAPInfo))
   {
     msGlobals.ggModeAP = true;
     return true;
