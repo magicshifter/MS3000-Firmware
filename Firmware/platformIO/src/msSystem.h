@@ -590,10 +590,9 @@ void showBatteryStatus(bool shouldFadeIn)
   void loop()
   {
 
+    displayButtons();
     msButtons.step();
     msSensor.step();
-
-    displayButtons();
 
     if (msButtons.msBtnActive) {
       msPowerCountDown = msGlobals.ggCurrentMicros;
