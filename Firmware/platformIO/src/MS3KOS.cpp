@@ -178,6 +178,9 @@ void loop()
     {
       Serial.print("FAULT:"); Serial.println(String(msGlobals.ggFault));
       msSystem.msLEDs.errorSwipe();
+      if (msGlobals.ggFault == FAULT_NO_ACCELEROMETER) {
+        ESP.reset();
+      }
     }
   }
 }

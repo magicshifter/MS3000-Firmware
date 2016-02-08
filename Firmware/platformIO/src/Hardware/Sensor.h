@@ -73,7 +73,7 @@ public:
 
     if (Wire.available() < bytesToRead)
     {
-      Serial.println("I2C not available. This should NEVER happen!");
+      Serial.println("Sensor Package unavailable - rebooting!!");
       msGlobals.ggFault = FAULT_NO_ACCELEROMETER;
       delay(10);
     }; //Hang out until we get the # of bytes we expect
@@ -95,7 +95,7 @@ public:
     Wire.requestFrom(MMA8452_ADDRESS, 1); //Ask for 1 byte, once done, bus is released by default
 
     if (!Wire.available()){
-      Serial.println("I2C not available. This should NEVER happen!");
+      Serial.println("Sensor Package unavailable - rebooting!!");
       msGlobals.ggFault = FAULT_NO_ACCELEROMETER;
       delay(10);
     } ; //Wait for the data to come back
@@ -175,12 +175,12 @@ public:
     bool success = false;
 
     do {
-      Serial.print("testin accel: ");
-      Serial.println(MMA8452_ADDRESS, HEX);
+      // Serial.print("testin accel: ");
+      // Serial.println(MMA8452_ADDRESS, HEX);
 
       byte c = readRegister(WHO_AM_I);  // Read WHO_AM_I register
-      Serial.print("read: ");
-      Serial.println(c, HEX);
+      // Serial.print("read: ");
+      // Serial.println(c, HEX);
 
       if (c == MMA8452_ID) // WHO_AM_I should always be 0x2A
       {

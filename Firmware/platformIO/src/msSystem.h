@@ -36,6 +36,7 @@ class MagicShifterSystem
 private:
 
 public:
+  MagicShifterSysLog msSysLog;
   // todo: protect
   MagicShifterAccelerometer msSensor;
   MagicShifterLEDs msLEDs;
@@ -43,7 +44,7 @@ public:
   MagicShifterButtons msButtons;
   MDNSResponder msDNS;
   ESP8266WebServer msESPServer;
-  WiFiUDP msUDP;
+
 
   int msFrame = 0;
   bool msSensorOK = false;
@@ -52,16 +53,12 @@ public:
   int modeMenuActivated = false;
 
 public:
-  void slog(String msg) { 
   // todo:switch slog from OFF, to BANNED (MIDI), to UDP .. etc.
-    Serial.print(msg); 
-    // Serial.print("UDP:");    
-    // Serial.print(String(msUDP.beginPacket("192.168.1.112", 514))); // wks port for syslog
-    // msUDP.print(msg);
-    // msUDP.endPacket();
-  };
 
-  void slogln(String msg) { Serial.println(msg); }; 
+  void slog(String msg) {Serial.print(msg); msSysLog.sendSysLogMsg(msg); };
+  void slogln(String msg) { Serial.println(msg); msSysLog.sendSysLogMsg(msg); }; 
+
+
 
   void slog(int8_t &msg, int base) { slog(String(msg)); } 
   void slog(uint16_t &msg, int base) { slog(String(msg));  }
@@ -511,6 +508,9 @@ void showBatteryStatus(bool shouldFadeIn)
   // gets the basic stuff set up
   void setup()
   {
+
+    msSysLog.setup();
+
      // led controllers and buffer
     msLEDs.initLEDHardware();
     msLEDs.initLEDBuffer();

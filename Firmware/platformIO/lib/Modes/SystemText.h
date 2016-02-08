@@ -32,10 +32,6 @@ public:
 
     msMagicShakeText.plotTextString( value, msGlobals.tBitmap4x5, tPos);
     shakeSync.setFrames(msMagicShakeText.getWidth() * FRAME_MULTIPLY);
-
-    Serial.print("label:"); Serial.println(label);
-    Serial.print("value:"); Serial.println(value);
-
   }
 
   void start()
