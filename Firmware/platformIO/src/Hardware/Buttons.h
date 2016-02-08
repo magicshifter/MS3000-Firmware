@@ -157,14 +157,17 @@ Serial.println("We gots clicks B.");
 			else 
 			if (msBtnPwrPressTime >= MIN_TIME_CLICK)
 			{
-// Serial.println("We gots Power clicks..");
-				msBtnPwrHit = true;
+
 
 				// long hits
 				long _now = millis();
 				if ((_now - msBtnPwrLastHitTime) < MAX_TIME_DOUBLE_CLICK) {
 					msBtnPwrDoubleHit = true;
 // Serial.println("We gots double Power clicks..");
+				}
+				else {
+					// Serial.println("We gots Power clicks..");
+					msBtnPwrHit = true;
 				}
 
 				msBtnPwrLastHitTime = millis();

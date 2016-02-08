@@ -604,37 +604,13 @@ void showBatteryStatus(bool shouldFadeIn)
       powerDown();
     }
 
-    if (msButtons.msBtnBLongHit)
-    {
-      // msGlobals.ggCurrentMode++;
-      // if (msGlobals.ggCurrentMode > (NUM_MS_MODES - 1)) // !J! todo: mode-list 
-      //   msGlobals.ggCurrentMode=0;
-      // msButtons.msBtnBLongHit = false;
-      // modeAnimation();
-      // slog("Changed +Mode:"); slogln(String(msGlobals.ggCurrentMode));
-      modeMenuActivated = true;
-    }
-
-    if (msButtons.msBtnALongHit)
-    {
-      // msGlobals.ggCurrentMode--;
-      // if (msGlobals.ggCurrentMode < 0) 
-      //   msGlobals.ggCurrentMode = (NUM_MS_MODES - 1);
-      // msButtons.msBtnALongHit = false;
-      // modeAnimation();
-      // slog("Changed -Mode:"); slogln(String(msGlobals.ggCurrentMode));
-      modeMenuActivated = true;
-    }
-
     if (msButtons.msBtnPwrDoubleHit)
     {
-      slogln("Double Power HIT!");
-      //brightnessControl(); // brightnessControl will not show up because it checks the button being pressed inside
-      // !w! double power hit does not conflict with brightness menu for me 
       msButtons.msBtnPwrDoubleHit = false;
+      modeMenuActivated = true;
+      modeAnimation();
     }
 
-    // if (msGlobals.allowCmd) 
     CommandInterfacePoll();
     brightnessControl();
 
