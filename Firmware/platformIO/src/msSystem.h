@@ -227,6 +227,11 @@ public:
       msLEDs.fastClear();
       delay(35);
     }
+
+    msLEDs.setLED(msGlobals.ggCurrentMode, 128, 128, 128, msGlobals.ggBrightness / 2);
+    delay(35);
+    msLEDs.fastClear();
+
   }
 
   // for fail-modes ..
@@ -253,11 +258,17 @@ public:
 #define BUTTON_LED_A (MAX_LEDS - 1)
 #define BUTTON_LED_PWR (MAX_LEDS / 2) 
 #define BUTTON_LED_B 0
-#define BUTTON_DISPLAY_PERIOD 125
+#define BUTTON_DISPLAY_PERIOD 1
 
 
   void displayButtons()
   {
+    if (msButtons.msBtnPwrDoubleHit) {
+      msLEDs.fillLEDs(0, 200, 0, msGlobals.ggBrightness);
+      msLEDs.updateLEDs();
+      delay(BUTTON_DISPLAY_PERIOD);
+    }
+
     if (msButtons.msBtnPwrLongHit)
     {
       msLEDs.setLED(BUTTON_LED_PWR, 0, 0, 20, 20);
@@ -520,7 +531,7 @@ void showBatteryStatus(bool shouldFadeIn)
     logln(String("\r\nMagicShifter 3000 OS V0.30"));
 
     // ggUploadFile is prepared for display as necessary ..
-    msEEPROMs.loadString(msGlobals.ggUploadFileName, MAX_FILENAME_LENGTH);
+    //msEEPROMs.loadString(msGlobals.ggUploadFileName, MAX_FILENAME_LENGTH);
 
     // wake up filesystem
     log("SPIFFS:");
@@ -614,9 +625,16 @@ void showBatteryStatus(bool shouldFadeIn)
       modeMenuActivated = true;
     }
 
+    if (msButtons.msBtnPwrDoubleHit)
+    {
+      logln("Double Power HIT!");
+      //brightnessControl(); // brightnessControl will not show up because it checks the button being pressed inside
+      // !w! double power hit does not conflict with brightness menu for me 
+      msButtons.msBtnPwrDoubleHit = false;
+    }
+
     // if (msGlobals.allowCmd) 
     CommandInterfacePoll();
-
     brightnessControl();
 
   }

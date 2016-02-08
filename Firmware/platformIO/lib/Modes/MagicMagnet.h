@@ -29,16 +29,18 @@ private:
       static  int autoCalResetCounter = 0;
 
       frame++;
+
       // AccelPoll();
       if (msSystem.msButtons.msBtnAHit) {
-        lMode=0;
+        lMode--;
         msSystem.msButtons.msBtnAHit = false;
       }
       if (msSystem.msButtons.msBtnBHit) {
-        lMode=1;
+        lMode++;
         msSystem.msButtons.msBtnBHit = false;
       }
-
+      if (lMode < 0) lMode = 2;
+      if (lMode > 2) lMode = 0;
 
       msSystem.msSensor.readMagnetometerData(msGlobals.ggMagnet);
 
@@ -66,17 +68,20 @@ private:
       msSystem.msLEDs.fillLEDs(0,0,0);
       int lednr = map(abs(degrees), 0, 180, 0, 15);
 
-      msSystem.msLEDs.setLED(lednr, 0, 255, 0, msGlobals.ggBrightness);
+      if (lMode <= 1) {
+        for (int lC=0;lC<lednr;lC++) 
+          msSystem.msLEDs.setLED(lC, 0, 255, 0, msGlobals.ggBrightness); // !J! hack
 
-      for (int lC=0;lC<lednr;lC++) 
-        msSystem.msLEDs.setLED(lC, 0, 255, 0, msGlobals.ggBrightness); // !J! hack
+        for (int lC=lednr+1;lC<MAX_LEDS;lC++) 
+          msSystem.msLEDs.setLED(lC, 255, 0, 0, msGlobals.ggBrightness); // !J! hack
+      }
 
-      for (int lC=lednr+1;lC<MAX_LEDS;lC++) 
-        msSystem.msLEDs.setLED(lC, 255, 0, 0, msGlobals.ggBrightness); // !J! hack
+      if ((lMode == 0) || (lMode == 2))
+        msSystem.msLEDs.setLED(lednr, 0, 255, 0, msGlobals.ggBrightness);
 
-      // msSystem.log("LED: "); msSystem.logln(String(lednr));
+      if (lMode == 1)
+        msSystem.msLEDs.setLED(lednr, 0, 0, 255, msGlobals.ggBrightness);
 
-      // updateLedsWithBrightness();
       msSystem.msLEDs.updateLEDs();
 
       delay(35);

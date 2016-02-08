@@ -67,7 +67,6 @@ delay(350); // debug !J!
 
   // start the system
   msSystem.setup();
-
   
   // get the web interface started
   msWebServer.StartWebServer();

@@ -150,7 +150,23 @@ public:
         isActive = true;
     }
 
-		msSystem.msLEDs.fillLEDs(0, 0, 0);
+    // workaround for strage behaviour of shake code, final fix needs moar debugging ;)
+    // sometimes frameIndex remains static but isActive is not set to false by above code
+    // workaround just detects the situation and resets isActive
+    static int lastFrameIndex = 0;
+    static int lastFrameIndexStaticTime = 0;
+    if (frameIndex == lastFrameIndex) {
+      lastFrameIndexStaticTime += msGlobals.ggCurrentMicros - msGlobals.ggLastMicros;
+    }
+    else {
+      lastFrameIndexStaticTime = 0;
+    }
+    lastFrameIndex = frameIndex;
+    if (lastFrameIndexStaticTime > 500 * 1000) {
+      isActive = false;
+    }
+
+		// msSystem.msLEDs.fillLEDs(0, 0, 0); // only enable this for debugging shaking 
 
     activeFramesMin2Max++;
     activeFramesMax2Min++;
@@ -267,7 +283,7 @@ public:
 			}
 		}
 
-		msSystem.msLEDs.updateLEDs();
+		//msSystem.msLEDs.updateLEDs(); // // only enable this for debugging shaking 
 
     return isActive;
 	}

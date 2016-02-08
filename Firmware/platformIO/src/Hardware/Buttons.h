@@ -36,6 +36,10 @@ class MagicShifterButtons {
 	bool msBtnPwrDoubleHit = false;
 	bool msBtnBDoubleHit = false;
 
+	long msBtnALastHitTime = 0;
+	long msBtnBLastHitTime = 0;
+	long msBtnPwrLastHitTime = 0;
+
 	long deltaMicros = 0; // !J! todo: init? (msGlobals.ggCurrentMicros - msGlobals.ggLastMicros);
 
 	//  button activity 
@@ -148,13 +152,22 @@ Serial.println("We gots clicks B.");
 			if (msBtnPwrPressTime >= MIN_TIME_LONG_CLICK)
 			{
 				msBtnPwrLongHit = true;
-	// logln("Btn Pwr Looong Hit");
+	// Serial.println("Btn Pwr Looong Hit");
 			}
 			else 
 			if (msBtnPwrPressTime >= MIN_TIME_CLICK)
 			{
-	// logln("We gots clicks Pwr.");
+// Serial.println("We gots Power clicks..");
 				msBtnPwrHit = true;
+
+				// long hits
+				long _now = millis();
+				if ((_now - msBtnPwrLastHitTime) < MAX_TIME_DOUBLE_CLICK) {
+					msBtnPwrDoubleHit = true;
+// Serial.println("We gots double Power clicks..");
+				}
+
+				msBtnPwrLastHitTime = millis();
 			}
 
 			msBtnPwrPressTime = 0;
