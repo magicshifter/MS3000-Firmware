@@ -73,7 +73,7 @@ public:
 
     if (Wire.available() < bytesToRead)
     {
-      Serial.println("Sensor Package unavailable - rebooting!!");
+      Serial.println("Sensor Package unavailable!!");
       msGlobals.ggFault = FAULT_NO_ACCELEROMETER;
       delay(10);
     }; //Hang out until we get the # of bytes we expect
@@ -95,7 +95,7 @@ public:
     Wire.requestFrom(MMA8452_ADDRESS, 1); //Ask for 1 byte, once done, bus is released by default
 
     if (!Wire.available()){
-      Serial.println("Sensor Package unavailable - rebooting!!");
+      Serial.println("Sensor Package unavailable!!");
       msGlobals.ggFault = FAULT_NO_ACCELEROMETER;
       delay(10);
     } ; //Wait for the data to come back
