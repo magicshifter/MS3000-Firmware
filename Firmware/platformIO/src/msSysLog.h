@@ -29,10 +29,10 @@ public:
 #ifdef SCAN_FIRST_MODE
     WiFi.mode(WIFI_STA);
 
-    Serial.print("sysLOG SSID:"); Serial.println(msGlobals.ggAPInfo.ssid);
-    Serial.print("sysLOG pass:"); Serial.println(msGlobals.ggAPInfo.password);
+    // Serial.print("sysLOG SSID:"); Serial.println(msGlobals.ggAPConfig.apInfo.ssid);
+    // Serial.print("sysLOG pass:"); Serial.println(msGlobals.ggAPConfig.apInfo.password);
 
-    WiFi.begin(msGlobals.ggAPInfo.ssid, msGlobals.ggAPInfo.password);
+    WiFi.begin(msGlobals.ggAPConfig.apInfo.ssid, msGlobals.ggAPConfig.apInfo.password);
 
     int Attempt = 0;
     while (WiFi.status() != WL_CONNECTED) {

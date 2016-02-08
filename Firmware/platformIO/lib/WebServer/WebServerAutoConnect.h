@@ -93,10 +93,10 @@ bool AutoConnect()
 #ifdef SCAN_FIRST_MODE
   // if (!forceAPMode)
   {
-    if (Settings.getPreferredAP(&msGlobals.ggAPInfo))
+    if (Settings.getPreferredAP(&msGlobals.ggAPConfig.apInfo))
     {
       msSystem.slogln("stored preferred wifi found.");
-      if (TryConnect(msGlobals.ggAPInfo, CONNECTION_TIMEOUT))
+      if (TryConnect(msGlobals.ggAPConfig.apInfo, CONNECTION_TIMEOUT))
       {
         msGlobals.ggModeAP = false;
         return true;
@@ -156,8 +156,8 @@ bool AutoConnect()
   msSystem.slogln("fallback to standalone access point...");
   // WiFi.disconnect(false);
 
-  Settings.getAPConfig(&msGlobals.ggAPInfo);
-  if (TrySoftAP(msGlobals.ggAPInfo))
+  Settings.getAPConfig(&msGlobals.ggAPConfig.apInfo);
+  if (TrySoftAP(msGlobals.ggAPConfig.apInfo))
   {
     msGlobals.ggModeAP = true;
     return true;
