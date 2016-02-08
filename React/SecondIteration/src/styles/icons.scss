@@ -1,10 +1,12 @@
-$i-color: "\63";
-$i-effects: "\65";
-$i-font: "\66";
-$i-image: "\62";
-$i-info: "\69";
-$i-settings: "\73";
-$i-upload: "\75";
+$i-arrow_left: "\31";
+$i-arrow_right: "\32";
+$i-color: "\33";
+$i-effects: "\34";
+$i-font: "\35";
+$i-image: "\36";
+$i-info: "\37";
+$i-settings: "\38";
+$i-upload: "\39";
 $i-zoom_in: "\2b";
 $i-zoom_out: "\2d";
 
@@ -29,49 +31,58 @@ i.icon {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
+.arrow_left {
+  &:before {
+    content: $i-arrow_left;
+  }
+}
+.arrow_right {
+  &:before {
+    content: $i-arrow_right;
+  }
+}
 .color {
-    &:before {
-        content: $i-color;
-    }
+  &:before {
+    content: $i-color;
+  }
 }
 .effects {
-    &:before {
-        content: $i-effects;
-    }
+  &:before {
+    content: $i-effects;
+  }
 }
 .font {
-    &:before {
-        content: $i-font;
-    }
+  &:before {
+    content: $i-font;
+  }
 }
 .image {
-    &:before {
-        content: $i-image;
-    }
+  &:before {
+    content: $i-image;
+  }
 }
 .info {
-    &:before {
-        content: $i-info;
-    }
+  &:before {
+    content: $i-info;
+  }
 }
 .settings {
-    &:before {
-        content: $i-settings;
-    }
+  &:before {
+    content: $i-settings;
+  }
 }
 .upload {
-    &:before {
-        content: $i-upload;
-    }
+  &:before {
+    content: $i-upload;
+  }
 }
 .zoom_in {
-    &:before {
-        content: $i-zoom_in;
-    }
+  &:before {
+    content: $i-zoom_in;
+  }
 }
 .zoom_out {
-    &:before {
-        content: $i-zoom_out;
-    }
+  &:before {
+    content: $i-zoom_out;
+  }
 }
