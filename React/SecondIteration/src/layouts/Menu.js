@@ -4,6 +4,7 @@ import {Link, IndexLink} from 'react-router';
 import rgba from 'rgba-convert';
 
 import classes from './Menu.scss';
+import iconClasses from 'styles/icons.scss';
 
 const mapStateToProps = (state) => {
   const {links, menuTextColor, header: {height}} = state.layout.toJS();
@@ -42,8 +43,28 @@ export class Menu extends Component {
             >
               {
                 link.to === '/'
-                ? <IndexLink to={link.to} activeClassName={classes['active']}>{link.text}</IndexLink>
-                : <Link to={link.to} activeClassName={classes['active']}>{link.text}</Link>
+                ? (
+                    <IndexLink
+                      to={link.to}
+                      activeClassName={classes['active']}
+                      title={link.text}
+                    >
+                      <i
+                        className={`${iconClasses['icon']} ${iconClasses[link.text]}`}
+                      />
+                    </IndexLink>
+                  )
+                : (
+                    <Link
+                      to={link.to}
+                      activeClassName={classes['active']}
+                      title={link.text}
+                    >
+                      <i
+                        className={`${iconClasses['icon']} ${iconClasses[link.text]}`}
+                      />
+                    </Link>
+                  )
               }
             </li>
           ))}
