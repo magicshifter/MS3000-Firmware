@@ -2,10 +2,10 @@ import React, {PropTypes} from 'react';
 
 import classes from './Sidebar.scss';
 
-export const sidebar =
+export const Sidebar =
   ({main, footer, width}) =>
     <aside
-      className={classes['aside']}
+      className={classes['container']}
       style={{
         width,
       }}
@@ -14,10 +14,10 @@ export const sidebar =
       {footer}
     </aside>;
 
-sidebar.propTypes = {
+Sidebar.propTypes = {
   main: PropTypes.element.isRequired,
   footer: PropTypes.element.isRequired,
   width: PropTypes.number.isRequired,
 };
 
-export default sidebar;
+export default Sidebar;
