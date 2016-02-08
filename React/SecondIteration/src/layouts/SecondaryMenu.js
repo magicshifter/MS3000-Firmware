@@ -43,11 +43,14 @@ export const SecondaryMenu =
             <span>color</span>
           </Link>
         </li>
-        {/*
         <li>
-            <FileUploadInput />
+          <Link to='/paint/upload'>
+            <i
+              className={`${iconClasses['icon']} ${iconClasses['upload']}`}
+            />
+            <span>upload</span>
+          </Link>
         </li>
-        */}
       </ul>
     </nav>
   );
