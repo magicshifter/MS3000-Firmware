@@ -90,7 +90,7 @@ bool AutoConnect()
 {
   struct jsonparse_state jsonState;
 
-#ifdef SCAN_FIRST_MODE
+#ifdef FORCE_AP_MODE
   // if (!forceAPMode)
   {
     if (Settings.getPreferredAP(&msGlobals.ggAPConfig.apInfo))
