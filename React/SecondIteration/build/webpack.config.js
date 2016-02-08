@@ -117,10 +117,10 @@ webpackConfig.module.loaders = [
 
 // Styles
 const cssLoader = !config.compiler_css_modules
-  ? 'css?sourceMap'
+  ? 'css' // XXX ?sourceMap'
   : [
     'css?modules',
-    'sourceMap',
+    // XXX 'sourceMap',
     'importLoaders=1',
     'localIdentName=[name]__[local]',
   ].join('&');
