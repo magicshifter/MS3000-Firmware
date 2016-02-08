@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 
 import FloatingButton from 'components/inputs/FloatingButton';
@@ -10,17 +10,14 @@ import classes from './PixelEditorMenu.scss';
 
 const mapStateToProps =
   state => {
-    const {layout} = state;
-
-    const {zoomIn, zoomOut} = layout.toJS();
-
-    return {
-      zoomIn,
-      zoomOut,
-    };
+    return {};
   };
 
 export class PixelEditorMenu extends Component {
+  static propTypes = {
+    zoomIn: PropTypes.func.isRequired,
+    zoomOut: PropTypes.func.isRequired,
+  };
 
   render() {
     const {zoomIn, zoomOut} = this.props;
