@@ -63,7 +63,7 @@ ModeSelectorMode msModeSelector;
   // record our bootup time
   msGlobals.ggBootTime = millis();
 
-delay(350); // debug !J!
+  delay(350); // debug !J!
 
   // start the system
   msSystem.setup();
@@ -71,8 +71,12 @@ delay(350); // debug !J!
   // get the web interface started
   msWebServer.StartWebServer();
 
+  ServerConfig sysLogInfo;
   // set up syslog ..
-  msSystem.msSysLog.setup();
+  if (Settings.getSyslogConfig(&sysLogInfo))
+    msSystem.msSysLog.setup(sysLogInfo.hostname);
+
+  msSystem.msSysLog.sendSysLogMsg(String("LOG WAS ENABLED.................."));
 
   msSystem.showBatteryStatus(true);
 

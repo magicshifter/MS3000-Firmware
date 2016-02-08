@@ -6,30 +6,46 @@
 #include <IPAddress.h>
 
 #undef _DO_SERIAL_ECHO
-// SYSLOG_AUTO_CONNECT
 
-// .2 is the first client to connect in SoftAP ..
-IPAddress syslogServer(192, 168, 2, 186);
+// #define this to get syslog before normal AP autoconnect
+// #define SYSLOG_AUTO_CONNECT
+
+IPAddress parseIPString(char *str)
+{
+// char str[] = "123 190 42 175";
+  uint8_t values[ 4 ];
+  uint8_t valuesCount = 0;
+
+  char *p = strtok( str, "." );
+  while ( p != NULL && valuesCount < 4 )
+  {
+      values[ valuesCount++ ] = atoi( p );
+      p = strtok( NULL, "." );
+  }
+
+  if ( valuesCount == 4 )
+  {
+      return IPAddress(values[0], values[1], values[2], values[3] );
+  }
+  else
+    return IPAddress(0,0,0,0);
+
+
+}
 
 class MagicShifterSysLog {
 
 private:
   unsigned int localPort = 2390;
-
-  String str;
-  //long startMills;
-
-  WiFiClient wifiClient;
-  WiFiUDP udp;
+  WiFiUDP sysLogUDP;
+  IPAddress syslogServer;
 
 public:
 
   void connect_wifi() {
+
 #ifdef SYSLOG_AUTO_CONNECT
     WiFi.mode(WIFI_AP_STA);
-
-    // Serial.print("sysLOG SSID:"); Serial.println(msGlobals.ggAPConfig.apInfo.ssid);
-    // Serial.print("sysLOG pass:"); Serial.println(msGlobals.ggAPConfig.apInfo.password);
 
     if (WiFi.status() != WL_CONNECTED) {
 
@@ -62,12 +78,18 @@ public:
     }
   }
 
-  void setup()
+  void setup( char *syslogHostIPStr)
   {
+
+    syslogServer = parseIPString(syslogHostIPStr);
+
+    Serial.print("syslog: configured host is:");
+    Serial.println(syslogServer);
+
     delay(20);
     connect_wifi();
 
-    udp.begin(localPort);
+    sysLogUDP.begin(localPort);
     delay(500);
     if (WiFi.status() == WL_CONNECTED) {
       sendSysLogMsg("MagicShifter3000 reporting for duty!");
@@ -99,9 +121,13 @@ public:
     byte* p = (byte*)malloc(msg_length);
     memcpy(p, (char*) newMsg.c_str(), msg_length);
 
-    udp.beginPacket(syslogServer, 514);
-    udp.write(p, msg_length);
-    udp.endPacket();
+  Serial.print("SYSLOGMSG:");
+  Serial.println(newMsg);
+
+    sysLogUDP.beginPacket(syslogServer, 514);
+    sysLogUDP.write(p, msg_length);
+    sysLogUDP.endPacket();
+    
     free(p);
   }
 
