@@ -5,6 +5,7 @@ import {actions} from 'redux/modules/layout';
 
 import Header from './Header';
 import Sidebar from './Sidebar';
+import SecondaryMenu from './SecondaryMenu';
 
 import PixelEditor from 'components/PixelEditor/PixelEditor';
 
@@ -19,9 +20,7 @@ const mapStateToProps =
 
 class CoreLayout extends Component {
   static propTypes = {
-    main: PropTypes.element,
     sidebar: PropTypes.element,
-    footer: PropTypes.element,
     width: PropTypes.number.isRequired,
     children: PropTypes.element,
     windowResize: PropTypes.func.isRequired,
@@ -46,6 +45,7 @@ class CoreLayout extends Component {
             <PixelEditor />
             {children}
           </div>
+          <SecondaryMenu />
           <Sidebar
             main={sidebar}
             footer={footer}
