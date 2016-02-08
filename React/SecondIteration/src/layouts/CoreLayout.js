@@ -46,11 +46,12 @@ class CoreLayout extends Component {
             {children}
           </div>
           <SecondaryMenu />
-          <Sidebar
-            main={sidebar}
-            footer={footer}
-            width={width}
-          />
+          { sidebar &&
+            <Sidebar
+              main={sidebar}
+              width={width}
+            />
+          }
         </div>
       </div>
     );
