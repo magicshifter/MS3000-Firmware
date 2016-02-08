@@ -221,6 +221,14 @@ public:
 
   void getFrameData(int frameIdx, byte *frameDest)
   {
+    for (int i=0; i<MAX_LEDS * 4; i+=4) 
+    {
+      frameDest[i] = 0xff;
+      frameDest[i+1] = 0x00;
+      frameDest[i+2] = 0x00;
+      frameDest[i+3] = 0x00;
+    }
+    
     for (int i = 0; i < txtCount; i++) {
       int idx = frameIdx - txtPositions[i].x;
 

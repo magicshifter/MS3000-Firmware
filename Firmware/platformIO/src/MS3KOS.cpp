@@ -122,27 +122,27 @@ void loop()
       if (msGlobals.ggCurrentMode == 1)
       {
 
-        // msSystem.msLEDs.loadBuffer(msGlobals.ggRGBLEDBuf);
-        // msSystem.msLEDs.updateLEDs();
-        // delay(10);
+        msSystem.msLEDs.loadBuffer(msGlobals.ggRGBLEDBuf);
+        msSystem.msLEDs.updateLEDs();
+        delay(10);
 
         // W: hijacked mode 1 for video
-        static int xx = 0;
-        int gs = msGlobals.ggBrightness;
+      //   static int xx = 0;
+      //   int gs = msGlobals.ggBrightness;
 
-      msSystem.msLEDs.fillLEDs(0, 0, 0);
-      msSystem.msLEDs.setLED((xx + 0 * 3) & 0xF, 255, 0, 0, gs);
+      // msSystem.msLEDs.fillLEDs(0, 0, 0);
+      // msSystem.msLEDs.setLED((xx + 0 * 3) & 0xF, 255, 0, 0, gs);
 
-      msSystem.msLEDs.setLED((xx + 1 * 3) & 0xF, 255, 255, 0, gs);
-      msSystem.msLEDs.setLED((xx + 2 * 3) & 0xF, 0, 255, 0, gs);
+      // msSystem.msLEDs.setLED((xx + 1 * 3) & 0xF, 255, 255, 0, gs);
+      // msSystem.msLEDs.setLED((xx + 2 * 3) & 0xF, 0, 255, 0, gs);
 
-      msSystem.msLEDs.setLED((xx + 3 * 3) & 0xF, 0, 255, 255, gs);
-      msSystem.msLEDs.setLED((xx + 4 * 3) & 0xF, 0, 0, 255, gs);
+      // msSystem.msLEDs.setLED((xx + 3 * 3) & 0xF, 0, 255, 255, gs);
+      // msSystem.msLEDs.setLED((xx + 4 * 3) & 0xF, 0, 0, 255, gs);
 
-      msSystem.msLEDs.updateLEDs();
+      // msSystem.msLEDs.updateLEDs();
 
-      xx++;
-        delay(350);
+      // xx++;
+      //   delay(350);
       }
       else
       if (msGlobals.ggCurrentMode == 2) {
