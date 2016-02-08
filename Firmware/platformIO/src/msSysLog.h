@@ -121,8 +121,8 @@ public:
     byte* p = (byte*)malloc(msg_length);
     memcpy(p, (char*) newMsg.c_str(), msg_length);
 
-  Serial.print("SYSLOGMSG:");
-  Serial.println(newMsg);
+  // Serial.print("SYSLOGMSG:");
+  // Serial.println(newMsg);
 
     sysLogUDP.beginPacket(syslogServer, 514);
     sysLogUDP.write(p, msg_length);
