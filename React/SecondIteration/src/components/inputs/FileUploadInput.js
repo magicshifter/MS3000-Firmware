@@ -13,6 +13,11 @@ export default class FileUploadInput extends Component {
     label: PropTypes.string,
     text: PropTypes.string,
     header: PropTypes.string,
+    simple: PropTypes.bool,
+  };
+
+  static defaultProps = {
+    simple: true,
   };
 
   constructor(props) {
@@ -130,9 +135,7 @@ export default class FileUploadInput extends Component {
   }
 
   render() {
-    const {label, text = 'Upload File', header} = this.props;
-
-    const simple = true;
+    const {label, text = 'Upload File', header, simple} = this.props;
 
     return (
       <div className={classes['container']}>
@@ -140,14 +143,14 @@ export default class FileUploadInput extends Component {
         {!simple && <h5>{header}</h5>}
 
         {!simple &&
-            <div>
-                <label>Filename:</label>
-                <input
-                  type='text'
-                  defaultValue='userImage'
-                  ref='fileName'
-                />
-            </div>
+          <div>
+            <label>Filename:</label>
+            <input
+              type='text'
+              defaultValue='userImage'
+              ref='fileName'
+            />
+          </div>
         }
 
         {!simple && label && <label>{label}</label>}
