@@ -71,6 +71,9 @@ void StartWebServer(void)
   msSystem.msESPServer.on("/settings/ap", HTTP_GET, handleGETAPSettings);
   msSystem.msESPServer.on("/settings/ap", HTTP_POST, handlePOSTAPSettings);
 
+  msSystem.msESPServer.on("/settings/syslog", HTTP_GET, handleGETSysLogHostSettings);
+  msSystem.msESPServer.on("/settings/syslog", HTTP_POST, handlePOSTSysLogSettings);
+
   msSystem.msESPServer.on("/settings/server", HTTP_GET, handleGETServerSettings);
   msSystem.msESPServer.on("/settings/server/set", handlePOSTServerSettings);
 

@@ -103,50 +103,57 @@ bool AutoConnect()
     else
       msSystem.slogln("wifi: no preferred configuration found.");
 
-    msSystem.slog("wifi: start scan -");
-    // WiFi.scanNetworks will return the number of networks found
-    int n = WiFi.scanNetworks();
-    msSystem.slogln("done");
-    if (n == 0) {
-      msSystem.slogln("wifi: no networks found");
-    }
-    else
-    {
-      msSystem.slogln("wifi: networks found: ");
-      msSystem.slog(String(n));
 
-      for (int i = 0; i < n; ++i)
-      {
-        // Print SSID and RSSI for each network found
-        msSystem.slog(String(i + 1));
-        msSystem.slog(": ");
-        msSystem.slog(WiFi.SSID(i));
-        msSystem.slog(" (");
-        msSystem.slog(String(WiFi.RSSI(i)));
-        msSystem.slog(")");
-        msSystem.slog((WiFi.encryptionType(i) == ENC_TYPE_NONE)?" ":"*");
-        delay(20);
+    if (SPIFFS.exists(Settings.apListConfigPath)) { 
+
+      msSystem.slog("wifi: start scan -");
+      // WiFi.scanNetworks will return the number of networks found
+      int n = WiFi.scanNetworks();
+      msSystem.slogln("done");
+      if (n == 0) {
+        msSystem.slogln("wifi: no networks found");
       }
-    }
-
-    msSystem.slogln("");
-
-    Settings.resetAPList();
-
-    while (Settings.getNextAP(&msGlobals.ggAPConfig.apInfo))
-    {
-      for (int i = 0; i < n; i++)
+      else
       {
-        if (strcmp(WiFi.SSID(i).c_str(), msGlobals.ggAPConfig.apInfo.ssid) == 0)
+        msSystem.slogln("wifi: networks found: ");
+        msSystem.slog(String(n));
+
+        for (int i = 0; i < n; ++i)
         {
-          if (TryConnect(msGlobals.ggAPConfig.apInfo, CONNECTION_TIMEOUT))
+          // Print SSID and RSSI for each network found
+          msSystem.slog(String(i + 1));
+          msSystem.slog(": ");
+          msSystem.slog(WiFi.SSID(i));
+          msSystem.slog(" (");
+          msSystem.slog(String(WiFi.RSSI(i)));
+          msSystem.slog(")");
+          msSystem.slog((WiFi.encryptionType(i) == ENC_TYPE_NONE)?" ":"*");
+          delay(20);
+        }
+      }
+
+      msSystem.slogln("");
+
+      Settings.resetAPList();
+
+      while (Settings.getNextAP(&msGlobals.ggAPConfig.apInfo))
+      {
+        for (int i = 0; i < n; i++)
+        {
+          if (strcmp(WiFi.SSID(i).c_str(), msGlobals.ggAPConfig.apInfo.ssid) == 0)
           {
-            msGlobals.ggModeAP = false;
-            return true;
+            if (TryConnect(msGlobals.ggAPConfig.apInfo, CONNECTION_TIMEOUT))
+            {
+              msGlobals.ggModeAP = false;
+              return true;
+            }
           }
         }
       }
+
+
     }
+
 
     msSystem.slogln("wifi: none of the configured networks found.");
     false;
