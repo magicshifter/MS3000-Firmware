@@ -8,7 +8,7 @@ private:
 
 public:
   const int maxModes = 5;
-  const char *modeNames[5]= {"Magic", "Remote", "RGB", "SysVals",  "Compass"};
+  const char *modeNames[5]= {"Mgc", "Rmte", "RGB", "SVals",  "Cmps"};
 
 
   void setText(  const char *label)

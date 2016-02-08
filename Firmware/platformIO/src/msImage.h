@@ -3,7 +3,7 @@
 
 #define BYTESPERPIXEL 4
 
-#define MAX_SHAKE_TEXT 3
+#define MAX_SHAKE_TEXT 4
 
 typedef struct  {
   int x;
@@ -192,20 +192,40 @@ public:
   void plotTextString( char *text, MSBitmap &font,  Coordinate_s pos)
   {
     if (txtCount < MAX_SHAKE_TEXT) {
-      l_safeStrncpy(txtCollection[txtCount], text, MAX_TEXT_LENGTH);
-      txtFonts[txtCount] = font;
-      txtPositions[txtCount] = pos;
+      int lineStart = 0;
+      for (int i = 0; ; i++) {
+        if (text[i] == '\n' || text[i] == 0) {
+          if (i != lineStart) {
+            int len =  i-lineStart+1;
+            if (len > MAX_TEXT_LENGTH)
+              len = MAX_TEXT_LENGTH;
 
-      int ts = font.header.frameWidth * strlen(text);
-      ts += pos.x;
+            l_safeStrncpy(txtCollection[txtCount], text + lineStart, len);
 
-      txtSizes[txtCount] = ts;
+            txtFonts[txtCount] = font;
+            txtPositions[txtCount] = pos;
 
-      if (ts > txtWidth) {
-        txtWidth = ts;
+            int ts = font.header.frameWidth * strlen(text);
+            ts += pos.x;
+
+            txtSizes[txtCount] = ts;
+
+            if (ts > txtWidth) {
+              txtWidth = ts;
+            }
+
+            pos.y += font.header.frameHeight;
+
+            txtCount++;
+
+            if (txtCount >= MAX_SHAKE_TEXT) 
+              break;
+          }
+        }
+        if (text[i] == 0) {
+          break;
+        }
       }
-
-      txtCount++;
     } 
   };
 

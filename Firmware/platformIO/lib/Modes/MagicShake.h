@@ -197,7 +197,7 @@ public:
       msModeBouncingBall.applyForce((msGlobals.ggCurrentMicros - msGlobals.ggLastMicros) / 1000.0, fX*3);
       msModeBouncingBall.simpleBouncingBall();
 
-      delay(100);
+      delay(30);
       return false;
     }
 
