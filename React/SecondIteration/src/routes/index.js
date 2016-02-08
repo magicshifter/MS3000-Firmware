@@ -10,7 +10,6 @@ import ImageSidebarImages from 'views/ImageView/Sidebar/Images';
 import ImageSidebarText from 'views/ImageView/Sidebar/Text';
 import ImageSidebarFilters from 'views/ImageView/Sidebar/Filters';
 import ImageSidebarSettings from 'views/ImageView/Sidebar/Settings';
-import SidebarMenu from 'views/ImageView/Sidebar/SidebarMenu';
 import SidebarFooter from 'views/ImageView/Sidebar/Footer';
 
 import SettingsView from 'views/SettingsView/SettingsView';
@@ -37,7 +36,7 @@ export default (
     />
 
     <Route
-      path='/paint/text'
+      path='/paint/font'
       components={{
         ...components,
         sidebar: ImageSidebarText,
@@ -45,7 +44,7 @@ export default (
     />
 
     <Route
-      path='/paint/filters'
+      path='/paint/effects'
       components={{
         ...components,
         sidebar: ImageSidebarFilters,
