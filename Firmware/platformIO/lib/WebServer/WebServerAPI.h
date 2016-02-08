@@ -441,6 +441,10 @@ bool parseSysLogInfoFromServerArgs(ServerConfig &sysLogHost)
     {
       l_safeStrncpy(sysLogHost.hostname, msSystem.msESPServer.arg(i).c_str(), sizeof(sysLogHost.hostname));
     }
+    else if (strcmp(msSystem.msESPServer.argName(i).c_str(), "port") == 0)
+      {
+        sysLogHost.port = atoi(msSystem.msESPServer.arg(i).c_str());
+      }
     else
     {
       msSystem.slogln("arg is not known!");
