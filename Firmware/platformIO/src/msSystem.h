@@ -520,7 +520,8 @@ void showBatteryStatus(bool shouldFadeIn)
 // #ifdef CONFIG_ENABLE_MIDI
 //     Serial.begin(31250);
 // #else
-    Serial.begin(115200);
+    // Serial.begin(115200);
+    Serial.begin(921600);
 // #endif
 
     // !J! todo: get this from factory config
