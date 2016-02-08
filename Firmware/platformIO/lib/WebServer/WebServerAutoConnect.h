@@ -4,9 +4,9 @@
 #include "msAPInfo.h"
 
 void printIPInfo(){
-  msSystem.slogln ( "IP address: " );
+  msSystem.slogln ( "wifi: IP address: " );
   msSystem.slogln ( String(WiFi.localIP().toString()) );
-  msSystem.slogln ( "SoftAP IP: " );
+  msSystem.slogln ( "wifi: soft AP IP: " );
   msSystem.slogln ( String(WiFi.softAPIP().toString()) );
 
   WiFi.printDiag(Serial);
@@ -14,10 +14,10 @@ void printIPInfo(){
 
 bool TryConnect(struct APInfo &apInfo, int timeoutMs)
 {
-  msSystem.slog("trying to connect to AP: ");
+  msSystem.slog("wifi: trying to connect to AP: ");
   msSystem.slogln(apInfo.ssid);
   WiFi.begin (apInfo.ssid, apInfo.password, 9);
-  msSystem.slog("using password: ");
+  msSystem.slog("wifi: using password: ");
   msSystem.slogln(apInfo.password);
 
   // Wait for connection
@@ -39,8 +39,7 @@ bool TryConnect(struct APInfo &apInfo, int timeoutMs)
     
     if (WiFi.status() == WL_NO_SSID_AVAIL || WiFi.status() == WL_CONNECT_FAILED || millis() > startTime + timeoutMs)
     {
-      msSystem.slogln ( "" );
-      msSystem.slogln ("Could NOT connect to:");
+      msSystem.slogln ("wifi: could not connect to:");
       msSystem.slogln(apInfo.ssid);
       return false; // :(
     }
@@ -48,8 +47,7 @@ bool TryConnect(struct APInfo &apInfo, int timeoutMs)
     delay(20);
   }
 
-  msSystem.slogln ( "" );
-  msSystem.slogln ( "Connected to: " );
+  msSystem.slogln ( "wifi: connected to: " );
   msSystem.slogln ( apInfo.ssid );
 
   printIPInfo();
@@ -61,9 +59,9 @@ bool TryConnect(struct APInfo &apInfo, int timeoutMs)
 
 bool TrySoftAP(struct APInfo &apInfo)
 {
-  msSystem.slogln("Configuring access point: ");
+  msSystem.slogln("wifi: configuring access point: ");
   msSystem.slogln(apInfo.ssid);
-  msSystem.slogln(" password: ");
+  msSystem.slogln("wifi: password: ");
   msSystem.slogln(apInfo.password);
 
   WiFi.mode(WIFI_AP);
@@ -78,7 +76,7 @@ bool TrySoftAP(struct APInfo &apInfo)
     WiFi.softAP(apInfo.ssid, apInfo.password);
   }
 
-  msSystem.slogln ( "accesspoints: " );
+  msSystem.slogln ( "wifi: accesspoints: " );
   msSystem.slogln ( apInfo.ssid );
 
   printIPInfo();
@@ -90,12 +88,12 @@ bool AutoConnect()
 {
   struct jsonparse_state jsonState;
 
-#ifdef FORCE_AP_MODE
+#ifdef SCAN_FIRST_MODE
   // if (!forceAPMode)
   {
     if (Settings.getPreferredAP(&msGlobals.ggAPConfig.apInfo))
     {
-      msSystem.slogln("stored preferred wifi found.");
+      msSystem.slogln("wifi: using stored configuration.");
       if (TryConnect(msGlobals.ggAPConfig.apInfo, CONNECTION_TIMEOUT))
       {
         msGlobals.ggModeAP = false;
@@ -103,17 +101,17 @@ bool AutoConnect()
       }
     }
 
-    msSystem.slog("wifi scan start:");
+    msSystem.slog("wifi: start scan -");
     // WiFi.scanNetworks will return the number of networks found
     int n = WiFi.scanNetworks();
-    msSystem.slogln("good");
+    msSystem.slogln("done");
     if (n == 0) {
-      msSystem.slogln("no networks found");
+      msSystem.slogln("wifi: no networks found");
     }
     else
     {
       msSystem.slog(String(n));
-      msSystem.slogln(" networks found");
+      msSystem.slogln("wifi: networks found");
       for (int i = 0; i < n; ++i)
       {
         // Print SSID and RSSI for each network found
@@ -132,13 +130,13 @@ bool AutoConnect()
 
     Settings.resetAPList();
 
-    while (Settings.getNextAP(&apInfo))
+    while (Settings.getNextAP(&msGlobals.ggAPConfig.apInfo))
     {
       for (int i = 0; i < n; i++)
       {
-        if (strcmp(WiFi.SSID(i).c_str(), apInfo.ssid) == 0)
+        if (strcmp(WiFi.SSID(i).c_str(), msGlobals.ggAPConfig.apInfo.ssid) == 0)
         {
-          if (TryConnect(apInfo, CONNECTION_TIMEOUT))
+          if (TryConnect(msGlobals.ggAPConfig.apInfo, CONNECTION_TIMEOUT))
           {
             msGlobals.ggModeAP = false;
             return true;
@@ -147,13 +145,13 @@ bool AutoConnect()
       }
     }
 
-    msSystem.slogln("None of the stored WiFi APs was found!");
+    msSystem.slogln("wifi: none of the configured networks found.");
     false;
   }
 #endif
 
 
-  msSystem.slogln("fallback to standalone access point...");
+  msSystem.slogln("wifi: fallback to standalone access point.");
   // WiFi.disconnect(false);
 
   Settings.getAPConfig(&msGlobals.ggAPConfig.apInfo);
@@ -163,7 +161,7 @@ bool AutoConnect()
     return true;
   }
 
-  msSystem.slogln("ERROR: AutoConnect failed!");
+  msSystem.slogln("wifi: ERROR: autoConnect failed!");
   return false;
 }
 

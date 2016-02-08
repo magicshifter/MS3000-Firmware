@@ -7,7 +7,7 @@
 
 #undef _DO_SERIAL_ECHO
 
-// we depend on FORCE_AP_MODE
+// we depend on SCAN_FIRST_MODE
 
 // .2 is the first client to connect in SoftAP ..
 IPAddress syslogServer(192, 168, 4, 2);
@@ -26,7 +26,7 @@ private:
 public:
 
   void connect_wifi() {
-#ifdef FORCE_AP_MODE
+#ifdef SCAN_FIRST_MODE
     WiFi.mode(WIFI_STA);
 
     // Serial.print("sysLOG SSID:"); Serial.println(msGlobals.ggAPConfig.apInfo.ssid);
@@ -93,9 +93,6 @@ public:
     unsigned int msg_length = newMsg.length();
     byte* p = (byte*)malloc(msg_length);
     memcpy(p, (char*) newMsg.c_str(), msg_length);
-
-Serial.print("SSLMSG:");
-Serial.println(newMsg);
 
     udp.beginPacket(syslogServer, 514);
     udp.write(p, msg_length);

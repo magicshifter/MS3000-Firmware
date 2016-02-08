@@ -57,7 +57,7 @@
 #define CONFIG_ENABLE_ACCEL
 
 // 192.168.4.1 is the IP it always has in softAP mode
-// #define FORCE_AP_MODE 1
+// #define SCAN_FIRST_MODE 1
 
 #define CONNECTION_TIMEOUT 30000
 
