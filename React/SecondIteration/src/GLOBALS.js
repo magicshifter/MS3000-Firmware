@@ -8,6 +8,8 @@ export const host = '';
 // export const host = '192.168.4.1';
 export const protocol = 'http';
 
+export const syslogIp = '';
+
 export const rows = 16;
 export const totalColumns = 96;
 export const visibleColumns = 16;

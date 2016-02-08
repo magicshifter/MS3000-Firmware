@@ -32,7 +32,7 @@ export class SettingsView extends Component {
 
   render() {
     const {setSettings} = this.props;
-    const {protocol, host} = this.state;
+    const {protocol, host, syslogIp} = this.state;
 
     return (
       <div className={[classes['container'], 'container'].join(' ')}>
@@ -45,7 +45,7 @@ export class SettingsView extends Component {
               <input
                 type='text'
                 name='protocol'
-                onChange={e => this.onInputChange(e)}
+                onChange={this.onInputChange}
                 value={protocol}
               />
             </li>
@@ -55,8 +55,18 @@ export class SettingsView extends Component {
               <input
                 type='text'
                 name='host'
-                onChange={e => this.onInputChange(e)}
+                onChange={this.onInputChange}
                 value={host}
+              />
+            </li>
+
+            <li key='syslogIp'>
+              <label>syslog ip:</label>
+              <input
+                type='text'
+                name='syslogIp'
+                onChange={this.onInputChange}
+                value={syslogIp}
               />
             </li>
 
