@@ -39,12 +39,12 @@ bool TryConnect(struct APInfo &apInfo, int timeoutMs)
     
     if (WiFi.status() == WL_NO_SSID_AVAIL || WiFi.status() == WL_CONNECT_FAILED || millis() > startTime + timeoutMs)
     {
-      msSystem.slogln ("wifi: could not connect to:");
+      msSystem.slog("wifi: could not connect to:");
       msSystem.slogln(apInfo.ssid);
       return false; // :(
     }
 
-    delay(20);
+    delay(100);
   }
 
   msSystem.slogln ( "wifi: connected to: " );
@@ -145,21 +145,19 @@ bool AutoConnect()
             if (TryConnect(msGlobals.ggAPConfig.apInfo, CONNECTION_TIMEOUT))
             {
               msGlobals.ggModeAP = false;
+              msSystem.feedbackAnimation(msGlobals.feedbackType::OK);
               return true;
             }
           }
         }
       }
-
-
     }
 
-
     msSystem.slogln("wifi: none of the configured networks found.");
+    msSystem.feedbackAnimation(msGlobals.feedbackType::NOT_OK);
     false;
   }
 #endif
-
 
   msSystem.slogln("wifi: fallback to standalone access point.");
   // WiFi.disconnect(false);

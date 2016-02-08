@@ -104,8 +104,14 @@ public:
   MSBitmap tBitmap10x16;
   MSBitmap tBitmap7x12;
 
-};
+enum feedbackType {
+  MODE_MENU = 1,
+  OK = 2,
+  NOT_OK = 3
+} ;
 
+
+};
 
 
 // #else

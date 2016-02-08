@@ -215,11 +215,29 @@ public:
     delay(1000);
   }
 
-  void modeAnimation()
+
+
+  void feedbackAnimation(int mode)
   {
+    int r,g,b = 0x00;
+    
+    if (mode == msGlobals.feedbackType::OK)
+    {
+      r = 0x00; g = 0xff; b = 0x00;
+    }
+    else
+    if (mode == msGlobals.feedbackType::NOT_OK)
+    {
+      r = 0xff; g = 0x00; b = 0x00;
+    }
+    else
+    {
+      r = 0xff; g = 0xff; b = 0xff;
+    }
+
     for (int i=0;i<=3;i++)
     {
-      msLEDs.fillLEDs(255, 255, 255, msGlobals.ggBrightness);
+      msLEDs.fillLEDs(r, g, b, msGlobals.ggBrightness);
       msLEDs.updateLEDs();
       delay(35);
       msLEDs.fastClear();
@@ -606,7 +624,7 @@ void showBatteryStatus(bool shouldFadeIn)
     {
       msButtons.msBtnPwrDoubleHit = false;
       modeMenuActivated = true;
-      modeAnimation();
+      feedbackAnimation(msGlobals.feedbackType::MODE_MENU);
     }
 
     CommandInterfacePoll();
