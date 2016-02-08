@@ -1,6 +1,6 @@
 import React from 'react';
 
-import classes from './AboutView.scss';
+import classes from './InfoView.scss';
 
 export default () => {
   const updateUrl = 'http://magicshifter.net/ms3000/update';
