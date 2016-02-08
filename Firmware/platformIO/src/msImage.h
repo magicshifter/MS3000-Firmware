@@ -282,19 +282,15 @@ public:
 
     if (LoadBitmapFile(fileName, &_bitmap) == true)
     {
-      Serial.println("loadbitmapfile: 0000");
+      // Serial.println("loadbitmapfile: 0000");
       height = _bitmap.header.frameHeight;
       width = _bitmap.header.frameWidth;
     }
     else {
-      Serial.println("loadbitmapfile: not okay");
+      // Serial.println("loadbitmapfile: not okay");
       height = 0;
       width = 0;
     }
-
-    Serial.print("image width:"); Serial.println(String(width));;
-    Serial.print("image height:"); Serial.println(String(height));;
-
   }
 
   static bool LoadBitmapFile(const char *filename, MSBitmap *bitmap)
@@ -341,7 +337,7 @@ public:
 
   void close()
   {
-    Serial.print("closefile:"); Serial.println(String(_bitmap.bmFile));
+    // Serial.print("closefile:"); Serial.println(String(_bitmap.bmFile));
     if (_bitmap.bmFile)
       _bitmap.bmFile.close();
     if(_bitmap.bmBuffer != NULL) {
