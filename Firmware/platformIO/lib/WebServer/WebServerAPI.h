@@ -29,7 +29,7 @@ public:
     }
     else 
     {
-      msSystem.slog("no server config file?::");
+      msSystem.slog("webserver: no server config file? ");
       msSystem.slogln((char * )path.c_str());
     }
 
@@ -63,7 +63,7 @@ public:
     }
     else
     {
-      msSystem.slogln("AP config missing:");
+      msSystem.slogln("webserver: AP config missing:");
       msSystem.slogln((char *)path.c_str());
     }
 
@@ -84,7 +84,7 @@ public:
     file.write((uint8_t *)config, sizeof(*config));
     file.close();
 
-    msSystem.slogln("saved:");
+    msSystem.slogln("webserver: saved:");
     msSystem.slogln(config->ssid);
     
   }
@@ -134,7 +134,7 @@ public:
     {
       if (strcmp(apInfoDummy.ssid, ssid) == 0)
       {
-        msSystem.slogln("deleting wifi:");
+        msSystem.slogln("webserver: deleting wifi:");
         msSystem.slogln(ssid);
 
         apInfoDummy.clear();
@@ -154,26 +154,33 @@ public:
   {
     
     String path = apListConfigPath;
-    File apListFile = SPIFFS.open((char *)path.c_str(), "r");
     const int requiredBytes = sizeof(*apInfo);
     APInfo apInfoDummy;
     int apListIndex = 0;
     int firstFreePos = -1;
+    File apListFile = SPIFFS.open((char *)path.c_str(), "r");
 
-    while (apListFile.read((uint8_t *)&apInfoDummy, requiredBytes) == requiredBytes)
-    {
-      if (firstFreePos < 0 && msSystem.msEEPROMs.memcmpByte((byte *)&apInfoDummy, 0, requiredBytes))
-      {
-        firstFreePos = apListIndex * requiredBytes;
-      }
-      else if (strcmp(apInfoDummy.ssid, apInfo->ssid) == 0)
-      {
-        firstFreePos = apListIndex * requiredBytes;
-        break;
-      }
-      apListIndex++;
+    if (!apListFile) {
+      msSystem.slog("webserver: cannot open file:");
+      msSystem.slogln(path);
     }
-    apListFile.close();
+    else
+    {
+      while (apListFile.read((uint8_t *)&apInfoDummy, requiredBytes) == requiredBytes)
+      {
+        if (firstFreePos < 0 && msSystem.msEEPROMs.memcmpByte((byte *)&apInfoDummy, 0, requiredBytes))
+        {
+          firstFreePos = apListIndex * requiredBytes;
+        }
+        else if (strcmp(apInfoDummy.ssid, apInfo->ssid) == 0)
+        {
+          firstFreePos = apListIndex * requiredBytes;
+          break;
+        }
+        apListIndex++;
+      }
+      apListFile.close();
+    }
 
     if (firstFreePos >= 0)
     {
@@ -184,12 +191,28 @@ public:
     }
     else
     {
-      msSystem.slogln("appendiong at end");
+      msSystem.slogln("appending at end");
       apListFile = SPIFFS.open((char *)path.c_str(), "A");
+
+      if (!apListFile) {
+        msSystem.slogln("creating new file");
+        apListFile = SPIFFS.open((char *)path.c_str(), "w");
+      }
     }
-    apListFile.write((uint8_t *)apInfo, requiredBytes);
-    apListFile.close();
-    
+
+    if (!apListFile) {
+      msSystem.slog("webserver: creation failed: ");
+      msSystem.slogln(path);
+    }
+    else
+    {
+      apListFile.write((uint8_t *)apInfo, requiredBytes);
+      apListFile.close();
+      msSystem.slog("webserver: configuration saved: ");
+      msSystem.slogln(path);
+    }
+
+
   }
 
   void resetAPList()

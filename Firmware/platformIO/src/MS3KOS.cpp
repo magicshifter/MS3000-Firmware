@@ -71,6 +71,9 @@ delay(350); // debug !J!
   // get the web interface started
   msWebServer.StartWebServer();
 
+  // set up syslog ..
+  msSystem.msSysLog.setup();
+
   msSystem.showBatteryStatus(true);
 
   // initialize the modules ..

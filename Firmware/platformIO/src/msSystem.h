@@ -509,7 +509,6 @@ void showBatteryStatus(bool shouldFadeIn)
   void setup()
   {
 
-    msSysLog.setup();
 
      // led controllers and buffer
     msLEDs.initLEDHardware();

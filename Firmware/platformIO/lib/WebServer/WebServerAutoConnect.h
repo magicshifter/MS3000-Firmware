@@ -64,7 +64,7 @@ bool TrySoftAP(struct APInfo &apInfo)
   msSystem.slogln("wifi: password: ");
   msSystem.slogln(apInfo.password);
 
-  WiFi.mode(WIFI_AP);
+  WiFi.mode(WIFI_AP_STA);
   
 //  WiFi.softAPConfig(IPAddress(10,20,30,40), IPAddress(10,1,1,1), IPAddress(255, 255, 255, 0));
   if (strlen(apInfo.password) == 0)
@@ -100,6 +100,8 @@ bool AutoConnect()
         return true;
       }
     }
+    else
+      msSystem.slogln("wifi: no preferred configuration found.");
 
     msSystem.slog("wifi: start scan -");
     // WiFi.scanNetworks will return the number of networks found
@@ -110,8 +112,9 @@ bool AutoConnect()
     }
     else
     {
+      msSystem.slogln("wifi: networks found: ");
       msSystem.slog(String(n));
-      msSystem.slogln("wifi: networks found");
+
       for (int i = 0; i < n; ++i)
       {
         // Print SSID and RSSI for each network found

@@ -6,11 +6,10 @@
 #include <IPAddress.h>
 
 #undef _DO_SERIAL_ECHO
-
-// we depend on SCAN_FIRST_MODE
+// SYSLOG_AUTO_CONNECT
 
 // .2 is the first client to connect in SoftAP ..
-IPAddress syslogServer(192, 168, 4, 2);
+IPAddress syslogServer(192, 168, 2, 186);
 
 class MagicShifterSysLog {
 
@@ -26,35 +25,40 @@ private:
 public:
 
   void connect_wifi() {
-#ifdef SCAN_FIRST_MODE
-    WiFi.mode(WIFI_STA);
+#ifdef SYSLOG_AUTO_CONNECT
+    WiFi.mode(WIFI_AP_STA);
 
     // Serial.print("sysLOG SSID:"); Serial.println(msGlobals.ggAPConfig.apInfo.ssid);
     // Serial.print("sysLOG pass:"); Serial.println(msGlobals.ggAPConfig.apInfo.password);
 
-    WiFi.begin(msGlobals.ggAPConfig.apInfo.ssid, msGlobals.ggAPConfig.apInfo.password);
+    if (WiFi.status() != WL_CONNECTED) {
 
-    int Attempt = 0;
-    while (WiFi.status() != WL_CONNECTED) {
-      delay(100);
-      Attempt++;
-      if (msGlobals.ggDebugSerial) {
-        Serial.print(".");
-      }
-      if (Attempt == 200)
-      {
-        ESP.restart(); // !J! todo: wtf
+      WiFi.begin(msGlobals.ggAPConfig.apInfo.ssid, msGlobals.ggAPConfig.apInfo.password);
+
+      int Attempt = 0;
+      while (WiFi.status() != WL_CONNECTED) {
+        delay(100);
+        Attempt++;
+        if (msGlobals.ggDebugSerial) {
+          Serial.print(".");
+        }
+        if (Attempt == 200)
+        {
+          ESP.restart(); // !J! todo: wtf
+        }
       }
     }
 #else
-    Serial.println("ForceJoinAP disabled:");
+    Serial.println("syslog: JoinAP disabled:");
 #endif
 
     if (msGlobals.ggDebugSerial) {
-      Serial.println("");
-      Serial.println("WiFi connected");
-      Serial.println("IP address: ");
+      Serial.println("syslog: serial enable");
+      Serial.println("syslog: WiFi connected");
+      Serial.print("syslog: local address: ");
       Serial.println(WiFi.localIP());
+      Serial.print("syslog: host address: ");
+      Serial.println(syslogServer);
     }
   }
 
@@ -66,11 +70,12 @@ public:
     udp.begin(localPort);
     delay(500);
     if (WiFi.status() == WL_CONNECTED) {
-      sendSysLogMsg("esp8266-02-syslog started");
+      sendSysLogMsg("MagicShifter3000 reporting for duty!");
     }
   }
 
-  void step()
+  // poll serial and route it to syslog server
+  void pollSerial()
   {
     if (WiFi.status() == WL_CONNECTED) {
 #if _DO_SERIAL_ECHO
@@ -88,7 +93,7 @@ public:
 
   void sendSysLogMsg(String aMsg)
   {
-    String newMsg = " 009.local <45>" + aMsg; // !J! level/service?
+    String newMsg = " 009.local <45>" + aMsg; // !J! todo: fix level/service?
 
     unsigned int msg_length = newMsg.length();
     byte* p = (byte*)malloc(msg_length);
