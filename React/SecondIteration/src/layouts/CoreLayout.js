@@ -14,9 +14,7 @@ import 'styles/core.scss';
 import classes from './CoreLayout.scss';
 
 const mapStateToProps =
-  (state) => ({
-    width: state.layout.toJS().sidebar.width,
-  });
+  (state) => ({});
 
 class CoreLayout extends Component {
   static propTypes = {
@@ -34,7 +32,7 @@ class CoreLayout extends Component {
   }
 
   render() {
-    const {children, width} = this.props;
+    const {children} = this.props;
 
     return (
       <div className={classes['container']}>
