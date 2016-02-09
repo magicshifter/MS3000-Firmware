@@ -6,7 +6,7 @@ import Menu from './Menu';
 import classes from './Header.scss';
 
 export const Header =
-  () => (
+  () =>
     <header className={classes['main']}>
       <Link
         to='/'
@@ -16,5 +16,6 @@ export const Header =
       </Link>
 
       <Menu />
-    </header>
-  );
+    </header>;
+
+export default Header;
