@@ -1,15 +1,9 @@
 import React, {PropTypes} from 'react';
 import {Link, IndexLink} from 'react-router';
 
-import classes from './MenuLink.scss';
-import iconClasses from 'styles/icons.scss';
+import {getIconCssClass} from 'utils/icons';
 
-function cssClass(text) {
-  return [
-    iconClasses['icon'],
-    iconClasses[text],
-  ].join(' ');
-}
+import classes from './MenuLink.scss';
 
 export const MenuLink =
   ({text, to, icon}) =>
@@ -23,7 +17,7 @@ export const MenuLink =
               title={text}
             >
               <i
-                className={cssClass(icon)}
+                className={getIconCssClass(icon)}
               />
             </IndexLink>
           )
@@ -34,7 +28,7 @@ export const MenuLink =
               title={text}
             >
               <i
-                className={cssClass(icon)}
+                className={getIconCssClass(icon)}
               />
 
               {text &&
