@@ -18,7 +18,6 @@ const mapStateToProps =
 
 class CoreLayout extends Component {
   static propTypes = {
-    width: PropTypes.number.isRequired,
     children: PropTypes.element,
     windowResize: PropTypes.func.isRequired,
     scrollEvent: PropTypes.func.isRequired,
