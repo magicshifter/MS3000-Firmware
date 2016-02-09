@@ -11,7 +11,7 @@ import RGBAInput from 'components/inputs/RGBAInput';
 // XXX BLOCK(time) import HexInput from 'components/inputs/HexInput';
 import ColorList from 'components/inputs/ColorList';
 
-import classes from './Color.scss';
+import classes from './Colors.scss';
 
 const mapStateToProps = (state) => {
   const {imageView, layout} = state;
@@ -22,7 +22,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export class Controls extends Component {
+export class Colors extends Component {
   static propTypes = {
     setColorValue: PropTypes.func.isRequired, // action
     setColor: PropTypes.func.isRequired, // action
@@ -105,4 +105,4 @@ export class Controls extends Component {
   }
 }
 
-export default connect(mapStateToProps, actions)(Controls);
+export default connect(mapStateToProps, actions)(Colors);
