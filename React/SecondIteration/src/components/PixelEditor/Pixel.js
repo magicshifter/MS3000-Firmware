@@ -1,9 +1,8 @@
 import React, {PropTypes, Component} from 'react';
 import {connect} from 'react-redux';
+import rgba from 'rgba-convert';
 
 import {colorType, pixelType} from 'utils/propTypes';
-
-import {rgba_toString} from 'utils/colors';
 
 import {actions} from 'redux/modules/pixels';
 
@@ -50,7 +49,7 @@ export class Pixel extends Component {
     const {pixel, pixelClick, color, size} = this.props;
 
     const style = {
-      backgroundColor: rgba_toString(pixel.color),
+      backgroundColor: rgba.css(pixel.color),
       width: size,
       height: size,
     };
