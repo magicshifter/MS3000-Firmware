@@ -8,7 +8,7 @@ import {colorType, layoutType} from 'utils/propTypes';
 
 import ColorPickerInput from 'components/inputs/ColorPickerInput';
 import RGBAInput from 'components/inputs/RGBAInput';
-import HexInput from 'components/inputs/HexInput';
+// XXX BLOCK(time) import HexInput from 'components/inputs/HexInput';
 import ColorList from 'components/inputs/ColorList';
 
 import classes from './Color.scss';
@@ -46,7 +46,7 @@ export class Controls extends Component {
   render() {
     const {
       setColorValue, // action
-      setColor, // action
+      // XXX BLOCK(time) TIME setColor, // action
       color,
       layout,
     } = this.props;
@@ -86,12 +86,14 @@ export class Controls extends Component {
           />
         </div>
 
-        <div className={classes['hex']}>
-          <HexInput
-            color={color}
-            setColor={setColor}
-          />
-        </div>
+        {/* XXX BLOCK(time)
+          <div className={classes['hex']}>
+            <HexInput
+              color={color}
+              setColor={setColor}
+            />
+          </div>
+        */}
 
         <div className={classes['list']}>
           <ColorList
