@@ -97,7 +97,7 @@ export class Controls extends Component {
 
         <div className={classes['list']}>
           <ColorList
-            editorColor={color}
+            uiColor={color}
           />
         </div>
       </div>
