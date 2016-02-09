@@ -169,8 +169,6 @@ class SettingsManager {
 	void deleteAP(char *ssid) {
 
 		String path = apListConfigPath;
-		// bug in FS WRITE define!!!!
-		//FSFile apListFile = FS.open((char *)path.c_str(), (SPIFFS_RDONLY | SPIFFS_WRONLY | SPIFFS_CREAT));
 		File apListFile = SPIFFS.open((char *) path.c_str(), "a+");
 
 		APInfo apInfoDummy;
@@ -256,14 +254,12 @@ class SettingsManager {
 	}
 
 	void resetAPList() {
-
 		apListIndex = -1;
 		apListFile.close();
 
 	}
 
 	bool getNextAP(struct APInfo *apInfo) {
-
 		if (apListIndex < 0) {
 			String path = apListConfigPath;
 			if (SPIFFS.exists((char *) path.c_str())) {
@@ -288,8 +284,6 @@ class SettingsManager {
 		} else {
 			return false;
 		}
-
-
 		///hack
 		return false;
 	}
@@ -344,32 +338,10 @@ void handleGETStatus(void)
 {
 	msSystem.slogln("handleGETStatus");
 
-	int adValue = analogRead(A0);
-
-	int ad1V = 1023;
-
-/*
-// Metalab wih Flo (Gamma)
-#define R601_VAL 200
-#define R602_VAL 820
-*/
-// with jqVic (Alpha, Beta)
-#define R601_VAL 270
-#define R602_VAL 1000
-
-	float r1 = R601_VAL, r2 = R602_VAL, r3 = 0;
-
-	float voltage = ((float) (r1 + r2 + r3) * adValue) / (r1 * ad1V);
-
-
-	msSystem.msSensor.readAccelData(msGlobals.ggAccelCount);
-
-	for (int i = 0; i < 3; i++) {
-		msGlobals.ggAccel[i] = (float) msGlobals.ggAccelCount[i] / ((1 << 12) / (2 * GSCALE));	// get actual g value, this depends on scale being set
-	}
+	int adValue = msSystem.getADValue();
+	float voltage = msSystem.getBatteryVoltage();
 
 	uint32_t ip = (uint32_t) msSystem.getIP();
-
 
 	String response = "{";
 	response += "\"id\":" + String(ESP.getChipId()) + ",";
@@ -706,12 +678,6 @@ void handleGETWLANList(void)
 {
 	msSystem.slogln("handleGETWLANList");
 
-	// if (msGlobals.ggModeAP)
-	// {
-	//   msSystem.msESPServer.send(200, "text/plain", "crash in AP mode...so diusabled for now");
-	//   return;
-	// }
-
 	String response = "[";
 
 	int n = WiFi.scanNetworks();
@@ -886,7 +852,6 @@ void handleLedSet()
 			base64_decode((char *) ledData, input, inputLen);
 
 		for (int i = 0; i < dataLen; i += 5) {
-			//msSystem.msLEDs.setLED(ledData[i], ledData[i+1], ledData[i+2], ledData[i+3], ledData[i+4]);
 			byte idx = ledData[i];
 			msSystem.slogln("idx: ");
 			msSystem.slogln(String((int) idx));
