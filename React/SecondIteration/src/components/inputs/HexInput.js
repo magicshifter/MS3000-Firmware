@@ -3,38 +3,58 @@ import rgba from 'rgba-convert';
 
 import {colorType, hexStringType} from 'utils/propTypes';
 
-import ColorInput from './ColorInput';
+import {isHexColor} from 'utils/types';
 
 import classes from './HexInput.scss';
 
-export default class RGBAInput extends Component {
+export default class HexInput extends Component {
 
   static propTypes = {
     color: PropTypes.oneOfType([colorType, hexStringType]).isRequired,
     setColor: PropTypes.func.isRequired,
   };
 
-  render() {
-    const {color, setColor, showAlpha} = this.props;
+  constructor(props) {
+    super(props);
 
-    const hex = rgba.css(color);
+    this.handleColorChange = this.handleColorChange.bind(this);
+    this.cleanHex = this.cleanHex.bind(this);
+  }
+
+  handleColorChange(e) {
+    const {setColor} = this.props;
+    const {value} = e.target;
+    const hex = this.cleanHex(value);
+    const rgb = rgba.obj(hex);
+
+    this.setState({
+      currentColor: hex,
+    });
+
+    if (isHexColor(hex)) {
+      setColor({
+        color: rgb,
+      });
+    }
+  }
+
+  cleanHex(hex) {
+    return rgba.hex(hex).substr(0, 7).replace('#', '');
+  }
+
+  render() {
+    const {currentColor} = this.state;
+    const currentHex = this.cleanHex(currentColor);
 
     return (
       <div className={classes['container']}>
-        {/*
-        <div
-          className={classes['indicator']}
-          style={{
-            backgroundColor: rgba.css(color),
-          }}
-        ></div>
-        */}
+
         <label>HEX</label>
 
         <input
           type='text'
-          value={hex}
-          setColor={setColor}
+          value={currentHex}
+          onChange={this.handleColorChange}
         />
       </div>
     );
