@@ -25,11 +25,10 @@ export const links = [
   {to: '/settings', text: 'settings'},
 ];
 
-export const currentColorName = 'cyan';
-
 export const defaultLedColor = {r: 0, b: 0, g: 0, a: 255};
 
-export const defaultEditorColor = {r: 255, b: 255, g: 255, a: 255};
+export const defaultEditorColor = {r: 28, b: 255, g: 250, a: 255};
+export const uiColor = defaultEditorColor;
 
 export const colorList = [
   {r: 0, g: 0, b: 0, a: 255},
@@ -44,8 +43,6 @@ export const colorList = [
 
 export const menuTextColor = materialColors['black'];
 
-export const currentColor = materialColors[currentColorName];
-
 export const fonts = [
   {
     name: 'Palatino',
@@ -56,7 +53,7 @@ export const fonts = [
     css: 'Impact, Impact5, Charcoal6, sans-serif',
   },
   {
-    name: 'Tahome',
+    name: 'Tahoma',
     css: 'Tahoma, Geneva, sans-serif',
   },
   {
@@ -78,5 +75,3 @@ export const sidebar = {
 export const text = 'Magic';
 
 export const fontId = 0;
-
-export const textColor = materialColors[currentColorName][900];
