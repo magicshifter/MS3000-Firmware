@@ -1,6 +1,7 @@
 #ifndef _WEBSERVERAPI_H
 #define _WEBSERVERAPI_H
 
+#include "Base64.h"
 
 class SettingsManager {
   private:
