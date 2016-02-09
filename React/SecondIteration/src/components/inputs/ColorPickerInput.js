@@ -1,6 +1,6 @@
 import React, {Component, PropTypes} from 'react';
 import rgba from 'rgba-convert';
-import ColorPicker from 'react-simple-colorpicker';
+import {Saturation, Hue} from 'react-color/lib/components/common';
 
 import {colorType, hexStringType} from 'utils/propTypes';
 
@@ -10,18 +10,27 @@ export default class ColorPickerInput extends Component {
 
   static propTypes = {
     color: PropTypes.oneOfType([colorType, hexStringType]).isRequired,
-    setColor: PropTypes.func.isRequired,
   };
 
   render() {
-    const {color, setColor} = this.props;
+    const {color} = this.props;
 
     return (
       <div className={classes['container']}>
-        <ColorPicker
-          color={rgba.css(color)}
-          onChange={setColor}
-        />
+        <div className={classes['saturation']}>
+          <Saturation
+            {...this.props}
+            color={rgba.hex(color)}
+            direction='vertical'
+          />
+        </div>
+        <div className={classes['hue']}>
+          <Hue
+            {...this.props}
+            color={rgba.hex(color)}
+            direction='vertical'
+          />
+        </div>
       </div>
     );
   }
