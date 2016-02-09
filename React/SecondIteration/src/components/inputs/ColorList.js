@@ -1,12 +1,13 @@
 import React, {PropTypes, Component} from 'react';
 import {connect} from 'react-redux';
-import rgba from 'rgba-convert';
 import Immutable from 'immutable';
+
+import ColorIndicator from './ColorIndicator';
+
+import {getIconCssClass} from 'utils/icons';
 
 import {actions as colorListActions} from 'redux/modules/colorList';
 import {actions as imageActions} from 'redux/modules/views/image';
-
-import FloatingButton from './FloatingButton';
 
 import {colorType} from 'utils/propTypes';
 
@@ -29,52 +30,55 @@ export class ColorList extends Component {
     setColor: PropTypes.func.isRequired, // action
 
     colors: PropTypes.arrayOf(colorType).isRequired,
-    editorColor: colorType.isRequired,
+    uiColor: colorType.isRequired,
   };
 
-  renderColorList(key, color) {
-    const {colors, removeColor, setColor} = this.props;
+  constructor(props) {
+    super(props);
 
-    return Object.keys(colors).map(
-      key => (
-        <li key={key}>
-          <div className={classes['indicator']}
-            style={{
-              backgroundColor: rgba.css(colors[key]),
-            }}
-            onClick={() => setColor({color: colors[key]})}
-          />
+    this.handleAddColorClick = this.handleAddColorClick.bind(this);
+  };
 
-          <FloatingButton
-            title='remove color'
-            cssClass={classes['remove']}
-            onClick={() => removeColor(key)}
-          >
-            x
-          </FloatingButton>
-        </li>
-      )
-    );
-  }
+  handleAddColorClick(e) {
+    const {colors, uiColor, addColor} = this.props;
+
+    const colorExists =
+      colors.some(
+        c =>
+          Immutable.Map(c).equals(Immutable.Map(uiColor))
+      );
+
+    if (!colorExists) {
+      addColor([...colors, uiColor]);
+    }
+  };
 
   render() {
-    const {addColor, editorColor, colors} = this.props;
+    const {colors, setColor, removeColor} = this.props;
 
     return (
       <div className={classes['container']}>
-        <div className={classes['add']}>
-          <input
-            type='button'
-            value='save current color'
-            onClick={
-              () =>
-                !colors.some(c => Immutable.Map(c).equals(Immutable.Map(editorColor))) &&
-                addColor([...colors, editorColor])
-            }
+        <div className={classes['nav']}>
+          <i
+            className={getIconCssClass('zoom_in')}
+            onClick={this.handleAddColorClick}
           />
         </div>
 
-        <ul>{this.renderColorList()}</ul>
+        <ul>
+          {
+            Object.keys(colors).map(
+              key =>
+                <ColorIndicator
+                  colorId={key}
+                  key={key}
+                  color={colors[key]}
+                  removeColor={removeColor}
+                  setColor={setColor}
+                />
+            )
+          }
+        </ul>
       </div>
     );
   }
