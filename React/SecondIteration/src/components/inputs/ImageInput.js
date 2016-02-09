@@ -4,6 +4,8 @@ import {connect} from 'react-redux';
 import {actions} from 'redux/modules/pixels';
 import {actions as imageActions} from 'redux/modules/views/image';
 
+import {getIconCssClass} from 'utils/icons';
+
 import {pixelsType} from 'utils/propTypes';
 import {getImagePixels} from 'utils/images';
 import {makePixelsArray} from 'utils/pixels';
@@ -54,18 +56,26 @@ export class ImageInput extends Component {
     const {label} = this.props;
 
     return (
-      <div className={classes['input']}>
+      <div className={classes['container']}>
 
         {
           label &&
           <label>{label}</label>
         }
 
-        <input
-          type='file'
-          name='fileUpload'
-          onChange={this.onChange}
-        />
+        <div className={classes['input_container']}>
+          <input
+            type='file'
+            name='fileUpload'
+            onChange={this.onChange}
+          />
+
+          <i
+            className={getIconCssClass('images')}
+          />
+        </div>
+
+        <button>Use Image</button>
 
       </div>
     );
