@@ -52,7 +52,7 @@ MagicShifterWebServer msWebServer;
 #include "Modes/Modes.h"
 
 MagicShakeMode msMagicShake;
-MagicSystemTextMode msSysText;
+SystemTextMode msSysText;
 MagicMagnetMode msMagicMagnet;
 
 ModeSelectorMode msModeSelector;

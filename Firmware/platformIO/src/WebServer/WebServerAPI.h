@@ -1,7 +1,6 @@
 #ifndef _WEBSERVERAPI_H
 #define _WEBSERVERAPI_H
 
-#include "msAPInfo.h"
 
 class SettingsManager
 {

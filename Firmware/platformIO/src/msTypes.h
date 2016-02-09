@@ -1,5 +1,5 @@
-#ifndef _MSAPINFO_H
-#define  _MSAPINFO_H
+#ifndef _MSTYPES_H
+#define  _MSTYPES_H
 
 #define MAX_AP_LEN 48
 struct APInfo

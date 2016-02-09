@@ -1,7 +1,5 @@
 
-#define NUM_SYS_TEXTS 2
-
-class MagicSystemTextMode : public MagicShifterBaseMode {
+class SystemTextMode : public MagicShifterBaseMode {
 
 private:
   // MagicShifterImageAbstr *msImage;

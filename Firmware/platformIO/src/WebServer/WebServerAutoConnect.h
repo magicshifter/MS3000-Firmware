@@ -1,8 +1,6 @@
 #ifndef _WEBSERVERAUTOCONNECT_H
 #define _WEBSERVERAUTOCONNECT_H
 
-#include "msAPInfo.h"
-
 void printIPInfo(){
   msSystem.slogln ( "wifi: IP address: " );
   msSystem.slogln ( String(WiFi.localIP().toString()) );

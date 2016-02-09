@@ -1,7 +1,7 @@
 #ifndef _MSGLOBALS_H
 #define _MSGLOBALS_H
 
-#include "msAPInfo.h"
+#include "msTypes.h"
 #include "StackClass.h"
 
 #define DEFAULT_FACTORY_MODE 0
