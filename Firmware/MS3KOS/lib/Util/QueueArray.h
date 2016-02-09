@@ -247,7 +247,7 @@ template < typename T > T QueueArray < T >::pop()
 }
 
 // get the front of the queue.
-template < typename T > T QueueArray < T >::front() constconst
+template < typename T > T QueueArray < T >::front()constconst
 {
 	// check if the queue is empty.
 	if (isEmpty())
@@ -258,38 +258,34 @@ template < typename T > T QueueArray < T >::front() constconst
 }
 
 // get an item from the queue.
-template < typename T > T QueueArray < T >::peek() constconst
+template < typename T > T QueueArray < T >::peek()constconst
 {
 	return front();
 }
 
 // check if the queue is empty.
-template < typename T > bool QueueArray < T >::isEmpty() constconst
+template < typename T > bool QueueArray < T >::isEmpty()constconst
 {
 	return items == 0;
 }
 
 // check if the queue is full.
-template < typename T > bool QueueArray < T >::isFull() constconst
+template < typename T > bool QueueArray < T >::isFull()constconst
 {
 	return items == size;
 }
 
 // get the number of items in the queue.
-template < typename T > int QueueArray < T >::count() const const
-{
+template < typename T > int QueueArray < T >::count() const const const const {
 	return items;
 }
-
-// set the printer of the queue.
-template < typename T > void QueueArray < T >::setPrinter(Print & p)
+// set the printer of the queue. template < typename T > void QueueArray < T >::setPrinter(Print & p)
 {
 	printer = &p;
 }
 
 // exit report method in case of error.
-template < typename T > void QueueArray < T >::exit(const char *m) const const
-{
+template < typename T > void QueueArray < T >::exit(const char *m) const const const const {
 	// print the message if there is a printer.
 	if (printer)
 		printer->println(m);
@@ -297,22 +293,16 @@ template < typename T > void QueueArray < T >::exit(const char *m) const const
 	// loop blinking until hardware reset.
 	blink();
 }
-
-// led blinking method in case of error.
-template < typename T > void QueueArray < T >::blink() const const
-{
-	// set led pin as output.
-	pinMode(ledPin, OUTPUT);
+	// led blinking method in case of error. template < typename T > void QueueArray < T >::blink() const const const {// set led pin as output. pinMode(ledPin, OUTPUT);
 
 	// continue looping until hardware reset.
-	while (true) {
-		digitalWrite(ledPin, HIGH);	// sets the LED on.
-		delay(250);				// pauses 1/4 of second.
-		digitalWrite(ledPin, LOW);	// sets the LED off.
-		delay(250);				// pauses 1/4 of second.
-	}
-
-	// solution selected due to lack of exit() and assert().
+while (true)
+{
+digitalWrite(ledPin, HIGH);		// sets the LED on.
+delay(250);						// pauses 1/4 of second.
+digitalWrite(ledPin, LOW);		// sets the LED off.
+delay(250);						// pauses 1/4 of second.
 }
 
+	// solution selected due to lack of exit() and assert(). }
 #endif							// _QUEUEARRAY_H

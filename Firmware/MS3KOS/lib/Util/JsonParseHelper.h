@@ -10,8 +10,7 @@ void ReportJsonLocation(struct jsonparse_state *jsonStatePtr)
 	msSystem.slogln(jsonStatePtr->json);
 }
 
-bool AssertParseNext(struct jsonparse_state *jsonStatePtr,
-					 byte expectedType)
+bool AssertParseNext(struct jsonparse_state *jsonStatePtr, byte expectedType)
 {
 	byte type;
 
@@ -26,8 +25,7 @@ bool AssertParseNext(struct jsonparse_state *jsonStatePtr,
 	return true;
 }
 
-int AssertParseNextMultiple(struct jsonparse_state *jsonStatePtr,
-							byte typeA, byte typeB)
+int AssertParseNextMultiple(struct jsonparse_state *jsonStatePtr, byte typeA, byte typeB)
 {
 	byte type = jsonparse_next(jsonStatePtr);
 
@@ -48,8 +46,7 @@ int AssertParseNextMultiple(struct jsonparse_state *jsonStatePtr,
 	return -1;
 }
 
-int TryParseKeyValue(struct jsonparse_state *jsonStatePtr, const char *key,
-					 char *data, int size)
+int TryParseKeyValue(struct jsonparse_state *jsonStatePtr, const char *key, char *data, int size)
 {
 	if (jsonparse_strcmp_value(jsonStatePtr, key) == 0) {
 		// 0 means syntax error
@@ -64,31 +61,23 @@ int TryParseKeyValue(struct jsonparse_state *jsonStatePtr, const char *key,
 	return 1;					// 1 means correct syntax but not found
 }
 
-bool ParseAPInfo(struct APInfo * apInfo,
-				 struct jsonparse_state * jsonState)
+bool ParseAPInfo(struct APInfo * apInfo, struct jsonparse_state * jsonState)
 {
 	byte type;
 
 	if (!AssertParseNext(jsonState, JSON_TYPE_OBJECT))
 		return false;
 
-	while ((type = jsonparse_next(jsonState)) == JSON_TYPE_PAIR_NAME
-		   || type == JSON_TYPE_SEPERATOR) {
+	while ((type = jsonparse_next(jsonState)) == JSON_TYPE_PAIR_NAME || type == JSON_TYPE_SEPERATOR) {
 		if (type == JSON_TYPE_PAIR_NAME) {
 			int parseResult;
 
-			if (!
-				(parseResult =
-				 TryParseKeyValue(jsonState, "ssid", apInfo->ssid,
-								  MAX_AP_LEN)))
+			if (!(parseResult = TryParseKeyValue(jsonState, "ssid", apInfo->ssid, MAX_AP_LEN)))
 				return false;
 			if (parseResult == 2)
 				continue;
 
-			if (!
-				(parseResult =
-				 TryParseKeyValue(jsonState, "pwd", apInfo->password,
-								  MAX_AP_LEN)))
+			if (!(parseResult = TryParseKeyValue(jsonState, "pwd", apInfo->password, MAX_AP_LEN)))
 				return false;
 			if (parseResult == 2)
 				continue;
