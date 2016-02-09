@@ -44,4 +44,12 @@ struct APConfig
   bool forceAPMode;
 };
 
+
+struct UIConfig
+{
+  int powerdownTimeUSB;
+  int powerdownTimeBattery;
+  int defaultBrightness;
+};
+
 #endif

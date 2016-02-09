@@ -77,6 +77,9 @@ void StartWebServer(void)
   msSystem.msESPServer.on("/settings/server", HTTP_GET, handleGETServerSettings);
   msSystem.msESPServer.on("/settings/server/set", handlePOSTServerSettings);
 
+  // msSystem.msESPServer.on("/settings/ui", handleGetUISettings);
+  // msSystem.msESPServer.on("/settings/ui/set", handleSetUISettings);
+
   msSystem.msESPServer.on("/settings/wifi/preferred", HTTP_GET, handleGETPreferredAPSettings);
   msSystem.msESPServer.on("/settings/wifi/preferred/set", handlePOSTPreferredAPSettings);
 
