@@ -16,17 +16,17 @@
 
 // HW_ID is passed one of these constants from Makefile -DHW_ID=.. 
 
-// set of Hw configurations	
-#define HW_ID_MS3000_FSOX8700CQ 	1		// magnetometer+accel
-#define HW_ID_MS3000_MMA8452Q 		2		// accel
-#define HW_ID_RING   				3		// on the wall
-#define HW_ID_SABRE   				4		// proto-j-beta light wandstrip, new ESP model
+// set of Hw configurations 
+#define HW_ID_MS3000_FSOX8700CQ 	1	// magnetometer+accel
+#define HW_ID_MS3000_MMA8452Q 		2	// accel
+#define HW_ID_RING   				3	// on the wall
+#define HW_ID_SABRE   				4	// proto-j-beta light wandstrip, new ESP model
 
 #define HW_ID HW_ID_MS3000_FSOX8700CQ
 // #define HW_ID HW_ID_MS3000_MMA8452Q
 
 // set of LED types
-#define LED_TYPE_APA102 1 
+#define LED_TYPE_APA102 1
 #define LED_TYPE_WS2801 2
 
 // define a default
@@ -95,14 +95,14 @@
 
 // normal MMA 
 #ifdef CONFIG_MMA_NORMAL
-  #define MMA8452_ADDRESS 0x1C
-  #define MMA8452_ID 0x2A
+#define MMA8452_ADDRESS 0x1C
+#define MMA8452_ID 0x2A
 #else
-  #ifdef CONFIG_MMA_FSOX
+#ifdef CONFIG_MMA_FSOX
 // magnet sensor version
-    #define MMA8452_ADDRESS 0x1E
-    #define MMA8452_ID 0xC7
-  #endif
+#define MMA8452_ADDRESS 0x1E
+#define MMA8452_ID 0xC7
+#endif
 #endif
 
 //#define MAX_LEDS 160

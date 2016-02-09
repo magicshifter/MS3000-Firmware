@@ -139,5 +139,4 @@
 #endif
 
 
-#endif /* MIBY_CONFIG_H */
-
+#endif							/* MIBY_CONFIG_H */

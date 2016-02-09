@@ -3,7 +3,7 @@
 // #include "../firmware.h"
 
 #include <math.h>
-#include <Wire.h> // Used for I2C
+#include <Wire.h>				// Used for I2C
 #include <Arduino.h>
 #include <Esp.h>
 
@@ -17,24 +17,25 @@ typedef struct estage estage;
 #define ENV_RELEASE 4
 
 struct estage {
-	uint16_t duration;	// duration in samples;
-	int8_t coeff;		// directional coefficient
+	uint16_t duration;			// duration in samples;
+	int8_t coeff;				// directional coefficient
 	uint16_t level;
-	estage * next;
+	estage *next;
 };
 
 typedef struct {
 	estage stages[5];
 	uint16_t timer;
 	uint16_t level;
-	estage * current;
+	estage *current;
 	bool is_idle;
 } adsr_envelope;
 
 void adsr_envelope_init(adsr_envelope * env);
 uint16_t adsr_envelope_tick(adsr_envelope * env);
 
-void adsr_envelope_init(adsr_envelope * env) {
+void adsr_envelope_init(adsr_envelope * env)
+{
 	env->stages[ENV_START].level = 0;
 	env->stages[ENV_START].next = &env->stages[ENV_START];
 
@@ -54,22 +55,23 @@ void adsr_envelope_init(adsr_envelope * env) {
 
 	env->timer = 0;
 	env->level = 0;
-	env->current = &env->stages[ENV_RELEASE]; // inactive
+	env->current = &env->stages[ENV_RELEASE];	// inactive
 	env->is_idle = true;
 }
 
-uint16_t adsr_envelope_tick(adsr_envelope * env) {
-	estage * es = env->current;
+uint16_t adsr_envelope_tick(adsr_envelope * env)
+{
+	estage *es = env->current;
 
 	msSystem.slogln("Current Stage:");
-	msSystem.slogln((unsigned int)es, HEX);
+	msSystem.slogln((unsigned int) es, HEX);
 	msSystem.slogln("Timer:");
 	msSystem.slogln(env->timer, DEC);
 	msSystem.slogln("Duration:");
 	msSystem.slogln(es->duration, DEC);
 
-	if (env->timer >= es->duration) { // next stage
-		env->current = (estage *)es->next;
+	if (env->timer >= es->duration) {	// next stage
+		env->current = (estage *) es->next;
 		es = env->current;
 		env->timer = 0;
 		env->level = es->level;
@@ -80,7 +82,7 @@ uint16_t adsr_envelope_tick(adsr_envelope * env) {
 		env->level += es->coeff;
 		if (env->level < 0)
 			env->level = 0;
-	 	env->timer++;
+		env->timer++;
 	}
 	return env->level;
 }

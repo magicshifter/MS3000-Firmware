@@ -56,7 +56,7 @@ struct tMIDIView {
 	uint8_t channel;			// MIDI loved MTV
 	uint16_t time_base;			// time lords too
 	void *v_arg;				// this ones for you
-} ;
+};
 
 struct tMIDIView curr_midiview;
 
@@ -67,14 +67,14 @@ struct tMIDIPacket {
 	uint8_t is_used;			// is currently in use
 	uint8_t r_stat;				// read status
 	uint8_t w_stat;				// write status
-} ;
+};
 
 // head of MIDI_sequences
 struct tMIDISequence {
 	uint16_t in_time;			//
 	struct list_head list;		// for larger MIDI seqs (sysex)
 	struct tMIDIPacket midi_seqs[NUM_MIDI_SEQS];	// set of midi_seqs
-} ;
+};
 
 // MIDI Sequences
 struct tMIDISequence MIDI_sequences[NUM_CHANNELS];
@@ -131,7 +131,7 @@ void MIDIFrame()
 	// pull midi_inbox
 	if (Serial1.available() > 0) {
 		msSystem.msLEDs.setLED(4, 100, 0, 0);
-		msSystem.msLEDs.setLED(5, 0,0,0);
+		msSystem.msLEDs.setLED(5, 0, 0, 0);
 		if (midi_in_pkt->is_used == 0) {
 			midi_in_pkt->r_stat = MIDIGet(&midi_in_pkt->buffer[0], 4);
 			midi_in_pkt->pkt_time = micros();	///  time
@@ -142,11 +142,10 @@ void MIDIFrame()
 				midi_inbox = 0;
 		}
 	}
-
 	// push midi_outbox
 	if (midi_out_pkt->pkt_time <= (micros() - curr_midiview.time_base)) {
 		if (midi_out_pkt->is_used == 1) {
-			msSystem.msLEDs.setLED(4, 0,0,0);
+			msSystem.msLEDs.setLED(4, 0, 0, 0);
 			msSystem.msLEDs.setLED(5, 0, 0, 100);
 			midi_out_pkt->w_stat = MIDIPut(&midi_out_pkt->buffer[0], 4);
 			midi_out_pkt->is_used = 0;
@@ -187,93 +186,81 @@ void MIDISync()
 }
 
 
-  int currentTimeStamp = 0;
-  int lastTimeStamp = 0;
-  int microsSinceLast = 0;
+int currentTimeStamp = 0;
+int lastTimeStamp = 0;
+int microsSinceLast = 0;
 
 // !J! TODO : There should be a MagicShifter API for this
 // TODO: private state
 // state for button timing
-  int msBtnAPressTime = 0;
-  int msBtnPwrPressTime = 0;
-  int msBtnBPressTime = 0;
+int msBtnAPressTime = 0;
+int msBtnPwrPressTime = 0;
+int msBtnBPressTime = 0;
 
 // state for double click timing
-  int msBtnATTL = 0;
-  int msBtnPwrTTL = 0;
-  int msBtnBTTL = 0;
+int msBtnATTL = 0;
+int msBtnPwrTTL = 0;
+int msBtnBTTL = 0;
 
-  bool msLongClickOK = true;
+bool msLongClickOK = true;
 
-  bool msBtnAHit = false;
-  bool msBtnPwrHit = false;
-  bool msBtnBHit = false;
+bool msBtnAHit = false;
+bool msBtnPwrHit = false;
+bool msBtnBHit = false;
 
-  bool msBtnALongHit = false;
-  bool msBtnPwrLongHit = false;
-  bool msBtnBLongHit = false;
-  
-  bool msBtnADoubleHit = false;
-  bool msBtnPwrDoubleHit = false;
-  bool msBtnBDoubleHit = false;
+bool msBtnALongHit = false;
+bool msBtnPwrLongHit = false;
+bool msBtnBLongHit = false;
 
-  void handleButtons()
-  {
-    // reset public btton state
-    msBtnAHit = msBtnALongHit = false;
-    if (!digitalRead(PIN_BUTTON_A))
-    {
-      if (msBtnAPressTime)
-        msBtnAPressTime += microsSinceLast;
-      else
-        msBtnAPressTime = 1;
-    }
-    else
-    {
-      if (msLongClickOK && msBtnAPressTime >= MIN_TIME_LONG_CLICK)
-      {
-        msBtnALongHit = true;
-        log("msBtnALongHit");
-      }
-      else if (msBtnAPressTime >= MIN_TIME_CLICK)
-      {
-        msBtnAHit = true;
-        log("msBtnAHit");
-      }
+bool msBtnADoubleHit = false;
+bool msBtnPwrDoubleHit = false;
+bool msBtnBDoubleHit = false;
 
-      msBtnAPressTime = 0;
-    }
+void handleButtons()
+{
+	// reset public btton state
+	msBtnAHit = msBtnALongHit = false;
+	if (!digitalRead(PIN_BUTTON_A)) {
+		if (msBtnAPressTime)
+			msBtnAPressTime += microsSinceLast;
+		else
+			msBtnAPressTime = 1;
+	} else {
+		if (msLongClickOK && msBtnAPressTime >= MIN_TIME_LONG_CLICK) {
+			msBtnALongHit = true;
+			log("msBtnALongHit");
+		} else if (msBtnAPressTime >= MIN_TIME_CLICK) {
+			msBtnAHit = true;
+			log("msBtnAHit");
+		}
+
+		msBtnAPressTime = 0;
+	}
 
 
-    // reset public btton state
-    msBtnBHit = msBtnBLongHit = false;
-    if (!digitalRead(PIN_BUTTON_B))
-    {
-      if (msBtnBPressTime)
-        msBtnBPressTime += microsSinceLast;
-      else
-        msBtnBPressTime = 1;
-    }
-    else
-    {
-      if (msLongClickOK && msBtnBPressTime >= MIN_TIME_LONG_CLICK)
-      {
-        msBtnBLongHit = true;
-        log("msBtnBLongHit");
+	// reset public btton state
+	msBtnBHit = msBtnBLongHit = false;
+	if (!digitalRead(PIN_BUTTON_B)) {
+		if (msBtnBPressTime)
+			msBtnBPressTime += microsSinceLast;
+		else
+			msBtnBPressTime = 1;
+	} else {
+		if (msLongClickOK && msBtnBPressTime >= MIN_TIME_LONG_CLICK) {
+			msBtnBLongHit = true;
+			log("msBtnBLongHit");
 
-      }
-      else if (msBtnBPressTime >= MIN_TIME_CLICK)
-      {
-        msBtnBHit = true;
-        log("msBtnBHit");
-      }
+		} else if (msBtnBPressTime >= MIN_TIME_CLICK) {
+			msBtnBHit = true;
+			log("msBtnBHit");
+		}
 
-      msBtnBPressTime = 0;
-    }
+		msBtnBPressTime = 0;
+	}
 
 
-    // reset public btton state
-    msBtnPwrHit = msBtnPwrLongHit = false;
+	// reset public btton state
+	msBtnPwrHit = msBtnPwrLongHit = false;
 /*
     if (msFrame++ % 10 == 0)
     if (powerButtonPressed())
@@ -299,32 +286,25 @@ void MIDISync()
     //*/
 
 // internal button usage
-    if (msBtnALongHit)
-    {
-      // powerDown();	// !J!
-    }
+	if (msBtnALongHit) {
+		// powerDown();   // !J!
+	}
 
-    if (msBtnBHit)
-    {
-      msGlobals.ggBrightness+=2;
-      if (msGlobals.ggBrightness > 31)
-      {
-        msGlobals.ggBrightness = 31;
-      }
-
-      //msGlobals.ggCurrentMode = (msGlobals.ggCurrentMode+1)%NUM_MS_MODES;
-    }
-    if (msBtnBLongHit)
-    {
-      msGlobals.ggBrightness-=6;
-      if (msGlobals.ggBrightness < 1)
-      {
-        msGlobals.ggBrightness = 1;
-      }
-
-      //msGlobals.ggCurrentMode = (msGlobals.ggCurrentMode+1)%NUM_MS_MODES;
-    }
-  }
+	if (msBtnBHit) {
+		msGlobals.ggBrightness += 2;
+		if (msGlobals.ggBrightness > 31) {
+			msGlobals.ggBrightness = 31;
+		}
+		//msGlobals.ggCurrentMode = (msGlobals.ggCurrentMode+1)%NUM_MS_MODES;
+	}
+	if (msBtnBLongHit) {
+		msGlobals.ggBrightness -= 6;
+		if (msGlobals.ggBrightness < 1) {
+			msGlobals.ggBrightness = 1;
+		}
+		//msGlobals.ggCurrentMode = (msGlobals.ggCurrentMode+1)%NUM_MS_MODES;
+	}
+}
 
 
 void MIDIMode()
@@ -348,7 +328,7 @@ void MIDIMode()
 		// msSystem.msLEDs.setLED(15, centerBtnPressed ? 100 : 0, powerBtnPressed ? 100 : 0, 0);
 
 #if 0
-		// updateLedsWithBlank();		// !J! 
+		// updateLedsWithBlank();       // !J! 
 		if (!MagicShifter_Poll())
 			break;
 #endif

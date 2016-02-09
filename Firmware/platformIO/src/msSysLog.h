@@ -13,122 +13,114 @@
 IPAddress parseIPString(char *str)
 {
 // char str[] = "123 190 42 175";
-  uint8_t values[ 4 ];
-  uint8_t valuesCount = 0;
+	uint8_t values[4];
+	uint8_t valuesCount = 0;
 
-  char *p = strtok( str, "." );
-  while ( p != NULL && valuesCount < 4 )
-  {
-      values[ valuesCount++ ] = atoi( p );
-      p = strtok( NULL, "." );
-  }
+	char *p = strtok(str, ".");
+	while (p != NULL && valuesCount < 4) {
+		values[valuesCount++] = atoi(p);
+		p = strtok(NULL, ".");
+	}
 
-  if ( valuesCount == 4 )
-  {
-      return IPAddress(values[0], values[1], values[2], values[3] );
-  }
-  else
-    return IPAddress(0,0,0,0);
+	if (valuesCount == 4) {
+		return IPAddress(values[0], values[1], values[2], values[3]);
+	} else
+		return IPAddress(0, 0, 0, 0);
 
 
 }
 
 class MagicShifterSysLog {
 
-private:
-  unsigned int localPort = 2390;
-  WiFiUDP sysLogUDP;
-  IPAddress syslogServer;
+  private:
+	unsigned int localPort = 2390;
+	WiFiUDP sysLogUDP;
+	IPAddress syslogServer;
 
-public:
+  public:
 
-  void connect_wifi() {
+	void connect_wifi() {
 
 #ifdef SYSLOG_AUTO_CONNECT
-    WiFi.mode(WIFI_AP_STA);
+		WiFi.mode(WIFI_AP_STA);
 
-    if (WiFi.status() != WL_CONNECTED) {
+		if (WiFi.status() != WL_CONNECTED) {
 
-      WiFi.begin(msGlobals.ggAPConfig.apInfo.ssid, msGlobals.ggAPConfig.apInfo.password);
+			WiFi.begin(msGlobals.ggAPConfig.apInfo.ssid,
+					   msGlobals.ggAPConfig.apInfo.password);
 
-      int Attempt = 0;
-      while (WiFi.status() != WL_CONNECTED) {
-        delay(100);
-        Attempt++;
-        if (msGlobals.ggDebugSerial) {
-          Serial.print(".");
-        }
-        if (Attempt == 200)
-        {
-          ESP.restart(); // !J! todo: wtf
-        }
-      }
-    }
+			int Attempt = 0;
+			while (WiFi.status() != WL_CONNECTED) {
+				delay(100);
+				Attempt++;
+				if (msGlobals.ggDebugSerial) {
+					Serial.print(".");
+				}
+				if (Attempt == 200) {
+					ESP.restart();	// !J! todo: wtf
+				}
+			}
+		}
 #else
-    Serial.println("syslog: JoinAP disabled:");
+		Serial.println("syslog: JoinAP disabled:");
 #endif
 
-    if (msGlobals.ggDebugSerial) {
-      Serial.println("syslog: serial enable");
-      Serial.println("syslog: WiFi connected");
-      Serial.print("syslog: local address: ");
-      Serial.println(WiFi.localIP());
-      Serial.print("syslog: host address: ");
-      Serial.println(syslogServer);
-    }
-  }
+		if (msGlobals.ggDebugSerial) {
+			Serial.println("syslog: serial enable");
+			Serial.println("syslog: WiFi connected");
+			Serial.print("syslog: local address: ");
+			Serial.println(WiFi.localIP());
+			Serial.print("syslog: host address: ");
+			Serial.println(syslogServer);
+		}
+	} void setup(char *syslogHostIPStr) {
 
-  void setup( char *syslogHostIPStr)
-  {
+		syslogServer = parseIPString(syslogHostIPStr);
 
-    syslogServer = parseIPString(syslogHostIPStr);
+		Serial.print("syslog: configured host is:");
+		Serial.println(syslogServer);
 
-    Serial.print("syslog: configured host is:");
-    Serial.println(syslogServer);
+		delay(20);
+		connect_wifi();
 
-    delay(20);
-    connect_wifi();
+		sysLogUDP.begin(localPort);
+		delay(500);
+		if (WiFi.status() == WL_CONNECTED) {
+			sendSysLogMsg("MagicShifter3000 reporting for duty!");
+		}
+	}
 
-    sysLogUDP.begin(localPort);
-    delay(500);
-    if (WiFi.status() == WL_CONNECTED) {
-      sendSysLogMsg("MagicShifter3000 reporting for duty!");
-    }
-  }
-
-  // poll serial and route it to syslog server
-  void pollSerial()
-  {
-    if (WiFi.status() == WL_CONNECTED) {
+	// poll serial and route it to syslog server
+	void pollSerial() {
+		if (WiFi.status() == WL_CONNECTED) {
 #if _DO_SERIAL_ECHO
-      str = Serial.readStringUntil('\n');
-      str.trim();
-      unsigned int msg_length = str.length();
-      if ( msg_length > 0 ) {
-        sendSysLogMsg(str);
-      }
+			str = Serial.readStringUntil('\n');
+			str.trim();
+			unsigned int msg_length = str.length();
+			if (msg_length > 0) {
+				sendSysLogMsg(str);
+			}
 #endif
-    } else {
-      connect_wifi();
-    }
-  }
+		} else {
+			connect_wifi();
+		}
+	}
 
-  void sendSysLogMsg(String aMsg)
-  {
-    String newMsg = " 009.local <45>" + aMsg; // !J! todo: fix level/service?
+	void sendSysLogMsg(String aMsg) {
+		String newMsg = " 009.local <45>" + aMsg;	// !J! todo: fix level/service?
 
-    unsigned int msg_length = newMsg.length();
-    byte* p = (byte*)malloc(msg_length);
-    memcpy(p, (char*) newMsg.c_str(), msg_length);
+		unsigned int msg_length = newMsg.length();
+		byte *p = (byte *) malloc(msg_length);
+		memcpy(p, (char *) newMsg.c_str(), msg_length);
 
-  // Serial.print("SYSLOGMSG:");
-  // Serial.println(newMsg);
+		// Serial.print("SYSLOGMSG:");
+		// Serial.println(newMsg);
 
-    sysLogUDP.beginPacket(syslogServer, 514);
-    sysLogUDP.write(p, msg_length);
-    sysLogUDP.endPacket();
-    
-    free(p);
-  }
+		sysLogUDP.beginPacket(syslogServer, 514);
+		sysLogUDP.write(p, msg_length);
+		sysLogUDP.endPacket();
+
+		free(p);
+	}
 
 };

@@ -15,11 +15,11 @@
 
 //#include "../firmware.h"
 
-//#include "list.h"				// light list library (future-use)
+//#include "list.h"             // light list library (future-use)
 
 // Neil Johnsons' tight MIDI Byte parser:
 // #include "miby.h"
-#include "miby.cpp"	// included like this because Arduino
+#include "miby.cpp"				// included like this because Arduino
 
 // NOTE: the configuration for the miby callbacks is done in MidiModeMibyConfig.h
 // .. which refers to functions declared in this module.  -D is used at build
@@ -43,7 +43,7 @@ typedef struct {
 	uint8_t midi_channel;		// MIDI channel of View
 	uint16_t time_base;			// Base Time for sequencer-Put
 	void *v_arg;				// user data
-} MIDIViewT ;
+} MIDIViewT;
 
 MIDIViewT curr_midiview;
 
@@ -67,7 +67,7 @@ void MIDI_Note_Off(miby_this_t a_miby);
 void MIDIMode();
 
 // Frame Processor:
-void MIDIFrame(miby_t *miby);
+void MIDIFrame(miby_t * miby);
 void MIDISync();
 
 // Arpeggiator constants -----------------------------------------------------------------
@@ -77,7 +77,7 @@ void MIDISync();
 #define LOWEST_ARP_TEMPO (20)
 
 // Arpeggiator function declarations:
-void arpFrame(); // Arpeggiator processing is done per-frame
+void arpFrame();				// Arpeggiator processing is done per-frame
 void arpPlayNote(uint8_t noteNumber, uint8_t on_off);
 void arpSoundOff();
 void arpNoteOn(uint8_t noteChannel, uint8_t noteNumber, uint8_t velocity);
@@ -105,27 +105,27 @@ typedef struct {
 ArpEventT arp_events[8];
 
 // Arpeggiator configuration state
-uint8_t  arp_play_state = 0;
+uint8_t arp_play_state = 0;
 uint8_t arp_bpm = LOWEST_ARP_TEMPO;
 uint32_t arp_beat_duration = 0;
-uint8_t arp_frame = 0; // internal beat, which is 1/16th of the actual beat (see arp_bpm)
-uint8_t current_pattern = 1; // this will trigger loading for the first time.
+uint8_t arp_frame = 0;			// internal beat, which is 1/16th of the actual beat (see arp_bpm)
+uint8_t current_pattern = 1;	// this will trigger loading for the first time.
 uint8_t new_pattern = 6;
 uint8_t current_note = 0;
 uint8_t new_note = 0;
 uint8_t current_velocity = 64;
 uint8_t new_velocity = 64;
 
-const uint8_t note_offset[12] = { 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0};
+const uint8_t note_offset[12] = { 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0 };
 
 const uint8_t note_LUT[7][7] = {
-	{ 0, 1, 2, 2, 3, 4, 5 },
-	{ 0, 1, 1, 2, 3, 4, 4 },
-	{ 0, 0, 1, 2, 3, 3, 4 },
-	{ 0, 1, 2, 3, 3, 4, 5 },
-	{ 0, 1, 2, 2, 3, 4, 4 },
-	{ 0, 1, 1, 2, 3, 3, 4 },
-	{ 0, 0, 1, 2, 2, 3, 4 }
+	{0, 1, 2, 2, 3, 4, 5},
+	{0, 1, 1, 2, 3, 4, 4},
+	{0, 0, 1, 2, 3, 3, 4},
+	{0, 1, 2, 3, 3, 4, 5},
+	{0, 1, 2, 2, 3, 4, 4},
+	{0, 1, 1, 2, 3, 3, 4},
+	{0, 0, 1, 2, 2, 3, 4}
 };
 
 const uint8_t note_to_natural[12] = { 0, 1, 1, 2, 2, 3, 4, 4, 5, 5, 6, 6 };
@@ -137,40 +137,40 @@ typedef struct {
 	uint8_t note_duration;
 } ArpPatternT;
 
-const ArpPatternT arp_patterns[][4] = { // arp_patterns 4/4
-		{ { 0, BEAT1, EIGHTH },
-		  { 2, BEAT2, EIGHTH },
-		  { 0, BEAT3, EIGHTH },
-		  { 2, BEAT4, EIGHTH } }, //
-		{ { 0, BEAT1, EIGHTH },
-		  { 0, BEAT2, EIGHTH },
-  		  { 2, BEAT3, EIGHTH },
-  		  { 2, BEAT4, EIGHTH } }, //
-		{ { 0, BEAT1, EIGHTH },
-		  { 0, BEAT2, EIGHTH },
-		  { 2, BEAT3, EIGHTH },
-		  { 4, BEAT4, EIGHTH } }, //
-		{ { 0, BEAT1, EIGHTH },
-		  { 2, BEAT2, EIGHTH },
-		  { 4, BEAT3, EIGHTH },
-		  { 6, BEAT4, EIGHTH } }, //
-		{ { 0, BEAT1, EIGHTH },
-		  { 12, BEAT2, EIGHTH },
-		  { 0, BEAT3, EIGHTH },
-		  { 12, BEAT4, EIGHTH } }, //
-		{ { 0, BEAT1, EIGHTH },
-		  { 0, BEAT2, EIGHTH },
-		  { 12, BEAT3, EIGHTH },
-		  { 12, BEAT4, EIGHTH } }, //
-		{ { 0, BEAT1, EIGHTH },
-		  { 0, BEAT2, EIGHTH },
-		  { 4, BEAT3, EIGHTH },
-		  { 12, BEAT4, EIGHTH } }, //
-		{ { 0, BEAT1, EIGHTH },
-		  { 2, BEAT1 + 8, EIGHTH },
-		  { 4, BEAT2, QUARTER },
-		  { 6, BEAT4, EIGHTH } }, //
-		};
+const ArpPatternT arp_patterns[][4] = {	// arp_patterns 4/4
+	{{0, BEAT1, EIGHTH},
+	 {2, BEAT2, EIGHTH},
+	 {0, BEAT3, EIGHTH},
+	 {2, BEAT4, EIGHTH}},		//
+	{{0, BEAT1, EIGHTH},
+	 {0, BEAT2, EIGHTH},
+	 {2, BEAT3, EIGHTH},
+	 {2, BEAT4, EIGHTH}},		//
+	{{0, BEAT1, EIGHTH},
+	 {0, BEAT2, EIGHTH},
+	 {2, BEAT3, EIGHTH},
+	 {4, BEAT4, EIGHTH}},		//
+	{{0, BEAT1, EIGHTH},
+	 {2, BEAT2, EIGHTH},
+	 {4, BEAT3, EIGHTH},
+	 {6, BEAT4, EIGHTH}},		//
+	{{0, BEAT1, EIGHTH},
+	 {12, BEAT2, EIGHTH},
+	 {0, BEAT3, EIGHTH},
+	 {12, BEAT4, EIGHTH}},		//
+	{{0, BEAT1, EIGHTH},
+	 {0, BEAT2, EIGHTH},
+	 {12, BEAT3, EIGHTH},
+	 {12, BEAT4, EIGHTH}},		//
+	{{0, BEAT1, EIGHTH},
+	 {0, BEAT2, EIGHTH},
+	 {4, BEAT3, EIGHTH},
+	 {12, BEAT4, EIGHTH}},		//
+	{{0, BEAT1, EIGHTH},
+	 {2, BEAT1 + 8, EIGHTH},
+	 {4, BEAT2, QUARTER},
+	 {6, BEAT4, EIGHTH}},		//
+};
 
 // Envelopes - used for the LED's
 adsr_envelope anEnvelope;
@@ -180,28 +180,28 @@ adsr_envelope anEnvelope;
 // !J! TODO : There should be a MagicShifter API for this
 // TODO: private state
 // state for button timing
-  int msBtnAPressTime = 0;
-  int msBtnPwrPressTime = 0;
-  int msBtnBPressTime = 0;
+int msBtnAPressTime = 0;
+int msBtnPwrPressTime = 0;
+int msBtnBPressTime = 0;
 
 // state for double click timing
-  int msBtnATTL = 0;
-  int msBtnPwrTTL = 0;
-  int msBtnBTTL = 0;
+int msBtnATTL = 0;
+int msBtnPwrTTL = 0;
+int msBtnBTTL = 0;
 
-  bool msLongClickOK = true;
+bool msLongClickOK = true;
 
-  bool msBtnAHit = false;
-  bool msBtnPwrHit = false;
-  bool msBtnBHit = false;
+bool msBtnAHit = false;
+bool msBtnPwrHit = false;
+bool msBtnBHit = false;
 
-  bool msBtnALongHit = false;
-  bool msBtnPwrLongHit = false;
-  bool msBtnBLongHit = false;
-  
-  bool msBtnADoubleHit = false;
-  bool msBtnPwrDoubleHit = false;
-  bool msBtnBDoubleHit = false;
+bool msBtnALongHit = false;
+bool msBtnPwrLongHit = false;
+bool msBtnBLongHit = false;
+
+bool msBtnADoubleHit = false;
+bool msBtnPwrDoubleHit = false;
+bool msBtnBDoubleHit = false;
 
 
 // ------------------------------------------------------------------------------ MIDI I/O
@@ -211,6 +211,7 @@ static uint16_t MIDI_Put(uint8_t * data, uint16_t length)
 {
 	return (Serial1.write(data, length));
 }
+
 // Receive a MIDI message if its available
 // returns the # of bytes received in the message (count should be length)
 static uint16_t MIDI_Get(uint8_t * data, uint16_t length)
@@ -244,7 +245,7 @@ void MIDI_Stop(miby_this_t a_miby)
 
 void MIDI_Program_Change(miby_this_t a_miby)
 {
-	arpProgramChange(curr_midiview.midi_channel,  MIBY_ARG0(a_miby));
+	arpProgramChange(curr_midiview.midi_channel, MIBY_ARG0(a_miby));
 }
 
 void MIDI_Control_Change(miby_this_t a_miby)
@@ -252,21 +253,22 @@ void MIDI_Control_Change(miby_this_t a_miby)
 	msSystem.msLEDs.setLED(LED_CONTROL_CHANGE, 0, 100, 100);
 	// TODO: Channel processing
 	// if (curr_midiview.midi_channel == MIBY_CHAN(a_miby)) {
-		// any controller can be used, cc#1 for now (modwheel)
-		if (MIBY_ARG0(a_miby) == 1) {
-			arp_bpm = LOWEST_ARP_TEMPO + (MIBY_ARG1(a_miby));
-			arp_beat_duration = ARP_DURATION_FOR_BPM(arp_bpm);
-		}
+	// any controller can be used, cc#1 for now (modwheel)
+	if (MIBY_ARG0(a_miby) == 1) {
+		arp_bpm = LOWEST_ARP_TEMPO + (MIBY_ARG1(a_miby));
+		arp_beat_duration = ARP_DURATION_FOR_BPM(arp_bpm);
+	}
 	// }
 }
 
-void MIDI_Note_On( miby_this_t a_miby)
+void MIDI_Note_On(miby_this_t a_miby)
 {
-	arpNoteOn(curr_midiview.midi_channel,  MIBY_ARG0(a_miby),  MIBY_ARG1(a_miby));
+	arpNoteOn(curr_midiview.midi_channel, MIBY_ARG0(a_miby),
+			  MIBY_ARG1(a_miby));
 	msSystem.msLEDs.setLED(LED_NOTE_EVENT, 0, 0, 100);
 }
 
-void MIDI_Note_Off( miby_this_t a_miby)
+void MIDI_Note_Off(miby_this_t a_miby)
 {
 	uint8_t note_msg[3];
 	note_msg[0] = MIBY_STATUSBYTE(a_miby);
@@ -284,20 +286,18 @@ void LEDFrame()
 	if (arp_frame == 0) {
 		msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 100, 0, 0);
 		msSystem.msLEDs.setLED(LED_MEASURE_COUNTER, 0, 100, 0);
-	}
-	else if ((arp_frame & 0x0F) == 0) {
+	} else if ((arp_frame & 0x0F) == 0) {
 		msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 0, 100, 0);
-	}
-	else { // LEDs off
+	} else {					// LEDs off
 		msSystem.msLEDs.setLED(LED_ARP_COUNTER, 100, 0, 0);
 		msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 0, 0, 0);
 		msSystem.msLEDs.setLED(LED_MEASURE_COUNTER, 0, 0, 0);
 	}
 
 #if 0
-		// updateLedsWithBlank();		// !J! 
-		if (!MagicShifter_Poll())
-			break;
+	// updateLedsWithBlank();       // !J! 
+	if (!MagicShifter_Poll())
+		break;
 #endif
 
 	// Debug:
@@ -332,16 +332,16 @@ void envDump()
 	msSystem.slogln(anEnvelope.level, DEC);
 
 	msSystem.slogln(" C: ");
-	msSystem.slogln((unsigned int)anEnvelope.current, HEX);
+	msSystem.slogln((unsigned int) anEnvelope.current, HEX);
 
 	msSystem.slogln(" IDLE: ");
 	msSystem.slogln(anEnvelope.is_idle, DEC);
 
 	msSystem.slogln("Envelope Dump:");
 
-	for (c=0;c<=ENV_RELEASE;c++){
+	for (c = 0; c <= ENV_RELEASE; c++) {
 		msSystem.slogln("Stage:");
-		msSystem.slogln((unsigned int)&anEnvelope.stages[c], HEX);
+		msSystem.slogln((unsigned int) &anEnvelope.stages[c], HEX);
 		msSystem.slogln(" ");
 		msSystem.slogln(c, DEC);
 		msSystem.slogln(" L:");
@@ -378,7 +378,7 @@ void envInit()
 	anEnvelope.stages[ENV_RELEASE].duration = 5;
 	anEnvelope.stages[ENV_RELEASE].coeff = -1;
 
-	anEnvelope.current = &anEnvelope.stages[ENV_START]; // active
+	anEnvelope.current = &anEnvelope.stages[ENV_START];	// active
 
 }
 
@@ -394,73 +394,61 @@ void envFrame()
 
 
 	dbg++;
-	if (dbg>=10)
+	if (dbg >= 10)
 		exit;
 }
 
 
 
-  int currentTimeStamp = 0;
-  int lastTimeStamp = 0;
-  int microsSinceLast = 0;
+int currentTimeStamp = 0;
+int lastTimeStamp = 0;
+int microsSinceLast = 0;
 
-  void handleButtons()
-  {
-    // reset public btton state
-    msBtnAHit = msBtnALongHit = false;
-    if (!digitalRead(PIN_BUTTON_A))
-    {
-      if (msBtnAPressTime)
-        msBtnAPressTime += microsSinceLast;
-      else
-        msBtnAPressTime = 1;
-    }
-    else
-    {
-      if (msLongClickOK && msBtnAPressTime >= MIN_TIME_LONG_CLICK)
-      {
-        msBtnALongHit = true;
-        msSystem.slogln("msBtnALongHit");
-      }
-      else if (msBtnAPressTime >= MIN_TIME_CLICK)
-      {
-        msBtnAHit = true;
-        msSystem.slogln("msBtnAHit");
-      }
+void handleButtons()
+{
+	// reset public btton state
+	msBtnAHit = msBtnALongHit = false;
+	if (!digitalRead(PIN_BUTTON_A)) {
+		if (msBtnAPressTime)
+			msBtnAPressTime += microsSinceLast;
+		else
+			msBtnAPressTime = 1;
+	} else {
+		if (msLongClickOK && msBtnAPressTime >= MIN_TIME_LONG_CLICK) {
+			msBtnALongHit = true;
+			msSystem.slogln("msBtnALongHit");
+		} else if (msBtnAPressTime >= MIN_TIME_CLICK) {
+			msBtnAHit = true;
+			msSystem.slogln("msBtnAHit");
+		}
 
-      msBtnAPressTime = 0;
-    }
+		msBtnAPressTime = 0;
+	}
 
 
-    // reset public btton state
-    msBtnBHit = msBtnBLongHit = false;
-    if (!digitalRead(PIN_BUTTON_B))
-    {
-      if (msBtnBPressTime)
-        msBtnBPressTime += microsSinceLast;
-      else
-        msBtnBPressTime = 1;
-    }
-    else
-    {
-      if (msLongClickOK && msBtnBPressTime >= MIN_TIME_LONG_CLICK)
-      {
-        msBtnBLongHit = true;
-        msSystem.slogln("msBtnBLongHit");
+	// reset public btton state
+	msBtnBHit = msBtnBLongHit = false;
+	if (!digitalRead(PIN_BUTTON_B)) {
+		if (msBtnBPressTime)
+			msBtnBPressTime += microsSinceLast;
+		else
+			msBtnBPressTime = 1;
+	} else {
+		if (msLongClickOK && msBtnBPressTime >= MIN_TIME_LONG_CLICK) {
+			msBtnBLongHit = true;
+			msSystem.slogln("msBtnBLongHit");
 
-      }
-      else if (msBtnBPressTime >= MIN_TIME_CLICK)
-      {
-        msBtnBHit = true;
-        msSystem.slogln("msBtnBHit");
-      }
+		} else if (msBtnBPressTime >= MIN_TIME_CLICK) {
+			msBtnBHit = true;
+			msSystem.slogln("msBtnBHit");
+		}
 
-      msBtnBPressTime = 0;
-    }
+		msBtnBPressTime = 0;
+	}
 
 
-    // reset public btton state
-    msBtnPwrHit = msBtnPwrLongHit = false;
+	// reset public btton state
+	msBtnPwrHit = msBtnPwrLongHit = false;
 /*
     if (msFrame++ % 10 == 0)
     if (powerButtonPressed())
@@ -486,32 +474,29 @@ void envFrame()
     //*/
 
 // internal button usage
-    if (msBtnALongHit)
-    {
-      // powerDown();	// !J!
-    }
+	if (msBtnALongHit) {
+		// powerDown();   // !J!
+	}
 
-    if (msBtnBHit)
-    {
-      msGlobals.ggBrightness+=2;
-      if (msGlobals.ggBrightness > 31)
-      {
-        msGlobals.ggBrightness = 31;
-      }
+	if (msBtnBHit) {
+		msGlobals.ggBrightness += 2;
+		if (msGlobals.ggBrightness > 31) {
+			msGlobals.ggBrightness = 31;
+		}
 
-      msGlobals.ggCurrentMode = (msGlobals.ggCurrentMode+1)%NUM_MS_MODES;
-    }
-    if (msBtnBLongHit)
-    {
-      msGlobals.ggBrightness-=6;
-      if (msGlobals.ggBrightness < 1)
-      {
-        msGlobals.ggBrightness = 1;
-      }
+		msGlobals.ggCurrentMode =
+			(msGlobals.ggCurrentMode + 1) % NUM_MS_MODES;
+	}
+	if (msBtnBLongHit) {
+		msGlobals.ggBrightness -= 6;
+		if (msGlobals.ggBrightness < 1) {
+			msGlobals.ggBrightness = 1;
+		}
 
-      msGlobals.ggCurrentMode = (msGlobals.ggCurrentMode+1)%NUM_MS_MODES;
-    }
-  }
+		msGlobals.ggCurrentMode =
+			(msGlobals.ggCurrentMode + 1) % NUM_MS_MODES;
+	}
+}
 
 
 // ---------------------------------------------------------------------- Main Entry Point
@@ -525,7 +510,7 @@ void MIDIMode()
 	curr_midiview.midi_channel = 0;
 
 	// The MIDI byte parser, provided by the miby module ..
-	miby_t 	miby;
+	miby_t miby;
 	miby_init(&miby, NULL);
 
 	// prime the Arp
@@ -543,7 +528,7 @@ void MIDIMode()
 	while (1) {
 		MIDIFrame(&miby);
 
-  		// minimize latency introduced by the Arp frame
+		// minimize latency introduced by the Arp frame
 		if (!((micros() - arp_frame_time) < arp_beat_duration))
 			arpFrame();
 		arp_frame_time = micros();
@@ -561,17 +546,16 @@ void MIDIMode()
 }
 
 // ------------------------------------------------------------- Main MIDI Frame Processor
-void MIDIFrame(miby_t *miby)
+void MIDIFrame(miby_t * miby)
 {
-	uint8_t	midi_inb;
+	uint8_t midi_inb;
 // ANALYZE:
 // PROCESS I/O:
 	// pull midi_inbox
 	if (Serial1.available()) {
 		MIDI_Get(&midi_inb, 1);
 		miby_parse(miby, midi_inb);
-	}
-	else  // Soft-thru, etc.
+	} else						// Soft-thru, etc.
 	{
 		// MIDI_Put(&midi_buf[0], 4);
 	}
@@ -593,7 +577,8 @@ void MIDISync()
 
 // --------------------------------------------------------------------------- ARPEGGIATOR
 // Process a frame of the Arpeggiator
-void arpFrame() {
+void arpFrame()
+{
 
 	uint8_t event_idx = 0;
 
@@ -605,10 +590,10 @@ void arpFrame() {
 		if (arp_play_state == 0)
 			return;
 	}
-
 	// handle changes in arp inputs - at the beginning of the measure...
-	if (arp_frame == 0 && (new_note != current_note || new_pattern != current_pattern
-					       || new_velocity != current_velocity)) {
+	if (arp_frame == 0
+		&& (new_note != current_note || new_pattern != current_pattern
+			|| new_velocity != current_velocity)) {
 		// ...update arp_events if anything has changed
 
 		// 8 arp_events, 4 pairs of notes, one on and one off
@@ -616,17 +601,20 @@ void arpFrame() {
 			// if you don't use getNextNaturalNote in arpNoteOn, use getNextNaturalNote
 			// here instead
 			uint8_t note = getNextNaturalNoteAdd(new_note,
-								arp_patterns[new_pattern][event_idx].note_offset);
+												 arp_patterns[new_pattern]
+												 [event_idx].note_offset);
 			// on
-			arp_events[event_idx].beat = arp_patterns[new_pattern][event_idx].beat;
+			arp_events[event_idx].beat =
+				arp_patterns[new_pattern][event_idx].beat;
 			arp_events[event_idx].note = note;
 			arp_events[event_idx].on_off = 1;
 
 			// off
 			// assuming that the beat and the duration is correctly calculated, sum
 			// must be < 64
-			arp_events[event_idx + 4].beat = arp_patterns[new_pattern][event_idx].beat
-					+ arp_patterns[new_pattern][event_idx].note_duration;
+			arp_events[event_idx + 4].beat =
+				arp_patterns[new_pattern][event_idx].beat +
+				arp_patterns[new_pattern][event_idx].note_duration;
 
 			arp_events[event_idx + 4].note = note;
 			arp_events[event_idx + 4].on_off = 0;
@@ -639,14 +627,14 @@ void arpFrame() {
 		current_velocity = new_velocity;
 
 	}
-
 	// process arp_events
 	event_idx = 0;
 
 	// go through all arp_events and play when event beat matches arp_frame
 	while (event_idx < 8) {
 		if (arp_events[event_idx].beat == arp_frame) {
-			arpPlayNote(arp_events[event_idx].note, arp_events[event_idx].on_off);
+			arpPlayNote(arp_events[event_idx].note,
+						arp_events[event_idx].on_off);
 		}
 		event_idx++;
 	}
@@ -657,15 +645,18 @@ void arpFrame() {
 	arp_frame++;
 }
 
-void arpPlayNote(uint8_t noteNumber, uint8_t on_off) {
-	arpPushMIDI((on_off ? MIDI_NOTE_ON : MIDI_NOTE_OFF) + curr_midiview.midi_channel);
+void arpPlayNote(uint8_t noteNumber, uint8_t on_off)
+{
+	arpPushMIDI((on_off ? MIDI_NOTE_ON : MIDI_NOTE_OFF) +
+				curr_midiview.midi_channel);
 	arpPushMIDI(noteNumber);
 	arpPushMIDI(current_velocity);
 
 	arpSendMIDI();
 }
 
-void arpSoundOff() {
+void arpSoundOff()
+{
 	arpPushMIDI(MIDI_CONTROLLER + curr_midiview.midi_channel);
 	arpPushMIDI(MIDI_ALL_NOTES_OFF);
 	arpPushMIDI(0);
@@ -673,31 +664,35 @@ void arpSoundOff() {
 	arpSendMIDI();
 }
 
-void arpNoteOn(uint8_t noteChannel, uint8_t noteNumber, uint8_t velocity) {
+void arpNoteOn(uint8_t noteChannel, uint8_t noteNumber, uint8_t velocity)
+{
 	//new_note = noteNumber;
 	new_note = getNextNaturalNote(noteNumber);
 	new_velocity = velocity;
-	if (arp_play_state == 0) { // start if stopped
+	if (arp_play_state == 0) {	// start if stopped
 		arp_frame = 0;
 		arp_play_state = 1;
 	}
 }
 
 // push a MIDI event into the arpeggiator queue for later processing
-void arpPushMIDI(uint8_t data) {
+void arpPushMIDI(uint8_t data)
+{
 	fifo[++fifo_in_index & BUFFER_MASK] = data;
 }
 
 // arpSendMIDI should be called after queueing up all messages and associated data for
 // those messages
-void arpSendMIDI() {
-	while (fifo_in_index != fifo_out_index) { // send whatever is in the buffer
+void arpSendMIDI()
+{
+	while (fifo_in_index != fifo_out_index) {	// send whatever is in the buffer
 		MIDI_Put(&fifo[++fifo_out_index & BUFFER_MASK], 1);
 	}
 }
 
 // reeive a Program change to change Arp Pattern
-void arpProgramChange(uint8_t pcChannel, uint8_t number) {
+void arpProgramChange(uint8_t pcChannel, uint8_t number)
+{
 	if (curr_midiview.midi_channel == pcChannel) {
 		// only 8 preset arp_patterns right now so each program number is masked
 		new_pattern = number & 0x07;
@@ -705,7 +700,8 @@ void arpProgramChange(uint8_t pcChannel, uint8_t number) {
 }
 
 // If the note is not a natural note, return next natural note
-uint8_t getNextNaturalNote(uint8_t note) {
+uint8_t getNextNaturalNote(uint8_t note)
+{
 	uint8_t offset = note;
 	while (offset > 11) {
 		offset -= 12;
@@ -714,7 +710,8 @@ uint8_t getNextNaturalNote(uint8_t note) {
 }
 
 // Calculate net natural note + offset
-uint8_t getNextNaturalNoteAdd(uint8_t naturalNote, uint8_t offset) {
+uint8_t getNextNaturalNoteAdd(uint8_t naturalNote, uint8_t offset)
+{
 	uint8_t n = naturalNote;
 	while (n > 11) {
 		n -= 12;

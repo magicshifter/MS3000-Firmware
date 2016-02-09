@@ -2,7 +2,7 @@
 #define _MS_SYSTEM_H
 
 #include <math.h>
-#include <Wire.h> // Used for I2C
+#include <Wire.h>				// Used for I2C
 #include <Arduino.h>
 #include <Esp.h>
 
@@ -31,414 +31,426 @@ class MagicShifterSystem;
 
 // TODO: all init and all sensors and leds in here :)
 // (accelerometer wuld also be a class but the MAgicShifter object has one ;)
-class MagicShifterSystem
-{
-private:
+class MagicShifterSystem {
+  private:
 
-public:
-  MagicShifterSysLog msSysLog;
-  // todo: protect
-  MagicShifterAccelerometer msSensor;
-  MagicShifterLEDs msLEDs;
-  MagicShifterEEPROMString  msEEPROMs;
-  MagicShifterButtons msButtons;
-  MDNSResponder msDNS;
-  ESP8266WebServer msESPServer;
-
-
-  int msFrame = 0;
-  bool msSensorOK = false;
-  long msPowerCountDown = 0;
-
-  int modeMenuActivated = false;
-
-public:
-  // todo:switch slog from OFF, to BANNED (MIDI), to UDP .. etc.
-
-  void slog(String msg) {Serial.print(msg); msSysLog.sendSysLogMsg(msg); };
-  void slogln(String msg) { Serial.println(msg); msSysLog.sendSysLogMsg(msg); }; 
+  public:
+	MagicShifterSysLog msSysLog;
+	// todo: protect
+	MagicShifterAccelerometer msSensor;
+	MagicShifterLEDs msLEDs;
+	MagicShifterEEPROMString msEEPROMs;
+	MagicShifterButtons msButtons;
+	MDNSResponder msDNS;
+	ESP8266WebServer msESPServer;
 
 
+	int msFrame = 0;
+	bool msSensorOK = false;
+	long msPowerCountDown = 0;
 
-  void slog(int8_t &msg, int base) { slog(String(msg)); } 
-  void slog(uint16_t &msg, int base) { slog(String(msg));  }
-  void slog(unsigned int msg, int base) { slog(String(msg)); } 
+	int modeMenuActivated = false;
+
+  public:
+	// todo:switch slog from OFF, to BANNED (MIDI), to UDP .. etc.
+
+	void slog(String msg) {
+		Serial.print(msg);
+		msSysLog.sendSysLogMsg(msg);
+	};
+	void slogln(String msg) {
+		Serial.println(msg);
+		msSysLog.sendSysLogMsg(msg);
+	};
+
+
+
+	void slog(int8_t & msg, int base) {
+		slog(String(msg));
+	}
+	void slog(uint16_t & msg, int base) {
+		slog(String(msg));
+	}
+	void slog(unsigned int msg, int base) {
+		slog(String(msg));
+	}
 //  void slog(bool b) { if (b) slog(String("true")); else slog(String("false")); }
-  
-  void slogln(int8_t &msg, int base) { slogln(String(msg)); }
-  void slogln(uint16_t &msg, int base) { slogln(String(msg));  }
-  void slogln(unsigned int msg, int base) { slogln(String(msg));  }
+
+	void slogln(int8_t & msg, int base) {
+		slogln(String(msg));
+	}
+	void slogln(uint16_t & msg, int base) {
+		slogln(String(msg));
+	}
+	void slogln(unsigned int msg, int base) {
+		slogln(String(msg));
+	}
 //  void slogln(bool b) { if (b) slogln(String("true")); else slogln(String("false")); }
 
-  void dumpActiveHeader(const MSBitmapHeader& header)
-  {
-    slogln("Header dump:");
-    slog("fileSize:"); slogln(String(header.fileSize));
-    slog("pixelFormat:"); slogln(String(header.pixelFormat));
-    slog("maxFrame:"); slogln(String(header.maxFrame));
-    slog("frameWidth:"); slogln(String(header.frameWidth));
-    slog("frameHeight:"); slogln(String(header.frameHeight));
-    slog("subType:"); slogln(String(header.subType));
-    slog("firstChar:"); slogln(String(header.firstChar));
-    slog("animationDelay:"); slogln(String(header.animationDelay));
-  }
+	void dumpActiveHeader(const MSBitmapHeader & header) {
+		slogln("Header dump:");
+		slog("fileSize:");
+		slogln(String(header.fileSize));
+		slog("pixelFormat:");
+		slogln(String(header.pixelFormat));
+		slog("maxFrame:");
+		slogln(String(header.maxFrame));
+		slog("frameWidth:");
+		slogln(String(header.frameWidth));
+		slog("frameHeight:");
+		slogln(String(header.frameHeight));
+		slog("subType:");
+		slogln(String(header.subType));
+		slog("firstChar:");
+		slogln(String(header.firstChar));
+		slog("animationDelay:");
+		slogln(String(header.animationDelay));
+	}
 
-  void TEST_SPIFFS_bug()
-  {
+	void TEST_SPIFFS_bug() {
 
-    const char* debugPath = "XXXXX";
-    uint8_t testVals[] = {1, 23, 3, 7};
-    uint8_t readBuffer[] = {0,0,0,0};
-    //File file = SPIFFS.open((char *)debugPath.c_str(), "w");
-    
-    slog("openin for w: ");
-    slogln(String(debugPath));
-    
-    File file = SPIFFS.open(debugPath, "w");
+		const char *debugPath = "XXXXX";
+		uint8_t testVals[] = { 1, 23, 3, 7 };
+		uint8_t readBuffer[] = { 0, 0, 0, 0 };
+		//File file = SPIFFS.open((char *)debugPath.c_str(), "w");
 
-    slog("opended for w: ");
-    slogln(String((bool)file));
+		slog("openin for w: ");
+		slogln(String(debugPath));
 
-    slog("writin: ");
-    slogln(String(testVals[1]));
+		File file = SPIFFS.open(debugPath, "w");
 
-    file.write((uint8_t *)testVals, sizeof testVals);
-    file.close();
+		slog("opended for w: ");
+		slogln(String((bool) file));
 
-    slog("openin for r: ");
-    slogln(String(debugPath));
-    
-    File fileR = SPIFFS.open(debugPath, "r");
+		slog("writin: ");
+		slogln(String(testVals[1]));
 
-    slog("opended for r: ");
-    slogln(String((bool)fileR));
+		file.write((uint8_t *) testVals, sizeof testVals);
+		file.close();
 
-    slogln("readin: ");
+		slog("openin for r: ");
+		slogln(String(debugPath));
 
-    fileR.read((uint8_t *)readBuffer, sizeof readBuffer);
-    fileR.close();
+		File fileR = SPIFFS.open(debugPath, "r");
 
-    slog("readback: ");
-    slogln(String(readBuffer[1]));
-  };
+		slog("opended for r: ");
+		slogln(String((bool) fileR));
 
-  void slogSysInfo()
-  {
-    slogln("System config:");
-    slog("Vcc: ");
-    slogln(String(ESP.getVcc()));
-    slog("Free heap: ");
-    slogln(String(ESP.getFreeHeap()));
-    slog("Chip ID: ");
-    slogln(String(ESP.getChipId()));
-    slog("SDK version: ");
-    slogln(String(ESP.getSdkVersion()));
-    slog("Boot version: ");
-    slogln(String(ESP.getBootVersion()));
-    slog("Boot mode: ");
-    slogln(String(ESP.getBootMode()));
-    slog("CPU freq.: ");
-    slogln(String(ESP.getCpuFreqMHz()));
-    slog("Flash chip ID: ");
-    slogln(String(ESP.getFlashChipId(), HEX));
-    // // gets the actual chip size based on the flash id
-    slog("Flash real size: ");
-    slogln(String(ESP.getFlashChipRealSize()));
-    slog("Flash real size (method b): ");
-    slogln(String(ESP.getFlashChipSizeByChipId()));
-    // // gets the size of the flash as set by the compiler
-    slog("flash configured size: ");
-    slogln(String(ESP.getFlashChipSize()));
-    // if (ESP.getFlashChipSize() != ESP.getFlashChipRealSize())
-    // {
-    //   slogln(String("WARNING: configured flash size does not match real flash size!"));
-    // }
-    slog("flash speed: ");
-    slogln(String(ESP.getFlashChipSpeed()));
-    slog("flash mode: ");
-    slogln(String(ESP.getFlashChipMode()));
-    slog("Sketch size: ");
-    slogln(String(ESP.getSketchSize()));
-    slog("Free sketch space: ");
-    slogln(String(ESP.getFreeSketchSpace()));
+		slogln("readin: ");
 
-    slog("uploadfile: "); slogln(msGlobals.ggUploadFileName);
+		fileR.read((uint8_t *) readBuffer, sizeof readBuffer);
+		fileR.close();
+
+		slog("readback: ");
+		slogln(String(readBuffer[1]));
+	};
+
+	void slogSysInfo() {
+		slogln("System config:");
+		slog("Vcc: ");
+		slogln(String(ESP.getVcc()));
+		slog("Free heap: ");
+		slogln(String(ESP.getFreeHeap()));
+		slog("Chip ID: ");
+		slogln(String(ESP.getChipId()));
+		slog("SDK version: ");
+		slogln(String(ESP.getSdkVersion()));
+		slog("Boot version: ");
+		slogln(String(ESP.getBootVersion()));
+		slog("Boot mode: ");
+		slogln(String(ESP.getBootMode()));
+		slog("CPU freq.: ");
+		slogln(String(ESP.getCpuFreqMHz()));
+		slog("Flash chip ID: ");
+		slogln(String(ESP.getFlashChipId(), HEX));
+		// // gets the actual chip size based on the flash id
+		slog("Flash real size: ");
+		slogln(String(ESP.getFlashChipRealSize()));
+		slog("Flash real size (method b): ");
+		slogln(String(ESP.getFlashChipSizeByChipId()));
+		// // gets the size of the flash as set by the compiler
+		slog("flash configured size: ");
+		slogln(String(ESP.getFlashChipSize()));
+		// if (ESP.getFlashChipSize() != ESP.getFlashChipRealSize())
+		// {
+		//   slogln(String("WARNING: configured flash size does not match real flash size!"));
+		// }
+		slog("flash speed: ");
+		slogln(String(ESP.getFlashChipSpeed()));
+		slog("flash mode: ");
+		slogln(String(ESP.getFlashChipMode()));
+		slog("Sketch size: ");
+		slogln(String(ESP.getSketchSize()));
+		slog("Free sketch space: ");
+		slogln(String(ESP.getFreeSketchSpace()));
+
+		slog("uploadfile: ");
+		slogln(msGlobals.ggUploadFileName);
 
 
-    // slog("Reset info: ");
-    // slogln(String(ESP.getResetInfo()));
-    //slog("FS mount: ");
-    //slogln(String(FS.mount() ? "OK" : "ERROR!"));
-    
+		// slog("Reset info: ");
+		// slogln(String(ESP.getResetInfo()));
+		//slog("FS mount: ");
+		//slogln(String(FS.mount() ? "OK" : "ERROR!"));
+
 #if 0
-    slog(F("Heap: ")); 
-    slogln(String(system_get_free_heap_size()));
-    slog(F("Boot Vers: ")); 
-    slogln(String(system_get_boot_version()));
-    slog(F("CPU: ")); 
-    slogln(String(system_get_cpu_freq()));
-    slog(F("SDK: ")); 
-    slogln(String(system_get_sdk_version()));
-    slog(F("Chip ID: ")); 
-    slogln(String(system_get_chip_id()));
-    slog(F("Flash ID: ")); 
-    slogln(String(spi_flash_get_id()));
-    slog(F("Vcc: ")); 
-    slogln(String(readvdd33()));
+		slog(F("Heap: "));
+		slogln(String(system_get_free_heap_size()));
+		slog(F("Boot Vers: "));
+		slogln(String(system_get_boot_version()));
+		slog(F("CPU: "));
+		slogln(String(system_get_cpu_freq()));
+		slog(F("SDK: "));
+		slogln(String(system_get_sdk_version()));
+		slog(F("Chip ID: "));
+		slogln(String(system_get_chip_id()));
+		slog(F("Flash ID: "));
+		slogln(String(spi_flash_get_id()));
+		slog(F("Vcc: "));
+		slogln(String(readvdd33()));
 #endif
 
-    // chercking crashes the ESP so its disabled atm
-    //slog("FS check: ");
-    //slogln(String(FS.check() ? "OK" : "ERROR!"));
+		// chercking crashes the ESP so its disabled atm
+		//slog("FS check: ");
+		//slogln(String(FS.check() ? "OK" : "ERROR!"));
 
-  };
+	};
 
 
-  // reset the power controller
-  void powerStabilize()
-  {
-    digitalWrite(PIN_PWR_MGT, HIGH);
-    pinMode(PIN_PWR_MGT, OUTPUT);
-    digitalWrite(PIN_PWR_MGT, HIGH);
-  }
+	// reset the power controller
+	void powerStabilize() {
+		digitalWrite(PIN_PWR_MGT, HIGH);
+		pinMode(PIN_PWR_MGT, OUTPUT);
+		digitalWrite(PIN_PWR_MGT, HIGH);
+	}
 
-  // tell power controller to power down
-  void powerDown()
-  {
-    showBatteryStatus(false);
+	// tell power controller to power down
+	void powerDown() {
+		showBatteryStatus(false);
 
-    // works even with pulldown but output seems to make more sense
-    //pinMode(PIN_PWR_MGT, INPUT_PULLDOWN);
-    pinMode(PIN_PWR_MGT, OUTPUT);
-    digitalWrite(PIN_PWR_MGT, LOW);
-    // now sleep forever...
-    delay(1000);
-  }
+		// works even with pulldown but output seems to make more sense
+		//pinMode(PIN_PWR_MGT, INPUT_PULLDOWN);
+		pinMode(PIN_PWR_MGT, OUTPUT);
+		digitalWrite(PIN_PWR_MGT, LOW);
+		// now sleep forever...
+		delay(1000);
+	}
 
 
 
-  void feedbackAnimation(int mode)
-  {
-    int r,g,b = 0x00;
-    
-    if (mode == msGlobals.feedbackType::OK)
-    {
-      r = 0x00; g = 0xff; b = 0x00;
-    }
-    else
-    if (mode == msGlobals.feedbackType::NOT_OK)
-    {
-      r = 0xff; g = 0x00; b = 0x00;
-    }
-    else
-    {
-      r = 0xff; g = 0xff; b = 0xff;
-    }
+	void feedbackAnimation(int mode) {
+		int r, g, b = 0x00;
 
-    for (int i=0;i<=3;i++)
-    {
-      msLEDs.fillLEDs(r, g, b, msGlobals.ggBrightness);
-      msLEDs.updateLEDs();
-      delay(35);
-      msLEDs.fastClear();
-      delay(35);
-    }
+		if (mode == msGlobals.feedbackType::OK) {
+			r = 0x00;
+			g = 0xff;
+			b = 0x00;
+		} else if (mode == msGlobals.feedbackType::NOT_OK) {
+			r = 0xff;
+			g = 0x00;
+			b = 0x00;
+		} else {
+			r = 0xff;
+			g = 0xff;
+			b = 0xff;
+		}
 
-    msLEDs.setLED(msGlobals.ggCurrentMode, 128, 128, 128, msGlobals.ggBrightness / 2);
-    delay(35);
-    msLEDs.fastClear();
+		for (int i = 0; i <= 3; i++) {
+			msLEDs.fillLEDs(r, g, b, msGlobals.ggBrightness);
+			msLEDs.updateLEDs();
+			delay(35);
+			msLEDs.fastClear();
+			delay(35);
+		}
 
-  }
+		msLEDs.setLED(msGlobals.ggCurrentMode, 128, 128, 128,
+					  msGlobals.ggBrightness / 2);
+		delay(35);
+		msLEDs.fastClear();
 
-  // for fail-modes ..
-  void infinite_swipe()
-  { 
-    while (1)
-    {
-      // swipe colors
-      for (byte idx = 0; idx < MAX_LEDS; idx++)
-      {
-        msLEDs.setLED(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, msGlobals.ggBrightness);
-        msLEDs.updateLEDs();
-        delay(30);
-      }
-      for (byte idx = 0; idx < MAX_LEDS; idx++)
-      {
-        msLEDs.setLED(idx, 0, 0, 0, 1);
-        msLEDs.updateLEDs();
-        delay(30);
-      }
-    }
-  }
+	}
+
+	// for fail-modes ..
+	void infinite_swipe() {
+		while (1) {
+			// swipe colors
+			for (byte idx = 0; idx < MAX_LEDS; idx++) {
+				msLEDs.setLED(idx, (idx & 1) ? 255 : 0,
+							  (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0,
+							  msGlobals.ggBrightness);
+				msLEDs.updateLEDs();
+				delay(30);
+			}
+			for (byte idx = 0; idx < MAX_LEDS; idx++) {
+				msLEDs.setLED(idx, 0, 0, 0, 1);
+				msLEDs.updateLEDs();
+				delay(30);
+			}
+		}
+	}
 
 #define BUTTON_LED_A (MAX_LEDS - 1)
-#define BUTTON_LED_PWR (MAX_LEDS / 2) 
+#define BUTTON_LED_PWR (MAX_LEDS / 2)
 #define BUTTON_LED_B 0
 #define BUTTON_DISPLAY_PERIOD 1
 
 
-  void displayButtons()
-  {
-    if (msButtons.msBtnPwrDoubleHit) {
-      msLEDs.fillLEDs(0, 200, 0, msGlobals.ggBrightness);
-      msLEDs.updateLEDs();
-      delay(BUTTON_DISPLAY_PERIOD);
-    }
+	void displayButtons() {
+		if (msButtons.msBtnPwrDoubleHit) {
+			msLEDs.fillLEDs(0, 200, 0, msGlobals.ggBrightness);
+			msLEDs.updateLEDs();
+			delay(BUTTON_DISPLAY_PERIOD);
+		}
 
-    if (msButtons.msBtnPwrLongHit)
-    {
-      msLEDs.setLED(BUTTON_LED_PWR, 0, 0, 20, 20);
-      msLEDs.setLED(BUTTON_LED_PWR + 1, 0, 0, 20, 20);
-      msLEDs.updateLEDs();
-      delay(BUTTON_DISPLAY_PERIOD);
-    }
-    if (msButtons.msBtnPwrHit)
-    {
-      msLEDs.setLED(BUTTON_LED_PWR, 20, 20, 0, 15);
-      msLEDs.setLED(BUTTON_LED_PWR - 1, 20, 20, 0, 15);
-      msLEDs.updateLEDs();
-      delay(BUTTON_DISPLAY_PERIOD);
-    }
-    if (msButtons.msBtnALongHit)
-    {
-      msLEDs.setLED(BUTTON_LED_A, 20, 0, 20, 20);
-      msLEDs.updateLEDs();
-      delay(BUTTON_DISPLAY_PERIOD);
-    }
-    if (msButtons.msBtnAHit)
-    {
-      msLEDs.setLED(BUTTON_LED_A, 20, 20, 0, 20);
-      msLEDs.updateLEDs();
-      delay(BUTTON_DISPLAY_PERIOD);
-    }
-    if (msButtons.msBtnBLongHit)
-    {
-      msLEDs.setLED(BUTTON_LED_B, 20, 0, 20, 20);
-      msLEDs.updateLEDs();
-      delay(BUTTON_DISPLAY_PERIOD);
-    }
-    if (msButtons.msBtnBHit)
-    {
-      msLEDs.setLED(BUTTON_LED_B, 20, 20, 0, 20);
-      msLEDs.updateLEDs();
-      delay(BUTTON_DISPLAY_PERIOD);
-    }
-  }
+		if (msButtons.msBtnPwrLongHit) {
+			msLEDs.setLED(BUTTON_LED_PWR, 0, 0, 20, 20);
+			msLEDs.setLED(BUTTON_LED_PWR + 1, 0, 0, 20, 20);
+			msLEDs.updateLEDs();
+			delay(BUTTON_DISPLAY_PERIOD);
+		}
+		if (msButtons.msBtnPwrHit) {
+			msLEDs.setLED(BUTTON_LED_PWR, 20, 20, 0, 15);
+			msLEDs.setLED(BUTTON_LED_PWR - 1, 20, 20, 0, 15);
+			msLEDs.updateLEDs();
+			delay(BUTTON_DISPLAY_PERIOD);
+		}
+		if (msButtons.msBtnALongHit) {
+			msLEDs.setLED(BUTTON_LED_A, 20, 0, 20, 20);
+			msLEDs.updateLEDs();
+			delay(BUTTON_DISPLAY_PERIOD);
+		}
+		if (msButtons.msBtnAHit) {
+			msLEDs.setLED(BUTTON_LED_A, 20, 20, 0, 20);
+			msLEDs.updateLEDs();
+			delay(BUTTON_DISPLAY_PERIOD);
+		}
+		if (msButtons.msBtnBLongHit) {
+			msLEDs.setLED(BUTTON_LED_B, 20, 0, 20, 20);
+			msLEDs.updateLEDs();
+			delay(BUTTON_DISPLAY_PERIOD);
+		}
+		if (msButtons.msBtnBHit) {
+			msLEDs.setLED(BUTTON_LED_B, 20, 20, 0, 20);
+			msLEDs.updateLEDs();
+			delay(BUTTON_DISPLAY_PERIOD);
+		}
+	}
 
 #define BRIGHTNESS_CONTROL_TIME (600 * 1000)
 
-uint8_t BrightnessLevels[16] = { 1,   2,   3, 4,
-                 5,  6,  7, 8,
-                  10,  12, 14, 16,
-                18, 22, 26, 31};
+	uint8_t BrightnessLevels[16] = { 1, 2, 3, 4,
+		5, 6, 7, 8,
+		10, 12, 14, 16,
+		18, 22, 26, 31
+	};
 
 #define BRIGHTNESS_UI_LEVEL 128
 
 // -- brightness handling:
-void brightnessControl()
-{
-  int newIdx = msGlobals.ggBrightness;
-  float avgV = 0;
-  int newV = 0, lastV = -1;
-  uint16_t blink = 0;
-  int skip = 100;
+	void brightnessControl() {
+		int newIdx = msGlobals.ggBrightness;
+		float avgV = 0;
+		int newV = 0, lastV = -1;
+		uint16_t blink = 0;
+		int skip = 100;
 
-  // state: on
-  if ((msButtons.powerButtonPressed()) && 
-      (msButtons.msBtnPwrPressTime > BRIGHTNESS_CONTROL_TIME) )
-  {
+		// state: on
+		if ((msButtons.powerButtonPressed()) &&
+			(msButtons.msBtnPwrPressTime > BRIGHTNESS_CONTROL_TIME)) {
 
-slogln("brightnesscontrol EVENT");
+			slogln("brightnesscontrol EVENT");
 
-    msGlobals.ggBrightness = 255;
-    while (skip)
-    {
-      delay(1);
-      
-      msButtons.step();
-      msSensor.step();
+			msGlobals.ggBrightness = 255;
+			while (skip) {
+				delay(1);
 
-      if (msButtons.powerButtonPressed())
-        skip = 100;
-      else
-      {
-        if (skip >0) skip--;
-      }
+				msButtons.step();
+				msSensor.step();
 
-      // AccelPoll();
+				if (msButtons.powerButtonPressed())
+					skip = 100;
+				else {
+					if (skip > 0)
+						skip--;
+				}
 
-      // calculate average curve
-      float fFactor = 0.96;
-      avgV = (fFactor * avgV) + msGlobals.ggAccel[XAXIS] * (1 - fFactor);
-      float lLEDRange=((MAX_LEDS - 1.0)/2.0);
-      // calculate LED index
-      newIdx = (int)((lLEDRange * 1.4) +  (lLEDRange * avgV) * 1.8);
+				// AccelPoll();
 
-      if (msGlobals.ggFault > 0)
-        newIdx = -2;
+				// calculate average curve
+				float fFactor = 0.96;
+				avgV =
+					(fFactor * avgV) + msGlobals.ggAccel[XAXIS] * (1 -
+																   fFactor);
+				float lLEDRange = ((MAX_LEDS - 1.0) / 2.0);
+				// calculate LED index
+				newIdx =
+					(int) ((lLEDRange * 1.4) + (lLEDRange * avgV) * 1.8);
 
-      if (newIdx < -1) {
-        newV = 0;
-      }
-      else
-      {
-        blink = 0;
-        if (newIdx < 0) newIdx = 0;
-        if (newIdx >= 15) newIdx = 15;
-        newV = BrightnessLevels[newIdx];
-      }
+				if (msGlobals.ggFault > 0)
+					newIdx = -2;
 
-      if (newV == 0)
-      {
-        msLEDs.fillLEDs(0, 0, 0, 0);
-        blink++;
-        uint16_t bb = blink&0x1FF;
-        if (bb > 255) bb =511-bb;
-        //bb = (v*bb)/255;
+				if (newIdx < -1) {
+					newV = 0;
+				} else {
+					blink = 0;
+					if (newIdx < 0)
+						newIdx = 0;
+					if (newIdx >= 15)
+						newIdx = 15;
+					newV = BrightnessLevels[newIdx];
+				}
 
-        msLEDs.setLED(4, bb/8, bb/8, bb/8);
-        msLEDs.setLED(5, bb/4, bb/4, bb/4);
-        msLEDs.setLED(6, bb/2, bb/2, bb/2);
-        msLEDs.setLED(7, bb, bb, bb);
-        msLEDs.setLED(8, bb, bb, bb);
-        msLEDs.setLED(9, bb/2, bb/2, bb/2);
-        msLEDs.setLED(10, bb/4, bb/4, bb/4);
-        msLEDs.setLED(11, bb/8, bb/8, bb/8);
+				if (newV == 0) {
+					msLEDs.fillLEDs(0, 0, 0, 0);
+					blink++;
+					uint16_t bb = blink & 0x1FF;
+					if (bb > 255)
+						bb = 511 - bb;
+					//bb = (v*bb)/255;
 
-        msLEDs.updateLEDs();
-        delayMicroseconds(200);
-      }
-      else if (lastV != newV)
-      {
-        for (uint8_t i = 0; i <= 15; i++) {
+					msLEDs.setLED(4, bb / 8, bb / 8, bb / 8);
+					msLEDs.setLED(5, bb / 4, bb / 4, bb / 4);
+					msLEDs.setLED(6, bb / 2, bb / 2, bb / 2);
+					msLEDs.setLED(7, bb, bb, bb);
+					msLEDs.setLED(8, bb, bb, bb);
+					msLEDs.setLED(9, bb / 2, bb / 2, bb / 2);
+					msLEDs.setLED(10, bb / 4, bb / 4, bb / 4);
+					msLEDs.setLED(11, bb / 8, bb / 8, bb / 8);
 
-          uint8_t lBr = BrightnessLevels[i];
+					msLEDs.updateLEDs();
+					delayMicroseconds(200);
+				} else if (lastV != newV) {
+					for (uint8_t i = 0; i <= 15; i++) {
 
-          uint8_t dB = lBr;
+						uint8_t lBr = BrightnessLevels[i];
 
-          //if (dB <= 16) dB = 16;
-          if (newV >= lBr)
-            msLEDs.setLED(15 - i, BRIGHTNESS_UI_LEVEL, BRIGHTNESS_UI_LEVEL, BRIGHTNESS_UI_LEVEL, dB);
-          else
-            msLEDs.setLED(15 - i, 0, 0, 0);
-        }
-        msLEDs.updateLEDs();
-        delayMicroseconds(200);
-      }
-      lastV = newV;
-    }
+						uint8_t dB = lBr;
 
-    if (newV == 0)
-      powerDown();
-    
-    msGlobals.ggBrightness = newV;
+						//if (dB <= 16) dB = 16;
+						if (newV >= lBr)
+							msLEDs.setLED(15 - i, BRIGHTNESS_UI_LEVEL,
+										  BRIGHTNESS_UI_LEVEL,
+										  BRIGHTNESS_UI_LEVEL, dB);
+						else
+							msLEDs.setLED(15 - i, 0, 0, 0);
+					}
+					msLEDs.updateLEDs();
+					delayMicroseconds(200);
+				}
+				lastV = newV;
+			}
 
-    WaitClearButtons();
+			if (newV == 0)
+				powerDown();
 
-    msLEDs.fillLEDs(0, 0, 0, 0);
-    msLEDs.updateLEDs();
-  }
-}
+			msGlobals.ggBrightness = newV;
+
+			WaitClearButtons();
+
+			msLEDs.fillLEDs(0, 0, 0, 0);
+			msLEDs.updateLEDs();
+		}
+	}
 
 
 // -- battery status methods:
@@ -447,244 +459,247 @@ slogln("brightnesscontrol EVENT");
 #define LIPO_DISPLAY_ORANGE_LIMIT_V        3.9
 #define LIPO_DISPLAY_UPPER_LIMIT_V         4.5
 
-void WaitClearButtons()
-{
-  while (msButtons.powerButtonPressed()) {
-    delay(1);
-  }
-}
+	void WaitClearButtons() {
+		while (msButtons.powerButtonPressed()) {
+			delay(1);
+		}
+	}
 
-void showBatteryStatus(bool shouldFadeIn)
-{
-  //v = MAXMV;
+	void showBatteryStatus(bool shouldFadeIn) {
+		//v = MAXMV;
 
-  int d = 500;
-  int gs = 10;
-  float batLevel = 0.0f;
+		int d = 500;
+		int gs = 10;
+		float batLevel = 0.0f;
 
-  if (!shouldFadeIn) 
-    d = d * -1;
+		if (!shouldFadeIn)
+			d = d * -1;
 
-  WaitClearButtons();
-  delay(50);
-  batLevel = getBatteryVoltage();
+		WaitClearButtons();
+		delay(50);
+		batLevel = getBatteryVoltage();
 
-  msLEDs.fillLEDs(0, 0, 0, 0);
+		msLEDs.fillLEDs(0, 0, 0, 0);
 
-  for (int i = 0; i >= 0 && i <= 15; i++) {
-    float iV = LIPO_DISPLAY_LOWER_LIMIT_V + (LIPO_DISPLAY_UPPER_LIMIT_V - LIPO_DISPLAY_LOWER_LIMIT_V) * (i / 16.0);
+		for (int i = 0; i >= 0 && i <= 15; i++) {
+			float iV =
+				LIPO_DISPLAY_LOWER_LIMIT_V + (LIPO_DISPLAY_UPPER_LIMIT_V -
+											  LIPO_DISPLAY_LOWER_LIMIT_V) *
+				(i / 16.0);
 
-    if (batLevel > iV) {
-      int red, green;
-      if (iV > LIPO_DISPLAY_RED_LIMIT_V) {
-        green = 255 * (iV - LIPO_DISPLAY_RED_LIMIT_V) / (LIPO_DISPLAY_UPPER_LIMIT_V - LIPO_DISPLAY_RED_LIMIT_V);
-      } else
-        green = 0;
+			if (batLevel > iV) {
+				int red, green;
+				if (iV > LIPO_DISPLAY_RED_LIMIT_V) {
+					green =
+						255 * (iV -
+							   LIPO_DISPLAY_RED_LIMIT_V) /
+						(LIPO_DISPLAY_UPPER_LIMIT_V -
+						 LIPO_DISPLAY_RED_LIMIT_V);
+				} else
+					green = 0;
 
-      if (iV < LIPO_DISPLAY_ORANGE_LIMIT_V) {
-        red = 255 * (LIPO_DISPLAY_ORANGE_LIMIT_V - iV) / (LIPO_DISPLAY_ORANGE_LIMIT_V - LIPO_DISPLAY_LOWER_LIMIT_V);
-      } else
-        red = 0;
-      msLEDs.setLED(15 - i, red, green, 0, gs);
+				if (iV < LIPO_DISPLAY_ORANGE_LIMIT_V) {
+					red =
+						255 * (LIPO_DISPLAY_ORANGE_LIMIT_V -
+							   iV) / (LIPO_DISPLAY_ORANGE_LIMIT_V -
+									  LIPO_DISPLAY_LOWER_LIMIT_V);
+				} else
+					red = 0;
+				msLEDs.setLED(15 - i, red, green, 0, gs);
 
-      //msLEDs.setLED(i, 0, iV > LIPO_DISPLAY_RED_LIMIT_V  ? 150 : 0, iV < LIPO_DISPLAY_ORANGE_LIMIT_V ? 150 : 0, gs);
-    }
+				//msLEDs.setLED(i, 0, iV > LIPO_DISPLAY_RED_LIMIT_V  ? 150 : 0, iV < LIPO_DISPLAY_ORANGE_LIMIT_V ? 150 : 0, gs);
+			}
 
-    if (d > 0) {
-      msLEDs.updateLEDs();
-      delay(12);
-    }
-  }
-  msLEDs.updateLEDs();
-
-
-  if (d < 0) {
-    d = -d;
-    for (int i = 0; i < d; i += 20) {
-      delay(20);
-    }
-
-    for (int i = 0; i >= 0 && i <= 15; i++) {
-      msLEDs.setLED(i, 0, 0, 0);
-      msLEDs.updateLEDs();
-      delay(12);
-    }
-  } else {
-    delay(100);
-    for (int i = 0; i < d; i += 20) {
-      delay(20);
-    }
-  }
-
-  msLEDs.fillLEDs(0, 0, 0, 0);;
-  msLEDs.updateLEDs();
-
-}
+			if (d > 0) {
+				msLEDs.updateLEDs();
+				delay(12);
+			}
+		}
+		msLEDs.updateLEDs();
 
 
+		if (d < 0) {
+			d = -d;
+			for (int i = 0; i < d; i += 20) {
+				delay(20);
+			}
 
-  // gets the basic stuff set up
-  void setup()
-  {
+			for (int i = 0; i >= 0 && i <= 15; i++) {
+				msLEDs.setLED(i, 0, 0, 0);
+				msLEDs.updateLEDs();
+				delay(12);
+			}
+		} else {
+			delay(100);
+			for (int i = 0; i < d; i += 20) {
+				delay(20);
+			}
+		}
 
-     // led controllers and buffer
-    msLEDs.initLEDHardware();
-    msLEDs.initLEDBuffer();
-    msLEDs.bootSwipe();
+		msLEDs.fillLEDs(0, 0, 0, 0);;
+		msLEDs.updateLEDs();
+
+	}
+
+
+
+	// gets the basic stuff set up
+	void setup() {
+
+		// led controllers and buffer
+		msLEDs.initLEDHardware();
+		msLEDs.initLEDBuffer();
+		msLEDs.bootSwipe();
 
 // !J! todo: enable MIDI, add arp mode
 // #ifdef CONFIG_ENABLE_MIDI
 //     Serial.begin(31250);
 // #else
-    // Serial.begin(115200);
-    Serial.begin(921600);
+		// Serial.begin(115200);
+		Serial.begin(921600);
 // #endif
 
-    // !J! todo: get this from factory config
-    delay(700); // this enables serial consoles to sync
+		// !J! todo: get this from factory config
+		delay(700);				// this enables serial consoles to sync
 
-    // #endif
-    EEPROM.begin(512);
+		// #endif
+		EEPROM.begin(512);
 
-    slogln(String("\r\nMagicShifter 3000 OS V0.30"));
+		slogln(String("\r\nMagicShifter 3000 OS V0.30"));
 
-    // ggUploadFile is prepared for display as necessary ..
-    //msEEPROMs.loadString(msGlobals.ggUploadFileName, MAX_FILENAME_LENGTH);
+		// ggUploadFile is prepared for display as necessary ..
+		//msEEPROMs.loadString(msGlobals.ggUploadFileName, MAX_FILENAME_LENGTH);
 
-    // wake up filesystem
-    slog("SPIFFS:");
+		// wake up filesystem
+		slog("SPIFFS:");
 
-    if (SPIFFS.begin()) 
-      slog("done:");
-    else
-      slog("noSPIFFS:");
-    // !J! todo: infinite_loop()? 
-    // TEST_SPIFFS_bug();
+		if (SPIFFS.begin())
+			slog("done:");
+		else
+			slog("noSPIFFS:");
+		// !J! todo: infinite_loop()? 
+		// TEST_SPIFFS_bug();
 
-    // all engines turn on
-    pinMode(PIN_PWR_MGT, INPUT);
-    pinMode(PIN_LED_ENABLE, INPUT);
+		// all engines turn on
+		pinMode(PIN_PWR_MGT, INPUT);
+		pinMode(PIN_LED_ENABLE, INPUT);
 
-    // reset power controller to stay on
-    // had some power down troubles so this needs to be further investigated
-    powerStabilize();
-    // !J! todo: power-management module 
+		// reset power controller to stay on
+		// had some power down troubles so this needs to be further investigated
+		powerStabilize();
+		// !J! todo: power-management module 
 
-    msButtons.setup();
+		msButtons.setup();
 
 #ifdef CONFIG_ENABLE_ACCEL
-    // accelerometer 
-    msSensor.initI2C();
-    msSensorOK = msSensor.setupSensor(); //Test and intialize the MMA8452
+		// accelerometer 
+		msSensor.initI2C();
+		msSensorOK = msSensor.setupSensor();	//Test and intialize the MMA8452
 #endif
 
-    // led controllers and buffer
-    msLEDs.initLEDHardware();
-    msLEDs.initLEDBuffer();
-    //msLEDs.bootSwipe();
+		// led controllers and buffer
+		msLEDs.initLEDHardware();
+		msLEDs.initLEDBuffer();
+		//msLEDs.bootSwipe();
 
-    // boot that we are alive
+		// boot that we are alive
 
-    // // I2C test:
-    // if (!Wire.available() ) {
-    //   infinite_swipe(); // todo: explain to user: please reset device
-    // }
+		// // I2C test:
+		// if (!Wire.available() ) {
+		//   infinite_swipe(); // todo: explain to user: please reset device
+		// }
 
-    // global font objects
-    MagicShifterImage::LoadBitmapBuffer("font4x5.magicFont", &msGlobals.tBitmap4x5);
-    MagicShifterImage::LoadBitmapBuffer("font6x8.magicFont", &msGlobals.tBitmap6x8);
-    MagicShifterImage::LoadBitmapBuffer("font7x12.magicFont", &msGlobals.tBitmap7x12);
-    MagicShifterImage::LoadBitmapBuffer("font10x16.magicFont", &msGlobals.tBitmap10x16);
+		// global font objects
+		MagicShifterImage::LoadBitmapBuffer("font4x5.magicFont",
+											&msGlobals.tBitmap4x5);
+		MagicShifterImage::LoadBitmapBuffer("font6x8.magicFont",
+											&msGlobals.tBitmap6x8);
+		MagicShifterImage::LoadBitmapBuffer("font7x12.magicFont",
+											&msGlobals.tBitmap7x12);
+		MagicShifterImage::LoadBitmapBuffer("font10x16.magicFont",
+											&msGlobals.tBitmap10x16);
 
-    slogSysInfo();
+		slogSysInfo();
 
-  }
+	}
 
-  void restart()
-  {
-    ESP.restart();
-  }
+	void restart() {
+		ESP.restart();
+	}
 
-  void loop()
-  {
+	void loop() {
 
-    displayButtons();
-    msButtons.step();
-    msSensor.step();
+		displayButtons();
+		msButtons.step();
+		msSensor.step();
 
-    if (msButtons.msBtnActive) {
-      msPowerCountDown = msGlobals.ggCurrentMicros;
-    }
+		if (msButtons.msBtnActive) {
+			msPowerCountDown = msGlobals.ggCurrentMicros;
+		}
 
-    if (msPowerCountDown < msGlobals.ggCurrentMicros - POWER_TIMEOUT) {
-      powerDown();
-    }
+		if (msPowerCountDown < msGlobals.ggCurrentMicros - POWER_TIMEOUT) {
+			powerDown();
+		}
 
-    if (msButtons.msBtnPwrDoubleHit)
-    {
-      msButtons.msBtnPwrDoubleHit = false;
-      modeMenuActivated = true;
-      feedbackAnimation(msGlobals.feedbackType::MODE_MENU);
-    }
+		if (msButtons.msBtnPwrDoubleHit) {
+			msButtons.msBtnPwrDoubleHit = false;
+			modeMenuActivated = true;
+			feedbackAnimation(msGlobals.feedbackType::MODE_MENU);
+		}
 
-    CommandInterfacePoll();
-    brightnessControl();
+		CommandInterfacePoll();
+		brightnessControl();
 
-  }
-
-
-  void enableLongClicks(bool enable)
-  {
-    msButtons.msLongClickOK = enable;
-  }
-
-  int getADValue(void)
-  {
-    return analogRead(A0);
-  }
+	}
 
 
-  float getBatteryVoltage(void)
-  {
-    int adValue = getADValue();
-    int ad1V = 1023;
-    float avg = 3.2;
+	void enableLongClicks(bool enable) {
+		msButtons.msLongClickOK = enable;
+	}
 
-    //float r1 = 180, r2 = 390, r3 = 330; // gamma??? or (not beta)
-    // !J! todo: magic numbers are bad voodoo
-    float r1 = 220, r2 = 820, r3 = 0; // alpha
+	int getADValue(void) {
+		return analogRead(A0);
+	}
 
-    float voltage = ((float)(r1 + r2 + r3) * adValue) / (r1 * ad1V);
 
-    static float p = 0.01;
-    avg = p*0.02 + voltage * (1-p);
+	float getBatteryVoltage(void) {
+		int adValue = getADValue();
+		int ad1V = 1023;
+		float avg = 3.2;
 
-    return avg;
-  }
+		//float r1 = 180, r2 = 390, r3 = 330; // gamma??? or (not beta)
+		// !J! todo: magic numbers are bad voodoo
+		float r1 = 220, r2 = 820, r3 = 0;	// alpha
 
-  IPAddress getIP()
-  {
-    if (msGlobals.ggModeAP)
-    {
-      return WiFi.softAPIP();
-    }
-    else
-    {
-      return WiFi.localIP();
-    }
-  }
+		float voltage = ((float) (r1 + r2 + r3) * adValue) / (r1 * ad1V);
 
-  void hexDump(int len, byte *buf, const char*label) {
-    slog(label); 
-    slog(String(len)); 
-    slog("/");
+		static float p = 0.01;
+		avg = p * 0.02 + voltage * (1 - p);
 
-    for (int x=0;x<len;x++) {
-      if (x % 4 == 0) slogln("");
-      slog(":"); Serial.print(buf[x], HEX);; 
-    }
-    slogln("<<EOF");
-  }
+		return avg;
+	}
+
+	IPAddress getIP() {
+		if (msGlobals.ggModeAP) {
+			return WiFi.softAPIP();
+		} else {
+			return WiFi.localIP();
+		}
+	}
+
+	void hexDump(int len, byte * buf, const char *label) {
+		slog(label);
+		slog(String(len));
+		slog("/");
+
+		for (int x = 0; x < len; x++) {
+			if (x % 4 == 0)
+				slogln("");
+			slog(":");
+			Serial.print(buf[x], HEX);;
+		}
+		slogln("<<EOF");
+	}
 
 };
 

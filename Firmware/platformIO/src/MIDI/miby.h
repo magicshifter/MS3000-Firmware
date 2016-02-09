@@ -127,19 +127,19 @@ typedef struct miby_s *miby_this_t;
 /** Miby state data type **/
 
 typedef struct miby_s {
-    unsigned char statusbyte;                 /** Current status byte      **/
-    unsigned char msg_chan;                   /** For channel msgs         **/
-    unsigned char sysexstate;                 /** Current SysEx state      **/
-    unsigned char basic_channel;              /** Encoded basic channel    **/
-    unsigned char top_channel;                /** Encoded top channel      **/
-    struct {                                  /** Parser error flags:      **/
-        unsigned int missing : 1;             /** - missing data           **/
-    } err;
-    int msglen;                               /** Maximum message length   **/
-    int idx;                                  /** Index into buf           **/
-    unsigned char buf[MIBY_SYSEX_BUF_LEN];    /** Receive buffer           **/
-    void (*handler)(struct miby_s *);         /** Current message handler  **/
-    void *v;                                  /** Opaque user data         **/
+	unsigned char statusbyte;				  /** Current status byte      **/
+	unsigned char msg_chan;					  /** For channel msgs         **/
+	unsigned char sysexstate;				  /** Current SysEx state      **/
+	unsigned char basic_channel;			  /** Encoded basic channel    **/
+	unsigned char top_channel;				  /** Encoded top channel      **/
+	struct {								  /** Parser error flags:      **/
+		unsigned int missing:1;				  /** - missing data           **/
+	} err;
+	int msglen;								  /** Maximum message length   **/
+	int idx;								  /** Index into buf           **/
+	unsigned char buf[MIBY_SYSEX_BUF_LEN];	  /** Receive buffer           **/
+	void (*handler) (struct miby_s *);		  /** Current message handler  **/
+	void *v;								  /** Opaque user data         **/
 } miby_t;
 
 /*****************************************************************************/
@@ -157,7 +157,7 @@ typedef struct miby_s {
     @param this     Pointer to MIBY parser state object
     @param v        User-supplied opaque pointer
 **/
-extern void miby_init( miby_t * /* this */, void * /* v */ );
+extern void miby_init(miby_t * /* this */ , void * /* v */ );
 
 /*****************************************************************************/
 /**
@@ -185,10 +185,10 @@ extern void miby_init( miby_t * /* this */, void * /* v */ );
     @param this     Pointer to MIBY parser state object
     @param rxbyte   Byte to process
 **/
-extern void miby_parse( miby_t * /* this */, unsigned char /* rxbyte */ );
+extern void miby_parse(miby_t * /* this */ , unsigned char /* rxbyte */ );
 
 /*****************************************************************************/
 /*****************************************************************************/
 /*****************************************************************************/
 
-#endif /* _MIBY_H */
+#endif							/* _MIBY_H */

@@ -117,5 +117,4 @@
 #define BEAT3 32
 #define BEAT4 48
 
-#endif /* MIDI_DEFS_H */
-
+#endif							/* MIDI_DEFS_H */
