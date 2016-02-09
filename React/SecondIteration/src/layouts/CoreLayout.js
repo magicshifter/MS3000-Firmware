@@ -20,7 +20,6 @@ const mapStateToProps =
 
 class CoreLayout extends Component {
   static propTypes = {
-    sidebar: PropTypes.element,
     width: PropTypes.number.isRequired,
     children: PropTypes.element,
     windowResize: PropTypes.func.isRequired,
@@ -35,25 +34,18 @@ class CoreLayout extends Component {
   }
 
   render() {
-    const {children, sidebar, width} = this.props;
+    const {children, width} = this.props;
 
     return (
       <div className={classes['container']}>
         <Header />
+
         <div className={classes['view']}>
-          <div className={classes['content']}>
-            <PixelEditor />
-          </div>
+
+          <PixelEditor />
           <SecondaryMenu />
-          { sidebar &&
-            <Sidebar
-              main={sidebar}
-              width={width}
-            />
-          }
-          <aside className={classes['sidebar']}>
-            {children}
-          </aside>
+          <Sidebar children={children} />
+
         </div>
       </div>
     );
