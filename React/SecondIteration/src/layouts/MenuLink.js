@@ -12,7 +12,7 @@ function cssClass(text) {
 }
 
 export const MenuLink =
-  ({text, to}) =>
+  ({text, to, icon}) =>
     <li className={classes['container']}>
       {
         to === '/'
@@ -23,7 +23,7 @@ export const MenuLink =
               title={text}
             >
               <i
-                className={cssClass(text)}
+                className={cssClass(icon)}
               />
             </IndexLink>
           )
@@ -34,8 +34,12 @@ export const MenuLink =
               title={text}
             >
               <i
-                className={cssClass(text)}
+                className={cssClass(icon)}
               />
+
+              {text &&
+                <span>{text}</span>
+              }
             </Link>
           )
       }
@@ -43,6 +47,7 @@ export const MenuLink =
 
 MenuLink.propTypes = {
   text: PropTypes.string,
+  icon: PropTypes.string,
   to: PropTypes.string.isRequired,
 };
 

@@ -21,9 +21,28 @@ export const minZoomLevel = 0.5;
 export const maxZoomLevel = 3;
 
 export const links = [
-  {to: '/info', text: 'info'},
-  {to: '/settings', text: 'settings'},
+  {to: '/info', icon: 'info'},
+  {to: '/settings', icon: 'settings'},
 ];
+
+export const pixelEditorUrlBase = '/paint';
+
+export const pixelEditorSubUrls = [
+  'images',
+  'fonts',
+  'effects',
+  'colors',
+  'upload',
+];
+
+export const secondaryLinks =
+  pixelEditorSubUrls.map(
+    url => ({
+      to: `${pixelEditorUrlBase}/${url}`,
+      text: url,
+      icon: url,
+    })
+  );
 
 export const defaultLedColor = {r: 0, b: 0, g: 0, a: 255};
 

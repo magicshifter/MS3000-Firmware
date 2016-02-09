@@ -14,7 +14,7 @@ export const Menu =
           link =>
             <MenuLink
               {...link}
-              key={link.key || link.text}
+              key={link.key || link.text || link.icon}
             />
         )}
       </ul>
