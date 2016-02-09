@@ -39,7 +39,7 @@ export default class RGBAInput extends Component {
               val={color[key]}
               key={key}
               name={key}
-              label={colorNames[key]}
+              label={key.toUpperCase()}
               setColorValue={setColorValue}
             />
           ))}
