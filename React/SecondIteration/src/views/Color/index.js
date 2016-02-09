@@ -1,11 +1,14 @@
 import React, {PropTypes, Component} from 'react';
 import {connect} from 'react-redux';
+import ColorPicker from 'react-color';
 
 import {actions} from 'redux/modules/views/image';
 
 import {colorType, layoutType} from 'utils/propTypes';
 
+import ColorPickerInput from 'components/inputs/ColorPickerInput';
 import RGBAInput from 'components/inputs/RGBAInput';
+import HexInput from 'components/inputs/HexInput';
 import ColorList from 'components/inputs/ColorList';
 
 import classes from './Color.scss';
@@ -22,13 +25,28 @@ const mapStateToProps = (state) => {
 export class Controls extends Component {
   static propTypes = {
     setColorValue: PropTypes.func.isRequired, // action
+    setColor: PropTypes.func.isRequired, // action
     color: colorType.isRequired,
     layout: layoutType,
   };
 
+  constructor(props) {
+    super(props);
+
+    this.handleColorChange = this.handleColorChange.bind(this);
+  }
+
+  handleColorChange(e) {
+    const {setColor} = this.props;
+    const {rgb} = e;
+
+    setColor({color: rgb});
+  }
+
   render() {
     const {
       setColorValue, // action
+      setColor, // action
       color,
       layout,
     } = this.props;
@@ -51,14 +69,35 @@ export class Controls extends Component {
         style={style.rgba}
       >
         <h5>color</h5>
-        <RGBAInput
-          color={color}
-          setColorValue={setColorValue}
-        />
 
-        <ColorList
-          editorColor={color}
-        />
+        <div className={classes['picker']}>
+          <ColorPicker
+            color={color}
+            onChange={this.handleColorChange}
+            onChangeComplete={this.handleColorChange}
+            custom={ColorPickerInput}
+          />
+        </div>
+
+        <div className={classes['rgba']}>
+          <RGBAInput
+            color={color}
+            setColorValue={setColorValue}
+          />
+        </div>
+
+        <div className={classes['hex']}>
+          <HexInput
+            color={color}
+            setColor={setColor}
+          />
+        </div>
+
+        <div className={classes['list']}>
+          <ColorList
+            editorColor={color}
+          />
+        </div>
       </div>
     );
   }
