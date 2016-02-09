@@ -21,7 +21,7 @@ export const defaultState = Immutable.Map({
   menuTextColor,
   materialColors,
   links,
-  zoomLevel: zoomLevel,
+  zoomLevel,
   minZoomLevel,
   maxZoomLevel,
 });
