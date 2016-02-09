@@ -46,11 +46,7 @@ MagicShifterWebServer msWebServer;
 // GUI modes, well actually .. modes are more of an 'app' ..
 #include "Modes/Modes.h"
 
-MagicShakeMode msMagicShake;
-SystemTextMode msSysText;
-MagicMagnetMode msMagicMagnet;
 
-ModeSelectorMode msModeSelector;
 
 // Begin MagicShifter3000 operation
 void setup()
@@ -161,6 +157,8 @@ void loop()
 				msSysText.step();
 			} else if (msGlobals.ggCurrentMode == 4) {
 				msMagicMagnet.step();
+			} else if (msGlobals.ggCurrentMode == 5) {
+				msMagicLight.step();
 			}
 		}
 

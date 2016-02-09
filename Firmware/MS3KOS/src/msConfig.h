@@ -48,8 +48,6 @@
 #define MAX_FILENAME_LENGTH 32
 #define MAX_TEXT_LENGTH 16
 
-#define NUM_MS_MODES 5
-
 // MIDI enabled?
 //#define CONFIG_ENABLE_MIDI
 // Accelerometer enabled?

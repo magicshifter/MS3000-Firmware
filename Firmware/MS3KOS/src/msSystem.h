@@ -408,14 +408,14 @@ class MagicShifterSystem {
 						bb = 511 - bb;
 					//bb = (v*bb)/255;
 
-					msLEDs.setLED(4, bb / 8, bb / 8, bb / 8);
-					msLEDs.setLED(5, bb / 4, bb / 4, bb / 4);
-					msLEDs.setLED(6, bb / 2, bb / 2, bb / 2);
-					msLEDs.setLED(7, bb, bb, bb);
-					msLEDs.setLED(8, bb, bb, bb);
-					msLEDs.setLED(9, bb / 2, bb / 2, bb / 2);
-					msLEDs.setLED(10, bb / 4, bb / 4, bb / 4);
-					msLEDs.setLED(11, bb / 8, bb / 8, bb / 8);
+					msLEDs.setLED(4, bb / 8, bb / 8, bb / 8, msGlobals.ggBrightness);
+					msLEDs.setLED(5, bb / 4, bb / 4, bb / 4, msGlobals.ggBrightness);
+					msLEDs.setLED(6, bb / 2, bb / 2, bb / 2, msGlobals.ggBrightness);
+					msLEDs.setLED(7, bb, bb, bb, msGlobals.ggBrightness);
+					msLEDs.setLED(8, bb, bb, bb, msGlobals.ggBrightness);
+					msLEDs.setLED(9, bb / 2, bb / 2, bb / 2, msGlobals.ggBrightness);
+					msLEDs.setLED(10, bb / 4, bb / 4, bb / 4, msGlobals.ggBrightness);
+					msLEDs.setLED(11, bb / 8, bb / 8, bb / 8, msGlobals.ggBrightness);
 
 					msLEDs.updateLEDs();
 					delayMicroseconds(200);
