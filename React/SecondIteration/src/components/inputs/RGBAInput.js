@@ -24,16 +24,7 @@ export default class RGBAInput extends Component {
 
     return (
       <div className={classes['container']}>
-        {/*
-        <div
-          className={classes['indicator']}
-          style={{
-            backgroundColor: rgba.css(color),
-          }}
-        ></div>
-        */}
-
-        <ul>
+         <ul>
           {color && Object.keys(color).map(key => (
             typeof color[key] === 'number' &&
             (key !== 'a' || showAlpha) &&

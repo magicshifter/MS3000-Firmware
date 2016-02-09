@@ -1,20 +1,11 @@
 .container {
+  width: 100%;
   display: inline-block;
 
   ul {
-    display: inline-block;
     float: left;
     list-style: none;
     margin: 0 0 0 10px;
     text-align: right;
-  }
-
-  .indicator {
-    display: block;
-    float: left;
-    height: 30px;
-    width: 30px;
-    border: 3px solid #222;
-    border-radius: 100%;
   }
 }

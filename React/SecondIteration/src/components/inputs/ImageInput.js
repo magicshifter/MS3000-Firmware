@@ -57,11 +57,7 @@ export class ImageInput extends Component {
 
     return (
       <div className={classes['container']}>
-
-        {
-          label &&
-          <label>{label}</label>
-        }
+        {label && <label>{label}</label>}
 
         <div className={classes['input_container']}>
           <input
@@ -76,7 +72,6 @@ export class ImageInput extends Component {
         </div>
 
         <button>Use Image</button>
-
       </div>
     );
   }
