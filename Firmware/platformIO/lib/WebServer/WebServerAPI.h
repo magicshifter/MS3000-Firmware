@@ -10,13 +10,56 @@ private:
   int apListIndex = -1;
   File apListFile;
 
+private:
+  bool loadData(String path, void *config, int len) {
+    if (SPIFFS.exists((char *)path.c_str()))
+    {
+      File file = SPIFFS.open((char *)path.c_str(), "r");
+      file.read((uint8_t *)config, len);
+      file.close();
+      return true;
+    }
+    else 
+    {
+      msSystem.slog("webserver: loadData: can not open config file ");
+      msSystem.slogln((char * )path.c_str());
+    }
+    return false;
+  }
+
+  bool saveData(String path, void *config, int len) {
+    File file = SPIFFS.open((char *)path.c_str(), "w");
+    if (file) {
+      file.write((uint8_t *)config, len);
+      file.close();
+      return true;
+    }
+    else {
+      msSystem.slog("webserver: can not open config file ");
+      msSystem.slogln((char * )path.c_str());
+      return false;
+    }
+  }
+
 public:
   const String apConfigPath = "settings/ap.bin";
   const String apServerConfigPath = "settings/server1.bin";
   const String apListConfigPath = "settings/aplist1.bin";
   const String apSysLogConfigPath = "settings/syslog.bin";
   const String preferredAPConfigPath = "settings/preferredap.bin";
+  const String uiSettingsConfigPath = "settings/ui.bin";
 
+  bool getUIConfig(struct ServerConfig *config)
+  {
+    // msSystem.slog("config: sizeof ");
+    //  msSystem.slogln(sizeof(*config));
+    return loadData(uiSettingsConfigPath, config, sizeof(*config));
+  }
+
+  bool setUIConfig(struct ServerConfig *config)
+  {
+    return saveData(uiSettingsConfigPath, config, sizeof(*config));
+  }
 
   bool getServerConfig(struct ServerConfig *config)
   {
@@ -974,6 +1017,87 @@ void handleLedsSet()
   }
   msSystem.msESPServer.send ( 200, "text/plain",message );
 }
+
+
+/*
+struct UIConfig
+{
+  int powerdownTimeUSB;
+  int powerdownTimeBattery;
+  int defaultBrightness;
+};
+*/
+
+// void handleGetUISettings(void)
+// {
+//   msSystem.slogln("handleGetUISettings");
+
+//   UIConfig config;
+//   Settings.getServerConfig(&config);
+
+//   String response = "{";
+//     response += "\"powerdownTimeUSB\":";
+//     response += config.powerdownTimeUSB;
+//     response += ",";
+//     response += "\"powerdownTimeBattery\":";
+//     response += config.powerdownTimeBattery;
+//     response += ",";
+//     response += "\"defaultBrightness\":";
+//     response += config.defaultBrightness;
+//   response += "}";
+//   msSystem.msESPServer.send(200, "text/plain", response);
+// }
+
+// void handleSetUISettings(void)
+// {
+//   msSystem.slogln("handleSetUISettings");
+//   if (msSystem.msESPServer.args() >= 1)
+//   {
+//     ServerConfig config;
+//     Settings.getServerConfig(&config);
+
+//     bool success = true;
+//     for (int i = 0; i < msSystem.msESPServer.args(); i++)
+//     {
+//       msSystem.slogln("argName: ");
+//       msSystem.slogln(msSystem.msESPServer.argName(i));
+
+//       msSystem.slogln("arg: ");
+//       msSystem.slogln(msSystem.msESPServer.arg(i));
+
+//       if (strcmp(msSystem.msESPServer.argName(i).c_str(), "powerdownTimeUSB") == 0)
+//       {
+//         config.powerdownTimeUSB = atoi(msSystem.msESPServer.arg(i).c_str());
+//       }
+//       else if (strcmp(msSystem.msESPServer.argName(i).c_str(), "powerdownTimeBattery") == 0)
+//       {
+//         config.powerdownTimeBattery = atoi(msSystem.msESPServer.arg(i).c_str());
+//       }
+//       else if (strcmp(msSystem.msESPServer.argName(i).c_str(), "defaultBrightness") == 0)
+//       {
+//         config.defaultBrightness = atoi(msSystem.msESPServer.arg(i).c_str());
+//       }
+//       else
+//       {
+//         success = false;
+//       }
+//     }
+
+//     if (success)
+//     {
+//       Settings.setServerConfig(&config);
+//       msSystem.msESPServer.send (200, "text/plain", "OK");
+//     }
+//     else
+//     {
+//       msSystem.msESPServer.send(500, "text/plain", "invalid args!");
+//     }
+//   }
+//   else
+//   {
+//     msSystem.msESPServer.send ( 500, "text/plain", "argument(s) missing!");
+//   }
+// }
 
 #endif
 
