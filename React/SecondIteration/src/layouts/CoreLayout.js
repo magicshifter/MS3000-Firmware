@@ -41,7 +41,7 @@ class CoreLayout extends Component {
 
           <PixelEditor />
           <SecondaryMenu />
-          <Sidebar children={children} />
+          {children && <Sidebar children={children} />}
 
         </div>
       </div>
