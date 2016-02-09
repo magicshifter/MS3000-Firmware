@@ -359,8 +359,7 @@ class MagicShifterSystem {
 			(msButtons.msBtnPwrPressTime > BRIGHTNESS_CONTROL_TIME)) {
 
 			slogln("brightnesscontrol EVENT");
-
-			msGlobals.ggBrightness = 255;
+		
 			while (skip) {
 				delay(1);
 
