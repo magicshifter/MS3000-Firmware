@@ -8,7 +8,7 @@ import {colorType, layoutType} from 'utils/propTypes';
 import RGBAInput from 'components/inputs/RGBAInput';
 import ColorList from 'components/inputs/ColorList';
 
-import classes from './Controls.scss';
+import classes from './Color.scss';
 
 const mapStateToProps = (state) => {
   const {imageView, layout} = state;
@@ -50,6 +50,7 @@ export class Controls extends Component {
         className={classes['container']}
         style={style.rgba}
       >
+        <h5>color</h5>
         <RGBAInput
           color={color}
           setColorValue={setColorValue}

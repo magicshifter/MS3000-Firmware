@@ -11,7 +11,7 @@ import FontSelect from 'components/inputs/FontSelect';
 import {fontType, pixelsType, colorType} from 'utils/propTypes';
 import {makePixelsArray} from 'utils/pixels';
 
-import classes from './Text.scss';
+import classes from './Font.scss';
 
 const mapStateToProps =
   (state) => {
@@ -29,7 +29,7 @@ const mapStateToProps =
     };
   };
 
-export class Text extends Component {
+export class Font extends Component {
   static propTypes = {
     setText: PropTypes.func.isRequired, // action
     setFont: PropTypes.func.isRequired, // action
@@ -103,6 +103,8 @@ export class Text extends Component {
 
     return (
       <div className={classes['container']}>
+        <h5>font</h5>
+
         <FontSelect
           setFont={setFont}
         />
@@ -129,4 +131,4 @@ export class Text extends Component {
   }
 }
 
-export default connect(mapStateToProps, {...actions, ...imageActions, ...pixelActions})(Text);
+export default connect(mapStateToProps, {...actions, ...imageActions, ...pixelActions})(Font);

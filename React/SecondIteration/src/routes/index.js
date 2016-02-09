@@ -3,63 +3,45 @@ import {Route, IndexRoute, Redirect} from 'react-router';
 
 import CoreLayout from 'layouts/CoreLayout';
 
-import AboutView from 'views/AboutView/AboutView';
+import InfoView from 'views/Info';
 
-import ImageSidebarControls from 'views/ImageView/Sidebar/Controls';
-import ImageSidebarImages from 'views/ImageView/Sidebar/Images';
-import ImageSidebarText from 'views/ImageView/Sidebar/Text';
-import ImageSidebarFilters from 'views/ImageView/Sidebar/Filters';
-import ImageSidebarSettings from 'views/ImageView/Sidebar/Settings';
-import SidebarFooter from 'views/ImageView/Sidebar/Footer';
+import ImagesView from 'views/Images';
+import EffectsView from 'views/Effects';
+import FontView from 'views/Font';
+import ColorView from 'views/Color';
+import UploadView from 'views/Upload';
 
-import SettingsView from 'views/SettingsView/SettingsView';
-import NotFoundView from 'views/NotFoundView/NotFoundView';
-
-const components = {
-  footer: SidebarFooter,
-};
+import SettingsView from 'views/Settings';
+import NotFoundView from 'views/NotFound';
 
 export default (
   <Route path='/' component={CoreLayout}>
-    <IndexRoute
-      components={{
-        ...components,
-        sidebar: ImageSidebarControls,
-      }}
-    />
+    <IndexRoute />
     <Route
       path='/paint/images'
-      components={{
-        ...components,
-        sidebar: ImageSidebarImages,
-      }}
+      component={ImagesView}
     />
 
     <Route
       path='/paint/font'
-      components={{
-        ...components,
-        sidebar: ImageSidebarText,
-      }}
+      component={FontView}
     />
 
     <Route
       path='/paint/effects'
-      components={{
-        ...components,
-        sidebar: ImageSidebarFilters,
-      }}
+      component={EffectsView}
+    />
+    <Route
+      path='/paint/color'
+      component={ColorView}
     />
 
     <Route
-      path='/paint/settings'
-      components={{
-        ...components,
-        sidebar: ImageSidebarSettings,
-      }}
+      path='/paint/upload'
+      component={UploadView}
     />
 
-    <Route path='/about' component={AboutView} />
+    <Route path='/info' component={InfoView} />
     <Route path='/settings' component={SettingsView} />
     <Route path='/404' component={NotFoundView} />
     <Redirect from='*' to='/404' />

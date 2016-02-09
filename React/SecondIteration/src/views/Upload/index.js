@@ -5,7 +5,7 @@ import {actions} from 'redux/modules/views/image';
 
 import ImageInput from 'components/inputs/ImageInput';
 
-import classes from './Files.scss';
+import classes from './Upload.scss';
 
 const mapStateToProps =
   () => ({});
@@ -18,10 +18,8 @@ export class Images extends Component {
       <div
         className={classes['container']}
       >
-        <div>
-          <h5>Load Image from disk</h5>
-          <ImageInput />
-        </div>
+        <h5>upload</h5>
+        <ImageInput />
       </div>
     );
   }
