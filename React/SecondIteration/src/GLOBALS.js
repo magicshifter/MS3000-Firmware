@@ -27,20 +27,23 @@ export const links = [
 
 export const pixelEditorUrlBase = '/paint';
 
-export const pixelEditorSubUrls = [
-  'images',
-  'fonts',
-  'effects',
-  'colors',
-  'upload',
-];
+export const pixelEditorSubUrls = {
+  images: {},
+  fonts: {},
+  effects: {},
+  colors: {},
+  upload: {
+    color: '#fff',
+  },
+};
 
 export const secondaryLinks =
-  pixelEditorSubUrls.map(
+  Object.keys(pixelEditorSubUrls).map(
     url => ({
       to: `${pixelEditorUrlBase}/${url}`,
       text: url,
       icon: url,
+      style: {...pixelEditorSubUrls[url]},
     })
   );
 
