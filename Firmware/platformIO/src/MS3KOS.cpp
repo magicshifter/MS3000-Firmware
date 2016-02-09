@@ -38,18 +38,18 @@ extern "C" {
 // note: beyond this point, please consider the above globals.
 
 #include "msSystem.h"
- MagicShifterSystem msSystem;
+MagicShifterSystem msSystem;
 // note: WebServer and msSystem are in love
-#include "WebServer.h" 
- MagicShifterWebServer msWebServer;
+#include "WebServer/WebServer.h" 
+MagicShifterWebServer msWebServer;
 
 // MIDI can be configured on or off 
 #ifdef CONFIG_ENABLE_MIDI
-#include "MidiShifter.h"
+#include "MIDI/MidiShifter.h"
 #endif
 
 // GUI modes, well actually .. modes are more of an 'app' ..
-#include "Modes.h"
+#include "Modes/Modes.h"
 
 MagicShakeMode msMagicShake;
 MagicSystemTextMode msSysText;
