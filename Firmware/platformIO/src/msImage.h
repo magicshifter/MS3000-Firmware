@@ -296,18 +296,14 @@ public:
   void LoadFile(const char *fileName)
   {
 
-    Serial.print("filename:"); Serial.println(fileName);
-    
     l_safeStrncpy(sv_Filename, fileName, MAX_FILENAME_LENGTH);
 
     if (LoadBitmapFile(fileName, &_bitmap) == true)
     {
-      // Serial.println("loadbitmapfile: 0000");
       height = _bitmap.header.frameHeight;
       width = _bitmap.header.frameWidth;
     }
     else {
-      // Serial.println("loadbitmapfile: not okay");
       height = 0;
       width = 0;
     }
@@ -357,7 +353,6 @@ public:
 
   void close()
   {
-    // Serial.print("closefile:"); Serial.println(String(_bitmap.bmFile));
     if (_bitmap.bmFile)
       _bitmap.bmFile.close();
     if(_bitmap.bmBuffer != NULL) {

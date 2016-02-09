@@ -80,7 +80,8 @@ class MagicShifterButtons {
 		resetButtons();
 
 	    deltaMicros = (msGlobals.ggCurrentMicros - msGlobals.ggLastMicros);
-	// handle Buttons:
+	
+		// handle Buttons:
 		pinMode(PIN_BUTTON_A, INPUT);
 		pinMode(PIN_BUTTON_B, INPUT);
 
@@ -97,13 +98,11 @@ class MagicShifterButtons {
 		{
 			if (msLongClickOK && msBtnAPressTime >= MIN_TIME_LONG_CLICK)
 			{
-// Serial.println("We gots LOON clicks A.");
 				msBtnALongHit = true;
 			}
 			else 
 			if (msBtnAPressTime >= MIN_TIME_CLICK)
 			{
-// Serial.println("We gots clicks A.");
 				msBtnAHit = true;
 			}
 
@@ -124,13 +123,11 @@ class MagicShifterButtons {
 		{
 			if (msLongClickOK && msBtnBPressTime >= MIN_TIME_LONG_CLICK)
 			{
-// Serial.println("We gots LOON clicks B .");
 				msBtnBLongHit = true;
 			}
 			else
 			if (msBtnBPressTime >= MIN_TIME_CLICK)
 			{
-// Serial.println("We gots clicks B.");
 				msBtnBHit = true;
 			}
 
@@ -152,7 +149,6 @@ class MagicShifterButtons {
 			if (msBtnPwrPressTime >= MIN_TIME_LONG_CLICK)
 			{
 				msBtnPwrLongHit = true;
-// Serial.println("Btn Pwr Looong Hit");
 			}
 			else 
 			if (msBtnPwrPressTime >= MIN_TIME_CLICK)
@@ -163,10 +159,8 @@ class MagicShifterButtons {
 				long _now = millis();
 				if ((_now - msBtnPwrLastHitTime) < MAX_TIME_DOUBLE_CLICK) {
 					msBtnPwrDoubleHit = true;
-// Serial.println("We gots double Power clicks..");
 				}
 				else {
-					// Serial.println("We gots Power clicks..");
 					msBtnPwrHit = true;
 				}
 
