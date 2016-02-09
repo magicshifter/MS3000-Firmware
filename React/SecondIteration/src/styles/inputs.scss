@@ -23,6 +23,11 @@ input[type=number] {
   width: 3.5em;
 }
 
+input[type=file] {
+  margin: 0;
+  padding: .5em 0;
+}
+
 .floating {
   float: left;
   height: 1em;
