@@ -32,10 +32,6 @@ public:
 
     msMagicShakeText.plotTextString( value, msGlobals.tBitmap4x5, tPos);
     shakeSync.setFrames(msMagicShakeText.getWidth() * FRAME_MULTIPLY);
-
-    Serial.print("label:"); Serial.println(label);
-    Serial.print("value:"); Serial.println(value);
-
   }
 
   void start()
@@ -58,7 +54,7 @@ public:
       msSystem.msButtons.msBtnAHit = false; // !J! todo: button callbacks
       sysCursor++;
       if (sysCursor > 2) sysCursor = 0;
-      msSystem.log("cursor:"); msSystem.logln(String(sysCursor));
+      msSystem.slog("cursor:"); msSystem.slogln(String(sysCursor));
 
       if (sysCursor==0){
         setText((char *)String("IP").c_str(), (char *)WiFi.localIP().toString().c_str());

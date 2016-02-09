@@ -3,7 +3,7 @@
 
 #define BYTESPERPIXEL 4
 
-#define MAX_SHAKE_TEXT 3
+#define MAX_SHAKE_TEXT 4
 
 typedef struct  {
   int x;
@@ -192,20 +192,40 @@ public:
   void plotTextString( char *text, MSBitmap &font,  Coordinate_s pos)
   {
     if (txtCount < MAX_SHAKE_TEXT) {
-      l_safeStrncpy(txtCollection[txtCount], text, MAX_TEXT_LENGTH);
-      txtFonts[txtCount] = font;
-      txtPositions[txtCount] = pos;
+      int lineStart = 0;
+      for (int i = 0; ; i++) {
+        if (text[i] == '\n' || text[i] == 0) {
+          if (i != lineStart) {
+            int len =  i-lineStart+1;
+            if (len > MAX_TEXT_LENGTH)
+              len = MAX_TEXT_LENGTH;
 
-      int ts = font.header.frameWidth * strlen(text);
-      ts += pos.x;
+            l_safeStrncpy(txtCollection[txtCount], text + lineStart, len);
 
-      txtSizes[txtCount] = ts;
+            txtFonts[txtCount] = font;
+            txtPositions[txtCount] = pos;
 
-      if (ts > txtWidth) {
-        txtWidth = ts;
+            int ts = font.header.frameWidth * strlen(text);
+            ts += pos.x;
+
+            txtSizes[txtCount] = ts;
+
+            if (ts > txtWidth) {
+              txtWidth = ts;
+            }
+
+            pos.y += font.header.frameHeight;
+
+            txtCount++;
+
+            if (txtCount >= MAX_SHAKE_TEXT) 
+              break;
+          }
+        }
+        if (text[i] == 0) {
+          break;
+        }
       }
-
-      txtCount++;
     } 
   };
 
@@ -221,6 +241,14 @@ public:
 
   void getFrameData(int frameIdx, byte *frameDest)
   {
+    for (int i=0; i<MAX_LEDS * 4; i+=4) 
+    {
+      frameDest[i] = 0xff;
+      frameDest[i+1] = 0x00;
+      frameDest[i+2] = 0x00;
+      frameDest[i+3] = 0x00;
+    }
+    
     for (int i = 0; i < txtCount; i++) {
       int idx = frameIdx - txtPositions[i].x;
 
@@ -274,19 +302,15 @@ public:
 
     if (LoadBitmapFile(fileName, &_bitmap) == true)
     {
-      Serial.println("loadbitmapfile: 0000");
+      // Serial.println("loadbitmapfile: 0000");
       height = _bitmap.header.frameHeight;
       width = _bitmap.header.frameWidth;
     }
     else {
-      Serial.println("loadbitmapfile: not okay");
+      // Serial.println("loadbitmapfile: not okay");
       height = 0;
       width = 0;
     }
-
-    Serial.print("image width:"); Serial.println(String(width));;
-    Serial.print("image height:"); Serial.println(String(height));;
-
   }
 
   static bool LoadBitmapFile(const char *filename, MSBitmap *bitmap)
@@ -333,7 +357,7 @@ public:
 
   void close()
   {
-    Serial.print("closefile:"); Serial.println(String(_bitmap.bmFile));
+    // Serial.print("closefile:"); Serial.println(String(_bitmap.bmFile));
     if (_bitmap.bmFile)
       _bitmap.bmFile.close();
     if(_bitmap.bmBuffer != NULL) {

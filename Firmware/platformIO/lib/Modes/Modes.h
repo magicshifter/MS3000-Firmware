@@ -9,7 +9,6 @@
 #include "MagicMagnet.h"
 
 #include "BouncingBall.h"
-#include "ShakeText.h"
 #include "MagicShake.h"
 
 #include "ModeSelectorMode.h"

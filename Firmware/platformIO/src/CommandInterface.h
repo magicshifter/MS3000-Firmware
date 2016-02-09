@@ -111,27 +111,27 @@ void CommandInterfacePoll()
 			const char *filename = fnA; //filenameStr.c_str();
 
 		    //l_safeStrncpy(msGlobals.ggUploadFileName, (char *)upload.filename.c_str(), MAX_FILENAME_LENGTH);//.c_str();
-		    msSystem.log("upload started: ");
-		    msSystem.log(filename);
+		    msSystem.slog("upload started: ");
+		    msSystem.slog(filename);
 
-		    msSystem.log("upload open.. ");
+		    msSystem.slog("upload open.. ");
 
 		    if (SPIFFS.exists(filename)) {
-		      msSystem.logln("Removing previous copy..");
+		      msSystem.slogln("Removing previous copy..");
 		      SPIFFS.remove(filename);
 		    }
 
 		    File spiffsFile = SPIFFS.open(filename, "w");
-		    msSystem.log("ggUploadFile opened:");
-		    msSystem.logln(filename);
+		    msSystem.slog("ggUploadFile opened:");
+		    msSystem.slogln(filename);
 
 		    if (!spiffsFile) 
 		    {
-		      msSystem.logln("ERROR: COULD NOT open file!!!");
+		      msSystem.slogln("ERROR: COULD NOT open file!!!");
 		    }
 		    else 
 		    {
-		    	msSystem.log("Opened file for writing...");
+		    	msSystem.slog("Opened file for writing...");
 				long time = millis();
 				for (uint32_t index = 0; index < dataSize; index += CMD_TEXT_MAX_LEN)
 				{
@@ -146,7 +146,7 @@ void CommandInterfacePoll()
 					bool result = spiffsFile.write(usbBuffer, byteIndex);
 					if (!result) 
 					{
-						msSystem.logln("ERROR: could not write!");
+						msSystem.slogln("ERROR: could not write!");
 					}
 					//WriteBytes(sectorAddr + index, usbBuffer, byteIndex);
 
@@ -155,7 +155,7 @@ void CommandInterfacePoll()
 				time = millis() - time;
 
 				spiffsFile.close();
-				msSystem.logln("File Upload DONE!");
+				msSystem.slogln("File Upload DONE!");
 			}
 		}
 		else

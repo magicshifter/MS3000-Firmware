@@ -97,13 +97,13 @@ class MagicShifterButtons {
 		{
 			if (msLongClickOK && msBtnAPressTime >= MIN_TIME_LONG_CLICK)
 			{
-	    Serial.println("We gots LOON clicks A.");
+// Serial.println("We gots LOON clicks A.");
 				msBtnALongHit = true;
 			}
 			else 
 			if (msBtnAPressTime >= MIN_TIME_CLICK)
 			{
-Serial.println("We gots clicks A.");
+// Serial.println("We gots clicks A.");
 				msBtnAHit = true;
 			}
 
@@ -124,13 +124,13 @@ Serial.println("We gots clicks A.");
 		{
 			if (msLongClickOK && msBtnBPressTime >= MIN_TIME_LONG_CLICK)
 			{
-Serial.println("We gots LOON clicks B .");
+// Serial.println("We gots LOON clicks B .");
 				msBtnBLongHit = true;
 			}
 			else
 			if (msBtnBPressTime >= MIN_TIME_CLICK)
 			{
-Serial.println("We gots clicks B.");
+// Serial.println("We gots clicks B.");
 				msBtnBHit = true;
 			}
 
@@ -152,19 +152,22 @@ Serial.println("We gots clicks B.");
 			if (msBtnPwrPressTime >= MIN_TIME_LONG_CLICK)
 			{
 				msBtnPwrLongHit = true;
-	// Serial.println("Btn Pwr Looong Hit");
+// Serial.println("Btn Pwr Looong Hit");
 			}
 			else 
 			if (msBtnPwrPressTime >= MIN_TIME_CLICK)
 			{
-// Serial.println("We gots Power clicks..");
-				msBtnPwrHit = true;
+
 
 				// long hits
 				long _now = millis();
 				if ((_now - msBtnPwrLastHitTime) < MAX_TIME_DOUBLE_CLICK) {
 					msBtnPwrDoubleHit = true;
 // Serial.println("We gots double Power clicks..");
+				}
+				else {
+					// Serial.println("We gots Power clicks..");
+					msBtnPwrHit = true;
 				}
 
 				msBtnPwrLastHitTime = millis();

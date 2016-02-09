@@ -41,13 +41,13 @@ void StartWebServer(void)
 {
   while (!AutoConnect())
   {
-    msSystem.logln("ARGL: WHY U no WLAN!? :( retrying...");
+    msSystem.slogln("ARGL: WHY U no WLAN!? :( retrying...");
     delay(100);
   }
 #ifdef USE_MDNS
   if (msSystem.msDNS.begin("magicshifter", WiFi.localIP()))
   {
-    msSystem.logln( "MDNS responder started" );
+    msSystem.slogln( "MDNS responder started" );
   }
 #endif
   msSystem.msESPServer.on("/restart", []() {
@@ -70,6 +70,9 @@ void StartWebServer(void)
 
   msSystem.msESPServer.on("/settings/ap", HTTP_GET, handleGETAPSettings);
   msSystem.msESPServer.on("/settings/ap", HTTP_POST, handlePOSTAPSettings);
+
+  msSystem.msESPServer.on("/settings/syslog", HTTP_GET, handleGETSysLogHostSettings);
+  msSystem.msESPServer.on("/settings/syslog", HTTP_POST, handlePOSTSysLogSettings);
 
   msSystem.msESPServer.on("/settings/server", HTTP_GET, handleGETServerSettings);
   msSystem.msESPServer.on("/settings/server/set", handlePOSTServerSettings);
@@ -123,7 +126,7 @@ void StartWebServer(void)
 
   msSystem.msESPServer.onNotFound ( handleNotFound );
   msSystem.msESPServer.begin();
-  msSystem.logln ( "HTTP msSystem.msESPServer started" );
+  msSystem.slogln ( "HTTP msSystem.msESPServer started" );
 }
 
 

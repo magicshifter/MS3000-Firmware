@@ -323,33 +323,33 @@ void envDump()
 {
 	int c;
 
-	msSystem.logln("Current Dump:");
+	msSystem.slogln("Current Dump:");
 
-	msSystem.logln(" T: ");
-	msSystem.logln(anEnvelope.timer, DEC);
+	msSystem.slogln(" T: ");
+	msSystem.slogln(anEnvelope.timer, DEC);
 
-	msSystem.logln(" L: ");
-	msSystem.logln(anEnvelope.level, DEC);
+	msSystem.slogln(" L: ");
+	msSystem.slogln(anEnvelope.level, DEC);
 
-	msSystem.logln(" C: ");
-	msSystem.logln((unsigned int)anEnvelope.current, HEX);
+	msSystem.slogln(" C: ");
+	msSystem.slogln((unsigned int)anEnvelope.current, HEX);
 
-	msSystem.logln(" IDLE: ");
-	msSystem.logln(anEnvelope.is_idle, DEC);
+	msSystem.slogln(" IDLE: ");
+	msSystem.slogln(anEnvelope.is_idle, DEC);
 
-	msSystem.logln("Envelope Dump:");
+	msSystem.slogln("Envelope Dump:");
 
 	for (c=0;c<=ENV_RELEASE;c++){
-		msSystem.logln("Stage:");
-		msSystem.logln((unsigned int)&anEnvelope.stages[c], HEX);
-		msSystem.logln(" ");
-		msSystem.logln(c, DEC);
-		msSystem.logln(" L:");
-		msSystem.logln(anEnvelope.stages[c].level, DEC);
-		msSystem.logln(" / D:");
-		msSystem.logln(anEnvelope.stages[c].duration, DEC);
-		msSystem.logln(" @ C:");
-		msSystem.logln(anEnvelope.stages[c].coeff, DEC);
+		msSystem.slogln("Stage:");
+		msSystem.slogln((unsigned int)&anEnvelope.stages[c], HEX);
+		msSystem.slogln(" ");
+		msSystem.slogln(c, DEC);
+		msSystem.slogln(" L:");
+		msSystem.slogln(anEnvelope.stages[c].level, DEC);
+		msSystem.slogln(" / D:");
+		msSystem.slogln(anEnvelope.stages[c].duration, DEC);
+		msSystem.slogln(" @ C:");
+		msSystem.slogln(anEnvelope.stages[c].coeff, DEC);
 
 	}
 }
@@ -420,12 +420,12 @@ void envFrame()
       if (msLongClickOK && msBtnAPressTime >= MIN_TIME_LONG_CLICK)
       {
         msBtnALongHit = true;
-        msSystem.logln("msBtnALongHit");
+        msSystem.slogln("msBtnALongHit");
       }
       else if (msBtnAPressTime >= MIN_TIME_CLICK)
       {
         msBtnAHit = true;
-        msSystem.logln("msBtnAHit");
+        msSystem.slogln("msBtnAHit");
       }
 
       msBtnAPressTime = 0;
@@ -446,13 +446,13 @@ void envFrame()
       if (msLongClickOK && msBtnBPressTime >= MIN_TIME_LONG_CLICK)
       {
         msBtnBLongHit = true;
-        msSystem.logln("msBtnBLongHit");
+        msSystem.slogln("msBtnBLongHit");
 
       }
       else if (msBtnBPressTime >= MIN_TIME_CLICK)
       {
         msBtnBHit = true;
-        msSystem.logln("msBtnBHit");
+        msSystem.slogln("msBtnBHit");
       }
 
       msBtnBPressTime = 0;

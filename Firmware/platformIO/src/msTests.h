@@ -30,7 +30,7 @@ void testButtonForBOM_X()
 {
   if (msGlobals.ggCurrentFrame % 1000 == 0)
   {
-    msSystem.logln("_");
+    msSystem.slogln("_");
   }
 
   if (msSystem.msButtons.msBtnPwrLongHit)
@@ -143,9 +143,9 @@ void testSimpleButtons()
 
 void logButtons()
 {
-  msSystem.log("msBtnA:"); msSystem.logln(String(msSystem.msButtons.msBtnAPressTime));
-  msSystem.log("msBtnPwr:"); msSystem.logln(String(msSystem.msButtons.msBtnPwrPressTime));
-  msSystem.log("msBtnB:"); msSystem.logln(String(msSystem.msButtons.msBtnBPressTime));
+  msSystem.slog("msBtnA:"); msSystem.slogln(String(msSystem.msButtons.msBtnAPressTime));
+  msSystem.slog("msBtnPwr:"); msSystem.slogln(String(msSystem.msButtons.msBtnPwrPressTime));
+  msSystem.slog("msBtnB:"); msSystem.slogln(String(msSystem.msButtons.msBtnBPressTime));
 }
 
 void doTests()

@@ -29,7 +29,6 @@ private:
   // the number of files discovered onboard during the scan for POV images..
   int numFiles = 0;
   bool correctBrightness = false;
-  bool shouldDisplayText=false;
 
 public:
   const char *modeName="MagicShake";
@@ -45,7 +44,7 @@ public:
   String getFileNameAtIndex(int fileIndex, int &maxFiles)
   {
     Dir POVDir;
-    msSystem.log("getFileNameAtIndex:"); msSystem.logln(String(fileIndex));
+    msSystem.slog("getFileNameAtIndex:"); msSystem.slogln(String(fileIndex));
     POVDir = SPIFFS.openDir("");
 
     int cnt = 0;
@@ -74,14 +73,64 @@ public:
     return foundFilename;
   }
 
+  int getIndexOf(String fileName) {
+    Dir POVDir;
+    POVDir = SPIFFS.openDir("");
+
+    int cnt = 0;
+
+    String foundFilename = "";
+    String currentFilename = "";
+
+    while(1)
+    {
+      if (!POVDir.next()) 
+        break; // end of list
+      
+      currentFilename = POVDir.fileName();
+
+      if (!currentFilename.endsWith(".magicBitmap")) 
+        continue;
+
+      if (currentFilename.equals(fileName))
+        return cnt;
+
+      cnt++;
+    }
+
+    return -1;
+  }
+
   // load a magic Shake file for display
   void loadShakeFile(const char *filename)
   {
-    msSystem.log("loadShakeFile:"); msSystem.logln(filename);
+    msSystem.slog("loadShakeFile:"); msSystem.slogln(filename);
 
     lLocalImage.close();
     lLocalImage.LoadFile(filename);
     lPOVMode.setImage(&lLocalImage);
+  }
+
+  void loadImageByIndex(int idx) {
+    dirCursor = idx;
+    String toLoad = getFileNameAtIndex(dirCursor, numFiles);
+
+    // out of bounds
+    if (toLoad.length() == 0) { 
+      dirCursor = 0;
+      toLoad = getFileNameAtIndex(0, numFiles);
+      if (toLoad.length() == 0) // !J! todo: default
+        toLoad = String(DEFAULT_SHAKE_IMAGE);
+    }
+
+    if (toLoad.length() > 0) {
+      loadShakeFile(toLoad.c_str());
+    }
+  }
+
+  void loadImageByName(String fileName) {
+    int idx = getIndexOf(fileName);
+    loadImageByIndex(idx);
   }
 
   // Start the MagicShake mode:
@@ -89,26 +138,8 @@ public:
   //  prime the file list, which may update dynamically during our session
   void start()
   {
-
-    // lPOVMode.start();
-
-    // 0 = picshow, 1 = textshow
-    shouldDisplayText = false;
-
-    if (String(msGlobals.ggUploadFileName).endsWith(".magicBitmap")) {
-      loadShakeFile(msGlobals.ggUploadFileName);
-    }
-    else {
-      loadShakeFile(DEFAULT_SHAKE_IMAGE); // !J! todo: move to default ..
-    }
-
-    // prime numFiles at Start
-    dirCursor = 999999;// !J! grr ..
-    getFileNameAtIndex(dirCursor, numFiles);
-    msSystem.log("numFiles:"); msSystem.logln(String(numFiles));
-    dirCursor = 0;// !J! grr ..
-
-
+    lPOVMode.start();
+    loadImageByIndex(0);
   } 
 
   // stop the MagicShake mode
@@ -120,76 +151,43 @@ public:
 
   void reset()
   {
-    msSystem.logln("MagicShake reset.");
+    msSystem.slogln("MagicShake reset.");
     stop();
     start();
   }
   
   bool step()
   {
-
-    // toggle text
-
-    // !J! TODO: give modes an event queue ..
-    if (msGlobals.ggShouldAutoLoad == 1) {
-      loadShakeFile(msGlobals.ggUploadFileName);
-      msGlobals.ggShouldAutoLoad = 0;
-    }
+    int newCursor = dirCursor;
 
     if (msSystem.msButtons.msBtnALongHit == true) {
       msSystem.msButtons.msBtnALongHit = false;
       correctBrightness = !correctBrightness;
     }
-    else // either a long or a short hit .. 
+
     if (msSystem.msButtons.msBtnAHit == true) {
       msSystem.msButtons.msBtnAHit = false;
-
-      dirCursor++;
-      if (dirCursor >= numFiles) dirCursor = 0;
-
-      String toLoad = getFileNameAtIndex(dirCursor, numFiles);
-
-      // out of bounds
-      if (toLoad.length() == 0) { 
-        dirCursor = 0;
-        toLoad = getFileNameAtIndex(0, numFiles);
-        if (toLoad.length() == 0) // !J! todo: default
-          toLoad = String("blueghost_png.magicBitmap");
-      }
-
-      if (toLoad.length() > 0) {
-        loadShakeFile(toLoad.c_str());
-      }
-
+      newCursor--;
     }
 
     if (msSystem.msButtons.msBtnBHit == true) {
       msSystem.msButtons.msBtnBHit = false;
-
-      dirCursor--;
-      if (dirCursor < 0) dirCursor = numFiles - 1; // !J!
-
-      // msSystem.log("B cursor:"); msSystem.logln(String(dirCursor));
-
-      String toLoad = getFileNameAtIndex(dirCursor, numFiles);
-      // msSystem.log("Would DISP:"); msSystem.logln(toLoad);
-
-      // out of bounds
-      if (toLoad.length() == 0) { 
-        dirCursor = numFiles;
-        toLoad = getFileNameAtIndex(numFiles, numFiles);
-        if (toLoad.length() == 0) // !J! todo: default
-          toLoad = String("blueghost_png.magicBitmap");
-      }
-
-      if (toLoad.length() > 0) {
-        loadShakeFile(toLoad.c_str());
-      }
+      newCursor++;
     }
 
-    // msSystem.log("numFiles:"); msSystem.logln(String(numFiles));
+    if (newCursor != dirCursor) {
+      if (newCursor >= numFiles) newCursor = 0;
+      if (newCursor < 0) newCursor = numFiles - 1; 
+      loadImageByIndex(newCursor);
+    }
 
-     if (lPOVMode.step()) {
+    // !J! TODO: give modes an event queue ..
+    if (msGlobals.ggShouldAutoLoad == 1) {
+      loadImageByName(msGlobals.ggUploadFileName);
+      msGlobals.ggShouldAutoLoad = 0;
+    }
+
+    if (lPOVMode.step()) {
         return true;
     }
     else

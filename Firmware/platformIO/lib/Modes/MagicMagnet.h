@@ -45,10 +45,10 @@ private:
       msSystem.msSensor.readMagnetometerData(msGlobals.ggMagnet);
 
       if ((msSystem.msSensor.readRegister(0x5E) & 0x02)) {
-        msSystem.logln("magnetometer:go!");
+        msSystem.slogln("magnetometer:go!");
         autoCalResetCounter++;
         if (autoCalResetCounter > 10) {
-          msSystem.logln("magnetometer:reset");
+          msSystem.slogln("magnetometer:reset");
           // M_CTRL_REG2: Hybrid auto increment, Magnetic measurement min/max detection function reset
           msSystem.msSensor.writeRegister(0x5C, 0x24);
           autoCalResetCounter = 0;

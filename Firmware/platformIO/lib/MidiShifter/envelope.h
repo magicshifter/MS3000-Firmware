@@ -61,12 +61,12 @@ void adsr_envelope_init(adsr_envelope * env) {
 uint16_t adsr_envelope_tick(adsr_envelope * env) {
 	estage * es = env->current;
 
-	msSystem.logln("Current Stage:");
-	msSystem.logln((unsigned int)es, HEX);
-	msSystem.logln("Timer:");
-	msSystem.logln(env->timer, DEC);
-	msSystem.logln("Duration:");
-	msSystem.logln(es->duration, DEC);
+	msSystem.slogln("Current Stage:");
+	msSystem.slogln((unsigned int)es, HEX);
+	msSystem.slogln("Timer:");
+	msSystem.slogln(env->timer, DEC);
+	msSystem.slogln("Duration:");
+	msSystem.slogln(es->duration, DEC);
 
 	if (env->timer >= es->duration) { // next stage
 		env->current = (estage *)es->next;

@@ -2,13 +2,13 @@ class ModeSelectorMode : public MagicShifterBaseMode {
 
 private:
   // MagicShifterImageAbstr *msImage;
-  POVShakeSync shakeSync;
+  MagicPOVMode lPOVMode;
   MagicShifterImageText msMagicShakeText;
   int currentIdx = 0;
 
 public:
   const int maxModes = 5;
-  const char *modeNames[5]= {"Magic", "Remote", "RGB", "SysVals",  "Compass"};
+  const char *modeNames[5]= {"Mgc", "Rmte", "RGB", "SVals",  "Cmps"};
 
 
   void setText(  const char *label)
@@ -22,8 +22,7 @@ public:
     tPos.x = 0; tPos.y = 0;
     msGlobals.tBitmap6x8.color = aWhile;
     msMagicShakeText.plotTextString( (char *)label, msGlobals.tBitmap6x8, tPos);
-
-    shakeSync.setFrames(msMagicShakeText.getWidth() * FRAME_MULTIPLY);
+    lPOVMode.setImage(&msMagicShakeText);
   }
 
   void start()
@@ -34,7 +33,7 @@ public:
 // stop the mode
   void stop(void)
   {
-    shakeSync.setFrames(0);
+    lPOVMode.setImage(NULL);
   }
 
   void setIndex(int idx) {
@@ -79,38 +78,9 @@ public:
       setIndex(currentIdx - 1);
     }
 
-    // check accelerometer
-    if (shakeSync.update(msGlobals.ggAccel[1]))
+    if (lPOVMode.step()) 
     {
-      int index = shakeSync.getFrameIndex();
-
-      if (index > 0)
-      {
-        byte povData[RGB_BUFFER_SIZE];
-
-       
-        for (int i=0; i<MAX_LEDS * 4; i+=4) 
-        {
-          povData[i] = 0xff;
-          povData[i+1] = 0x00;
-          povData[i+2] = 0x00;
-          povData[i+3] = 0x00;
-        }
-        
-        int frame_index = index / FRAME_MULTIPLY;
-
-        msMagicShakeText.getFrameData(frame_index, povData);
-
-        msSystem.msLEDs.loadBuffer(povData);
-        msSystem.msLEDs.updateLEDs();
-        delayMicroseconds(POV_TIME_MICROSECONDS);
-        msSystem.msLEDs.fastClear();
-      }
-      else
-      {
-        msSystem.msLEDs.fastClear();
-        yield();
-      }
+        return -1;
     }
     else 
     {

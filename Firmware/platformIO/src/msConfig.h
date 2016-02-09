@@ -39,7 +39,7 @@
 #define MIN_TIME_CLICK 10000
 #define MIN_TIME_LONG_CLICK 1000 * 750
 
-#define MAX_TIME_DOUBLE_CLICK 650
+#define MAX_TIME_DOUBLE_CLICK 900
 
 #define POWER_TIMEOUT 1000 * 1000 * 10 * 60
 
@@ -57,7 +57,7 @@
 #define CONFIG_ENABLE_ACCEL
 
 // 192.168.4.1 is the IP it always has in softAP mode
-// #define SCAN_FIRST_MODE 1
+#define SCAN_FIRST_MODE 1
 
 #define CONNECTION_TIMEOUT 30000
 

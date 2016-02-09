@@ -1,63 +1,23 @@
 #ifndef _WEBSERVERAPI_H
 #define _WEBSERVERAPI_H
 
-#define MAX_AP_LEN 48
-struct APInfo
-{
-    char ssid[MAX_AP_LEN];
-    char password[MAX_AP_LEN];
-
-  public:
-    APInfo()
-    {
-      clear();
-    }
-
-    void clear(void)
-    {
-      memset(ssid, 0, sizeof(ssid));
-      memset(password, 0, sizeof(password));
-    }
-};
-
-
-struct ServerConfig
-{
-  char hostname[48];
-  int port;
-
-public:
-  ServerConfig()
-  {
-    clear();
-  }
-
-  void clear(void)
-  {
-    memset(hostname, 0, sizeof(hostname));
-    port = 80;
-  }
-};
-
-struct APConfig
-{
-  struct APInfo  apInfo;
-  bool forceAPMode;
-};
+#include "msAPInfo.h"
 
 class SettingsManager
 {
 private:
-  const String apConfigPath = "settings/ap.bin";
-  const String apServerConfigPath = "settings/server1.bin";
-  const String apListConfigPath = "settings/aplist1.bin";
-  const String preferredAPConfigPath = "settings/preferredap.bin";
-
   // used in resetAPList & getNextAP
   int apListIndex = -1;
   File apListFile;
 
 public:
+  const String apConfigPath = "settings/ap.bin";
+  const String apServerConfigPath = "settings/server1.bin";
+  const String apListConfigPath = "settings/aplist1.bin";
+  const String apSysLogConfigPath = "settings/syslog.bin";
+  const String preferredAPConfigPath = "settings/preferredap.bin";
+
+
   bool getServerConfig(struct ServerConfig *config)
   {
     
@@ -71,13 +31,10 @@ public:
     }
     else 
     {
-      msSystem.log("no server config file?::");
-      msSystem.logln((char * )path.c_str());
+      msSystem.slog("webserver: no server config file? ");
+      msSystem.slogln((char * )path.c_str());
     }
 
-    l_safeStrncpy(config->hostname, "magicshifter", sizeof(config->hostname));
-    config->port = 80;
-    
     return false;
   }
 
@@ -85,6 +42,37 @@ public:
   {
     
     String path = apServerConfigPath;
+    File file = SPIFFS.open((char *)path.c_str(), "w");
+    file.write((uint8_t *)config, sizeof(*config));
+    
+    file.close();
+  
+  }
+
+  bool getSyslogConfig(struct ServerConfig *config)
+  {
+    
+    String path = apSysLogConfigPath;
+    if (SPIFFS.exists((char *)path.c_str()))
+    {
+      File file = SPIFFS.open((char *)path.c_str(), "r");
+      file.read((uint8_t *)config, sizeof(*config));
+      file.close();
+      return true;
+    }
+    else 
+    {
+      msSystem.slog("webserver: no syslog config file? ");
+      msSystem.slogln((char * )path.c_str());
+    }
+
+    return false;
+  }
+
+  void setSyslogConfig(struct ServerConfig *config)
+  {
+    
+    String path = apSysLogConfigPath;
     File file = SPIFFS.open((char *)path.c_str(), "w");
     file.write((uint8_t *)config, sizeof(*config));
     
@@ -105,8 +93,8 @@ public:
     }
     else
     {
-      msSystem.logln("AP config missing:");
-      msSystem.logln((char *)path.c_str());
+      msSystem.slogln("webserver: AP config missing:");
+      msSystem.slogln((char *)path.c_str());
     }
 
     
@@ -126,8 +114,8 @@ public:
     file.write((uint8_t *)config, sizeof(*config));
     file.close();
 
-    msSystem.logln("saved:");
-    msSystem.logln(config->ssid);
+    msSystem.slogln("webserver: saved:");
+    msSystem.slogln(config->ssid);
     
   }
 
@@ -176,8 +164,8 @@ public:
     {
       if (strcmp(apInfoDummy.ssid, ssid) == 0)
       {
-        msSystem.logln("deleting wifi:");
-        msSystem.logln(ssid);
+        msSystem.slogln("webserver: deleting wifi:");
+        msSystem.slogln(ssid);
 
         apInfoDummy.clear();
         int calcPos = apListIndex * requiredBytes;
@@ -196,42 +184,65 @@ public:
   {
     
     String path = apListConfigPath;
-    File apListFile = SPIFFS.open((char *)path.c_str(), "r");
     const int requiredBytes = sizeof(*apInfo);
     APInfo apInfoDummy;
     int apListIndex = 0;
     int firstFreePos = -1;
+    File apListFile = SPIFFS.open((char *)path.c_str(), "r");
 
-    while (apListFile.read((uint8_t *)&apInfoDummy, requiredBytes) == requiredBytes)
-    {
-      if (firstFreePos < 0 && msSystem.msEEPROMs.memcmpByte((byte *)&apInfoDummy, 0, requiredBytes))
-      {
-        firstFreePos = apListIndex * requiredBytes;
-      }
-      else if (strcmp(apInfoDummy.ssid, apInfo->ssid) == 0)
-      {
-        firstFreePos = apListIndex * requiredBytes;
-        break;
-      }
-      apListIndex++;
+    if (!apListFile) {
+      msSystem.slog("webserver: cannot open file:");
+      msSystem.slogln(path);
     }
-    apListFile.close();
+    else
+    {
+      while (apListFile.read((uint8_t *)&apInfoDummy, requiredBytes) == requiredBytes)
+      {
+        if (firstFreePos < 0 && msSystem.msEEPROMs.memcmpByte((byte *)&apInfoDummy, 0, requiredBytes))
+        {
+          firstFreePos = apListIndex * requiredBytes;
+        }
+        else if (strcmp(apInfoDummy.ssid, apInfo->ssid) == 0)
+        {
+          firstFreePos = apListIndex * requiredBytes;
+          break;
+        }
+        apListIndex++;
+      }
+      apListFile.close();
+    }
 
     if (firstFreePos >= 0)
     {
-      msSystem.logln("found hole!");
-      msSystem.logln(String(firstFreePos));
+      msSystem.slogln("found hole!");
+      msSystem.slogln(String(firstFreePos));
       apListFile = SPIFFS.open((char *)path.c_str(), "a+");
       apListFile.seek(firstFreePos, SeekSet);
     }
     else
     {
-      msSystem.logln("appendiong at end");
+      msSystem.slogln("appending at end");
       apListFile = SPIFFS.open((char *)path.c_str(), "A");
+
+      if (!apListFile) {
+        msSystem.slogln("creating new file");
+        apListFile = SPIFFS.open((char *)path.c_str(), "w");
+      }
     }
-    apListFile.write((uint8_t *)apInfo, requiredBytes);
-    apListFile.close();
-    
+
+    if (!apListFile) {
+      msSystem.slog("webserver: creation failed: ");
+      msSystem.slogln(path);
+    }
+    else
+    {
+      apListFile.write((uint8_t *)apInfo, requiredBytes);
+      apListFile.close();
+      msSystem.slog("webserver: configuration saved: ");
+      msSystem.slogln(path);
+    }
+
+
   }
 
   void resetAPList()
@@ -287,7 +298,7 @@ SettingsManager Settings;
 
 void handleGETInfo(void)
 {
-  msSystem.logln("handleGETInfo");
+  msSystem.slogln("handleGETInfo");
 
   String response = "{";
     response += "\"api\":{";
@@ -313,7 +324,7 @@ void handleGETInfo(void)
 
 void handleGETAbout(void)
 {
-  msSystem.logln("handleGETAbout");
+  msSystem.slogln("handleGETAbout");
 
   String response = "{";
     response += "\"type\":\"MagicShifter3000\",";
@@ -329,7 +340,7 @@ void handleGETAbout(void)
 
 void handleGETStatus(void)
 {
-  msSystem.logln("handleGETStatus");
+  msSystem.slogln("handleGETStatus");
 
   int adValue = analogRead(A0);
 
@@ -392,11 +403,11 @@ bool parseAPInfoFromServerArgs(APInfo &apInfo)
   bool success = true;
   for (int i = 0; i < msSystem.msESPServer.args(); i++)
   {
-    msSystem.logln("argName: ");
-    msSystem.logln(msSystem.msESPServer.argName(i));
+    msSystem.slogln("argName: ");
+    msSystem.slogln(msSystem.msESPServer.argName(i));
 
-    msSystem.logln("arg: ");
-    msSystem.logln(msSystem.msESPServer.arg(i));
+    msSystem.slogln("arg: ");
+    msSystem.slogln(msSystem.msESPServer.arg(i));
 
     if (strcmp(msSystem.msESPServer.argName(i).c_str(), "ssid") == 0)
     {
@@ -408,16 +419,45 @@ bool parseAPInfoFromServerArgs(APInfo &apInfo)
     }
     else
     {
-      msSystem.logln("arg is not known!");
+      msSystem.slogln("arg is not known!");
       success = false;
     }
   }
   return success;
 }
 
+bool parseSysLogInfoFromServerArgs(ServerConfig &sysLogHost)
+{
+  bool success = true;
+  for (int i = 0; i < msSystem.msESPServer.args(); i++)
+  {
+    msSystem.slogln("argName: ");
+    msSystem.slogln(msSystem.msESPServer.argName(i));
+
+    msSystem.slogln("arg: ");
+    msSystem.slogln(msSystem.msESPServer.arg(i));
+
+    if (strcmp(msSystem.msESPServer.argName(i).c_str(), "host") == 0)
+    {
+      l_safeStrncpy(sysLogHost.hostname, msSystem.msESPServer.arg(i).c_str(), sizeof(sysLogHost.hostname));
+    }
+    else if (strcmp(msSystem.msESPServer.argName(i).c_str(), "port") == 0)
+      {
+        sysLogHost.port = atoi(msSystem.msESPServer.arg(i).c_str());
+      }
+    else
+    {
+      msSystem.slogln("arg is not known!");
+      success = false;
+    }
+  }
+  return success;
+}
+
+
 void handleGetSettings(void)
 {
-  msSystem.logln("handleGetSettings");
+  msSystem.slogln("handleGetSettings");
 
   ServerConfig config;
   Settings.getServerConfig(&config);
@@ -444,7 +484,7 @@ void handleGetSettings(void)
 
 void handleGETServerSettings(void)
 {
-  msSystem.logln("handleGETServerSettings");
+  msSystem.slogln("handleGETServerSettings");
 
   ServerConfig config;
   Settings.getServerConfig(&config);
@@ -463,7 +503,7 @@ void handleGETServerSettings(void)
 
 void handlePOSTServerSettings(void)
 {
-  msSystem.logln("handlePOSTServerSettings");
+  msSystem.slogln("handlePOSTServerSettings");
   if (msSystem.msESPServer.args() >= 2)
   {
     ServerConfig config;
@@ -472,11 +512,11 @@ void handlePOSTServerSettings(void)
     bool success = true;
     for (int i = 0; i < msSystem.msESPServer.args(); i++)
     {
-      msSystem.logln("argName: ");
-      msSystem.logln(msSystem.msESPServer.argName(i));
+      msSystem.slogln("argName: ");
+      msSystem.slogln(msSystem.msESPServer.argName(i));
 
-      msSystem.logln("arg: ");
-      msSystem.logln(msSystem.msESPServer.arg(i));
+      msSystem.slogln("arg: ");
+      msSystem.slogln(msSystem.msESPServer.arg(i));
 
       if (strcmp(msSystem.msESPServer.argName(i).c_str(), "host") == 0)
       {
@@ -510,7 +550,7 @@ void handlePOSTServerSettings(void)
 
 void handleGETAPSettings(void)
 {
-  msSystem.logln("handleGETAPSettings");
+  msSystem.slogln("handleGETAPSettings");
 
   APInfo apInfo;
   Settings.getAPConfig(&apInfo);
@@ -529,7 +569,7 @@ void handleGETAPSettings(void)
 
 void handlePOSTAPSettings(void)
 {
-  msSystem.logln("handlePOSTAPSettings");
+  msSystem.slogln("handlePOSTAPSettings");
 
   if (msSystem.msESPServer.args() >= 2)
   {
@@ -539,7 +579,7 @@ void handlePOSTAPSettings(void)
 
     if (parseAPInfoFromServerArgs(apInfo))
     {
-      msSystem.logln("saving setAPConfig");
+      msSystem.slogln("saving setAPConfig");
       Settings.setAPConfig(&apInfo);
       msSystem.msESPServer.send (200, "text/plain", "OK");
     }
@@ -555,9 +595,54 @@ void handlePOSTAPSettings(void)
 }
 
 
+void handleGETSysLogHostSettings(void)
+{
+  msSystem.slogln("handleGETSysLogHostSettings");
+
+  ServerConfig sysLogInfo;
+  Settings.getSyslogConfig(&sysLogInfo);
+
+  String response = "{";
+    response += "\"syslog_host\":";
+    response += "\"";
+    response += sysLogInfo.hostname;
+    response += "\"";
+  response += "}";
+  msSystem.msESPServer.send(200, "text/plain", response);
+}
+
+void handlePOSTSysLogSettings(void)
+{
+  msSystem.slogln("handlePOSTSysLogSettings");
+
+  if (msSystem.msESPServer.args() >= 2)
+  {
+    // load old settings
+    ServerConfig sysLogInfo;
+    Settings.getSyslogConfig(&sysLogInfo);
+
+    if (parseSysLogInfoFromServerArgs(sysLogInfo))
+    {
+      msSystem.slogln("saving setSysLogConfig");
+      Settings.setSyslogConfig(&sysLogInfo);
+      msSystem.msESPServer.send (200, "text/plain", "OK");
+    }
+    else
+    {
+      msSystem.msESPServer.send(500, "text/plain", "unknown args!");
+    }
+  }
+  else
+  {
+    msSystem.msESPServer.send ( 500, "text/plain", "argument missing!");
+  }
+}
+
+
+
 void handleGETPreferredAPSettings(void)
 {
-  msSystem.logln("handleGETPreferredAPSettings");
+  msSystem.slogln("handleGETPreferredAPSettings");
 
   APInfo apInfo;
   Settings.getPreferredAP(&apInfo);
@@ -576,7 +661,7 @@ void handleGETPreferredAPSettings(void)
 
 void handlePOSTPreferredAPSettings(void)
 {
-  msSystem.logln("handlePOSTPreferredAPSettings");
+  msSystem.slogln("handlePOSTPreferredAPSettings");
 
   if (msSystem.msESPServer.args() >= 2)
   {
@@ -585,7 +670,7 @@ void handlePOSTPreferredAPSettings(void)
 
     if (parseAPInfoFromServerArgs(apInfo))
     {
-      msSystem.logln("saving setAPConfig");
+      msSystem.slogln("saving setAPConfig");
       Settings.setPreferredAP(&apInfo);
       msSystem.msESPServer.send (200, "text/plain", "OK");
     }
@@ -606,7 +691,7 @@ void handlePOSTPreferredAPSettings(void)
 
 void handleGETAPList(void)
 {
-  msSystem.logln("handleGETAPList");
+  msSystem.slogln("handleGETAPList");
 
   APInfo apInfo;
   Settings.getPreferredAP(&apInfo);
@@ -640,7 +725,7 @@ void handleGETAPList(void)
 
 void handleGETWLANList(void)
 {
-  msSystem.logln("handleGETWLANList");
+  msSystem.slogln("handleGETWLANList");
 
   // if (msGlobals.ggModeAP)
   // {
@@ -651,15 +736,15 @@ void handleGETWLANList(void)
   String response = "[";
 
   int n = WiFi.scanNetworks();
-  msSystem.logln("scan done");
+  msSystem.slogln("scan done");
   if (n == 0)
   {
-    msSystem.logln("\"no networks found\"");
+    msSystem.slogln("\"no networks found\"");
   }
   else
   {
-    //msSystem.logln(n);
-    msSystem.logln(" networks found");
+    //msSystem.slogln(n);
+    msSystem.slogln(" networks found");
     bool firstAP = true;
     for (int i = 0; i < n; ++i)
     {
@@ -692,7 +777,7 @@ void handleGETWLANList(void)
 
 void handlePOSTAPListAdd(void)
 {
-  msSystem.logln("handlePOSTAPListAdd");
+  msSystem.slogln("handlePOSTAPListAdd");
 
   if (msSystem.msESPServer.args() >= 2)
   {
@@ -704,7 +789,7 @@ void handlePOSTAPListAdd(void)
     {
       if (!strcmp(apInfo.ssid, "") == 0)
       {
-        msSystem.logln("adding wifi");
+        msSystem.slogln("adding wifi");
         Settings.addAP(&apInfo);
       }
       msSystem.msESPServer.send (200, "text/plain", "OK");
@@ -722,7 +807,7 @@ void handlePOSTAPListAdd(void)
 
 void handlePOSTAPListDelete(void)
 {
-  msSystem.logln("handlePOSTAPListDelete");
+  msSystem.slogln("handlePOSTAPListDelete");
 
   if (msSystem.msESPServer.args() >= 1)
   {
@@ -734,7 +819,7 @@ void handlePOSTAPListDelete(void)
     {
       if (!strcmp(apInfo.ssid, "") == 0)
       {
-        msSystem.logln("deleting wifi");
+        msSystem.slogln("deleting wifi");
         Settings.deleteAP(apInfo.ssid);
       }
       msSystem.msESPServer.send (200, "text/plain", "OK");
@@ -753,7 +838,7 @@ void handlePOSTAPListDelete(void)
 
 void handleSetMode(void)
 {
-  msSystem.logln("handleSetMode");
+  msSystem.slogln("handleSetMode");
   if (msSystem.msESPServer.args() == 1)
   {
     ServerConfig config;
@@ -762,11 +847,11 @@ void handleSetMode(void)
     bool success = true;
     for (int i = 0; i < msSystem.msESPServer.args(); i++)
     {
-      msSystem.logln("argName: ");
-      msSystem.logln(msSystem.msESPServer.argName(i));
+      msSystem.slogln("argName: ");
+      msSystem.slogln(msSystem.msESPServer.argName(i));
 
-      msSystem.logln("arg: ");
-      msSystem.logln(msSystem.msESPServer.arg(i));
+      msSystem.slogln("arg: ");
+      msSystem.slogln(msSystem.msESPServer.arg(i));
 
       msGlobals.ggCurrentMode = atoi(msSystem.msESPServer.arg(i).c_str());
     }
@@ -806,14 +891,14 @@ void respondREQTime()
 
 void handleGETTime()
 {
-  msSystem.logln("handleGETTime");
+  msSystem.slogln("handleGETTime");
 
   respondREQTime();
 }
 
 void handlePOSTTime()
 {
-  msSystem.logln("handlePOSTTime");
+  msSystem.slogln("handlePOSTTime");
 
   if (msSystem.msESPServer.argName(0) == "t")
   {
@@ -834,13 +919,13 @@ void handleLedSet()
   {
     const char* input = msSystem.msESPServer.arg(0).c_str();
     unsigned int inputLen =  (int)msSystem.msESPServer.arg(0).length();
-    msSystem.logln("inputLen: ");
-    msSystem.logln(String(inputLen));
+    msSystem.slogln("inputLen: ");
+    msSystem.slogln(String(inputLen));
 
     if (inputLen > sizeof(ledData))
       inputLen = sizeof(ledData);
 
-    msSystem.logln(String(inputLen));
+    msSystem.slogln(String(inputLen));
 
     unsigned int dataLen = base64_decode((char *)ledData, input, inputLen);
 
@@ -848,11 +933,11 @@ void handleLedSet()
     {
       //msSystem.msLEDs.setLED(ledData[i], ledData[i+1], ledData[i+2], ledData[i+3], ledData[i+4]);
       byte idx = ledData[i];
-      msSystem.logln("idx: ");
-      msSystem.logln(String((int)idx));
+      msSystem.slogln("idx: ");
+      msSystem.slogln(String((int)idx));
       if (idx >= MAX_LEDS) continue;
-      msSystem.logln("data+1: ");
-      msSystem.logln(String((int)ledData[i+1]));
+      msSystem.slogln("data+1: ");
+      msSystem.slogln(String((int)ledData[i+1]));
 
       msGlobals.ggRGBLEDBuf[idx*4] = ledData[i+1];
       msGlobals.ggRGBLEDBuf[idx*4+1] = ledData[i+2];
@@ -870,7 +955,7 @@ void handleLedSet()
 
 void handleLedsSet()
 {
-  msSystem.logln("handleLedsSet");
+  msSystem.slogln("handleLedsSet");
   
   String message = "LedsSet\n\n";
 
