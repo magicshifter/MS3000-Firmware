@@ -21,8 +21,7 @@ export const minZoomLevel = 0.5;
 export const maxZoomLevel = 3;
 
 export const links = [
-  {to: '/', text: 'paint'},
-  {to: '/about', text: 'about'},
+  {to: '/info', text: 'info'},
   {to: '/settings', text: 'settings'},
 ];
 
@@ -49,16 +48,20 @@ export const currentColor = materialColors[currentColorName];
 
 export const fonts = [
   {
-    name: 'georgia',
-    css: 'Georgia',
+    name: 'Palatino',
+    css: 'Palatino Linotype, Book Antiqua3, Palatino, serif',
   },
   {
-    name: 'monospace',
-    css: 'Lucida Console',
+    name: 'Impact',
+    css: 'Impact, Impact5, Charcoal6, sans-serif',
   },
   {
-    name: 'comic sans',
-    css: 'Comic Sans MS',
+    name: 'Tahome',
+    css: 'Tahoma, Geneva, sans-serif',
+  },
+  {
+    name: 'Monospace',
+    css: 'Lucida Console, Monaco5, monospace',
   },
 ];
 
