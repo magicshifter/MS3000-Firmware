@@ -68,7 +68,7 @@ export class Controls extends Component {
         className={classes['container']}
         style={style.rgba}
       >
-        <h5>color</h5>
+        <h5>colors</h5>
 
         <div className={classes['picker']}>
           <ColorPicker

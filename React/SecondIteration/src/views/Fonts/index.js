@@ -103,7 +103,7 @@ export class Font extends Component {
 
     return (
       <div className={classes['container']}>
-        <h5>font</h5>
+        <h5>fonts</h5>
 
         <FontSelect
           setFont={setFont}

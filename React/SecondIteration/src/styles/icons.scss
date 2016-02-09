@@ -43,7 +43,7 @@ i.icon {
     content: $i-arrow_right;
   }
 }
-.color {
+.colors {
   &:before {
     content: $i-color;
   }
@@ -53,12 +53,12 @@ i.icon {
     content: $i-effects;
   }
 }
-.font {
+.fonts {
   &:before {
     content: $i-font;
   }
 }
-.image {
+.images {
   &:before {
     content: $i-image;
   }

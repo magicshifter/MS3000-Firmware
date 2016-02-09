@@ -7,8 +7,8 @@ import InfoView from 'views/Info';
 
 import ImagesView from 'views/Images';
 import EffectsView from 'views/Effects';
-import FontView from 'views/Font';
-import ColorView from 'views/Color';
+import FontsView from 'views/Fonts';
+import ColorsView from 'views/Colors';
 import UploadView from 'views/Upload';
 
 import SettingsView from 'views/Settings';
@@ -23,8 +23,8 @@ export default (
     />
 
     <Route
-      path='/paint/font'
-      component={FontView}
+      path='/paint/fonts'
+      component={FontsView}
     />
 
     <Route
@@ -32,8 +32,8 @@ export default (
       component={EffectsView}
     />
     <Route
-      path='/paint/color'
-      component={ColorView}
+      path='/paint/colors'
+      component={ColorsView}
     />
 
     <Route
