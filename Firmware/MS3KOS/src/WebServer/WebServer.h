@@ -10,24 +10,6 @@
 class MagicShifterWebServer {
 
   private:
-// TODO: sensible syslog config
-#ifdef CONFIG_USE_DEBUG_AP
-	const char *jsonLastAP =
-		//"{\"ssid\":\"PACIFIC\", \"pwd\":\"AllesR0ger\"}";
-		//"{\"ssid\":\"wizard23\", \"pwd\":\"lolinternets\"}";
-		"{\"ssid\":\"wizme\", \"pwd\":\"lolinternets\"}";
-
-	const char *jsonAPList = "{\"list\": [\
-  {\"ssid\":\"metalab\", \"pwd\":\"\"},\
-  {\"ssid\":\"wizard23\", \"pwd\":\"lolinternets\"},\
-  {\"ssid\":\"wizme\", \"pwd\":\"lolinternets\"}\
-  ]}";
-	const char *jsonSoftAP =
-		"{\"ssid\":\"MagicShifter3000\", \"pwd\":\"\"}";
-#endif
-
-
-
 	static void HandleServeStaticFile(String path) {
 		if (!streamFile(path)) {
 			msSystem.msESPServer.send(404, "text/plain", "FileNotFound");

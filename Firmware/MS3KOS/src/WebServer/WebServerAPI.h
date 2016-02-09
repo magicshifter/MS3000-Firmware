@@ -331,7 +331,7 @@ void handleGETAbout(void)
 	String response = "{";
 	response += "\"type\":\"MagicShifter3000\",";
 	response += "\"format\":\"BGRA\",";
-	response += "\"version\":" + String(VERSION) + ",";
+	response += "\"version\":" + String(MS3KOS_VERSION) + ",";
 	response += "\"leds\":" + String(MAX_LEDS) + ",";
 	response += "\"id\":" + String(ESP.getChipId()) + ",";
 	response += "\"flashid\":" + String(ESP.getFlashChipId()) + ",";

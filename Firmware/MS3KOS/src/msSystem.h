@@ -565,7 +565,7 @@ class MagicShifterSystem {
 		// #endif
 		EEPROM.begin(512);
 
-		slogln(String("\r\nMagicShifter 3000 OS V0.30"));
+		slogln(String("\r\nMagicShifter 3000 OS V" + String(MS3KOS_VERSION)));
 
 		// ggUploadFile is prepared for display as necessary ..
 		//msEEPROMs.loadString(msGlobals.ggUploadFileName, MAX_FILENAME_LENGTH);

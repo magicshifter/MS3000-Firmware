@@ -17,13 +17,12 @@
 // HW_ID is passed one of these constants from Makefile -DHW_ID=.. 
 
 // set of Hw configurations 
-#define HW_ID_MS3000_FSOX8700CQ 	1	// magnetometer+accel
-#define HW_ID_MS3000_MMA8452Q 		2	// accel
-#define HW_ID_RING   				3	// on the wall
-#define HW_ID_SABRE   				4	// proto-j-beta light wandstrip, new ESP model
+#define HW_ID_MS3000_FSOX8700CQ 	1	// MS3000 config magnetometer+accel
+#define HW_ID_MS3000_MMA8452Q 		2	// accel only used in early prototypes
+#define HW_ID_RING   				3	// with attached strip used in early prototypes
+#define HW_ID_SABRE   				4	// with attached strip used in early prototypes
 
 #define HW_ID HW_ID_MS3000_FSOX8700CQ
-// #define HW_ID HW_ID_MS3000_MMA8452Q
 
 // set of LED types
 #define LED_TYPE_APA102 1
@@ -34,7 +33,7 @@
 
 // v1 == breadboard pcb
 // 2 == 0.9 pcb :)
-#define VERSION 0.1
+#define MS3KOS_VERSION "1.0"
 
 #define MIN_TIME_CLICK 10000
 #define MIN_TIME_LONG_CLICK 1000 * 750
@@ -111,8 +110,5 @@
 // double features as bootloader button
 #define PIN_BUTTON_A  0
 #define PIN_BUTTON_B 12
-
-// Use pre-configured AP list
-#undef CONFIG_USE_DEBUG_AP
 
 #endif
