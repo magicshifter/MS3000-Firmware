@@ -35,7 +35,7 @@ class CoreLayout extends Component {
   }
 
   render() {
-    const {children, sidebar, footer, width} = this.props;
+    const {children, sidebar, width} = this.props;
 
     return (
       <div className={classes['container']}>
@@ -43,7 +43,6 @@ class CoreLayout extends Component {
         <div className={classes['view']}>
           <div className={classes['content']}>
             <PixelEditor />
-            {children}
           </div>
           <SecondaryMenu />
           { sidebar &&
@@ -52,6 +51,9 @@ class CoreLayout extends Component {
               width={width}
             />
           }
+          <aside className={classes['sidebar']}>
+            {children}
+          </aside>
         </div>
       </div>
     );
