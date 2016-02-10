@@ -216,6 +216,28 @@ class MagicShifterLEDs {
 		SPI.writeBytes(clearBuffer, RGB_BUFFER_SIZE + 8);
 	}
 
+
+	void setAllChannel(uint8_t channel, uint8_t value)
+	{
+		for (int i = 0; i < MAX_LEDS; i++) {
+			setChannel(i, channel, value);
+		}
+	}
+
+	void setChannel(uint8_t index, uint8_t channelIndex, uint8_t value)
+	{
+	  if (index >= 0 && index < MAX_LEDS && channelIndex >= 0 && channelIndex < 3)
+	  {
+#if (LED_TYPE == LED_TYPE_APA102)
+			int idx = index << 2;
+			RGB_COLORS[idx + 1 + channelIndex] = value;
+#else
+			int idx = index * 3;
+			RGB_COLORS[idx + channelIndex] = value;
+#endif
+	  }
+	}
+
 };
 
 
