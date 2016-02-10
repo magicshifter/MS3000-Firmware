@@ -6,7 +6,7 @@ import {getIconCssClass} from 'utils/icons';
 import classes from './MenuLink.scss';
 
 export const MenuLink =
-  ({text, to, icon}) =>
+  ({text, to, icon, style}) =>
     <li className={classes['container']}>
       {
         to === '/'
@@ -18,6 +18,7 @@ export const MenuLink =
             >
               <i
                 className={getIconCssClass(icon)}
+                style={style}
               />
             </IndexLink>
           )
@@ -29,11 +30,10 @@ export const MenuLink =
             >
               <i
                 className={getIconCssClass(icon)}
+                style={style}
               />
 
-              {text &&
-                <span>{text}</span>
-              }
+              {text && <span>{text}</span>}
             </Link>
           )
       }
