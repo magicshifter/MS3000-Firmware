@@ -1,14 +1,19 @@
-$i-arrow_left: "\31";
-$i-arrow_right: "\32";
-$i-color: "\33";
-$i-effects: "\34";
-$i-font: "\35";
-$i-image: "\36";
-$i-info: "\37";
-$i-settings: "\38";
-$i-upload: "\39";
-$i-zoom_in: "\2b";
-$i-zoom_out: "\2d";
+$add: "\e901";
+$arrow_left: "\31";
+$arrow_right: "\32";
+$brightness: "\e902";
+$colors: "\33";
+$effects: "\34";
+$fonts: "\35";
+$images: "\36";
+$info: "\37";
+$invert-path1: "\62";
+$invert-path2: "\63";
+$settings: "\38";
+$trash: "\39";
+$upload: "\61";
+$zoom_in: "\2b";
+$zoom_out: "\2d";
 
 @font-face {
   font-family: 'MS3000';
@@ -17,7 +22,7 @@ $i-zoom_out: "\2d";
   src: url('/font/ms-ico.woff?pt8xw1') format('woff');
 }
 
-i.icon {
+.icon {
   box-shadow: 1px 2px 2px #888;
 
   /* use !important to prevent issues with browser extensions that change fonts */
@@ -33,58 +38,88 @@ i.icon {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.add {
+    &:before {
+        content: $add;
+    }
+}
 .arrow_left {
-  &:before {
-    content: $i-arrow_left;
-  }
+    &:before {
+        content: $arrow_left;
+    }
 }
 .arrow_right {
-  &:before {
-    content: $i-arrow_right;
-  }
+    &:before {
+        content: $arrow_right;
+    }
+}
+.brightness {
+    &:before {
+        content: $brightness;
+    }
 }
 .colors {
-  &:before {
-    content: $i-color;
-  }
+    &:before {
+        content: $colors;
+    }
 }
 .effects {
-  &:before {
-    content: $i-effects;
-  }
+    &:before {
+        content: $effects;
+    }
 }
 .fonts {
-  &:before {
-    content: $i-font;
-  }
+    &:before {
+        content: $fonts;
+    }
 }
 .images {
-  &:before {
-    content: $i-image;
-  }
+    &:before {
+        content: $images;
+    }
 }
 .info {
-  &:before {
-    content: $i-info;
-  }
+    &:before {
+        content: $info;
+    }
+}
+.invert .path1 {
+    &:before {
+        content: $invert-path1;
+        color: rgb(51, 51, 51);
+    }
+}
+.invert .path2 {
+    &:before {
+        content: $invert-path2;
+        margin-left: -1em;
+        color: rgb(255, 255, 255);
+    }
 }
 .settings {
-  &:before {
-    content: $i-settings;
-  }
+    &:before {
+        content: $settings;
+    }
+}
+.trash {
+    &:before {
+        content: $trash;
+    }
 }
 .upload {
-  &:before {
-    content: $i-upload;
-  }
+    &:before {
+        content: $upload;
+    }
 }
 .zoom_in {
-  &:before {
-    content: $i-zoom_in;
-  }
+    &:before {
+        content: $zoom_in;
+    }
 }
 .zoom_out {
-  &:before {
-    content: $i-zoom_out;
-  }
+    &:before {
+        content: $zoom_out;
+    }
 }
+
