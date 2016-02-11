@@ -26,8 +26,16 @@ class CoreLayout extends Component {
   constructor(props) {
     super(props);
 
-    window.addEventListener('resize', props.windowResize);
-    window.addEventListener('mousewheel', props.scrollEvent);
+    const {windowResize, scrollEvent} = props;
+
+    window.addEventListener('resize', windowResize);
+    window.addEventListener('mousewheel', scrollEvent);
+
+    document.body.addEventListener(
+      'click',
+      e =>
+        console.log({e, loc: window.location})
+    );
   }
 
   render() {
@@ -38,11 +46,11 @@ class CoreLayout extends Component {
         <Header />
 
         <div className={classes['view']}>
-
           <PixelEditor />
-          <SecondaryMenu />
-          {children && <Sidebar children={children} />}
 
+          <SecondaryMenu />
+
+          {children && <Sidebar children={children} />}
         </div>
       </div>
     );
