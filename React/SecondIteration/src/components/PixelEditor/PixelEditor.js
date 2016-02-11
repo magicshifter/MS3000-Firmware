@@ -60,33 +60,35 @@ export class PixelEditor extends Component {
 
     return (
       <div className={classes['container']}>
-        <table className={classes['list']}>
-          <tbody>
-            {rowArray.map(
-              row => (
-                <tr key={`r-${row + 1}`}>
-                  {columnArray.map(
-                    column => {
-                      if (column < visibleColumns) {
-                        const pixelId = getPixelId(totalColumns, column, row);
-                        const pixel = pixels[pixelId];
+        <div className={classes['sub_container']}>
+          <table className={classes['list']}>
+            <tbody>
+              {rowArray.map(
+                row => (
+                  <tr key={`r-${row + 1}`}>
+                    {columnArray.map(
+                      column => {
+                        if (column < visibleColumns) {
+                          const pixelId = getPixelId(totalColumns, column, row);
+                          const pixel = pixels[pixelId];
 
-                        return (
-                          <Pixel
-                            key={`r-${row + 1}-c-${column + 1}`}
-                            pixel={pixel}
-                            size={pxSize}
-                          />
-                        );
+                          return (
+                            <Pixel
+                              key={`r-${row + 1}-c-${column + 1}`}
+                              pixel={pixel}
+                              size={pxSize}
+                            />
+                          );
+                        }
                       }
-                    }
-                  )}
-                </tr>
-              )
-            )}
-          </tbody>
-        </table>
-        <PixelEditorMenu />
+                    )}
+                  </tr>
+                )
+              )}
+            </tbody>
+          </table>
+          <PixelEditorMenu />
+        </div>
       </div>
     );
   }

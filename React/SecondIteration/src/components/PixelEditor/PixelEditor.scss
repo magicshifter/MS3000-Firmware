@@ -1,12 +1,22 @@
 .container {
   text-align: center;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.sub_container {
+  width: 100000px;
+  height: 100000px;
+  position: relative;
 
   table {
-    background-color: #808080;
+    background-color: #fff;
     display: inline-block;
+    left: 190px;
     list-style: none;
     margin: 0;
     padding: 0;
+    position: absolute;
 
     tr {
       margin: 0;

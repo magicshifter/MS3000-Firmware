@@ -1,15 +1,15 @@
 import React from 'react';
-import {Link} from 'react-router';
 
-import FloatingButton from 'components/inputs/FloatingButton';
+// XXX import FloatingButton from 'components/inputs/FloatingButton';
 
-import {actions} from 'redux/modules/layout';
+// XXX import {actions} from 'redux/modules/layout';
 
 import classes from './PixelEditorMoveMenu.scss';
 
 export const PixelEditorMoveMenu =
   () => (
     <ul className={classes['container']}>
+      {/*
       <li className={classes['btn']}>
         <FloatingButton
           text='<<'
@@ -38,6 +38,7 @@ export const PixelEditorMoveMenu =
           onClick={actions.moveRight}
         />
       </li>
+      */}
     </ul>
   );
 
