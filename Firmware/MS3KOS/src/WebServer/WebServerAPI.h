@@ -45,13 +45,13 @@ class SettingsManager {
 	const String preferredAPConfigPath = "settings/preferredap.bin";
 	const String uiSettingsConfigPath = "settings/ui.bin";
 
-	bool getUIConfig(struct ServerConfig *config) {
+	bool getUIConfig(struct UIConfig *config) {
 		// msSystem.slog("config: sizeof ");
 		//  msSystem.slogln(sizeof(*config));
 		return loadData(uiSettingsConfigPath, config, sizeof(*config));
 	}
 
-	bool setUIConfig(struct ServerConfig *config) {
+	bool setUIConfig(struct UIConfig *config) {
 		return saveData(uiSettingsConfigPath, config, sizeof(*config));
 	}
 
@@ -901,75 +901,75 @@ struct UIConfig
 };
 */
 
-// void handleGetUISettings(void)
-// {
-//   msSystem.slogln("handleGetUISettings");
+void handleGetUISettings(void)
+{
+  msSystem.slogln("handleGetUISettings");
 
-//   UIConfig config;
-//   Settings.getServerConfig(&config);
+  UIConfig config;
+  Settings.getUIConfig(&config);
 
-//   String response = "{";
-//     response += "\"powerdownTimeUSB\":";
-//     response += config.powerdownTimeUSB;
-//     response += ",";
-//     response += "\"powerdownTimeBattery\":";
-//     response += config.powerdownTimeBattery;
-//     response += ",";
-//     response += "\"defaultBrightness\":";
-//     response += config.defaultBrightness;
-//   response += "}";
-//   msSystem.msESPServer.send(200, "text/plain", response);
-// }
+  String response = "{";
+    response += "\"powerdownTimeUSB\":";
+    response += config.powerdownTimeUSB;
+    response += ",";
+    response += "\"powerdownTimeBattery\":";
+    response += config.powerdownTimeBattery;
+    response += ",";
+    response += "\"defaultBrightness\":";
+    response += config.defaultBrightness;
+  response += "}";
+  msSystem.msESPServer.send(200, "text/plain", response);
+}
 
-// void handleSetUISettings(void)
-// {
-//   msSystem.slogln("handleSetUISettings");
-//   if (msSystem.msESPServer.args() >= 1)
-//   {
-//     ServerConfig config;
-//     Settings.getServerConfig(&config);
+void handleSetUISettings(void)
+{
+  msSystem.slogln("handleSetUISettings");
+  if (msSystem.msESPServer.args() >= 1)
+  {
+    UIConfig config;
+    Settings.getUIConfig(&config);
 
-//     bool success = true;
-//     for (int i = 0; i < msSystem.msESPServer.args(); i++)
-//     {
-//       msSystem.slogln("argName: ");
-//       msSystem.slogln(msSystem.msESPServer.argName(i));
+    bool success = true;
+    for (int i = 0; i < msSystem.msESPServer.args(); i++)
+    {
+      msSystem.slogln("argName: ");
+      msSystem.slogln(msSystem.msESPServer.argName(i));
 
-//       msSystem.slogln("arg: ");
-//       msSystem.slogln(msSystem.msESPServer.arg(i));
+      msSystem.slogln("arg: ");
+      msSystem.slogln(msSystem.msESPServer.arg(i));
 
-//       if (strcmp(msSystem.msESPServer.argName(i).c_str(), "powerdownTimeUSB") == 0)
-//       {
-//         config.powerdownTimeUSB = atoi(msSystem.msESPServer.arg(i).c_str());
-//       }
-//       else if (strcmp(msSystem.msESPServer.argName(i).c_str(), "powerdownTimeBattery") == 0)
-//       {
-//         config.powerdownTimeBattery = atoi(msSystem.msESPServer.arg(i).c_str());
-//       }
-//       else if (strcmp(msSystem.msESPServer.argName(i).c_str(), "defaultBrightness") == 0)
-//       {
-//         config.defaultBrightness = atoi(msSystem.msESPServer.arg(i).c_str());
-//       }
-//       else
-//       {
-//         success = false;
-//       }
-//     }
+      if (strcmp(msSystem.msESPServer.argName(i).c_str(), "powerdownTimeUSB") == 0)
+      {
+        config.powerdownTimeUSB = atoi(msSystem.msESPServer.arg(i).c_str());
+      }
+      else if (strcmp(msSystem.msESPServer.argName(i).c_str(), "powerdownTimeBattery") == 0)
+      {
+        config.powerdownTimeBattery = atoi(msSystem.msESPServer.arg(i).c_str());
+      }
+      else if (strcmp(msSystem.msESPServer.argName(i).c_str(), "defaultBrightness") == 0)
+      {
+        config.defaultBrightness = atoi(msSystem.msESPServer.arg(i).c_str());
+      }
+      else
+      {
+        success = false;
+      }
+    }
 
-//     if (success)
-//     {
-//       Settings.setServerConfig(&config);
-//       msSystem.msESPServer.send (200, "text/plain", "OK");
-//     }
-//     else
-//     {
-//       msSystem.msESPServer.send(500, "text/plain", "invalid args!");
-//     }
-//   }
-//   else
-//   {
-//     msSystem.msESPServer.send ( 500, "text/plain", "argument(s) missing!");
-//   }
-// }
+    if (success)
+    {
+      Settings.setUIConfig(&config);
+      msSystem.msESPServer.send (200, "text/plain", "OK");
+    }
+    else
+    {
+      msSystem.msESPServer.send(500, "text/plain", "invalid args!");
+    }
+  }
+  else
+  {
+    msSystem.msESPServer.send ( 500, "text/plain", "argument(s) missing!");
+  }
+}
 
 #endif
