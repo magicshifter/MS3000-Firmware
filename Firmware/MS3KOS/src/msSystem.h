@@ -278,8 +278,7 @@ class MagicShifterSystem {
 			delay(35);
 		}
 
-		msLEDs.setLED(msGlobals.ggCurrentMode, 128, 128, 128,
-					  msGlobals.ggBrightness / 2);
+		msLEDs.setLED(msGlobals.ggCurrentMode, 128, 128, 128, msGlobals.ggBrightness);
 		delay(35);
 		msLEDs.fastClear();
 
@@ -374,7 +373,7 @@ class MagicShifterSystem {
 			(msButtons.msBtnPwrPressTime > BRIGHTNESS_CONTROL_TIME)) {
 
 			slogln("brightnesscontrol EVENT");
-		
+
 			while (skip) {
 				delay(1);
 
