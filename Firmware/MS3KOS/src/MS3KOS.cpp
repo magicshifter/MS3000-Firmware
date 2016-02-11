@@ -86,8 +86,7 @@ void loop()
 	// inside time-frame
 	if (msGlobals.ggLastFrameMicros + msGlobals.ggSpeedMicros < micros()) {
 
-		msGlobals.ggLastMicros = msGlobals.ggCurrentMicros;
-		msGlobals.ggCurrentMicros = micros();
+		
 
 		msSystem.loop();
 

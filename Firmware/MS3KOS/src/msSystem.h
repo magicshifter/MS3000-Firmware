@@ -626,7 +626,9 @@ class MagicShifterSystem {
 	}
 
 	void loop() {
-
+		msGlobals.ggLastMicros = msGlobals.ggCurrentMicros;
+		msGlobals.ggCurrentMicros = micros();
+		
 		displayButtons();
 		msButtons.step();
 		msSensor.step();

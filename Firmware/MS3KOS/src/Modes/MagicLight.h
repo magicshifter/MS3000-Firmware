@@ -16,20 +16,23 @@ class MagicLightMode : public MagicShifterBaseMode {
 	int d = 10;
 	uint8_t lookup[6][3] = { {0, 1, 2}, {1, 0, 2}, {2, 0, 1}, {0, 2, 1}, {1, 2, 0}, {2, 1, 0} };
 	uint8_t lookupindex = 0;
+	bool firstRun = false;
 
   public:
-	void start() {
-	} 
+    bool hackUIResponsive() {
+		int oldlMode = lMode;
+		if (firstRun)
+			firstRun = false;
+		else
+			msSystem.loop();
 
-	void stop(void) {
-	}
-
-	bool step() {
 		if (msSystem.msButtons.msBtnAHit) {
+			msSystem.slogln("btnA");
 			lMode--;
 			msSystem.msButtons.msBtnAHit = false;
 		}
 		if (msSystem.msButtons.msBtnBHit) {
+			msSystem.slogln("btnB");
 			lMode++;
 			msSystem.msButtons.msBtnBHit = false;
 		}
@@ -38,8 +41,29 @@ class MagicLightMode : public MagicShifterBaseMode {
 		if (lMode > 2)
 			lMode = 0;
 
-		
+		if (lMode != oldlMode) {
+			msSystem.slog("lMode: ");
+			msSystem.slogln(String(lMode));
+		}
+
+
+		return msSystem.modeMenuActivated;
+	}
+
+	void start() {
+	} 
+
+	void stop(void) {
+	}
+
+	bool step() {
+		frame++;
+		firstRun = true;
+
+		hackUIResponsive();
+
 		if (lMode == 0) {
+			if (frame % d*10 == 0)
 			msSystem.msLEDs.fillLEDs(0, 0, 0);
 			msSystem.msLEDs.setLED((xx + 0 * 3) & 0xF, 255, 0, 0, msGlobals.ggBrightness);
 
@@ -79,9 +103,6 @@ class MagicLightMode : public MagicShifterBaseMode {
 			lookupindex = (lookupindex + 1) % 6;
 			dir = (dir + 1) % 2;
 		}
-
-		delay(55);
-
 	}
 
 	void update() {
@@ -89,13 +110,16 @@ class MagicLightMode : public MagicShifterBaseMode {
 	void reset() {
 	};
 
-
 	void startToEndChannel(uint8_t start, uint8_t end, int d, int channel, int color)
 	{
 		int i;
 
 		i = start;
 		do {
+			if (hackUIResponsive()) {
+				return;
+			}
+
 			msSystem.msLEDs.setAllChannel(channel, 0);
 			msSystem.msLEDs.setChannel(i, channel, color);
 			msSystem.msLEDs.updateLEDs();
@@ -125,9 +149,16 @@ class MagicLightMode : public MagicShifterBaseMode {
 
 		for (;;)
 		{
+			
+
 			i = currentStart;
 			do {
+				if (hackUIResponsive()) {
+									return;
+				}
+
 				msSystem.msLEDs.fillLEDs(0, 0, 0, msGlobals.ggBrightness);
+				if (i >= 0 && i < MAX_LEDS)
 				msSystem.msLEDs.setLED(i, r, g, b);
 				msSystem.msLEDs.updateLEDs();
 				if (d)
