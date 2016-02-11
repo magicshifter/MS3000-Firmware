@@ -74,8 +74,8 @@ export const zoomOut = createAction(
 );
 
 export const actions = {
-  windowResize,
   scrollEvent,
+  windowResize,
   zoomIn,
   zoomOut,
 };
