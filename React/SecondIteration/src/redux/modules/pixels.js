@@ -18,6 +18,7 @@ const initialState = Immutable.List(pixels);
 // ------------------------------------
 
 export const PIXEL_CLICK = 'PIXEL_CLICK';
+export const PIXEL_HOVER = 'PIXEL_HOVER';
 export const SET_PIXELS = 'SET_PIXELS';
 export const INVERT = 'INVERT';
 export const DARKEN = 'DARKEN';
@@ -30,6 +31,12 @@ export const LIGHTEN = 'LIGHTEN';
 export const pixelClick =
   createAction(
     PIXEL_CLICK,
+    value => value
+  );
+
+export const pixelHover =
+  createAction(
+    PIXEL_HOVER,
     value => value
   );
 
@@ -59,6 +66,7 @@ export const lightenPixels =
 
 export const actions = {
   pixelClick,
+  pixelHover,
   setPixels,
   invertPixels,
   darkenPixels,
@@ -71,18 +79,25 @@ export const actions = {
 
 export default handleActions({
 
-  // a pixel has been clicked
+  // a pixel has been hovered
+  [PIXEL_HOVER]:
+    (state, {payload: p}) =>
+      isObject(p.color)
+      ? state.setIn([p.pixel.id, 'color'], p.color)
+      : state,
+
+   // a pixel has been clicked
   [PIXEL_CLICK]:
     (state, {payload: p}) =>
-      isObject(p.color) &&
-      state.setIn(
+      isObject(p.color)
+      ? state.setIn(
         [p.pixel.id, 'color'],
           Immutable.Map(p.pixel.color).equals(defaultColor) ||
           !Immutable.Map(p.pixel.color).equals(Immutable.Map(p.color))
             ? p.color
             : defaultColor
-      ) ||
-      state,
+      )
+      : state,
 
   // set all pixels
   [SET_PIXELS]:

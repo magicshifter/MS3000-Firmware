@@ -2,10 +2,6 @@ import rgba from 'rgba-convert';
 
 import {isString, isObject, isArray} from 'utils/types';
 
-export const rgba_toString =
-  color =>
-    rgba.css(color);
-
 export const colorsTo =
   (convertTo, colors) => {
     let newColors = {};

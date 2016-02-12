@@ -11,13 +11,60 @@ class MagicLightMode : public MagicShifterBaseMode {
 	int frame = 0;
 	int lMode = 0;
 	int xx = 0;
+	int pDelay = 230;
 
 	bool dir = false;
 	int d = 10;
 	uint8_t lookup[6][3] = { {0, 1, 2}, {1, 0, 2}, {2, 0, 1}, {0, 2, 1}, {1, 2, 0}, {2, 1, 0} };
 	uint8_t lookupindex = 0;
+	bool firstRun = false;
+	int centerAction = 0;
+
+	int colorIdx = 6;
 
   public:
+    bool hackUIResponsive() {
+		int oldlMode = lMode;
+		if (firstRun)
+			firstRun = false;
+		else
+			msSystem.loop();
+
+		if (msSystem.msButtons.msBtnPwrHit) {
+			msSystem.slogln("btnPwr");
+			centerAction++;
+			msSystem.msButtons.msBtnPwrHit = false;
+		}
+
+		if (msSystem.msButtons.msBtnAHit) {
+			msSystem.slogln("btnA");
+			lMode--;
+			msSystem.msButtons.msBtnAHit = false;
+		}
+		if (msSystem.msButtons.msBtnBHit) {
+			msSystem.slogln("btnB");
+			lMode++;
+			msSystem.msButtons.msBtnBHit = false;
+		}
+		if (lMode < 0)
+			lMode = 3;
+		if (lMode > 3)
+			lMode = 0;
+
+		if (lMode != oldlMode) {
+			msSystem.slog("lMode: ");
+			msSystem.slogln(String(lMode));
+			msSystem.msLEDs.fillLEDs(255, 255, 255, msGlobals.ggBrightness);
+			msSystem.msLEDs.updateLEDs();
+			delay(10);
+			msSystem.msLEDs.fillLEDs(0, 0, 0, msGlobals.ggBrightness);
+			msSystem.msLEDs.updateLEDs();
+		}
+
+
+		return msSystem.modeMenuActivated;
+	}
+
 	void start() {
 	} 
 
@@ -25,34 +72,52 @@ class MagicLightMode : public MagicShifterBaseMode {
 	}
 
 	bool step() {
-		if (msSystem.msButtons.msBtnAHit) {
-			lMode--;
-			msSystem.msButtons.msBtnAHit = false;
-		}
-		if (msSystem.msButtons.msBtnBHit) {
-			lMode++;
-			msSystem.msButtons.msBtnBHit = false;
-		}
-		if (lMode < 0)
-			lMode = 2;
-		if (lMode > 2)
-			lMode = 0;
+		frame++;
+		firstRun = true;
 
-		
+		hackUIResponsive();
+
 		if (lMode == 0) {
-			msSystem.msLEDs.fillLEDs(0, 0, 0);
-			msSystem.msLEDs.setLED((xx + 0 * 3) & 0xF, 255, 0, 0, msGlobals.ggBrightness);
+			if (frame % pDelay == 0) {
+				msSystem.msLEDs.fillLEDs(0, 0, 0);
+				msSystem.msLEDs.setLED((xx + 0 * 3) & 0xF, 255, 0, 0, msGlobals.ggBrightness);
 
-			msSystem.msLEDs.setLED((xx + 1 * 3) & 0xF, 255, 255, 0, msGlobals.ggBrightness);
-			msSystem.msLEDs.setLED((xx + 2 * 3) & 0xF, 0, 255, 0, msGlobals.ggBrightness);
+				msSystem.msLEDs.setLED((xx + 1 * 3) & 0xF, 255, 255, 0, msGlobals.ggBrightness);
+				msSystem.msLEDs.setLED((xx + 2 * 3) & 0xF, 0, 255, 0, msGlobals.ggBrightness);
 
-			msSystem.msLEDs.setLED((xx + 3 * 3) & 0xF, 0, 255, 255, msGlobals.ggBrightness);
-			msSystem.msLEDs.setLED((xx + 4 * 3) & 0xF, 0, 0, 255, msGlobals.ggBrightness);
+				msSystem.msLEDs.setLED((xx + 3 * 3) & 0xF, 0, 255, 255, msGlobals.ggBrightness);
+				msSystem.msLEDs.setLED((xx + 4 * 3) & 0xF, 0, 0, 255, msGlobals.ggBrightness);
 
-			xx++;
-			msSystem.msLEDs.updateLEDs();
+				xx++;
+				msSystem.msLEDs.updateLEDs();
+			}
+
+			if (centerAction > 0) {
+				centerAction--;
+				pDelay += 1 + pDelay / 2;
+				if (pDelay > 250 && pDelay < 500) {
+					pDelay = 1000;
+				} else if (pDelay >= 500) {
+					pDelay = 1;
+				}
+			}
 		}
-		if (lMode >= 1) {
+		if (lMode == 1) {
+			int r=0,g=0,b=0;
+			int ii = colorIdx+1;
+			if (ii & 1) r = 255;
+			if (ii & 2) g = 255;
+			if (ii & 4) b = 255;
+
+			msSystem.msLEDs.fillLEDs(r, g, b, msGlobals.ggBrightness);
+			msSystem.msLEDs.updateLEDs();
+
+			if (centerAction > 0) {
+				centerAction--;
+				colorIdx = (colorIdx + 1) % 7;
+			}
+		}
+		if (lMode >= 2) {
 			int start, end;
 			if (dir)
 			{
@@ -65,23 +130,29 @@ class MagicLightMode : public MagicShifterBaseMode {
 				end = 0;
 			}
 
-			if (lMode == 1)
-			{
-				for (int index = 0; index < 3; index++) {
-					startToEndChannel(start, end, d, lookup[lookupindex][index], 255);
+			if (centerAction > 0) {
+				centerAction--;
+	
+				if (lMode == 2)
+				{
+					for (int index = 0; index < 3; index++) {
+						startToEndChannel(start, end, d, lookup[lookupindex][index], 255);
+					}
 				}
-			}
-			else if (lMode == 2)
-			{
-				startToEndZigZag(start, end, 1, 255, 255, 255);
-			}
+				else if (lMode == 3)
+				{
+					startToEndZigZag(start, end, 1, 255, 255, 255);
+				}
 
-			lookupindex = (lookupindex + 1) % 6;
-			dir = (dir + 1) % 2;
+				lookupindex = (lookupindex + 1) % 6;
+				dir = (dir + 1) % 2;
+			}
+			else {
+				msSystem.msLEDs.fillLEDs(0, 0, 0);
+				msSystem.msLEDs.setLED(start, 255, 255, 255, msGlobals.ggBrightness);
+				msSystem.msLEDs.updateLEDs();
+			}
 		}
-
-		delay(55);
-
 	}
 
 	void update() {
@@ -89,13 +160,16 @@ class MagicLightMode : public MagicShifterBaseMode {
 	void reset() {
 	};
 
-
 	void startToEndChannel(uint8_t start, uint8_t end, int d, int channel, int color)
 	{
 		int i;
 
 		i = start;
 		do {
+			if (hackUIResponsive()) {
+				return;
+			}
+
 			msSystem.msLEDs.setAllChannel(channel, 0);
 			msSystem.msLEDs.setChannel(i, channel, color);
 			msSystem.msLEDs.updateLEDs();
@@ -127,7 +201,12 @@ class MagicLightMode : public MagicShifterBaseMode {
 		{
 			i = currentStart;
 			do {
+				if (hackUIResponsive()) {
+									return;
+				}
+
 				msSystem.msLEDs.fillLEDs(0, 0, 0, msGlobals.ggBrightness);
+				if (i >= 0 && i < MAX_LEDS)
 				msSystem.msLEDs.setLED(i, r, g, b);
 				msSystem.msLEDs.updateLEDs();
 				if (d)

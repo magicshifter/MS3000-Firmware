@@ -8,25 +8,49 @@ export const host = '';
 // export const host = '192.168.4.1';
 export const protocol = 'http';
 
+export const syslogIp = '';
+
 export const rows = 16;
 export const totalColumns = 96;
 export const visibleColumns = 16;
 
 export const fontSize = 15;
 
-export const zoom = 1;
+export const zoomLevel = 1;
+export const minZoomLevel = 0.5;
+export const maxZoomLevel = 3;
 
 export const links = [
-  {to: '/', text: 'paint'},
-  {to: '/about', text: 'about'},
-  {to: '/settings', text: 'settings'},
+  {to: '/info', icon: 'info'},
+  {to: '/settings', icon: 'settings'},
 ];
 
-export const currentColorName = 'cyan';
+export const pixelEditorUrlBase = '/paint';
+
+export const pixelEditorSubUrls = {
+  images: {},
+  fonts: {},
+  effects: {},
+  colors: {},
+  upload: {
+    color: '#fff',
+  },
+};
+
+export const secondaryLinks =
+  Object.keys(pixelEditorSubUrls).map(
+    url => ({
+      to: `${pixelEditorUrlBase}/${url}`,
+      text: url,
+      icon: url,
+      style: {...pixelEditorSubUrls[url]},
+    })
+  );
 
 export const defaultLedColor = {r: 0, b: 0, g: 0, a: 255};
 
-export const defaultEditorColor = {r: 255, b: 255, g: 255, a: 255};
+export const defaultEditorColor = {r: 28, b: 255, g: 250, a: 255};
+export const uiColor = defaultEditorColor;
 
 export const colorList = [
   {r: 0, g: 0, b: 0, a: 255},
@@ -41,20 +65,22 @@ export const colorList = [
 
 export const menuTextColor = materialColors['black'];
 
-export const currentColor = materialColors[currentColorName];
-
 export const fonts = [
   {
-    name: 'georgia',
-    css: 'Georgia',
+    name: 'Palatino',
+    css: 'Palatino Linotype, Book Antiqua3, Palatino, serif',
   },
   {
-    name: 'monospace',
-    css: 'Lucida Console',
+    name: 'Impact',
+    css: 'Impact, Impact5, Charcoal6, sans-serif',
   },
   {
-    name: 'comic sans',
-    css: 'Comic Sans MS',
+    name: 'Tahoma',
+    css: 'Tahoma, Geneva, sans-serif',
+  },
+  {
+    name: 'Monospace',
+    css: 'Lucida Console, Monaco5, monospace',
   },
 ];
 
@@ -71,5 +97,3 @@ export const sidebar = {
 export const text = 'Magic';
 
 export const fontId = 0;
-
-export const textColor = materialColors[currentColorName][900];

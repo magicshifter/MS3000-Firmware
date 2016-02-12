@@ -2,7 +2,7 @@
   margin: .2em 0 0;
 
   ul li {
-    margin: 0 .2em 0 0;
+    margin: .2em;
     width: 26%;
     display: inline-block;
     position: relative;
@@ -13,13 +13,11 @@
     font-size: .5em;
   }
 }
-.add {
-  margin: 0 0 .3em;
-}
 
 .indicator {
   height: 2em;
   width: 2em;
   float: left;
-  border: 1px solid;
+  border-radius: 100%;
+  border: 3px solid #222;
 }

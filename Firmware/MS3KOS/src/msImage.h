@@ -5,11 +5,6 @@
 
 #define MAX_SHAKE_TEXT 4
 
-typedef struct {
-	int x;
-	int y;
-} Coordinate_s;
-
 class MagicShifterImageAbstr {
   public:
 	virtual int getWidth();

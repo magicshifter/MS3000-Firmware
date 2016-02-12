@@ -1,0 +1,36 @@
+.container {
+  display: inline-block;
+  float: left;
+  padding: 0 0 0 10px;
+  width: 100%;
+
+  &:before {
+    top: 198px;
+  }
+
+  ul {
+    li {
+      i {
+        float: left;
+
+        &:first-child {
+          background-color: #000;
+          border-radius: 100%;
+          color: #1cfffa;
+          font-size: 30px;
+          padding: 2px;
+        }
+
+        &:last-child {
+          font-size: 18px;
+        }
+      }
+    }
+  }
+}
+
+.picker {
+  height: 200px;
+  position: relative;
+  width: 100%;
+}

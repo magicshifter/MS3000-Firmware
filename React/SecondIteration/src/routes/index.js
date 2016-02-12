@@ -1,67 +1,47 @@
 import React from 'react';
-import { Route, IndexRoute, Redirect } from 'react-router';
+import {Route, IndexRoute, Redirect} from 'react-router';
 
 import CoreLayout from 'layouts/CoreLayout';
 
-import AboutView from 'views/AboutView/AboutView';
+import InfoView from 'views/Info';
 
-import ImageSidebarControls from 'views/ImageView/Sidebar/Controls';
-import ImageSidebarImages from 'views/ImageView/Sidebar/Images';
-import ImageSidebarText from 'views/ImageView/Sidebar/Text';
-import ImageSidebarFilters from 'views/ImageView/Sidebar/Filters';
-import ImageSidebarSettings from 'views/ImageView/Sidebar/Settings';
-import sidebarMenu from 'views/ImageView/Sidebar/sidebarMenu';
-import sidebarFooter from 'views/ImageView/Sidebar/Footer';
+import ImagesView from 'views/Images';
+import EffectsView from 'views/Effects';
+import FontsView from 'views/Fonts';
+import ColorsView from 'views/Colors';
+import UploadView from 'views/Upload';
 
-import SettingsView from 'views/SettingsView/SettingsView';
-import NotFoundView from 'views/NotFoundView/NotFoundView';
-
-const components = {
-  sidebarMenu,
-  footer: sidebarFooter,
-};
+import SettingsView from 'views/Settings';
+import NotFoundView from 'views/NotFound';
 
 export default (
   <Route path='/' component={CoreLayout}>
-    <IndexRoute
-      components={{
-        ...components,
-        sidebar: ImageSidebarControls,
-      }}
-    />
+    <IndexRoute />
     <Route
       path='/paint/images'
-      components={{
-        ...components,
-        sidebar: ImageSidebarImages,
-      }}
+      component={ImagesView}
     />
 
     <Route
-      path='/paint/text'
-      components={{
-        ...components,
-        sidebar: ImageSidebarText,
-      }}
+      path='/paint/fonts'
+      component={FontsView}
     />
 
     <Route
-      path='/paint/filters'
-      components={{
-        ...components,
-        sidebar: ImageSidebarFilters,
-      }}
+      path='/paint/effects'
+      component={EffectsView}
+    />
+    <Route
+      path='/paint/colors'
+      component={ColorsView}
     />
 
     <Route
-      path='/paint/settings'
-      components={{
-        ...components,
-        sidebar: ImageSidebarSettings,
-      }}
+      path='/paint/upload'
+      component={UploadView}
     />
 
-    <Route path='/about' component={AboutView} />
+    <Route path='/info' component={InfoView} />
     <Route path='/settings' component={SettingsView} />
     <Route path='/404' component={NotFoundView} />
     <Redirect from='*' to='/404' />

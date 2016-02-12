@@ -1,9 +1,8 @@
 import React, {PropTypes, Component} from 'react';
 import {connect} from 'react-redux';
+import rgba from 'rgba-convert';
 
 import {colorType, pixelType} from 'utils/propTypes';
-
-import {rgba_toString} from 'utils/colors';
 
 import {actions} from 'redux/modules/pixels';
 
@@ -24,6 +23,7 @@ export class Pixel extends Component {
     color: colorType.isRequired,
     size: PropTypes.number.isRequired,
     pixelClick: PropTypes.func.isRequired,
+    pixelHover: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -38,27 +38,29 @@ export class Pixel extends Component {
   }
 
   onMouseOver(args) {
-    const {pixelClick, color} = this.props;
+    const {pixelHover, color} = this.props;
     const {e, pixel} = args;
 
     if (e.buttons === 1) {
-      pixelClick({pixel, color});
+      pixelHover({pixel, color});
     }
   }
 
   render() {
     const {pixel, pixelClick, color, size} = this.props;
 
+    const style = {
+      backgroundColor: rgba.css(pixel.color),
+      width: size,
+      height: size,
+    };
+
     return (
       <td
         className={classes['container']}
-        onClick={() => pixelClick({pixel, color})}
+        onMouseDown={() => pixelClick({pixel, color})}
         onMouseOver={e => this.onMouseOver({e, pixel})}
-        style={{
-          width: size,
-          height: size,
-          backgroundColor: rgba_toString(pixel.color),
-        }}
+        style={style}
       ></td>
     );
   }

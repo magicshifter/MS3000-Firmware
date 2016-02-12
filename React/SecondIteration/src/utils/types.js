@@ -91,10 +91,22 @@ export const isRGBObject =
     isNumber(e.g) &&
     isNumber(e.b);
 
+export const isHexColor =
+  c => (
+    /^#[0-9A-F]{6}$/i.test(c)
+  );
+
+export const isHexAlphaColor =
+  c => (
+    /^#[0-9A-F]{8}$/i.test(c)
+  );
+
 export const isColor =
   e =>
     isRGBAObject(e) ||
-    isRGBObject(e);
+    isRGBObject(e) ||
+    isHexColor(e) ||
+    isHexAlphaColor(e);
 
 export const isDate =
   ele =>

@@ -5,54 +5,53 @@ import {actions} from 'redux/modules/layout';
 
 import Header from './Header';
 import Sidebar from './Sidebar';
+import SecondaryMenu from './SecondaryMenu';
 
 import PixelEditor from 'components/PixelEditor/PixelEditor';
 
-import 'styles/core.scss';
+import {colorType} from 'utils/propTypes';
 
+import 'styles/core.scss';
 import classes from './CoreLayout.scss';
 
 const mapStateToProps =
-  (state) => ({
-    width: state.layout.toJS().sidebar.width,
-  });
+  ({imageView}) => {
+    const {color} = imageView.toJS();
+    return {
+      color,
+    };
+  };
 
 class CoreLayout extends Component {
   static propTypes = {
-    main: PropTypes.element,
-    sidebar: PropTypes.element,
-    sidebarMenu: PropTypes.element,
-    footer: PropTypes.element,
-    width: PropTypes.number.isRequired,
     children: PropTypes.element,
     windowResize: PropTypes.func.isRequired,
     scrollEvent: PropTypes.func.isRequired,
+    color: colorType.isRequired,
   };
 
   constructor(props) {
     super(props);
 
-    window.addEventListener('resize', props.windowResize);
-    window.addEventListener('mousewheel', props.scrollEvent);
+    const {windowResize, scrollEvent} = props;
+
+    window.addEventListener('resize', windowResize);
+    window.addEventListener('mousewheel', scrollEvent);
   }
 
   render() {
-    const {children, sidebar, footer, sidebarMenu, width} = this.props;
+    const {children, color} = this.props;
 
     return (
       <div className={classes['container']}>
         <Header />
+
         <div className={classes['view']}>
-          <div className={classes['content']}>
-            <PixelEditor />
-            {children}
-          </div>
-          <Sidebar
-            menu={sidebarMenu}
-            main={sidebar}
-            footer={footer}
-            width={width}
-          />
+          <PixelEditor />
+
+          <SecondaryMenu color={color} />
+
+          {children && <Sidebar children={children} />}
         </div>
       </div>
     );

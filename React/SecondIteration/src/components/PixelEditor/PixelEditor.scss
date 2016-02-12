@@ -1,16 +1,54 @@
 .container {
   text-align: center;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.sub_container {
+  width: 100000px;
+  height: 100000px;
+  position: relative;
+  left: 120px;
 
   table {
-    background-color: #808080;
     display: inline-block;
     list-style: none;
+    left: 0;
     margin: 0;
     padding: 0;
+    position: absolute;
+    top: 0;
 
     tr {
       margin: 0;
       padding: 0;
+    }
+  }
+
+  > div {
+    position: fixed;
+    right: 50px;
+
+    ul {
+      width: 30px;
+
+      li {
+        display: block;
+        width: auto;
+
+        position: relative;
+        z-index: 2;
+
+        i {
+          font-size: 30px;
+          border-radius: 100%;
+          background-color: #353535;
+
+          &:last-child {
+            display: none;
+          }
+        }
+      }
     }
   }
 }

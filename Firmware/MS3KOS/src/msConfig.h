@@ -38,7 +38,7 @@
 #define MIN_TIME_CLICK 10000
 #define MIN_TIME_LONG_CLICK 1000 * 750
 
-#define MAX_TIME_DOUBLE_CLICK 900
+#define MAX_TIME_DOUBLE_CLICK 375
 
 #define POWER_TIMEOUT 1000 * 1000 * 10 * 60
 
@@ -108,5 +108,14 @@
 // double features as bootloader button
 #define PIN_BUTTON_A  0
 #define PIN_BUTTON_B 12
+
+#define DEFAULT_FACTORY_MODE 0
+//
+// Global definitions and the master global struct for the system
+//
+
+#define COLUMNMULTIPLY 2
+
+#define FAULT_NO_ACCELEROMETER 0xf1
 
 #endif

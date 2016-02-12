@@ -1,11 +1,11 @@
 import {createAction, handleActions} from 'redux-actions';
 import Immutable from 'immutable';
+import rgba from 'rgba-convert';
 import scColor from 'sc-color';
 
 import {colorList} from 'GLOBALS';
 
 import {isNumber, toInt} from 'utils/types';
-import {rgba_toString} from 'utils/colors';
 
 const initialState = Immutable.List(colorList.map(color => Immutable.Map(color)));
 
@@ -27,7 +27,7 @@ export const addColor =
       Immutable.List(
         colors.sort(
           (colorA, colorB) =>
-            scColor(rgba_toString(colorA)).hue() - scColor(rgba_toString(colorB)).hue()
+            scColor(rgba.css(colorA)).hue() - scColor(rgba.css(colorB)).hue()
         ).map(color => Immutable.Map(color))
       )
   );

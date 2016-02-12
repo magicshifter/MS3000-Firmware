@@ -1,46 +1,123 @@
-@charset 'UTF-8';
+$add: "\e901";
+$arrow_left: "\31";
+$arrow_right: "\32";
+$brightness: "\e902";
+$colors: "\33";
+$effects: "\34";
+$fonts: "\35";
+$images: "\36";
+$info: "\37";
+$invert-path1: "\62";
+$invert-path2: "\63";
+$settings: "\38";
+$trash: "\39";
+$upload: "\61";
+$zoom_in: "\2b";
+$zoom_out: "\2d";
 
 @font-face {
-  font-family: 'ms-icons';
-  font-style: normal;
+  font-family: 'MS3000';
   font-weight: normal;
-  src: url('../static/font/ms-icons.woff') format('woff');
+  font-style: normal;
+  src: url('/font/ms-ico.woff?pt8xw1') format('woff');
 }
 
-[class^='']:before,
-[class*=' ']:before {
-  font-family: 'ms-icons';
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
+.icon {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'MS3000';
   font-style: normal;
-  font-variant: normal;
   font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
   line-height: 1;
   speak: none;
-  text-transform: none;
-  vertical-align: text-bottom;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.i-colors:before {
-  content: '\69';
+.add {
+    &:before {
+        content: $add;
+    }
+}
+.arrow_left {
+    &:before {
+        content: $arrow_left;
+    }
+}
+.arrow_right {
+    &:before {
+        content: $arrow_right;
+    }
+}
+.brightness {
+    &:before {
+        content: $brightness;
+    }
+}
+.colors {
+    &:before {
+        content: $colors;
+    }
+}
+.effects {
+    &:before {
+        content: $effects;
+    }
+}
+.fonts {
+    &:before {
+        content: $fonts;
+    }
+}
+.images {
+    &:before {
+        content: $images;
+    }
+}
+.info {
+    &:before {
+        content: $info;
+    }
+}
+.invert .path1 {
+    &:before {
+        content: $invert-path1;
+        color: rgb(51, 51, 51);
+    }
+}
+.invert .path2 {
+    &:before {
+        content: $invert-path2;
+        margin-left: -1em;
+        color: rgb(255, 255, 255);
+    }
+}
+.settings {
+    &:before {
+        content: $settings;
+    }
+}
+.trash {
+    &:before {
+        content: $trash;
+    }
+}
+.upload {
+    &:before {
+        content: $upload;
+    }
+}
+.zoom_in {
+    &:before {
+        content: $zoom_in;
+    }
+}
+.zoom_out {
+    &:before {
+        content: $zoom_out;
+    }
 }
 
-.i-plus:before {
-  content: '\6d';
-}
-
-.i-minus:before {
-  content: '\6e';
-}
-
-.i-upload:before {
-  content: '\6f';
-}
-
-.i-load:before {
-  content: '\70';
-}
-
-.i-settings:before {
-  content: '\6c';
-}

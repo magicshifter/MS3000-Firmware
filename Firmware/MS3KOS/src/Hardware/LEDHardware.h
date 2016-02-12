@@ -115,12 +115,12 @@ class MagicShifterLEDs {
 
 		// swipe colors
 		for (byte idx = 0; idx < MAX_LEDS; idx++) {
-			setLED(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, 2);	//msGlobals.ggBrightness);
+			setLED(idx, (idx & 1) ? 255 : 0, (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0, msGlobals.ggBrightness);
 			updateLEDs();
 			delay(30);
 		}
 		for (byte idx = 0; idx < MAX_LEDS; idx++) {
-			setLED(idx, 0, 0, 0, 1);
+			setLED(idx, 0, 0, 0);
 			updateLEDs();
 			delay(30);
 		}

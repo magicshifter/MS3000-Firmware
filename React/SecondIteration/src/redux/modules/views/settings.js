@@ -27,6 +27,8 @@ export const actions = {
 // Reducer
 // ------------------------------------
 export default handleActions({
-  [SET_SETTINGS]: (state, {payload}) => Immutable.Map(payload),
+  [SET_SETTINGS]:
+    (state, {payload}) =>
+      Immutable.Map(payload),
 
 }, initialState);

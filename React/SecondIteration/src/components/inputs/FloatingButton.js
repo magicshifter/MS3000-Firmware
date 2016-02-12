@@ -9,6 +9,7 @@ export default class FloatingButton extends Component {
     icon: PropTypes.string,
     children: PropTypes.string,
     title: PropTypes.string,
+    text: PropTypes.string,
     cssClass: PropTypes.string,
   };
 
@@ -16,10 +17,11 @@ export default class FloatingButton extends Component {
     cssClass: '',
     icon: '',
     title: '',
+    text: '',
   };
 
   render() {
-    const {onClick, icon, children, title} = this.props;
+    const {onClick, icon, children, title, text} = this.props;
     let {cssClass} = this.props;
 
     cssClass += ' ' + classes['container'];
@@ -33,7 +35,7 @@ export default class FloatingButton extends Component {
         onClick={onClick}
         title={title}
       >
-        {children}
+        {children || text}
       </button>
     );
   }

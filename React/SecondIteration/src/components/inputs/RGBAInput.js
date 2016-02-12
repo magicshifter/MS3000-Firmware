@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react';
-import rgba from 'rgba-convert';
+// XXX import rgba from 'rgba-convert';
 
-import {colorType, colorNames, hexStringType} from 'utils/propTypes';
+import {colorType, hexStringType} from 'utils/propTypes';
 
 import ColorInput from './ColorInput';
 
@@ -24,14 +24,7 @@ export default class RGBAInput extends Component {
 
     return (
       <div className={classes['container']}>
-        <div
-          className={classes['indicator']}
-          style={{
-            backgroundColor: rgba.css(color),
-          }}
-        ></div>
-
-        <ul>
+         <ul>
           {color && Object.keys(color).map(key => (
             typeof color[key] === 'number' &&
             (key !== 'a' || showAlpha) &&
@@ -39,7 +32,7 @@ export default class RGBAInput extends Component {
               val={color[key]}
               key={key}
               name={key}
-              label={colorNames[key]}
+              label={key.toUpperCase()}
               setColorValue={setColorValue}
             />
           ))}

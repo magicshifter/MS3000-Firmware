@@ -44,7 +44,7 @@ export default class NumberInput extends Component {
     const {val, name, label, min, max, step} = this.props;
 
     return (
-      <div className={classes['input']}>
+      <div className={classes['container']}>
 
         {label &&
           <label>{label}</label>

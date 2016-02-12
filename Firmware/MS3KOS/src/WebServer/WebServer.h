@@ -16,9 +16,13 @@ class MagicShifterWebServer {
 		}
   } public:
 
-	void StartWebServer(void) {
+  	void stop() {
+  		
+  	}
+
+	void start(void) {
 		while (!AutoConnect()) {
-			msSystem.slogln("ARGL: WHY U no WLAN!? :( retrying...");
+			msSystem.slogln("webserver: wifi connection failed, retrying...");
 			delay(100);
 		}
 #ifdef USE_MDNS
@@ -61,8 +65,8 @@ class MagicShifterWebServer {
 		msSystem.msESPServer.on("/settings/server/set",
 								handlePOSTServerSettings);
 
-		// msSystem.msESPServer.on("/settings/ui", handleGetUISettings);
-		// msSystem.msESPServer.on("/settings/ui/set", handleSetUISettings);
+		msSystem.msESPServer.on("/settings/ui", handleGetUISettings);
+		msSystem.msESPServer.on("/settings/ui/set", handleSetUISettings);
 
 		msSystem.msESPServer.on("/settings/wifi/preferred", HTTP_GET,
 								handleGETPreferredAPSettings);

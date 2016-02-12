@@ -25,7 +25,7 @@ export default class ColorInput extends Component {
     } = this.props;
 
     return (
-      <li className={classes['input']}>
+      <li className={classes['container']}>
         <NumberInput
           type='text'
           label={label}

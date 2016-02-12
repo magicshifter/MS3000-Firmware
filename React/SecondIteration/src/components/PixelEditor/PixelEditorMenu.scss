@@ -1,0 +1,35 @@
+.container {
+  left: 0;
+  position: fixed;
+  bottom: 0;
+
+  ul {
+    li {
+      float: left;
+
+      position: relative;
+      z-index: 2;
+    }
+  }
+}
+
+.navi {
+
+  .btn_left {
+    float: left;
+  }
+
+  .btn_up_down {
+    .btn_up {
+      float: none;
+    }
+
+    .btn_down {
+      float: none;
+    }
+  }
+
+  .btn_right {
+    float: right;
+  }
+}

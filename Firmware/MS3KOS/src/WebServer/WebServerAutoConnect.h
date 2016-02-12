@@ -83,12 +83,11 @@ bool TrySoftAP(struct APInfo & apInfo)
 
 bool AutoConnect()
 {
-	struct jsonparse_state jsonState;
 
 #ifdef SCAN_FIRST_MODE
 	// if (!forceAPMode)
 	{
-		if (Settings.getPreferredAP(&msGlobals.ggAPConfig.apInfo)) {
+		if (msSystem.Settings.getPreferredAP(&msGlobals.ggAPConfig.apInfo)) {
 			msSystem.slogln("wifi: using stored configuration.");
 			if (TryConnect
 				(msGlobals.ggAPConfig.apInfo, CONNECTION_TIMEOUT)) {
@@ -99,7 +98,7 @@ bool AutoConnect()
 			msSystem.slogln("wifi: no preferred configuration found.");
 
 
-		if (SPIFFS.exists(Settings.apListConfigPath)) {
+		if (SPIFFS.exists(msSystem.Settings.apListConfigPath)) {
 
 			msSystem.slog("wifi: start scan -");
 			// WiFi.scanNetworks will return the number of networks found
@@ -128,9 +127,9 @@ bool AutoConnect()
 
 			msSystem.slogln("");
 
-			Settings.resetAPList();
+			msSystem.Settings.resetAPList();
 
-			while (Settings.getNextAP(&msGlobals.ggAPConfig.apInfo)) {
+			while (msSystem.Settings.getNextAP(&msGlobals.ggAPConfig.apInfo)) {
 				for (int i = 0; i < n; i++) {
 					if (strcmp
 						(WiFi.SSID(i).c_str(),
@@ -159,7 +158,7 @@ bool AutoConnect()
 
 	APInfo softAPInfo;
 
-	Settings.getAPConfig(&softAPInfo);
+	msSystem.Settings.getAPConfig(&softAPInfo);
 	if (TrySoftAP(softAPInfo)) {
 		msGlobals.ggModeAP = true;
 		return true;

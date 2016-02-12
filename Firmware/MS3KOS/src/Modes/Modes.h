@@ -1,7 +1,7 @@
 #ifndef _MODES_H
 #define _MODES_H
 
-#define NUM_MS_MODES 6
+#define NUM_MS_MODES 5
 
 // rudimentary mode for displaying an msImage with POV
 #include "UI/ShakeSync.h"

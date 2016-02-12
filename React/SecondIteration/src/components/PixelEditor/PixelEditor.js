@@ -8,12 +8,16 @@ import {getPixelId, makePixelsArray} from 'utils/pixels';
 import {multimax} from 'utils/math';
 
 import Pixel from 'components/PixelEditor/Pixel';
+import PixelEditorMenu from 'components/PixelEditor/PixelEditorMenu';
+
+import ColorList from 'components/inputs/ColorList';
 
 import classes from './PixelEditor.scss';
 
 const mapStateToProps =
   state => {
     const {imageView, pixels, layout} = state;
+
     return {
       pixels: makePixelsArray(pixels),
       color: imageView.get('color'),
@@ -34,25 +38,17 @@ export class PixelEditor extends Component {
     layout: layoutType,
   };
 
-  constructor(props) {
-    super(props);
-
-    this.defaultStyle = {
-      table: {},
-      tr: {},
-    };
-  }
-
   render() {
     const {layout, rows, totalColumns, visibleColumns, pixels} = this.props;
 
+    const zoom = layout.zoomLevel;
     const widthMargin = layout.width * 0.2;
     const heightMargin = layout.height * 0.2;
-    const maxWidth = layout.width - widthMargin;
-    const maxHeight = layout.height - heightMargin;
+    const maxWidth = (layout.width - widthMargin) * zoom;
+    const maxHeight = (layout.height - heightMargin) * zoom;
 
     const pixelListSize = multimax(layout.width, maxWidth, maxHeight);
-    var pxSize = Math.max(Math.floor(pixelListSize / (Math.max(visibleColumns, rows) + 1)), 1);
+    var pxSize = Math.max(Math.floor(pixelListSize / (Math.max(visibleColumns, rows) + 1)), 1) * zoom;
 
     let rowArray = [];
     for (let i = 0; i < rows; i++) {
@@ -64,50 +60,38 @@ export class PixelEditor extends Component {
       columnArray.push(i);
     }
 
-    const style = this.defaultStyle;
-
-    style.tr.height = pxSize;
-
-    if (layout.width < 500) {
-      style.table = {
-        paddingTop: '1em',
-      };
-    }
-
     return (
       <div className={classes['container']}>
+        <div className={classes['sub_container']}>
+          <table className={classes['list']}>
+            <tbody>
+              {rowArray.map(
+                row => (
+                  <tr key={`r-${row + 1}`}>
+                    {columnArray.map(
+                      column => {
+                        if (column < visibleColumns) {
+                          const pixelId = getPixelId(totalColumns, column, row);
+                          const pixel = pixels[pixelId];
 
-        <table
-          className={classes['list']}
-          style={style.table}
-        >
-          <tbody>
-            {rowArray.map(
-              row => (
-                <tr
-                  key={`r-${row + 1}`}
-                  style={style.tr}
-                >
-                  {columnArray.map(
-                    column => {
-                      const pixelId = getPixelId(totalColumns, column, row);
-                      const pixel = pixels[pixelId];
-                      if (column < visibleColumns) {
-                        return (
-                          <Pixel
-                            key={`r-${row + 1}-c-${column + 1}`}
-                            pixel={pixel}
-                            size={pxSize}
-                          />
-                        );
+                          return (
+                            <Pixel
+                              key={`r-${row + 1}-c-${column + 1}`}
+                              pixel={pixel}
+                              size={pxSize}
+                            />
+                          );
+                        }
                       }
-                    }
-                  )}
-                </tr>
-              )
-            )}
-          </tbody>
-        </table>
+                    )}
+                  </tr>
+                )
+              )}
+            </tbody>
+          </table>
+          <ColorList />
+          <PixelEditorMenu />
+        </div>
       </div>
     );
   }
