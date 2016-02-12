@@ -23,6 +23,7 @@ export class Pixel extends Component {
     color: colorType.isRequired,
     size: PropTypes.number.isRequired,
     pixelClick: PropTypes.func.isRequired,
+    pixelHover: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -37,11 +38,11 @@ export class Pixel extends Component {
   }
 
   onMouseOver(args) {
-    const {pixelClick, color} = this.props;
+    const {pixelHover, color} = this.props;
     const {e, pixel} = args;
 
     if (e.buttons === 1) {
-      pixelClick({pixel, color});
+      pixelHover({pixel, color});
     }
   }
 
