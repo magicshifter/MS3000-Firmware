@@ -14,8 +14,10 @@ class SystemTextMode:public MagicShifterBaseMode {
 	const char *modeName = "SystemText";
 
 	void setText(char *label, char *value) {
-		MSColor aRED = { 0xff, 0x00, 0x00 };
-		MSColor aBLUE = { 0x00, 0x00, 0xFF };
+		MSColor aRED = 		{ 0xff, 0x00, 0x00 };
+		MSColor aGREEN = 	{ 0x00, 0xff, 0x00 };
+		MSColor aBLUE = 	{ 0x00, 0x00, 0xff };
+
 		Coordinate_s tPos;
 
 		msMagicShakeText.resetTexts();
@@ -41,6 +43,13 @@ class SystemTextMode:public MagicShifterBaseMode {
 		shakeSync.setFrames(0);
 	}
 
+	enum {
+		STR_IP = 0,
+		STR_SOFTIP = 1,
+		STR_SSID = 2,
+		STR_WIFI = 3
+	};
+
 // step through a frame of the mode 
 	bool step() {
 
@@ -48,23 +57,42 @@ class SystemTextMode:public MagicShifterBaseMode {
 		if (msSystem.msButtons.msBtnAHit) {
 			msSystem.msButtons.msBtnAHit = false;	// !J! todo: button callbacks
 			sysCursor++;
-			if (sysCursor > 2)
+			if (sysCursor > 3)
 				sysCursor = 0;
 			msSystem.slog("cursor:");
 			msSystem.slogln(String(sysCursor));
 
-			if (sysCursor == 0) {
+			if (sysCursor == STR_IP) {
 				setText((char *) String("IP").c_str(),
 						(char *) WiFi.localIP().toString().c_str());
-			} else if (sysCursor == 1) {
+			} else if (sysCursor == STR_SOFTIP) {
 				setText((char *) String("SOFTIP").c_str(),
 						(char *) WiFi.softAPIP().toString().c_str());
-			} else if (sysCursor == 2) {
+			} else if (sysCursor == STR_SSID) {
 				setText((char *) String("SSID").c_str(),
 						(char *) WiFi.SSID().c_str());
+			} else if (sysCursor == STR_WIFI) {
+				if  (WiFi.status() == WL_DISCONNECTED)
+					setText((char *) String("WIFI").c_str(), (char *) String("OFF").c_str());
+				else
+					setText((char *) String("WIFI").c_str(), (char *) String("ON").c_str());
 			}
-
 		}
+
+		if (msSystem.msButtons.msBtnPwrHit) {
+			if (sysCursor == STR_WIFI) { // WIFI
+				if (msGlobals.ggEnableWIFI)  {
+					WiFi.disconnect(true);
+					msGlobals.ggEnableWIFI = false;
+				}
+				else {
+					msGlobals.ggEnableWIFI = true;
+					msWebServer.start();
+				}
+				msSystem.msButtons.msBtnPwrHit = false;
+			}
+		}
+
 		// check accelerometer
 		if (shakeSync.update(msGlobals.ggAccel[1])) {
 			int index = shakeSync.getFrameIndex();

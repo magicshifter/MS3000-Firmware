@@ -44,6 +44,8 @@ class MagicShifterSystem {
 	MDNSResponder msDNS;
 	ESP8266WebServer msESPServer;
 
+	UIConfig msUIConfig;
+
 
 	int msFrame = 0;
 	bool msSensorOK = false;
@@ -62,8 +64,6 @@ class MagicShifterSystem {
 		Serial.println(msg);
 		msSysLog.sendSysLogMsg(msg);
 	};
-
-
 
 	void slog(int8_t & msg, int base) {
 		slog(String(msg));
@@ -107,44 +107,6 @@ class MagicShifterSystem {
 		slogln(String(header.animationDelay));
 	}
 
-	void TEST_SPIFFS_bug() {
-
-		const char *debugPath = "XXXXX";
-		uint8_t testVals[] = { 1, 23, 3, 7 };
-		uint8_t readBuffer[] = { 0, 0, 0, 0 };
-		//File file = SPIFFS.open((char *)debugPath.c_str(), "w");
-
-		slog("openin for w: ");
-		slogln(String(debugPath));
-
-		File file = SPIFFS.open(debugPath, "w");
-
-		slog("opended for w: ");
-		slogln(String((bool) file));
-
-		slog("writin: ");
-		slogln(String(testVals[1]));
-
-		file.write((uint8_t *) testVals, sizeof testVals);
-		file.close();
-
-		slog("openin for r: ");
-		slogln(String(debugPath));
-
-		File fileR = SPIFFS.open(debugPath, "r");
-
-		slog("opended for r: ");
-		slogln(String((bool) fileR));
-
-		slogln("readin: ");
-
-		fileR.read((uint8_t *) readBuffer, sizeof readBuffer);
-		fileR.close();
-
-		slog("readback: ");
-		slogln(String(readBuffer[1]));
-	};
-
 	void slogSysInfo() {
 		slogln("System config:");
 		slog("Vcc: ");
@@ -171,10 +133,10 @@ class MagicShifterSystem {
 		// // gets the size of the flash as set by the compiler
 		slog("flash configured size: ");
 		slogln(String(ESP.getFlashChipSize()));
-		// if (ESP.getFlashChipSize() != ESP.getFlashChipRealSize())
-		// {
-		//   slogln(String("WARNING: configured flash size does not match real flash size!"));
-		// }
+		if (ESP.getFlashChipSize() != ESP.getFlashChipRealSize())
+		{
+		  slogln(String("WARNING: configured flash size does not match real flash size!"));
+		}
 		slog("flash speed: ");
 		slogln(String(ESP.getFlashChipSpeed()));
 		slog("flash mode: ");
@@ -187,32 +149,8 @@ class MagicShifterSystem {
 		slog("uploadfile: ");
 		slogln(msGlobals.ggUploadFileName);
 
-
-		// slog("Reset info: ");
-		// slogln(String(ESP.getResetInfo()));
-		//slog("FS mount: ");
-		//slogln(String(FS.mount() ? "OK" : "ERROR!"));
-
-#if 0
-		slog(F("Heap: "));
-		slogln(String(system_get_free_heap_size()));
-		slog(F("Boot Vers: "));
-		slogln(String(system_get_boot_version()));
-		slog(F("CPU: "));
-		slogln(String(system_get_cpu_freq()));
-		slog(F("SDK: "));
-		slogln(String(system_get_sdk_version()));
-		slog(F("Chip ID: "));
-		slogln(String(system_get_chip_id()));
-		slog(F("Flash ID: "));
-		slogln(String(spi_flash_get_id()));
-		slog(F("Vcc: "));
-		slogln(String(readvdd33()));
-#endif
-
-		// chercking crashes the ESP so its disabled atm
-		//slog("FS check: ");
-		//slogln(String(FS.check() ? "OK" : "ERROR!"));
+		slog("Reset info: ");
+		slogln(String(ESP.getResetInfo()));
 
 	};
 
@@ -335,7 +273,7 @@ class MagicShifterSystem {
 		}
 	}
 
-#define BRIGHTNESS_CONTROL_TIME (600 * 1000)
+#define BRIGHTNESS_CONTROL_TIME (1000 * 1000)
 
 	uint8_t BrightnessLevels[16] = { 1, 2, 3, 4,
 		5, 6, 7, 8,
@@ -547,27 +485,8 @@ class MagicShifterSystem {
 		// led controllers and buffer
 		msLEDs.initLEDHardware();
 		msLEDs.initLEDBuffer();
-		msLEDs.bootSwipe();
 
-// !J! todo: enable MIDI, add arp mode
-// #ifdef CONFIG_ENABLE_MIDI
-//     Serial.begin(31250);
-// #else
-		// Serial.begin(115200);
-		Serial.begin(921600);
-// #endif
-
-		// !J! todo: get this from factory config
-		delay(700);				// this enables serial consoles to sync
-
-		// #endif
 		EEPROM.begin(512);
-
-		slogln(String("\r\nMagicShifter 3000 OS V" + String(MS3KOS_VERSION)));
-
-		// ggUploadFile is prepared for display as necessary ..
-		//msEEPROMs.loadString(msGlobals.ggUploadFileName, MAX_FILENAME_LENGTH);
-
 		// wake up filesystem
 		slog("SPIFFS:");
 
@@ -575,12 +494,16 @@ class MagicShifterSystem {
 			slog("done:");
 		else
 			slog("noSPIFFS:");
-		// !J! todo: infinite_loop()? 
-		// TEST_SPIFFS_bug();
+
+		msLEDs.bootSwipe();
+
+		Serial.begin(921600);
+		slogln(String("\r\nMagicShifter 3000 OS V" + String(MS3KOS_VERSION)));
 
 		// all engines turn on
 		pinMode(PIN_PWR_MGT, INPUT);
-		pinMode(PIN_LED_ENABLE, INPUT);
+
+		// pinMode(PIN_LED_ENABLE, INPUT);
 
 		// reset power controller to stay on
 		// had some power down troubles so this needs to be further investigated
@@ -598,14 +521,6 @@ class MagicShifterSystem {
 		// led controllers and buffer
 		msLEDs.initLEDHardware();
 		msLEDs.initLEDBuffer();
-		//msLEDs.bootSwipe();
-
-		// boot that we are alive
-
-		// // I2C test:
-		// if (!Wire.available() ) {
-		//   infinite_swipe(); // todo: explain to user: please reset device
-		// }
 
 		// global font objects
 		MagicShifterImage::LoadBitmapBuffer("font4x5.magicFont",
@@ -641,8 +556,9 @@ class MagicShifterSystem {
 			powerDown();
 		}
 
-		if (msButtons.msBtnPwrDoubleHit) {
-			msButtons.msBtnPwrDoubleHit = false;
+		if (msButtons.msBtnADoubleHit || msButtons.msBtnBDoubleHit) {
+			msButtons.msBtnADoubleHit = false;
+			msButtons.msBtnBDoubleHit = false;
 			modeMenuActivated = true;
 			feedbackAnimation(msGlobals.feedbackType::MODE_MENU);
 		}

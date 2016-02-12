@@ -48,7 +48,13 @@ class SettingsManager {
 	bool getUIConfig(struct UIConfig *config) {
 		// msSystem.slog("config: sizeof ");
 		//  msSystem.slogln(sizeof(*config));
-		return loadData(uiSettingsConfigPath, config, sizeof(*config));
+		bool result = loadData(uiSettingsConfigPath, config, sizeof(*config));
+		if (!result) {
+			config->powerdownTimeUSB = 0;
+			config->powerdownTimeBattery = 1000 * 1000 * 10 * 60;
+			config->defaultBrightness = 2;
+		}
+		return result;
 	}
 
 	bool setUIConfig(struct UIConfig *config) {
