@@ -9,18 +9,25 @@ import SecondaryMenu from './SecondaryMenu';
 
 import PixelEditor from 'components/PixelEditor/PixelEditor';
 
-import 'styles/core.scss';
+import {colorType} from 'utils/propTypes';
 
+import 'styles/core.scss';
 import classes from './CoreLayout.scss';
 
 const mapStateToProps =
-  (state) => ({});
+  ({imageView}) => {
+    const {color} = imageView.toJS();
+    return {
+      color,
+    };
+  };
 
 class CoreLayout extends Component {
   static propTypes = {
     children: PropTypes.element,
     windowResize: PropTypes.func.isRequired,
     scrollEvent: PropTypes.func.isRequired,
+    color: colorType.isRequired,
   };
 
   constructor(props) {
@@ -39,7 +46,7 @@ class CoreLayout extends Component {
   }
 
   render() {
-    const {children} = this.props;
+    const {children, color} = this.props;
 
     return (
       <div className={classes['container']}>
@@ -48,7 +55,7 @@ class CoreLayout extends Component {
         <div className={classes['view']}>
           <PixelEditor />
 
-          <SecondaryMenu />
+          <SecondaryMenu color={color} />
 
           {children && <Sidebar children={children} />}
         </div>
