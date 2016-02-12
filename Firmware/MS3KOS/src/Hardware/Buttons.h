@@ -8,6 +8,7 @@ class MagicShifterButtons {
   private:
 
   public:
+  	bool enableABDoubleHit = false;
 
 	// TODO: private state
 	// state for button timing
@@ -39,6 +40,10 @@ class MagicShifterButtons {
 	long msBtnALastHitTime = 0;
 	long msBtnBLastHitTime = 0;
 	long msBtnPwrLastHitTime = 0;
+
+	long msBtnALastLongHitTime = 0;
+	long msBtnBLastLongHitTime = 0;
+	long msBtnPwrLastLongHitTime = 0;
 
 	long deltaMicros = 0;		// !J! todo: init? (msGlobals.ggCurrentMicros - msGlobals.ggLastMicros);
 
@@ -89,12 +94,19 @@ class MagicShifterButtons {
 		} else {
 			if (msLongClickOK && msBtnAPressTime >= MIN_TIME_LONG_CLICK) {
 				msBtnALongHit = true;
+				msBtnALastLongHitTime = millis();
 			} else if (msBtnAPressTime >= MIN_TIME_CLICK) {
-				// long hits
-				long _now = millis();
-				if ((_now - msBtnALastHitTime) < MAX_TIME_DOUBLE_CLICK) {
-					msBtnADoubleHit = true;
-				} else {
+				if (enableABDoubleHit) {
+					// long hits
+					long _now = millis();
+					if ((_now - msBtnALastHitTime) < MAX_TIME_DOUBLE_CLICK) {
+						msBtnADoubleHit = true;
+					} else {
+						msBtnAHit = true;
+					}
+				}
+				else
+				{
 					msBtnAHit = true;
 				}
 				msBtnALastHitTime = millis();
@@ -114,17 +126,24 @@ class MagicShifterButtons {
 		} else {
 			if (msLongClickOK && msBtnBPressTime >= MIN_TIME_LONG_CLICK) {
 				msBtnBLongHit = true;
+				msBtnBLastLongHitTime = millis();
 			} else if (msBtnBPressTime >= MIN_TIME_CLICK) {
-				// long hits
-				long _now = millis();
-				if ((_now - msBtnBLastHitTime) < MAX_TIME_DOUBLE_CLICK) {
-					msBtnBDoubleHit = true;
-				} else {
+				if (enableABDoubleHit) {
+					// long hits
+					long _now = millis();
+					if ((_now - msBtnBLastHitTime) < MAX_TIME_DOUBLE_CLICK) {
+						msBtnBDoubleHit = true;
+					} else {
+						msBtnBHit = true;
+					}
+				}
+				else
+				{
 					msBtnBHit = true;
 				}
 				msBtnBLastHitTime = millis();
 			}
-
+			
 			msBtnBPressTime = 0;
 		}
 
@@ -139,6 +158,7 @@ class MagicShifterButtons {
 		} else {
 			if (msBtnPwrPressTime >= MIN_TIME_LONG_CLICK) {
 				msBtnPwrLongHit = true;
+				msBtnPwrLastLongHitTime = millis();
 			} else if (msBtnPwrPressTime >= MIN_TIME_CLICK) {
 				// // long hits
 				// long _now = millis();
@@ -153,6 +173,18 @@ class MagicShifterButtons {
 
 			msBtnPwrPressTime = 0;
 		}
+	}
+
+	#define SYNC_CLICK_TIME_MS 250
+	bool checkMenueEnterCondition() {
+		if ((msBtnAHit && (millis() - msBtnBLastHitTime) < SYNC_CLICK_TIME_MS) ||
+			(msBtnBHit && (millis() - msBtnALastHitTime) < SYNC_CLICK_TIME_MS) ||
+			(msBtnALongHit && (millis() - msBtnBLastLongHitTime) < SYNC_CLICK_TIME_MS) ||
+			(msBtnBLongHit && (millis() - msBtnALastLongHitTime) < SYNC_CLICK_TIME_MS)) {
+			resetButtons();
+			return true;
+		}
+		return false;
 	}
 };
 

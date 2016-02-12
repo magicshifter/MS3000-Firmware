@@ -273,7 +273,7 @@ class MagicShifterSystem {
 		}
 	}
 
-#define BRIGHTNESS_CONTROL_TIME (1000 * 1000)
+#define BRIGHTNESS_CONTROL_TIME (850 * 1000)
 
 	uint8_t BrightnessLevels[16] = { 1, 2, 3, 4,
 		5, 6, 7, 8,
@@ -557,20 +557,9 @@ class MagicShifterSystem {
 		}
 
 
-		if (msButtons.msBtnADoubleHit || msButtons.msBtnBDoubleHit) {
-			if (modeMenuActivated) {
-				if (msButtons.msBtnADoubleHit) {
-					msButtons.msBtnADoubleHit = false;
-					msButtons.msBtnAHit = true;
-				}
-				if (msButtons.msBtnBDoubleHit) {
-					msButtons.msBtnBDoubleHit = false;
-					msButtons.msBtnBHit = true;
-				}
-			}
-			else {
-				msButtons.msBtnADoubleHit = false;
-				msButtons.msBtnBDoubleHit = false;
+
+		if (msButtons.checkMenueEnterCondition()) {
+			if (!modeMenuActivated) {
 				modeMenuActivated = true;
 				feedbackAnimation(msGlobals.feedbackType::MODE_MENU);
 			}
