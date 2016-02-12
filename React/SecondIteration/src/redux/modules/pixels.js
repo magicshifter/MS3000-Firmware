@@ -74,15 +74,9 @@ export default handleActions({
   // a pixel has been clicked
   [PIXEL_CLICK]:
     (state, {payload: p}) =>
-      isObject(p.color) &&
-      state.setIn(
-        [p.pixel.id, 'color'],
-          Immutable.Map(p.pixel.color).equals(defaultColor) ||
-          !Immutable.Map(p.pixel.color).equals(Immutable.Map(p.color))
-            ? p.color
-            : defaultColor
-      ) ||
-      state,
+      isObject(p.color)
+      ? state.setIn([p.pixel.id, 'color'], p.color)
+      : state,
 
   // set all pixels
   [SET_PIXELS]:
