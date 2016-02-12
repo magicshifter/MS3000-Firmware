@@ -11,6 +11,7 @@ class MagicLightMode : public MagicShifterBaseMode {
 	int frame = 0;
 	int lMode = 0;
 	int xx = 0;
+	int pDelay = 230;
 
 	bool dir = false;
 	int d = 10;
@@ -77,7 +78,7 @@ class MagicLightMode : public MagicShifterBaseMode {
 		hackUIResponsive();
 
 		if (lMode == 0) {
-			if (frame % d*10 == 0) {
+			if (frame % pDelay == 0) {
 				msSystem.msLEDs.fillLEDs(0, 0, 0);
 				msSystem.msLEDs.setLED((xx + 0 * 3) & 0xF, 255, 0, 0, msGlobals.ggBrightness);
 
@@ -89,6 +90,16 @@ class MagicLightMode : public MagicShifterBaseMode {
 
 				xx++;
 				msSystem.msLEDs.updateLEDs();
+			}
+
+			if (centerAction > 0) {
+				centerAction--;
+				pDelay += 1 + pDelay / 2;
+				if (pDelay > 250 && pDelay < 500) {
+					pDelay = 1000;
+				} else if (pDelay >= 500) {
+					pDelay = 1;
+				}
 			}
 		}
 		if (lMode == 1) {
