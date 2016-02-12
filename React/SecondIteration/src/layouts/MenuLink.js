@@ -9,11 +9,10 @@ import classes from './MenuLink.scss';
 
 export const MenuLink =
   ({text, to, icon, style, color}) => {
-    const col = rgba.css(color);
-    style = style || {};
-
     if (isColor(color) && icon === 'colors') {
-      style.color = col;
+      style = {
+        color: rgba.css(color),
+      };
     }
 
     return (
