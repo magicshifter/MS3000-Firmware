@@ -88,6 +88,7 @@ struct APConfig {
 };
 
 struct UIConfig {
+	int initialMode;
 	long powerdownTimeUSB;
 	long powerdownTimeBattery;
 	int defaultBrightness;
