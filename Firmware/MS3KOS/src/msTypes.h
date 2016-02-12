@@ -94,5 +94,11 @@ struct UIConfig {
 };
 
 
+typedef struct {
+	int x;
+	int y;
+} Coordinate_s;
+
+
 
 #endif

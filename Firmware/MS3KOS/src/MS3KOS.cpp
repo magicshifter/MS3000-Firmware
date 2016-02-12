@@ -28,6 +28,7 @@ extern "C" {
 #include <FS.h>
 // note: local configuration, globals, and system objects get created now.
 #include "msConfig.h"
+
 #include "msGlobals.h"
 MagicShifterGlobals msGlobals;
 // note: beyond this point, please consider the above globals.
@@ -45,8 +46,6 @@ MagicShifterWebServer msWebServer;
 
 // GUI modes, well actually .. modes are more of an 'app' ..
 #include "Modes/Modes.h"
-
-
 
 // Begin MagicShifter3000 operation
 void setup()

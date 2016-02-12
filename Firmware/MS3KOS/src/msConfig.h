@@ -109,4 +109,14 @@
 #define PIN_BUTTON_A  0
 #define PIN_BUTTON_B 12
 
+#define DEFAULT_FACTORY_MODE 0
+//
+// Global definitions and the master global struct for the system
+//
+
+#define COLUMNMULTIPLY 2
+
+#define FAULT_NO_ACCELEROMETER 0xf1
+#define FAULT_NEW_FILEUPLOAD    0xf2
+
 #endif

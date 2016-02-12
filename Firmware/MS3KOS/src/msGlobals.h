@@ -4,13 +4,6 @@
 #include "msTypes.h"
 #include "StackClass.h"
 
-#define DEFAULT_FACTORY_MODE 0
-//
-// Global definitions and the master global struct for the system
-//
-
-#define COLUMNMULTIPLY 2
-
 
 void l_safeStrncpy(char *dest, const char *source, int n)
 {
@@ -18,8 +11,6 @@ void l_safeStrncpy(char *dest, const char *source, int n)
 	dest[n - 1] = '\0';
 }
 
-#define FAULT_NO_ACCELEROMETER 0xf1
-#define FAULT_NEW_FILEUPLOAD    0xf2
 
 class MagicShifterGlobals {
   public:
