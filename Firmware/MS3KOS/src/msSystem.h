@@ -556,11 +556,24 @@ class MagicShifterSystem {
 			powerDown();
 		}
 
+
 		if (msButtons.msBtnADoubleHit || msButtons.msBtnBDoubleHit) {
-			msButtons.msBtnADoubleHit = false;
-			msButtons.msBtnBDoubleHit = false;
-			modeMenuActivated = true;
-			feedbackAnimation(msGlobals.feedbackType::MODE_MENU);
+			if (modeMenuActivated) {
+				if (msButtons.msBtnADoubleHit) {
+					msButtons.msBtnADoubleHit = false;
+					msButtons.msBtnAHit = true;
+				}
+				if (msButtons.msBtnBDoubleHit) {
+					msButtons.msBtnBDoubleHit = false;
+					msButtons.msBtnBHit = true;
+				}
+			}
+			else {
+				msButtons.msBtnADoubleHit = false;
+				msButtons.msBtnBDoubleHit = false;
+				modeMenuActivated = true;
+				feedbackAnimation(msGlobals.feedbackType::MODE_MENU);
+			}
 		}
 
 		CommandInterfacePoll();
