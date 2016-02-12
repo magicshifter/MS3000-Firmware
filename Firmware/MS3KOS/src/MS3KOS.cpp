@@ -85,8 +85,6 @@ void loop()
 	// inside time-frame
 	if (msGlobals.ggLastFrameMicros + msGlobals.ggSpeedMicros < micros()) {
 
-		
-
 		msSystem.loop();
 
 		msWebServer.loop();
@@ -105,11 +103,6 @@ void loop()
 		} else {
 			// dispatch to the mode handler .. 
 			if (msGlobals.ggCurrentMode == 0) {
-				if (msGlobals.ggFault == FAULT_NEW_FILEUPLOAD) {
-					msGlobals.ggFault = 0;
-					msMagicShake.reset();
-				}
-
 				msMagicShake.step();
 			} else if (msGlobals.ggCurrentMode == 1) {
 

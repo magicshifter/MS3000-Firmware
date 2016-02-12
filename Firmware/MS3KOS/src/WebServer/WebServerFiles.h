@@ -409,7 +409,6 @@ void handleFileUpload()
 
 		msSystem.slogln("Upload: END, Size: ");
 		msSystem.slogln(String(upload.totalSize));
-		msGlobals.ggFault = FAULT_NEW_FILEUPLOAD;
 	}
 }
 

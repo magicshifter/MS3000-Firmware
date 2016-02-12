@@ -117,6 +117,5 @@
 #define COLUMNMULTIPLY 2
 
 #define FAULT_NO_ACCELEROMETER 0xf1
-#define FAULT_NEW_FILEUPLOAD    0xf2
 
 #endif
