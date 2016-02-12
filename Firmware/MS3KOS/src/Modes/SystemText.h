@@ -14,8 +14,10 @@ class SystemTextMode:public MagicShifterBaseMode {
 	const char *modeName = "SystemText";
 
 	void setText(char *label, char *value) {
-		MSColor aRED = { 0xff, 0x00, 0x00 };
-		MSColor aBLUE = { 0x00, 0x00, 0xFF };
+		MSColor aRED = 		{ 0xff, 0x00, 0x00 };
+		MSColor aGREEN = 	{ 0x00, 0xff, 0x00 };
+		MSColor aBLUE = 	{ 0x00, 0x00, 0xff };
+
 		Coordinate_s tPos;
 
 		msMagicShakeText.resetTexts();
@@ -48,7 +50,7 @@ class SystemTextMode:public MagicShifterBaseMode {
 		if (msSystem.msButtons.msBtnAHit) {
 			msSystem.msButtons.msBtnAHit = false;	// !J! todo: button callbacks
 			sysCursor++;
-			if (sysCursor > 2)
+			if (sysCursor > 3)
 				sysCursor = 0;
 			msSystem.slog("cursor:");
 			msSystem.slogln(String(sysCursor));
@@ -62,9 +64,20 @@ class SystemTextMode:public MagicShifterBaseMode {
 			} else if (sysCursor == 2) {
 				setText((char *) String("SSID").c_str(),
 						(char *) WiFi.SSID().c_str());
+			} else if (sysCursor == 3) {
+				if  (WiFi.status() == WL_DISCONNECTED)
+					setText((char *) String("WIFI").c_str(), (char *) String("OFF").c_str());
+				else
+					setText((char *) String("WIFI").c_str(), (char *) String("ON").c_str());
 			}
-
 		}
+
+		if (msSystem.msButtons.msBtnPwrHit) {
+			if (sysCursor == 3) { // WIFI
+				
+			}
+		}
+
 		// check accelerometer
 		if (shakeSync.update(msGlobals.ggAccel[1])) {
 			int index = shakeSync.getFrameIndex();

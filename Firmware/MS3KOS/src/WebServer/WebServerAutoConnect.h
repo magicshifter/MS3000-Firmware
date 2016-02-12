@@ -83,7 +83,6 @@ bool TrySoftAP(struct APInfo & apInfo)
 
 bool AutoConnect()
 {
-	struct jsonparse_state jsonState;
 
 #ifdef SCAN_FIRST_MODE
 	// if (!forceAPMode)
