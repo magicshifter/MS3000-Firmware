@@ -37,12 +37,6 @@ class CoreLayout extends Component {
 
     window.addEventListener('resize', windowResize);
     window.addEventListener('mousewheel', scrollEvent);
-
-    document.body.addEventListener(
-      'click',
-      e =>
-        console.log({e, loc: window.location})
-    );
   }
 
   render() {
