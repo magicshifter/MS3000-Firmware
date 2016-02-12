@@ -10,14 +10,14 @@ const mapStateToProps =
     const {settingsView, pixels, imageView} = state;
     const {host} = settingsView.toJS();
     const pxs = pixels.toJS();
-    const {rows, columns, visibleColumns} = imageView.toJS();
+    const {rows, totalColumns, visibleColumns} = imageView.toJS();
 
     return {
       url: `http://${host}`,
       pixels: pxs,
       height: rows,
       width: visibleColumns,
-      totalWidth: columns,
+      totalWidth: totalColumns,
     };
   };
 
