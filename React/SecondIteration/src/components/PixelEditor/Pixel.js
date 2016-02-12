@@ -57,7 +57,7 @@ export class Pixel extends Component {
     return (
       <td
         className={classes['container']}
-        onClick={() => pixelClick({pixel, color})}
+        onMouseDown={() => pixelClick({pixel, color})}
         onMouseOver={e => this.onMouseOver({e, pixel})}
         style={style}
       ></td>
