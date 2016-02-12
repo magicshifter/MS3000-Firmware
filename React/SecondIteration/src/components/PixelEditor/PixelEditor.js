@@ -10,7 +10,7 @@ import {multimax} from 'utils/math';
 import Pixel from 'components/PixelEditor/Pixel';
 import PixelEditorMenu from 'components/PixelEditor/PixelEditorMenu';
 
-import ColorList from 'components/inputs/ColorList';
+import ColorList from 'components/colors/list';
 
 import classes from './PixelEditor.scss';
 

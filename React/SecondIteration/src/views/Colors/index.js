@@ -11,8 +11,8 @@ import {colorType, layoutType} from 'utils/propTypes';
 import ColorPickerInput from 'components/inputs/ColorPickerInput';
 import RGBAInput from 'components/inputs/RGBAInput';
 // XXX BLOCK(time) import HexInput from 'components/inputs/HexInput';
-import ColorList from 'components/inputs/ColorList';
-import ColorNav from 'components/colors/ColorNav';
+import ColorList from 'components/colors/list';
+import ColorNav from 'components/colors/nav';
 
 import classes from './Colors.scss';
 

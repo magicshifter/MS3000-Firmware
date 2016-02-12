@@ -1,9 +1,8 @@
 import React, {Component, PropTypes} from 'react';
-// XXX import rgba from 'rgba-convert';
 
 import {colorType, hexStringType} from 'utils/propTypes';
 
-import ColorInput from './ColorInput';
+import ColorInput from 'components/colors/input';
 
 import classes from './RGBAInput.scss';
 

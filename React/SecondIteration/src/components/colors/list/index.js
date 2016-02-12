@@ -1,7 +1,7 @@
 import React, {PropTypes, Component} from 'react';
 import {connect} from 'react-redux';
 
-import ColorIndicator from './ColorIndicator';
+import ColorIndicator from 'components/colors/indicator';
 
 import {actions as colorListActions} from 'redux/modules/colorList';
 import {actions as imageActions} from 'redux/modules/views/image';
