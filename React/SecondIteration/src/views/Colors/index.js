@@ -1,8 +1,10 @@
 import React, {PropTypes, Component} from 'react';
 import {connect} from 'react-redux';
 import ColorPicker from 'react-color';
+import Immutable from 'immutable';
 
-import {actions} from 'redux/modules/views/image';
+import {actions as imageActions} from 'redux/modules/views/image';
+import {actions as colorListActions} from 'redux/modules/colorList';
 
 import {colorType, layoutType} from 'utils/propTypes';
 
@@ -10,31 +12,39 @@ import ColorPickerInput from 'components/inputs/ColorPickerInput';
 import RGBAInput from 'components/inputs/RGBAInput';
 // XXX BLOCK(time) import HexInput from 'components/inputs/HexInput';
 import ColorList from 'components/inputs/ColorList';
+import ColorNav from 'components/colors/ColorNav';
 
 import classes from './Colors.scss';
 
-const mapStateToProps = (state) => {
-  const {imageView, layout} = state;
-  const color = imageView.get('color').toObject();
-  return {
-    color,
-    layout: layout.toJS(),
+const mapStateToProps =
+  ({imageView, layout, colorList}) => {
+    const {color} = imageView.toJS();
+    const colors = colorList.toJS();
+
+    return {
+      color,
+      colors,
+      layout: layout.toJS(),
+    };
   };
-};
 
 export class Colors extends Component {
   static propTypes = {
     setColorValue: PropTypes.func.isRequired, // action
     setColor: PropTypes.func.isRequired, // action
+    addColor: PropTypes.func.isRequired, // action
     color: colorType.isRequired,
     layout: layoutType,
+
+    colors: PropTypes.arrayOf(colorType).isRequired,
   };
 
   constructor(props) {
     super(props);
 
     this.handleColorChange = this.handleColorChange.bind(this);
-  }
+    this.handleAddColorClick = this.handleAddColorClick.bind(this);
+  };
 
   handleColorChange(e) {
     const {setColor} = this.props;
@@ -42,6 +52,20 @@ export class Colors extends Component {
 
     setColor({color: rgb});
   }
+
+  handleAddColorClick(e) {
+    const {colors, color, addColor} = this.props;
+
+    const colorExists =
+      colors.some(
+        c =>
+          Immutable.Map(c).equals(Immutable.Map(color))
+      );
+
+    if (!colorExists) {
+      addColor([...colors, color]);
+    }
+  };
 
   render() {
     const {
@@ -96,13 +120,20 @@ export class Colors extends Component {
         */}
 
         <div className={classes['list']}>
-          <ColorList
-            uiColor={color}
+          <ColorNav
+            handleAddColorClick={this.handleAddColorClick}
           />
+
+          <ColorList />
         </div>
       </div>
     );
   }
 }
+
+const actions = {
+  ...colorListActions,
+  ...imageActions,
+};
 
 export default connect(mapStateToProps, actions)(Colors);
