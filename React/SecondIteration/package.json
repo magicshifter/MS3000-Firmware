@@ -101,7 +101,6 @@
     "redux-devtools-dock-monitor": "^1.0.1",
     "redux-devtools-log-monitor": "^1.0.1",
     "redux-immutablejs": "0.0.8",
-    "redux-simple-router": "^2.0.3",
     "redux-thunk": "^1.0.0",
     "rgba-convert": "^0.2.1",
     "sass-loader": "^3.0.0",
