@@ -2,10 +2,12 @@
 
 html,
 body {
+  background-color: #efefef;
   font-family: Ubuntu, 'Segoe UI', roboto, 'Lucida Grande', sans-serif;
   height: 100%;
   margin: 0;
   padding: 0;
+  font-size: 14px;
 }
 
 a {
@@ -19,4 +21,3 @@ h5 {
 button:focus {
   outline: none;
 }
-

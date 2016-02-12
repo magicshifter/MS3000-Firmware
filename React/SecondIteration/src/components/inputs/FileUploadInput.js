@@ -1,18 +1,37 @@
 import React, {Component, PropTypes} from 'react';
+import {connect} from 'react-redux';
+
 import {saveAs} from 'filesaver.js';
 
 import classes from './FileUploadInput.scss';
 
-export default class FileUploadInput extends Component {
+const mapStateToProps =
+  state => {
+    const {settingsView, pixels, imageView} = state;
+    const {host} = settingsView.toJS();
+    const pxs = pixels.toJS();
+    const {rows, columns, visibleColumns} = imageView.toJS();
+
+    return {
+      url: `http://${host}`,
+      pixels: pxs,
+      height: rows,
+      width: visibleColumns,
+      totalWidth: columns,
+    };
+  };
+
+export class FileUploadInput extends Component {
   static propTypes = {
     url: PropTypes.string.isRequired,
     pixels: PropTypes.array.isRequired,
     height: PropTypes.number.isRequired,
     width: PropTypes.number.isRequired,
     totalWidth: PropTypes.number.isRequired,
-    label: PropTypes.string,
-    text: PropTypes.string,
-    header: PropTypes.string,
+  };
+
+  static defaultProps = {
+    simple: true,
   };
 
   constructor(props) {
@@ -130,43 +149,32 @@ export default class FileUploadInput extends Component {
   }
 
   render() {
-    const {label, text = 'Upload File', header} = this.props;
-
-    const simple = true;
-
     return (
       <div className={classes['container']}>
 
-        {!simple && <h5>{header}</h5>}
-
-        {!simple &&
-            <div>
-                <label>Filename:</label>
-                <input
-                  type='text'
-                  defaultValue='userImage'
-                  ref='fileName'
-                />
-            </div>
-        }
-
-        {!simple && label && <label>{label}</label>}
+        <div>
+          <label>Filename:</label>
+          <input
+            type='text'
+            defaultValue='userImage'
+            ref='fileName'
+          />
+        </div>
 
         <input
           type='button'
           onClick={this.onClick}
-          value={text}
+          value='Send to MagicShifter'
         />
 
-        {!simple &&
-          <input
-            type='button'
-            onClick={this.onFileDownload}
-            value='download file'
-          />
-        }
+        <input
+          type='button'
+          onClick={this.onFileDownload}
+          value='download file'
+        />
       </div>
     );
   }
 }
 
+export default connect(mapStateToProps, {})(FileUploadInput);

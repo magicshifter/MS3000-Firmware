@@ -10,18 +10,9 @@
 
   li {
     float: left;
-    margin: .5em;
-  }
+    margin: 0 .5em;
 
-  a {
-    text-decoration: none;
-
-    &.active {
-      text-decoration: underline;
-    }
-
-    &:hover {
-      opacity: .8;
-    }
+    position: relative;
+    z-index: 2;
   }
 }

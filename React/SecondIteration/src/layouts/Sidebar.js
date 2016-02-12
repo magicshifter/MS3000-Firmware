@@ -1,23 +1,23 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
+import { Link } from 'react-router';
 
 import classes from './Sidebar.scss';
 
-export const sidebar =
-  ({menu, main, footer, width}) =>
-    <aside
-      className={classes['aside']}
-      style={{
-        width,
-      }}
-    >
-      {menu}
-      {main}
-      {footer}
-    </aside>;
+export const Sidebar =
+  ({children}) => (
+    <aside className={classes['container']}>
+      <Link
+        to='/'
+        className={classes['clicker']}
+      />
+      <div className={classes['children']}>
+        {children}
+      </div>
+    </aside>
+  );
 
-sidebar.propTypes = {
-  menu: PropTypes.element.isRequired,
-  main: PropTypes.element.isRequired,
+Sidebar.propTypes = {
+  children: PropTypes.element.isRequired,
 };
 
-export default sidebar;
+export default Sidebar;

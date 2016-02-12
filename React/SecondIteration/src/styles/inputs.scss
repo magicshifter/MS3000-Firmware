@@ -1,29 +1,39 @@
 button,
 input {
+  background-color: transparent;
+  border-color: #fff;
+  border-width: 1px;
+  border-radius: 2px;
+  color: #fff;
+  font-size: 1.1em;
   margin: .3em;
-  padding: .3em;
+  max-width: 100%;
+  padding: .5em;
 }
 
 button,
-input[type=button] {
-  background-color: #00FF5C;
-  padding: 1.2em;
-  font-size: 1.2em;
+input[type=button],
+input[type=submit] {
+  background-color: #1cfffa;
   border: 0 none;
   cursor: pointer;
+  color: #000;
 }
 
 input[type=number] {
   text-align: right;
-  padding: .3em 0 .3em .3em;
-  width: 3.5em;
+  width: 4em;
+}
+
+input[type=file] {
+  margin: 0;
+  padding: .5em 0;
 }
 
 .floating {
   float: left;
   height: 1em;
   width: 1em;
-
 
   &.small {
     height: .7em;

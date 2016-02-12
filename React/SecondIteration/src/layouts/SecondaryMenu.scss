@@ -1,0 +1,38 @@
+.container {
+  position: absolute;
+  top: 50px;
+  left: 0;
+  padding: 0 50px 0;
+
+  nav {
+    display: inline-block;
+    font-size: .8em;
+    margin: 0 0 .2em;
+  }
+
+  li {
+    margin: 20px 0;
+
+    position: relative;
+    z-index: 2;
+  }
+
+  a {
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  i {
+    background-color: #353535;
+    border-radius: 100%;
+    color: #1cfffa;
+    font-size: 30px;
+    padding: 5px;
+    float: left;
+  }
+
+  span {
+    float: left;
+    margin: 11px 0 0 5px;
+  }
+}

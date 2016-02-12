@@ -1,5 +1,23 @@
-.aside {
-  float: left;
-  margin: 0;
-  padding: 0 0 0 1em;
+.container {
+  background-color: #353535;
+  box-shadow: 3px 4px 5px #666;
+  color: #fff;
+  left: 170px;
+  padding: 10px;
+  position: absolute;
+  top: 60px;
+  width: 300px;
+}
+
+.clicker {
+  height: 100vh;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100vw;
+}
+
+.children {
+  position: relative;
+  z-index: 2;
 }
