@@ -4,6 +4,7 @@ input {
   border-color: #fff;
   border-width: 1px;
   border-radius: 2px;
+  color: #fff;
   font-size: 1.1em;
   margin: .3em;
   max-width: 100%;
@@ -11,7 +12,8 @@ input {
 }
 
 button,
-input[type=button] {
+input[type=button],
+input[type=submit] {
   background-color: #1cfffa;
   border: 0 none;
   cursor: pointer;
