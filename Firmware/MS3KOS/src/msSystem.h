@@ -547,24 +547,8 @@ class MagicShifterSystem {
 		// led controllers and buffer
 		msLEDs.initLEDHardware();
 		msLEDs.initLEDBuffer();
-		msLEDs.bootSwipe();
 
-// !J! todo: enable MIDI, add arp mode
-// #ifdef CONFIG_ENABLE_MIDI
-//     Serial.begin(31250);
-// #else
-		// Serial.begin(115200);
-		Serial.begin(921600);
-// #endif
-
-		// #endif
 		EEPROM.begin(512);
-
-		slogln(String("\r\nMagicShifter 3000 OS V" + String(MS3KOS_VERSION)));
-
-		// ggUploadFile is prepared for display as necessary ..
-		//msEEPROMs.loadString(msGlobals.ggUploadFileName, MAX_FILENAME_LENGTH);
-
 		// wake up filesystem
 		slog("SPIFFS:");
 
@@ -574,6 +558,12 @@ class MagicShifterSystem {
 			slog("noSPIFFS:");
 		// !J! todo: infinite_loop()? 
 		// TEST_SPIFFS_bug();
+
+		msLEDs.bootSwipe();
+
+		Serial.begin(921600);
+		slogln(String("\r\nMagicShifter 3000 OS V" + String(MS3KOS_VERSION)));
+
 
 		// all engines turn on
 		pinMode(PIN_PWR_MGT, INPUT);
@@ -595,14 +585,6 @@ class MagicShifterSystem {
 		// led controllers and buffer
 		msLEDs.initLEDHardware();
 		msLEDs.initLEDBuffer();
-		//msLEDs.bootSwipe();
-
-		// boot that we are alive
-
-		// // I2C test:
-		// if (!Wire.available() ) {
-		//   infinite_swipe(); // todo: explain to user: please reset device
-		// }
 
 		// global font objects
 		MagicShifterImage::LoadBitmapBuffer("font4x5.magicFont",
