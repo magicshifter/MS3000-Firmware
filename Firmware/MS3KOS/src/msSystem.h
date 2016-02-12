@@ -557,9 +557,6 @@ class MagicShifterSystem {
 		Serial.begin(921600);
 // #endif
 
-		// !J! todo: get this from factory config
-		delay(700);				// this enables serial consoles to sync
-
 		// #endif
 		EEPROM.begin(512);
 
