@@ -52,8 +52,11 @@ export default handleActions({
 
   [SET_COLOR]:
     (state, {payload: p}) => {
-      return isColor(p.color)
-        ? state.set('color', Immutable.Map(p.color))
+      const {color} = p;
+      color.a = 255;
+
+      return isColor(color)
+        ? state.set('color', Immutable.Map(color))
         : state;
     },
 
