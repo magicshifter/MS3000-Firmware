@@ -90,7 +90,14 @@ class MagicShifterButtons {
 			if (msLongClickOK && msBtnAPressTime >= MIN_TIME_LONG_CLICK) {
 				msBtnALongHit = true;
 			} else if (msBtnAPressTime >= MIN_TIME_CLICK) {
-				msBtnAHit = true;
+				// long hits
+				long _now = millis();
+				if ((_now - msBtnALastHitTime) < MAX_TIME_DOUBLE_CLICK) {
+					msBtnADoubleHit = true;
+				} else {
+					msBtnAHit = true;
+				}
+				msBtnALastHitTime = millis();
 			}
 
 			msBtnAPressTime = 0;
@@ -108,7 +115,14 @@ class MagicShifterButtons {
 			if (msLongClickOK && msBtnBPressTime >= MIN_TIME_LONG_CLICK) {
 				msBtnBLongHit = true;
 			} else if (msBtnBPressTime >= MIN_TIME_CLICK) {
-				msBtnBHit = true;
+				// long hits
+				long _now = millis();
+				if ((_now - msBtnBLastHitTime) < MAX_TIME_DOUBLE_CLICK) {
+					msBtnBDoubleHit = true;
+				} else {
+					msBtnBHit = true;
+				}
+				msBtnBLastHitTime = millis();
 			}
 
 			msBtnBPressTime = 0;
@@ -126,17 +140,15 @@ class MagicShifterButtons {
 			if (msBtnPwrPressTime >= MIN_TIME_LONG_CLICK) {
 				msBtnPwrLongHit = true;
 			} else if (msBtnPwrPressTime >= MIN_TIME_CLICK) {
-
-
-				// long hits
-				long _now = millis();
-				if ((_now - msBtnPwrLastHitTime) < MAX_TIME_DOUBLE_CLICK) {
-					msBtnPwrDoubleHit = true;
-				} else {
+				// // long hits
+				// long _now = millis();
+				// if ((_now - msBtnPwrLastHitTime) < MAX_TIME_DOUBLE_CLICK) {
+				// 	msBtnPwrDoubleHit = true;
+				// } else {
 					msBtnPwrHit = true;
-				}
+				// }
 
-				msBtnPwrLastHitTime = millis();
+				// msBtnPwrLastHitTime = millis();
 			}
 
 			msBtnPwrPressTime = 0;

@@ -51,7 +51,7 @@ class SettingsManager {
 		bool result = loadData(uiSettingsConfigPath, config, sizeof(*config));
 		if (!result) {
 			config->powerdownTimeUSB = 0;
-			config->powerdownTimeBattery = 1000 * 1000 * 10 * 60
+			config->powerdownTimeBattery = 1000 * 1000 * 10 * 60;
 			config->defaultBrightness = 2;
 		}
 		return result;

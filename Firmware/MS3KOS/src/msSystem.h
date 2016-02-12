@@ -44,6 +44,8 @@ class MagicShifterSystem {
 	MDNSResponder msDNS;
 	ESP8266WebServer msESPServer;
 
+	UIConfig msUIConfig;
+
 
 	int msFrame = 0;
 	bool msSensorOK = false;
@@ -271,7 +273,7 @@ class MagicShifterSystem {
 		}
 	}
 
-#define BRIGHTNESS_CONTROL_TIME (600 * 1000)
+#define BRIGHTNESS_CONTROL_TIME (1000 * 1000)
 
 	uint8_t BrightnessLevels[16] = { 1, 2, 3, 4,
 		5, 6, 7, 8,
@@ -554,8 +556,9 @@ class MagicShifterSystem {
 			powerDown();
 		}
 
-		if (msButtons.msBtnPwrDoubleHit) {
-			msButtons.msBtnPwrDoubleHit = false;
+		if (msButtons.msBtnADoubleHit || msButtons.msBtnBDoubleHit) {
+			msButtons.msBtnADoubleHit = false;
+			msButtons.msBtnBDoubleHit = false;
 			modeMenuActivated = true;
 			feedbackAnimation(msGlobals.feedbackType::MODE_MENU);
 		}
