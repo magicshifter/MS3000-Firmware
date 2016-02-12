@@ -12,6 +12,9 @@
 
   li {
     margin: 20px 0;
+
+    position: relative;
+    z-index: 2;
   }
 
   a {

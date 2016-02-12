@@ -8,3 +8,16 @@
   top: 60px;
   width: 300px;
 }
+
+.clicker {
+  height: 100vh;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100vw;
+}
+
+.children {
+  position: relative;
+  z-index: 2;
+}

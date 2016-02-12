@@ -6,6 +6,9 @@
   ul {
     li {
       float: left;
+
+      position: relative;
+      z-index: 2;
     }
   }
 }

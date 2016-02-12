@@ -11,5 +11,8 @@
   li {
     float: left;
     margin: 0 .5em;
+
+    position: relative;
+    z-index: 2;
   }
 }

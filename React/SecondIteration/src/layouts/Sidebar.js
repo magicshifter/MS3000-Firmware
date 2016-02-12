@@ -1,11 +1,18 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
+import { Link } from 'react-router';
 
 import classes from './Sidebar.scss';
 
 export const Sidebar =
   ({children}) => (
     <aside className={classes['container']}>
-      {children}
+      <Link
+        to='/'
+        className={classes['clicker']}
+      />
+      <div className={classes['children']}>
+        {children}
+      </div>
     </aside>
   );
 
