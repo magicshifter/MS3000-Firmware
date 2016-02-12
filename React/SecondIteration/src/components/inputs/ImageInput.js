@@ -92,7 +92,7 @@ export class ImageInput extends Component {
     const {label} = this.props;
     const {pixels} = this.state;
 
-    const fontSize = pixels.length ? '50px' : '200px';
+    // XXX block(time) const fontSize = pixels.length ? '50px' : '200px';
 
     return (
       <div className={classes['container']}>
@@ -103,12 +103,12 @@ export class ImageInput extends Component {
             type='file'
             name='fileUpload'
             onChange={this.onImageInputchange}
-            //style={{fontSize}}
+            // XXX block(time) style={{fontSize}}
           />
 
           <i
             className={getIconCssClass('images')}
-            //style={{fontSize}}
+            // XXX block(time) style={{fontSize}}
           />
         </div>
 
