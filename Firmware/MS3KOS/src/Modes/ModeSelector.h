@@ -8,7 +8,7 @@ class ModeSelectorMode:public MagicShifterBaseMode {
 
   public:
 	const int maxModes = NUM_MS_MODES;
-	const char *modeNames[NUM_MS_MODES] = { "Mgc", "Rmte", "RGB", "SVals", "Cmps", "Light" };
+	const char *modeNames[NUM_MS_MODES] = { "Mgc", "Lgt", "Cmps", "SVals", "Rmt" };
 
 
 	void setText(const char *label) {
