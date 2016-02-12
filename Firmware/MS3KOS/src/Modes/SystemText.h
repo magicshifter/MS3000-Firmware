@@ -43,6 +43,13 @@ class SystemTextMode:public MagicShifterBaseMode {
 		shakeSync.setFrames(0);
 	}
 
+	enum {
+		STR_IP = 0,
+		STR_SOFTIP = 1,
+		STR_SSID = 2,
+		STR_WIFI = 3
+	};
+
 // step through a frame of the mode 
 	bool step() {
 
@@ -55,16 +62,16 @@ class SystemTextMode:public MagicShifterBaseMode {
 			msSystem.slog("cursor:");
 			msSystem.slogln(String(sysCursor));
 
-			if (sysCursor == 0) {
+			if (sysCursor == STR_IP) {
 				setText((char *) String("IP").c_str(),
 						(char *) WiFi.localIP().toString().c_str());
-			} else if (sysCursor == 1) {
+			} else if (sysCursor == STR_SOFTIP) {
 				setText((char *) String("SOFTIP").c_str(),
 						(char *) WiFi.softAPIP().toString().c_str());
-			} else if (sysCursor == 2) {
+			} else if (sysCursor == STR_SSID) {
 				setText((char *) String("SSID").c_str(),
 						(char *) WiFi.SSID().c_str());
-			} else if (sysCursor == 3) {
+			} else if (sysCursor == STR_WIFI) {
 				if  (WiFi.status() == WL_DISCONNECTED)
 					setText((char *) String("WIFI").c_str(), (char *) String("OFF").c_str());
 				else
@@ -73,8 +80,16 @@ class SystemTextMode:public MagicShifterBaseMode {
 		}
 
 		if (msSystem.msButtons.msBtnPwrHit) {
-			if (sysCursor == 3) { // WIFI
-				
+			if (sysCursor == STR_WIFI) { // WIFI
+				if (msGlobals.ggEnableWIFI)  {
+					WiFi.disconnect(true);
+					msGlobals.ggEnableWIFI = false;
+				}
+				else {
+					msGlobals.ggEnableWIFI = true;
+					msWebServer.start();
+				}
+				msSystem.msButtons.msBtnPwrHit = false;
 			}
 		}
 

@@ -57,7 +57,7 @@ void setup()
 	msSystem.setup();
 
 	// get the web interface started
-	msWebServer.StartWebServer();
+	msWebServer.start();
 
 	ServerConfig sysLogInfo;
 	// set up syslog ..

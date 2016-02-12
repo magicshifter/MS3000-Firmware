@@ -39,6 +39,7 @@ class MagicShifterGlobals {
 	long ggTime = 76500000;
 	long ggTimePostedAt = 0;
 	bool ggDebugSerial = true;
+	bool ggEnableWIFI = true;
 
 	struct APConfig ggAPConfig;
 
