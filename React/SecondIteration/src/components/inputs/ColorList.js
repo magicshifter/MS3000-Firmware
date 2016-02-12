@@ -1,10 +1,7 @@
 import React, {PropTypes, Component} from 'react';
 import {connect} from 'react-redux';
-import Immutable from 'immutable';
 
 import ColorIndicator from './ColorIndicator';
-
-import {getIconCssClass} from 'utils/icons';
 
 import {actions as colorListActions} from 'redux/modules/colorList';
 import {actions as imageActions} from 'redux/modules/views/image';
@@ -19,9 +16,15 @@ const actions = {
 };
 
 const mapStateToProps =
-  state => ({
-    colors: state.colorList.toArray().map(color => color.toObject()),
-  });
+  state => {
+    const { color } = state.imageView.toJS();
+    const colors = state.colorList.toArray().map(color => color.toObject());
+
+    return {
+      colors,
+      uiColor: color,
+    };
+  };
 
 export class ColorList extends Component {
   static propTypes = {
@@ -33,38 +36,11 @@ export class ColorList extends Component {
     uiColor: colorType.isRequired,
   };
 
-  constructor(props) {
-    super(props);
-
-    this.handleAddColorClick = this.handleAddColorClick.bind(this);
-  };
-
-  handleAddColorClick(e) {
-    const {colors, uiColor, addColor} = this.props;
-
-    const colorExists =
-      colors.some(
-        c =>
-          Immutable.Map(c).equals(Immutable.Map(uiColor))
-      );
-
-    if (!colorExists) {
-      addColor([...colors, uiColor]);
-    }
-  };
-
   render() {
     const {colors, setColor, removeColor} = this.props;
 
     return (
       <div className={classes['container']}>
-        <div className={classes['nav']}>
-          <i
-            className={getIconCssClass('zoom_in')}
-            onClick={this.handleAddColorClick}
-          />
-        </div>
-
         <ul>
           {
             Object.keys(colors).map(
