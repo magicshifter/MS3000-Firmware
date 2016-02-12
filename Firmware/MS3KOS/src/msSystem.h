@@ -446,6 +446,22 @@ class MagicShifterSystem {
 		slog("uploadfile: ");
 		slogln(msGlobals.ggUploadFileName);
 
+		FSInfo linfo;
+		SPIFFS.info(linfo);
+
+		slog("linfo.blockSize =");
+		slogln(String(linfo.blockSize));
+		slog("linfo.pageSize =");
+		slogln(String(linfo.pageSize));
+		slog("linfo.maxOpenFiles =");
+		slogln(String(linfo.maxOpenFiles));
+		slog("linfo.maxPathLength =");
+		slogln(String(linfo.maxPathLength));
+		slog("linfo.totalBytes =");
+		slogln(String(linfo.totalBytes));
+		slog("linfo.usedBytes = ");
+		slogln(String(linfo.usedBytes));
+
 		slog("Reset info: ");
 		slogln(String(ESP.getResetInfo()));
 
