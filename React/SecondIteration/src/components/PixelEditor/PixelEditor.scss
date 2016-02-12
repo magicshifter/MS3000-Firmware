@@ -10,7 +10,6 @@
   position: relative;
 
   table {
-    background-color: #fff;
     display: inline-block;
     left: 190px;
     list-style: none;
@@ -21,6 +20,33 @@
     tr {
       margin: 0;
       padding: 0;
+    }
+  }
+
+  > div {
+    position: fixed;
+    right: 50px;
+
+    ul {
+      width: 30px;
+
+      li {
+        display: block;
+        width: auto;
+
+        position: relative;
+        z-index: 2;
+
+        i {
+          font-size: 30px;
+          border-radius: 100%;
+          background-color: #353535;
+
+          &:last-child {
+            display: none;
+          }
+        }
+      }
     }
   }
 }

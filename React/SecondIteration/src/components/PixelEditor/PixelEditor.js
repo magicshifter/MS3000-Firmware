@@ -10,6 +10,8 @@ import {multimax} from 'utils/math';
 import Pixel from 'components/PixelEditor/Pixel';
 import PixelEditorMenu from 'components/PixelEditor/PixelEditorMenu';
 
+import ColorList from 'components/inputs/ColorList';
+
 import classes from './PixelEditor.scss';
 
 const mapStateToProps =
@@ -87,6 +89,7 @@ export class PixelEditor extends Component {
               )}
             </tbody>
           </table>
+          <ColorList />
           <PixelEditorMenu />
         </div>
       </div>
