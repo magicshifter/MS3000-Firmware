@@ -37,23 +37,62 @@ export class ImageInput extends Component {
   constructor(props) {
     super(props);
 
-    this.onChange = this.onChange.bind(this);
+    this.state = {
+      pixels: [],
+    };
+
+    this.onUseImageClick = this.onUseImageClick.bind(this);
+    this.onClearCanvasClick = this.onClearCanvasClick.bind(this);
+    this.onImageInputchange = this.onImageInputchange.bind(this);
   }
 
-  onChange(e) {
+  onClearCanvasClick(e) {
+    const {canvas} = this.refs;
+
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    this.setState({
+      pixels: [],
+    });
+  }
+
+  onUseImageClick() {
     const {
       setPixels, setColumns, // actions
-      pixels, rows, visibleColumns, totalColumns,
     } = this.props;
 
-    getImagePixels(e, pixels, totalColumns, visibleColumns, rows, ({pixels, width, height}) => {
+    const {
+      pixels, columns,
+    } = this.state;
+
+    if (pixels.length) {
       setPixels(pixels);
-      setColumns({value: width});
+      setColumns({value: columns});
+    }
+  }
+
+  onImageInputchange(e) {
+    const {pixels, rows, visibleColumns, totalColumns} = this.props;
+    const {canvas} = this.refs;
+
+    const {files} = e.target;
+    const file = files[0];
+
+    getImagePixels(file, canvas, pixels, totalColumns, visibleColumns, rows, ({data, pixels, width, height}) => {
+      this.setState({
+        imageUrl: data,
+        pixels,
+        columns: width,
+      });
+      this.onUseImageClick();
     });
   }
 
   render() {
     const {label} = this.props;
+    const {pixels} = this.state;
+
+    const fontSize = pixels.length ? '50px' : '200px';
 
     return (
       <div className={classes['container']}>
@@ -63,15 +102,33 @@ export class ImageInput extends Component {
           <input
             type='file'
             name='fileUpload'
-            onChange={this.onChange}
+            onChange={this.onImageInputchange}
+            //style={{fontSize}}
           />
 
           <i
             className={getIconCssClass('images')}
+            //style={{fontSize}}
           />
         </div>
 
-        <button>Use Image</button>
+        <div
+          className={classes['sub_container']}
+          style={{
+            // XXX block(time) hide for now
+            display: false && pixels.length ? 'inherit' : 'none',
+          }}
+        >
+          <canvas
+            ref='canvas'
+          />
+
+          <button
+            onClick={this.onUseImageClick}
+          >
+            Use Image
+          </button>
+        </div>
       </div>
     );
   }
