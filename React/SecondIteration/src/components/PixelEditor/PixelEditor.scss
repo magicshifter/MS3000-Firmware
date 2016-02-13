@@ -9,45 +9,44 @@
   height: 100000px;
   position: relative;
   left: 120px;
+}
 
-  table {
-    display: inline-block;
-    float: left;
-    list-style: none;
-    left: 0;
+.table {
+  display: inline-block;
+  float: left;
+  list-style: none;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  top: 0;
+
+  tr {
     margin: 0;
     padding: 0;
-    position: relative;
-    top: 0;
-
-    tr {
-      margin: 0;
-      padding: 0;
-    }
   }
+}
 
-  > div {
-    float: left;
-    margin: 0 0 0 10px;
+.color_list {
+  left: 120px;
+  position: fixed;
+  top: 10px;
 
-    ul {
-      width: 30px;
+  ul {
+    li {
+      float: left;
+      position: relative;
+      width: auto;
+      z-index: 2;
 
-      li {
-        display: block;
-        width: auto;
+      i {
+        cursor: pointer;
+        font-size: 30px;
+        background-color: #353535;
+        border-radius: 100%;
 
-        position: relative;
-        z-index: 2;
-
-        i {
-          font-size: 30px;
-          border-radius: 100%;
-          background-color: #353535;
-
-          &:last-child {
-            display: none;
-          }
+        &:last-child {
+          display: none;
         }
       }
     }

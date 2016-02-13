@@ -63,7 +63,7 @@ export class PixelEditor extends Component {
     return (
       <div className={classes['container']}>
         <div className={classes['sub_container']}>
-          <table className={classes['list']}>
+          <table className={classes['table']}>
             <tbody>
               {rowArray.map(
                 row => (
@@ -89,9 +89,11 @@ export class PixelEditor extends Component {
               )}
             </tbody>
           </table>
-          <ColorList />
-          <PixelEditorMenu />
         </div>
+        <div className={classes['color_list']}>
+          <ColorList />
+        </div>
+        <PixelEditorMenu />
       </div>
     );
   }
