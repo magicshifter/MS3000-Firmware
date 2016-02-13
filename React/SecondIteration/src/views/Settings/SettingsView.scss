@@ -1,3 +1,11 @@
 .container {
   padding: 1em;
+  width: 600px;
+  max-width: 80vw;
+
+  &:before {
+    right: 0;
+    top: 0;
+    left: auto;
+  }
 }

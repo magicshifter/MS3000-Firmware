@@ -1,13 +1,10 @@
 .container {
-  background-color: rgba(53, 53, 53, .9);
-  box-shadow: 3px 4px 5px rgba(53, 53, 53, .9);
   color: #fff;
   left: 110px;
-  padding: 10px;
   position: absolute;
   top: 60px;
-  width: 300px;
 }
+
 .clicker {
   height: 100vh;
   left: 0;
@@ -17,17 +14,22 @@
 }
 
 .children {
-  position: relative;
-  z-index: 2;
+  > div {
+    background-color: rgba(53, 53, 53, .9);
+    box-shadow: 3px 4px 5px rgba(53, 53, 53, .9);
+    padding: 1em;
+    position: relative;
+    z-index: 2;
 
-  > div:before {
-    border-bottom: 10px solid transparent;
-    border-right: 10px solid rgba(53, 53, 53, .9);
-    border-top: 10px solid transparent;
-    content: '';
-    height: 0;
-    left: -20px;
-    position: absolute;
-    width: 0;
+    &:before {
+      border-bottom: 10px solid transparent;
+      border-right: 10px solid rgba(53, 53, 53, .9);
+      border-top: 10px solid transparent;
+      content: '';
+      height: 0;
+      left: -10px;
+      position: absolute;
+      width: 0;
+    }
   }
 }
