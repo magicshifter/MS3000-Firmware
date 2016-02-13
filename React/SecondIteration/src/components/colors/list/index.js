@@ -2,6 +2,7 @@ import React, {PropTypes, Component} from 'react';
 import {connect} from 'react-redux';
 
 import ColorIndicator from 'components/colors/indicator';
+import ColorRemover from 'components/colors/remover';
 
 import {actions as colorListActions} from 'redux/modules/colorList';
 import {actions as imageActions} from 'redux/modules/views/image';
@@ -42,18 +43,18 @@ export class ColorList extends Component {
     return (
       <div className={classes['container']}>
         <ul>
-          {
-            Object.keys(colors).map(
-              key =>
-                <ColorIndicator
-                  colorId={key}
-                  key={key}
-                  color={colors[key]}
-                  removeColor={removeColor}
-                  setColor={setColor}
-                />
-            )
-          }
+          {Object.keys(colors).map(key =>
+            <li key={key}>
+              <ColorIndicator
+                color={colors[key]}
+                setColor={setColor}
+              />
+              <ColorRemover
+                colorId={key}
+                removeColor={removeColor}
+              />
+            </li>
+          )}
         </ul>
       </div>
     );
