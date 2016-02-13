@@ -4,6 +4,10 @@ import {connect} from 'react-redux';
 import {actions} from 'redux/modules/views/settings';
 import {settingsViewType} from 'utils/propTypes';
 
+import AccesspointForm from './accesspoints';
+
+import {onInputChange} from 'utils/inputs';
+
 import classes from './SettingsView.scss';
 
 const mapStateToProps =
@@ -20,14 +24,9 @@ export class SettingsView extends Component {
   constructor(props) {
     super(props);
 
-    this.onInputChange = this.onInputChange.bind(this);
+    this.onInputChange = onInputChange.bind(this);
 
     this.state = props.settings || {};
-  }
-
-  onInputChange(e) {
-    const {name, value} = e.target;
-    this.setState({[name]: value});
   }
 
   render() {
@@ -81,6 +80,7 @@ export class SettingsView extends Component {
             </li>
           </ul>
         </div>
+        <AccesspointForm />
       </div>
     );
   }
