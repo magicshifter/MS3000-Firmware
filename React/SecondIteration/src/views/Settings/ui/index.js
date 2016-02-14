@@ -9,7 +9,7 @@ export const UiSettings =
       onSubmit={onFormSubmit}
     >
       <fieldset>
-        <legend>Webinterface:</legend>
+        <legend>Userinterface:</legend>
 
         <ul>
           <li style={{display: 'none'}} key='protocol'>
