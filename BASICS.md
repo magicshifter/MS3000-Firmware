@@ -29,7 +29,7 @@ OS Platforms:
 	
 Git:	2.7.0
 
-PlatformIO, version 2.7.1
+PlatformIO, version 2.8.3
 
 Python:	2.7.10
 
