@@ -1,4 +1,6 @@
-import {createAction, handleActions} from 'redux-actions';
+import {createAction} from 'redux-action';
+import {handleActions} from 'redux-actions';
+
 import Immutable from 'immutable';
 
 import {isColor, isNumber} from 'utils/types';

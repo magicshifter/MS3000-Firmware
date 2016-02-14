@@ -1,4 +1,5 @@
-import {createAction, handleActions} from 'redux-actions';
+import {createAction} from 'redux-action';
+import {handleActions} from 'redux-actions';
 import Immutable from 'immutable';
 
 import {text, fontId, fonts, textColor} from 'GLOBALS';
