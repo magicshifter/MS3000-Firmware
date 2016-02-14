@@ -61,7 +61,7 @@ void setup()
 
 	ServerConfig sysLogInfo;
 	// set up syslog ..
-	if (Settings.getSyslogConfig(&sysLogInfo))
+	if (msSystem.Settings.getSyslogConfig(&sysLogInfo))
 		msSystem.msSysLog.setup(sysLogInfo.hostname);
 
 	msSystem.msSysLog.

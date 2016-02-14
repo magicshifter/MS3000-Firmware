@@ -314,29 +314,6 @@ void handleFileListJson() {
 */
 
 
-#if 0
-void dumpSPIFFS_info()
-{
-	FSInfo linfo;
-	SPIFFS.info(&linfo);
-	msSystem.slog("linfo.maxOpenFiles =");
-	msSystem.slogln(linfo.maxOpenFiles);
-	msSystem.slog("linfo.blockSize =");
-	msSystem.slogln(linfo.blockSize);
-	msSystem.slog("linfo.pageSize =");
-	msSystem.slogln(linfo.pageSize);
-	msSystem.slog("linfo.maxOpenFiles =");
-	msSystem.slogln(linfo.maxOpenFds);
-	msSystem.slog("linfo.maxPathLength =");
-	msSystem.slogln(linfo.maxPathLength);
-	msSystem.slog("linfo.totalBytes =");
-	msSystem.slogln(linfo.totalBytes);
-	msSystem.slog("linfo.usedBytes = ");
-	msSystem.slogln(linfo.usedBytes);
-}
-#endif
-
-
 void handleFileUpload()
 {
 

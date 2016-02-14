@@ -151,6 +151,7 @@ class POVShakeSync {
 				activeMin.g = g;
 				activeMin.micros = msGlobals.ggCurrentMicros;
 				activeFramesMin2Max = 0;
+				max2minFrames = activeFramesMax2Min;
 			} else {
 				// TODO: timeout
 			}
@@ -159,7 +160,7 @@ class POVShakeSync {
 			if (g > (activeMin.g + hysteresis)) {
 				int lastV = max2minDelta;
 
-				max2minFrames = activeFramesMax2Min - activeFramesMin2Max;
+				//max2minFrames = activeFramesMax2Min - activeFramesMin2Max;
 
 				lastMin = activeMin;
 				max2minDelta = lastMin.micros - lastMax.micros;
@@ -169,8 +170,8 @@ class POVShakeSync {
 
 				frameStartTime =
 					lastMin.micros + min2maxDelta / 2 -
-					((((float) min2maxFrames) / min2maxDelta) * frames) /
-					2;
+					((((float) min2maxDelta) / min2maxFrames) * frames) / 2;
+					//((((float) min2maxFrames) / min2maxDelta) * frames) / 2;
 				// end previous frame since it wont fit anyway (we are allready moving in other dir)
 				isFrameIndexActive = false;
 
@@ -218,11 +219,13 @@ class POVShakeSync {
 				activeMax.g = g;
 				activeMax.micros = msGlobals.ggCurrentMicros;
 				activeFramesMax2Min = 0;
+				min2maxFrames = activeFramesMin2Max;
 			} else {
 			}
 
 			if (g < (activeMax.g - hysteresis)) {
-				min2maxFrames = activeFramesMin2Max - activeFramesMax2Min;
+				//min2maxFrames = activeFramesMin2Max - activeFramesMax2Min;
+				
 				lastMax = activeMax;
 				min2maxDelta = lastMax.micros - lastMin.micros;
 				searchMin = true;
@@ -230,9 +233,9 @@ class POVShakeSync {
 				firedPredictedExtremum = false;
 
 				frameStartTime =
-					lastMin.micros + max2minDelta / 2 -
-					((((float) max2minFrames) / max2minDelta) * frames) /
-					2;
+					lastMax.micros + max2minDelta / 2 -
+					((((float) max2minDelta) / max2minFrames) * frames) / 2;
+					//((((float) max2minFrames) / max2minDelta) * frames) / 2;
 				// end previous frame since it wont fit anyway (we are allready moving in other dir)
 				isFrameIndexActive = false;
 

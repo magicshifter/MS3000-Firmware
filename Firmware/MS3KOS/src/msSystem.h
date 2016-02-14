@@ -28,13 +28,310 @@
 void CommandInterfacePoll();
 
 class MagicShifterSystem;
+extern MagicShifterSystem msSystem;
+
+
 
 // TODO: all init and all sensors and leds in here :)
 // (accelerometer wuld also be a class but the MAgicShifter object has one ;)
 class MagicShifterSystem {
+	class SettingsManager {
+  private:
+	// used in resetAPList & getNextAP
+	int apListIndex = -1;
+	File apListFile;
+
+  private:
+	 bool loadData(String path, void *config, int len) {
+		if (SPIFFS.exists((char *) path.c_str())) {
+			File file = SPIFFS.open((char *) path.c_str(), "r");
+			 file.read((uint8_t *) config, len);
+			 file.close();
+			 return true;
+		} else {
+			msSystem.
+				slog("webserver: loadData: can not open config file ");
+			msSystem.slogln((char *) path.c_str());
+		}
+		return false;
+	}
+
+	bool saveData(String path, void *config, int len) {
+		File file = SPIFFS.open((char *) path.c_str(), "w");
+		if (file) {
+			file.write((uint8_t *) config, len);
+			file.close();
+			return true;
+		} else {
+			msSystem.slog("webserver: can not open config file ");
+			msSystem.slogln((char *) path.c_str());
+			return false;
+		}
+	}
+
+  public:
+	const String apConfigPath = "settings/ap.bin";
+	const String apServerConfigPath = "settings/server1.bin";
+	const String apListConfigPath = "settings/aplist1.bin";
+	const String apSysLogConfigPath = "settings/syslog.bin";
+	const String preferredAPConfigPath = "settings/preferredap.bin";
+	const String uiSettingsConfigPath = "settings/ui.bin";
+
+	bool getUIConfig(struct UIConfig *config) {
+		//msSystem.slog("config: sizeof ");
+		//msSystem.slogln(String(sizeof(*config)));
+		bool result = loadData(uiSettingsConfigPath, config, sizeof(*config));
+		if (!result) {
+			config->powerdownTimeUSB = 0;
+			config->powerdownTimeBattery = 1000 * 1000 * 10 * 60;
+			config->defaultBrightness = 2;
+		}
+		return result;
+	}
+
+	bool setUIConfig(struct UIConfig *config) {
+		return saveData(uiSettingsConfigPath, config, sizeof(*config));
+	}
+
+	bool getServerConfig(struct ServerConfig *config) {
+
+		String path = apServerConfigPath;
+		if (SPIFFS.exists((char *) path.c_str())) {
+			File file = SPIFFS.open((char *) path.c_str(), "r");
+			file.read((uint8_t *) config, sizeof(*config));
+			file.close();
+			return true;
+		} else {
+			msSystem.slog("webserver: no server config file? ");
+			msSystem.slogln((char *) path.c_str());
+		}
+
+		return false;
+	}
+
+	void setServerConfig(struct ServerConfig *config) {
+
+		String path = apServerConfigPath;
+		File file = SPIFFS.open((char *) path.c_str(), "w");
+		file.write((uint8_t *) config, sizeof(*config));
+
+		file.close();
+
+	}
+
+	bool getSyslogConfig(struct ServerConfig *config) {
+
+		String path = apSysLogConfigPath;
+		if (SPIFFS.exists((char *) path.c_str())) {
+			File file = SPIFFS.open((char *) path.c_str(), "r");
+			file.read((uint8_t *) config, sizeof(*config));
+			file.close();
+			return true;
+		} else {
+			msSystem.slog("webserver: no syslog config file? ");
+			msSystem.slogln((char *) path.c_str());
+		}
+
+		return false;
+	}
+
+	void setSyslogConfig(struct ServerConfig *config) {
+
+		String path = apSysLogConfigPath;
+		File file = SPIFFS.open((char *) path.c_str(), "w");
+		file.write((uint8_t *) config, sizeof(*config));
+
+		file.close();
+
+	}
+
+	bool getAPConfig(struct APInfo *config) {
+
+		String path = apConfigPath;
+		if (SPIFFS.exists((char *) path.c_str())) {
+			File file = SPIFFS.open((char *) path.c_str(), "r");
+			file.read((uint8_t *) config, sizeof(*config));
+			file.close();
+			return true;
+		} else {
+			msSystem.slogln("webserver: AP config missing:");
+			msSystem.slogln((char *) path.c_str());
+		}
+
+
+#ifdef AP_NAME_OVERRIDE
+		l_safeStrncpy(config->ssid, AP_NAME_OVERRIDE,
+					  sizeof(config->ssid));
+		l_safeStrncpy(config->password, "", sizeof(config->password));
+#endif
+
+		return false;
+	}
+
+	void setAPConfig(struct APInfo *config) {
+
+		String path = apConfigPath;
+		File file = SPIFFS.open((char *) path.c_str(), "w");
+		file.write((uint8_t *) config, sizeof(*config));
+		file.close();
+
+		msSystem.slogln("webserver: saved:");
+		msSystem.slogln(config->ssid);
+
+	}
+
+	bool getPreferredAP(struct APInfo *config) {
+
+		String path = preferredAPConfigPath;
+		if (SPIFFS.exists((char *) path.c_str())) {
+			File file = SPIFFS.open((char *) path.c_str(), "r");
+			file.read((uint8_t *) config, sizeof(*config));
+			file.close();
+			return true;
+		}
+		l_safeStrncpy(config->ssid, "", sizeof(config->ssid));
+		l_safeStrncpy(config->password, "", sizeof(config->password));
+		return false;
+
+	}
+
+	void setPreferredAP(struct APInfo *config) {
+
+		String path = preferredAPConfigPath;
+		File file = SPIFFS.open((char *) path.c_str(), "w");
+		file.write((uint8_t *) config, sizeof(*config));
+		file.close();
+
+	}
+
+	void deleteAP(char *ssid) {
+
+		String path = apListConfigPath;
+		File apListFile = SPIFFS.open((char *) path.c_str(), "a+");
+
+		APInfo apInfoDummy;
+		const int requiredBytes = sizeof(apInfoDummy);
+		int apListIndex = 0;
+
+		int lastPos = apListFile.position();
+
+		while (apListFile.read((uint8_t *) & apInfoDummy, requiredBytes) ==
+			   requiredBytes) {
+			if (strcmp(apInfoDummy.ssid, ssid) == 0) {
+				msSystem.slogln("webserver: deleting wifi:");
+				msSystem.slogln(ssid);
+
+				apInfoDummy.clear();
+				int calcPos = apListIndex * requiredBytes;
+				apListFile.seek(calcPos, SeekSet);
+				apListFile.write((uint8_t *) & apInfoDummy, requiredBytes);
+				break;
+			}
+			apListIndex++;
+			lastPos = apListFile.position();
+		}
+		apListFile.close();
+
+	}
+
+	void addAP(struct APInfo *apInfo) {
+
+		String path = apListConfigPath;
+		const int requiredBytes = sizeof(*apInfo);
+		APInfo apInfoDummy;
+		int apListIndex = 0;
+		int firstFreePos = -1;
+		File apListFile = SPIFFS.open((char *) path.c_str(), "r");
+
+		if (!apListFile) {
+			msSystem.slog("webserver: cannot open file:");
+			msSystem.slogln(path);
+		} else {
+			while (apListFile.
+				   read((uint8_t *) & apInfoDummy,
+						requiredBytes) == requiredBytes) {
+				if (firstFreePos < 0
+					&& msSystem.msEEPROMs.
+					memcmpByte((byte *) & apInfoDummy, 0, requiredBytes)) {
+					firstFreePos = apListIndex * requiredBytes;
+				} else if (strcmp(apInfoDummy.ssid, apInfo->ssid) == 0) {
+					firstFreePos = apListIndex * requiredBytes;
+					break;
+				}
+				apListIndex++;
+			}
+			apListFile.close();
+		}
+
+		if (firstFreePos >= 0) {
+			msSystem.slogln("found hole!");
+			msSystem.slogln(String(firstFreePos));
+			apListFile = SPIFFS.open((char *) path.c_str(), "a+");
+			apListFile.seek(firstFreePos, SeekSet);
+		} else {
+			msSystem.slogln("appending at end");
+			apListFile = SPIFFS.open((char *) path.c_str(), "A");
+
+			if (!apListFile) {
+				msSystem.slogln("creating new file");
+				apListFile = SPIFFS.open((char *) path.c_str(), "w");
+			}
+		}
+
+		if (!apListFile) {
+			msSystem.slog("webserver: creation failed: ");
+			msSystem.slogln(path);
+		} else {
+			apListFile.write((uint8_t *) apInfo, requiredBytes);
+			apListFile.close();
+			msSystem.slog("webserver: configuration saved: ");
+			msSystem.slogln(path);
+		}
+
+
+	}
+
+	void resetAPList() {
+		apListIndex = -1;
+		apListFile.close();
+
+	}
+
+	bool getNextAP(struct APInfo *apInfo) {
+		if (apListIndex < 0) {
+			String path = apListConfigPath;
+			if (SPIFFS.exists((char *) path.c_str())) {
+				apListFile = SPIFFS.open((char *) path.c_str(), "r");
+				apListIndex = 0;
+			}
+		}
+
+		if (apListIndex >= 0) {
+			const int requiredBytes = sizeof(*apInfo);
+			do {
+				if (apListFile.read((uint8_t *) apInfo, requiredBytes) ==
+					requiredBytes) {
+					apListIndex++;
+					if (!msSystem.msEEPROMs.
+						memcmpByte((byte *) apInfo, 0, requiredBytes))
+						return true;
+				} else {
+					return false;
+				}
+			} while (true);
+		} else {
+			return false;
+		}
+		///hack
+		return false;
+	}
+};
+
+
   private:
 
   public:
+  	SettingsManager Settings;
 	MagicShifterSysLog msSysLog;
 	// todo: protect
 	MagicShifterAccelerometer msSensor;
@@ -149,9 +446,31 @@ class MagicShifterSystem {
 		slog("uploadfile: ");
 		slogln(msGlobals.ggUploadFileName);
 
+		FSInfo linfo;
+		SPIFFS.info(linfo);
+
+		slog("linfo.blockSize =");
+		slogln(String(linfo.blockSize));
+		slog("linfo.pageSize =");
+		slogln(String(linfo.pageSize));
+		slog("linfo.maxOpenFiles =");
+		slogln(String(linfo.maxOpenFiles));
+		slog("linfo.maxPathLength =");
+		slogln(String(linfo.maxPathLength));
+		slog("linfo.totalBytes =");
+		slogln(String(linfo.totalBytes));
+		slog("linfo.usedBytes = ");
+		slogln(String(linfo.usedBytes));
+
 		slog("Reset info: ");
 		slogln(String(ESP.getResetInfo()));
 
+		slog("powerdownTimeUSB: ");
+		slogln(String(msUIConfig.powerdownTimeUSB));
+		slog("powerdownTimeBattery: ");
+		slogln(String(msUIConfig.powerdownTimeBattery));
+		slog("defaultBrightness: ");
+		slogln(String(msUIConfig.defaultBrightness));
 	};
 
 
@@ -273,7 +592,7 @@ class MagicShifterSystem {
 		}
 	}
 
-#define BRIGHTNESS_CONTROL_TIME (1000 * 1000)
+#define BRIGHTNESS_CONTROL_TIME (850 * 1000)
 
 	uint8_t BrightnessLevels[16] = { 1, 2, 3, 4,
 		5, 6, 7, 8,
@@ -487,6 +806,9 @@ class MagicShifterSystem {
 		msLEDs.initLEDBuffer();
 
 		EEPROM.begin(512);
+		Serial.begin(921600);
+		slogln(String("\r\nMagicShifter 3000 OS V" + String(MS3KOS_VERSION)));
+
 		// wake up filesystem
 		slog("SPIFFS:");
 
@@ -495,10 +817,13 @@ class MagicShifterSystem {
 		else
 			slog("noSPIFFS:");
 
+		Settings.getUIConfig(&msUIConfig);
+
+		msGlobals.ggBrightness = msUIConfig.defaultBrightness;
+
 		msLEDs.bootSwipe();
 
-		Serial.begin(921600);
-		slogln(String("\r\nMagicShifter 3000 OS V" + String(MS3KOS_VERSION)));
+		
 
 		// all engines turn on
 		pinMode(PIN_PWR_MGT, INPUT);
@@ -552,25 +877,14 @@ class MagicShifterSystem {
 			msPowerCountDown = msGlobals.ggCurrentMicros;
 		}
 
-		if (msPowerCountDown < msGlobals.ggCurrentMicros - POWER_TIMEOUT) {
-			powerDown();
+		if (msUIConfig.powerdownTimeBattery != 0) {
+			if (msPowerCountDown < msGlobals.ggCurrentMicros - POWER_TIMEOUT) {
+				powerDown();
+			}
 		}
 
-
-		if (msButtons.msBtnADoubleHit || msButtons.msBtnBDoubleHit) {
-			if (modeMenuActivated) {
-				if (msButtons.msBtnADoubleHit) {
-					msButtons.msBtnADoubleHit = false;
-					msButtons.msBtnAHit = true;
-				}
-				if (msButtons.msBtnBDoubleHit) {
-					msButtons.msBtnBDoubleHit = false;
-					msButtons.msBtnBHit = true;
-				}
-			}
-			else {
-				msButtons.msBtnADoubleHit = false;
-				msButtons.msBtnBDoubleHit = false;
+		if (msButtons.checkMenueEnterCondition()) {
+			if (!modeMenuActivated) {
 				modeMenuActivated = true;
 				feedbackAnimation(msGlobals.feedbackType::MODE_MENU);
 			}

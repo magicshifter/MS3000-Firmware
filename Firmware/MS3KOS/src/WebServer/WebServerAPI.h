@@ -3,301 +3,6 @@
 
 #include "Base64.h"
 
-class SettingsManager {
-  private:
-	// used in resetAPList & getNextAP
-	int apListIndex = -1;
-	File apListFile;
-
-  private:
-	 bool loadData(String path, void *config, int len) {
-		if (SPIFFS.exists((char *) path.c_str())) {
-			File file = SPIFFS.open((char *) path.c_str(), "r");
-			 file.read((uint8_t *) config, len);
-			 file.close();
-			 return true;
-		} else {
-			msSystem.
-				slog("webserver: loadData: can not open config file ");
-			msSystem.slogln((char *) path.c_str());
-		}
-		return false;
-	}
-
-	bool saveData(String path, void *config, int len) {
-		File file = SPIFFS.open((char *) path.c_str(), "w");
-		if (file) {
-			file.write((uint8_t *) config, len);
-			file.close();
-			return true;
-		} else {
-			msSystem.slog("webserver: can not open config file ");
-			msSystem.slogln((char *) path.c_str());
-			return false;
-		}
-	}
-
-  public:
-	const String apConfigPath = "settings/ap.bin";
-	const String apServerConfigPath = "settings/server1.bin";
-	const String apListConfigPath = "settings/aplist1.bin";
-	const String apSysLogConfigPath = "settings/syslog.bin";
-	const String preferredAPConfigPath = "settings/preferredap.bin";
-	const String uiSettingsConfigPath = "settings/ui.bin";
-
-	bool getUIConfig(struct UIConfig *config) {
-		// msSystem.slog("config: sizeof ");
-		//  msSystem.slogln(sizeof(*config));
-		bool result = loadData(uiSettingsConfigPath, config, sizeof(*config));
-		if (!result) {
-			config->powerdownTimeUSB = 0;
-			config->powerdownTimeBattery = 1000 * 1000 * 10 * 60;
-			config->defaultBrightness = 2;
-		}
-		return result;
-	}
-
-	bool setUIConfig(struct UIConfig *config) {
-		return saveData(uiSettingsConfigPath, config, sizeof(*config));
-	}
-
-	bool getServerConfig(struct ServerConfig *config) {
-
-		String path = apServerConfigPath;
-		if (SPIFFS.exists((char *) path.c_str())) {
-			File file = SPIFFS.open((char *) path.c_str(), "r");
-			file.read((uint8_t *) config, sizeof(*config));
-			file.close();
-			return true;
-		} else {
-			msSystem.slog("webserver: no server config file? ");
-			msSystem.slogln((char *) path.c_str());
-		}
-
-		return false;
-	}
-
-	void setServerConfig(struct ServerConfig *config) {
-
-		String path = apServerConfigPath;
-		File file = SPIFFS.open((char *) path.c_str(), "w");
-		file.write((uint8_t *) config, sizeof(*config));
-
-		file.close();
-
-	}
-
-	bool getSyslogConfig(struct ServerConfig *config) {
-
-		String path = apSysLogConfigPath;
-		if (SPIFFS.exists((char *) path.c_str())) {
-			File file = SPIFFS.open((char *) path.c_str(), "r");
-			file.read((uint8_t *) config, sizeof(*config));
-			file.close();
-			return true;
-		} else {
-			msSystem.slog("webserver: no syslog config file? ");
-			msSystem.slogln((char *) path.c_str());
-		}
-
-		return false;
-	}
-
-	void setSyslogConfig(struct ServerConfig *config) {
-
-		String path = apSysLogConfigPath;
-		File file = SPIFFS.open((char *) path.c_str(), "w");
-		file.write((uint8_t *) config, sizeof(*config));
-
-		file.close();
-
-	}
-
-	bool getAPConfig(struct APInfo *config) {
-
-		String path = apConfigPath;
-		if (SPIFFS.exists((char *) path.c_str())) {
-			File file = SPIFFS.open((char *) path.c_str(), "r");
-			file.read((uint8_t *) config, sizeof(*config));
-			file.close();
-			return true;
-		} else {
-			msSystem.slogln("webserver: AP config missing:");
-			msSystem.slogln((char *) path.c_str());
-		}
-
-
-#ifdef AP_NAME_OVERRIDE
-		l_safeStrncpy(config->ssid, AP_NAME_OVERRIDE,
-					  sizeof(config->ssid));
-		l_safeStrncpy(config->password, "", sizeof(config->password));
-#endif
-
-		return false;
-	}
-
-	void setAPConfig(struct APInfo *config) {
-
-		String path = apConfigPath;
-		File file = SPIFFS.open((char *) path.c_str(), "w");
-		file.write((uint8_t *) config, sizeof(*config));
-		file.close();
-
-		msSystem.slogln("webserver: saved:");
-		msSystem.slogln(config->ssid);
-
-	}
-
-	bool getPreferredAP(struct APInfo *config) {
-
-		String path = preferredAPConfigPath;
-		if (SPIFFS.exists((char *) path.c_str())) {
-			File file = SPIFFS.open((char *) path.c_str(), "r");
-			file.read((uint8_t *) config, sizeof(*config));
-			file.close();
-			return true;
-		}
-		l_safeStrncpy(config->ssid, "", sizeof(config->ssid));
-		l_safeStrncpy(config->password, "", sizeof(config->password));
-		return false;
-
-	}
-
-	void setPreferredAP(struct APInfo *config) {
-
-		String path = preferredAPConfigPath;
-		File file = SPIFFS.open((char *) path.c_str(), "w");
-		file.write((uint8_t *) config, sizeof(*config));
-		file.close();
-
-	}
-
-	void deleteAP(char *ssid) {
-
-		String path = apListConfigPath;
-		File apListFile = SPIFFS.open((char *) path.c_str(), "a+");
-
-		APInfo apInfoDummy;
-		const int requiredBytes = sizeof(apInfoDummy);
-		int apListIndex = 0;
-
-		int lastPos = apListFile.position();
-
-		while (apListFile.read((uint8_t *) & apInfoDummy, requiredBytes) ==
-			   requiredBytes) {
-			if (strcmp(apInfoDummy.ssid, ssid) == 0) {
-				msSystem.slogln("webserver: deleting wifi:");
-				msSystem.slogln(ssid);
-
-				apInfoDummy.clear();
-				int calcPos = apListIndex * requiredBytes;
-				apListFile.seek(calcPos, SeekSet);
-				apListFile.write((uint8_t *) & apInfoDummy, requiredBytes);
-				break;
-			}
-			apListIndex++;
-			lastPos = apListFile.position();
-		}
-		apListFile.close();
-
-	}
-
-	void addAP(struct APInfo *apInfo) {
-
-		String path = apListConfigPath;
-		const int requiredBytes = sizeof(*apInfo);
-		APInfo apInfoDummy;
-		int apListIndex = 0;
-		int firstFreePos = -1;
-		File apListFile = SPIFFS.open((char *) path.c_str(), "r");
-
-		if (!apListFile) {
-			msSystem.slog("webserver: cannot open file:");
-			msSystem.slogln(path);
-		} else {
-			while (apListFile.
-				   read((uint8_t *) & apInfoDummy,
-						requiredBytes) == requiredBytes) {
-				if (firstFreePos < 0
-					&& msSystem.msEEPROMs.
-					memcmpByte((byte *) & apInfoDummy, 0, requiredBytes)) {
-					firstFreePos = apListIndex * requiredBytes;
-				} else if (strcmp(apInfoDummy.ssid, apInfo->ssid) == 0) {
-					firstFreePos = apListIndex * requiredBytes;
-					break;
-				}
-				apListIndex++;
-			}
-			apListFile.close();
-		}
-
-		if (firstFreePos >= 0) {
-			msSystem.slogln("found hole!");
-			msSystem.slogln(String(firstFreePos));
-			apListFile = SPIFFS.open((char *) path.c_str(), "a+");
-			apListFile.seek(firstFreePos, SeekSet);
-		} else {
-			msSystem.slogln("appending at end");
-			apListFile = SPIFFS.open((char *) path.c_str(), "A");
-
-			if (!apListFile) {
-				msSystem.slogln("creating new file");
-				apListFile = SPIFFS.open((char *) path.c_str(), "w");
-			}
-		}
-
-		if (!apListFile) {
-			msSystem.slog("webserver: creation failed: ");
-			msSystem.slogln(path);
-		} else {
-			apListFile.write((uint8_t *) apInfo, requiredBytes);
-			apListFile.close();
-			msSystem.slog("webserver: configuration saved: ");
-			msSystem.slogln(path);
-		}
-
-
-	}
-
-	void resetAPList() {
-		apListIndex = -1;
-		apListFile.close();
-
-	}
-
-	bool getNextAP(struct APInfo *apInfo) {
-		if (apListIndex < 0) {
-			String path = apListConfigPath;
-			if (SPIFFS.exists((char *) path.c_str())) {
-				apListFile = SPIFFS.open((char *) path.c_str(), "r");
-				apListIndex = 0;
-			}
-		}
-
-		if (apListIndex >= 0) {
-			const int requiredBytes = sizeof(*apInfo);
-			do {
-				if (apListFile.read((uint8_t *) apInfo, requiredBytes) ==
-					requiredBytes) {
-					apListIndex++;
-					if (!msSystem.msEEPROMs.
-						memcmpByte((byte *) apInfo, 0, requiredBytes))
-						return true;
-				} else {
-					return false;
-				}
-			} while (true);
-		} else {
-			return false;
-		}
-		///hack
-		return false;
-	}
-};
-
-SettingsManager Settings;
-
-
 void handleGETInfo(void)
 {
 	msSystem.slogln("handleGETInfo");
@@ -438,7 +143,7 @@ void handleGetSettings(void)
 	msSystem.slogln("handleGetSettings");
 
 	ServerConfig config;
-	Settings.getServerConfig(&config);
+	msSystem.Settings.getServerConfig(&config);
 
 	String response = "<!DOCTYPE html><html><head></head><body>";;
 	response += "<h3>Urls</h3>";
@@ -471,7 +176,7 @@ void handleGETServerSettings(void)
 	msSystem.slogln("handleGETServerSettings");
 
 	ServerConfig config;
-	Settings.getServerConfig(&config);
+	msSystem.Settings.getServerConfig(&config);
 
 	String response = "{";
 	response += "\"host\":";
@@ -490,7 +195,7 @@ void handlePOSTServerSettings(void)
 	msSystem.slogln("handlePOSTServerSettings");
 	if (msSystem.msESPServer.args() >= 2) {
 		ServerConfig config;
-		Settings.getServerConfig(&config);
+		msSystem.Settings.getServerConfig(&config);
 
 		bool success = true;
 		for (int i = 0; i < msSystem.msESPServer.args(); i++) {
@@ -515,7 +220,7 @@ void handlePOSTServerSettings(void)
 		}
 
 		if (success) {
-			Settings.setServerConfig(&config);
+			msSystem.Settings.setServerConfig(&config);
 			msSystem.msESPServer.send(200, "text/plain", "OK");
 		} else {
 			msSystem.msESPServer.send(500, "text/plain", "invalid args!");
@@ -530,7 +235,7 @@ void handleGETAPSettings(void)
 	msSystem.slogln("handleGETAPSettings");
 
 	APInfo apInfo;
-	Settings.getAPConfig(&apInfo);
+	msSystem.Settings.getAPConfig(&apInfo);
 
 	String response = "{";
 	response += "\"ssid\":";
@@ -551,11 +256,11 @@ void handlePOSTAPSettings(void)
 	if (msSystem.msESPServer.args() >= 2) {
 		// load old settings
 		APInfo apInfo;
-		Settings.getAPConfig(&apInfo);
+		msSystem.Settings.getAPConfig(&apInfo);
 
 		if (parseAPInfoFromServerArgs(apInfo)) {
 			msSystem.slogln("saving setAPConfig");
-			Settings.setAPConfig(&apInfo);
+			msSystem.Settings.setAPConfig(&apInfo);
 			msSystem.msESPServer.send(200, "text/plain", "OK");
 		} else {
 			msSystem.msESPServer.send(500, "text/plain", "unknown args!");
@@ -571,7 +276,7 @@ void handleGETSysLogHostSettings(void)
 	msSystem.slogln("handleGETSysLogHostSettings");
 
 	ServerConfig sysLogInfo;
-	Settings.getSyslogConfig(&sysLogInfo);
+	msSystem.Settings.getSyslogConfig(&sysLogInfo);
 
 	String response = "{";
 	response += "\"syslog_host\":";
@@ -589,11 +294,11 @@ void handlePOSTSysLogSettings(void)
 	if (msSystem.msESPServer.args() >= 2) {
 		// load old settings
 		ServerConfig sysLogInfo;
-		Settings.getSyslogConfig(&sysLogInfo);
+		msSystem.Settings.getSyslogConfig(&sysLogInfo);
 
 		if (parseSysLogInfoFromServerArgs(sysLogInfo)) {
 			msSystem.slogln("saving setSysLogConfig");
-			Settings.setSyslogConfig(&sysLogInfo);
+			msSystem.Settings.setSyslogConfig(&sysLogInfo);
 			msSystem.msESPServer.send(200, "text/plain", "OK");
 		} else {
 			msSystem.msESPServer.send(500, "text/plain", "unknown args!");
@@ -610,7 +315,7 @@ void handleGETPreferredAPSettings(void)
 	msSystem.slogln("handleGETPreferredAPSettings");
 
 	APInfo apInfo;
-	Settings.getPreferredAP(&apInfo);
+	msSystem.Settings.getPreferredAP(&apInfo);
 
 	String response = "{";
 	response += "\"ssid\":";
@@ -630,11 +335,11 @@ void handlePOSTPreferredAPSettings(void)
 
 	if (msSystem.msESPServer.args() >= 2) {
 		APInfo apInfo;
-		Settings.getPreferredAP(&apInfo);
+		msSystem.Settings.getPreferredAP(&apInfo);
 
 		if (parseAPInfoFromServerArgs(apInfo)) {
 			msSystem.slogln("saving setAPConfig");
-			Settings.setPreferredAP(&apInfo);
+			msSystem.Settings.setPreferredAP(&apInfo);
 			msSystem.msESPServer.send(200, "text/plain", "OK");
 		} else {
 			msSystem.msESPServer.send(500, "text/plain", "unknown args!");
@@ -653,13 +358,13 @@ void handleGETAPList(void)
 	msSystem.slogln("handleGETAPList");
 
 	APInfo apInfo;
-	Settings.getPreferredAP(&apInfo);
+	msSystem.Settings.getPreferredAP(&apInfo);
 
 	String response = "[";
 
-	Settings.resetAPList();
+	msSystem.Settings.resetAPList();
 	bool firstAP = true;
-	while (Settings.getNextAP(&apInfo)) {
+	while (msSystem.Settings.getNextAP(&apInfo)) {
 		if (!firstAP) {
 			response += ",";
 		}
@@ -675,7 +380,7 @@ void handleGETAPList(void)
 		response += "}";
 	}
 	response += "]";
-	Settings.resetAPList();
+	msSystem.Settings.resetAPList();
 
 	msSystem.msESPServer.send(200, "text/plain", response);
 }
@@ -718,7 +423,7 @@ void handleGETWLANList(void)
 
 
 	response += "]";
-	Settings.resetAPList();
+	msSystem.Settings.resetAPList();
 
 	msSystem.msESPServer.send(200, "text/plain", response);
 }
@@ -735,7 +440,7 @@ void handlePOSTAPListAdd(void)
 		if (parseAPInfoFromServerArgs(apInfo)) {
 			if (!strcmp(apInfo.ssid, "") == 0) {
 				msSystem.slogln("adding wifi");
-				Settings.addAP(&apInfo);
+				msSystem.Settings.addAP(&apInfo);
 			}
 			msSystem.msESPServer.send(200, "text/plain", "OK");
 		} else {
@@ -758,7 +463,7 @@ void handlePOSTAPListDelete(void)
 		if (parseAPInfoFromServerArgs(apInfo)) {
 			if (!strcmp(apInfo.ssid, "") == 0) {
 				msSystem.slogln("deleting wifi");
-				Settings.deleteAP(apInfo.ssid);
+				msSystem.Settings.deleteAP(apInfo.ssid);
 			}
 			msSystem.msESPServer.send(200, "text/plain", "OK");
 		} else {
@@ -775,7 +480,7 @@ void handleSetMode(void)
 	msSystem.slogln("handleSetMode");
 	if (msSystem.msESPServer.args() == 1) {
 		ServerConfig config;
-		Settings.getServerConfig(&config);
+		msSystem.Settings.getServerConfig(&config);
 
 		bool success = true;
 		for (int i = 0; i < msSystem.msESPServer.args(); i++) {
@@ -912,7 +617,7 @@ void handleGetUISettings(void)
   msSystem.slogln("handleGetUISettings");
 
   UIConfig config;
-  Settings.getUIConfig(&config);
+  msSystem.Settings.getUIConfig(&config);
 
   String response = "{";
     response += "\"powerdownTimeUSB\":";
@@ -933,7 +638,7 @@ void handleSetUISettings(void)
   if (msSystem.msESPServer.args() >= 1)
   {
     UIConfig config;
-    Settings.getUIConfig(&config);
+    msSystem.Settings.getUIConfig(&config);
 
     bool success = true;
     for (int i = 0; i < msSystem.msESPServer.args(); i++)
@@ -964,7 +669,7 @@ void handleSetUISettings(void)
 
     if (success)
     {
-      Settings.setUIConfig(&config);
+      msSystem.Settings.setUIConfig(&config);
       msSystem.msESPServer.send (200, "text/plain", "OK");
     }
     else
