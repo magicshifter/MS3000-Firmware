@@ -11,8 +11,6 @@ import {onInputChange} from 'utils/inputs';
 
 import classes from './SettingsView.scss';
 
-import GLOBALS from 'GLOBALS';
-
 const mapStateToProps =
   state => ({
     settings: state.settingsView.toJS(),
@@ -27,15 +25,12 @@ export class SettingsView extends Component {
   constructor(props) {
     super(props);
 
+    const {settings} = props;
+
     // this.inputChange = onInputChange.bind(this);
     this.formSubmit = this.formSubmit.bind(this);
 
-    this.state = props.settings || {
-      ssid: GLOBALS.ssid || '',
-      syslogIp: GLOBALS.syslogIp || '',
-      host: GLOBALS.host || '',
-      protocol: GLOBALS.protocol || '',
-    };
+    this.state = settings || {};
   }
 
   inputChange(e) {

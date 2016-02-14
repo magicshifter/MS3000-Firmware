@@ -3,7 +3,13 @@ import Immutable from 'immutable';
 
 import * as GLOBALS from 'GLOBALS';
 
-const defaultValues = {protocol: GLOBALS.protocol, host: GLOBALS.host};
+const defaultValues = {
+  protocol: GLOBALS.protocol,
+  host: GLOBALS.host,
+  syslogIp: GLOBALS.syslogIp,
+  ssid: GLOBALS.ssid,
+};
+
 const initialState = Immutable.Map(defaultValues);
 
 // ------------------------------------
