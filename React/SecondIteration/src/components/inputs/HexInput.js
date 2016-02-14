@@ -1,9 +1,9 @@
-import React, {Component, PropTypes} from 'react';
+import React, { Component, PropTypes } from 'react';
 import rgba from 'rgba-convert';
 
-import {colorType, hexStringType} from 'utils/propTypes';
+import { colorType, hexStringType } from 'utils/propTypes';
 
-import {isHexColor} from 'utils/types';
+import { isHexColor } from 'utils/types';
 
 import classes from './HexInput.scss';
 
@@ -22,8 +22,8 @@ export default class HexInput extends Component {
   }
 
   handleColorChange(e) {
-    const {setColor} = this.props;
-    const {value} = e.target;
+    const { setColor } = this.props;
+    const { value } = e.target;
     const hex = this.cleanHex(value);
     const rgb = rgba.obj(hex);
 
@@ -43,7 +43,7 @@ export default class HexInput extends Component {
   }
 
   render() {
-    const {currentColor} = this.state;
+    const { currentColor } = this.state;
     const currentHex = this.cleanHex(currentColor);
 
     return (

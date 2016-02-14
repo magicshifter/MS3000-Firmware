@@ -2,9 +2,9 @@
 
 import Immutable from 'immutable';
 
-import {defaultLedColor as color} from 'GLOBALS';
+import { defaultLedColor as color } from 'GLOBALS';
 
-import {isFunction, isObject} from 'utils/types';
+import { isFunction, isObject } from 'utils/types';
 
 export const getPixelId =
   (columns, column, row) =>
@@ -36,7 +36,7 @@ export const makePixelImmutable =
   pixel =>
     Immutable.Map({
       ...pixel,
-      ...{color: Immutable.Map(pixel.color)},
+      ...{ color: Immutable.Map(pixel.color) },
     });
 
 export const makePixelsImmutable =

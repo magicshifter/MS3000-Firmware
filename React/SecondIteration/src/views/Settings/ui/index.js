@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react';
 import classes from './UiSettings.scss';
 
 export const UiSettings =
-  ({protocol, host, syslogIp, onInputChange, onFormSubmit}) =>
+  ({ protocol, host, syslogIp, onInputChange, onFormSubmit }) =>
     <form
       className={classes['container']}
       onSubmit={onFormSubmit}
@@ -12,7 +12,7 @@ export const UiSettings =
         <legend>Userinterface:</legend>
 
         <ul>
-          <li style={{display: 'none'}} key='protocol'>
+          <li style={{ display: 'none' }} key='protocol'>
             <label>protocol:</label>
             <input
               type='text'

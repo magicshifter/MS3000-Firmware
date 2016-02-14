@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 import classes from './Sidebar.scss';
 
 export const Sidebar =
-  ({children}) => (
+  ({ children }) => (
     <aside className={classes['container']}>
       <Link
         to='/'

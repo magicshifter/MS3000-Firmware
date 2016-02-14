@@ -1,18 +1,18 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 import rgba from 'rgba-convert';
 
-import {getIconCssClass} from 'utils/icons';
+import { getIconCssClass } from 'utils/icons';
 
-import {colorType} from 'utils/propTypes';
+import { colorType } from 'utils/propTypes';
 
 export const ColorIndicator =
-  ({color, setColor}) =>
+  ({ color, setColor }) =>
     <i
       className={getIconCssClass('colors')}
       style={{
         color: rgba.css(color),
       }}
-      onClick={() => setColor({color})}
+      onClick={() => setColor({ color })}
     />;
 
 ColorIndicator.propTypes = {

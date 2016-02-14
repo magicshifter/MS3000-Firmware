@@ -1,15 +1,15 @@
-import React, {PropTypes, Component} from 'react';
-import {connect} from 'react-redux';
+import React, { PropTypes, Component } from 'react';
+import { connect } from 'react-redux';
 import rgba from 'rgba-convert';
 
-import {colorType, pixelType} from 'utils/propTypes';
+import { colorType, pixelType } from 'utils/propTypes';
 
-import {actions} from 'redux/modules/pixels';
+import { actions } from 'redux/modules/pixels';
 
 import classes from './Pixel.scss';
 
 const mapStateToProps =
-  ({imageView}) => {
+  ({ imageView }) => {
     return {
       color: imageView.get('color'),
       rows: imageView.get('rows'),
@@ -37,16 +37,16 @@ export class Pixel extends Component {
   }
 
   onMouseOver(args) {
-    const {pixelHover, color} = this.props;
-    const {e, pixel} = args;
+    const { pixelHover, color } = this.props;
+    const { e, pixel } = args;
 
     if (e.buttons === 1) {
-      pixelHover({pixel, color});
+      pixelHover({ pixel, color });
     }
   }
 
   render() {
-    const {pixel, pixelClick, color, size} = this.props;
+    const { pixel, pixelClick, color, size } = this.props;
 
     const style = {
       backgroundColor: rgba.css(pixel.color),
@@ -57,8 +57,8 @@ export class Pixel extends Component {
     return (
       <td
         className={classes['container']}
-        onMouseDown={() => pixelClick({pixel, color})}
-        onMouseOver={e => this.onMouseOver({e, pixel})}
+        onMouseDown={() => pixelClick({ pixel, color })}
+        onMouseOver={e => this.onMouseOver({ e, pixel })}
         style={style}
       ></td>
     );

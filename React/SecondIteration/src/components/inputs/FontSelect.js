@@ -1,16 +1,16 @@
-import React, {PropTypes, Component} from 'react';
-import {connect} from 'react-redux';
+import React, { PropTypes, Component } from 'react';
+import { connect } from 'react-redux';
 
-import {actions} from 'redux/modules/views/text';
+import { actions } from 'redux/modules/views/text';
 
-import {toInt} from 'utils/types';
-import {fontType} from 'utils/propTypes';
+import { toInt } from 'utils/types';
+import { fontType } from 'utils/propTypes';
 
 import classes from './FontSelect.scss';
 
 const mapStateToProps =
-  ({textView}) => {
-    const {fonts, fontId} = textView.toJS();
+  ({ textView }) => {
+    const { fonts, fontId } = textView.toJS();
     return {
       fonts,
       fontId,
@@ -26,7 +26,7 @@ export class FontSelect extends Component {
   };
 
   render() {
-    const {fonts, fontId, setFont} = this.props;
+    const { fonts, fontId, setFont } = this.props;
 
     return (
       <ul className={classes['container']}>

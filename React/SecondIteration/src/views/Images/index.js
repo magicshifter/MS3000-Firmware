@@ -1,7 +1,7 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
-import {actions} from 'redux/modules/views/image';
+import { actions } from 'redux/modules/views/image';
 
 import ImageInput from 'components/inputs/ImageInput';
 

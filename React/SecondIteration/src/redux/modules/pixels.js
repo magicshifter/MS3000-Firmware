@@ -1,12 +1,12 @@
-import {createAction} from 'redux-action';
-import {handleActions} from 'redux-actions';
+import { createAction } from 'redux-action';
+import { handleActions } from 'redux-actions';
 import Immutable from 'immutable';
 
-import {isObject} from 'utils/types';
-import {createImmutablePixels, makePixelsImmutable} from 'utils/pixels';
-import {invert, lighten, darken} from 'utils/colors';
+import { isObject } from 'utils/types';
+import { createImmutablePixels, makePixelsImmutable } from 'utils/pixels';
+import { invert, lighten, darken } from 'utils/colors';
 
-import {rows, totalColumns, visibleColumns, defaultLedColor} from 'GLOBALS';
+import { rows, totalColumns, visibleColumns, defaultLedColor } from 'GLOBALS';
 
 const defaultColor = Immutable.Map(defaultLedColor);
 
@@ -82,14 +82,14 @@ export default handleActions({
 
   // a pixel has been hovered
   [PIXEL_HOVER]:
-    (state, {payload: p}) =>
+    (state, { payload: p }) =>
       isObject(p.color)
       ? state.setIn([p.pixel.id, 'color'], p.color)
       : state,
 
    // a pixel has been clicked
   [PIXEL_CLICK]:
-    (state, {payload: p}) =>
+    (state, { payload: p }) =>
       isObject(p.color)
       ? state.setIn(
         [p.pixel.id, 'color'],
@@ -102,28 +102,28 @@ export default handleActions({
 
   // set all pixels
   [SET_PIXELS]:
-    (state, {payload: pixels}) =>
+    (state, { payload: pixels }) =>
       isObject(pixels)
         ? pixels
         : state,
 
   // invert all pixels
   [INVERT]:
-    (state, {payload: pixels}) =>
+    (state, { payload: pixels }) =>
       isObject(pixels)
         ? pixels
         : state,
 
   // darken all pixels
   [DARKEN]:
-    (state, {payload: pixels}) =>
+    (state, { payload: pixels }) =>
       isObject(pixels)
         ? pixels
         : state,
 
   // lighten all pixels
   [LIGHTEN]:
-    (state, {payload: pixels}) =>
+    (state, { payload: pixels }) =>
       isObject(pixels)
         ? pixels
         : state,

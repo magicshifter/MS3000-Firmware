@@ -1,12 +1,12 @@
-import {createAction} from 'redux-action';
-import {handleActions} from 'redux-actions';
+import { createAction } from 'redux-action';
+import { handleActions } from 'redux-actions';
 import Immutable from 'immutable';
 import rgba from 'rgba-convert';
 import scColor from 'sc-color';
 
-import {colorList} from 'GLOBALS';
+import { colorList } from 'GLOBALS';
 
-import {isNumber, toInt} from 'utils/types';
+import { isNumber, toInt } from 'utils/types';
 
 const initialState = Immutable.List(colorList.map(color => Immutable.Map(color)));
 
@@ -51,11 +51,11 @@ export const actions = {
 export default handleActions({
 
   [ADD_COLOR]:
-    (state, {payload: colors}) =>
+    (state, { payload: colors }) =>
       colors,
 
   [REMOVE_COLOR]:
-    (state, {payload: id}) =>
+    (state, { payload: id }) =>
       isNumber(toInt(id)) && state.get(toInt(id))
         ? state.filter((_, key) => console.log(toInt(id), key, _) || toInt(id) !== key)
         : state,

@@ -1,12 +1,12 @@
-import React, {PropTypes, Component} from 'react';
-import {connect} from 'react-redux';
+import React, { PropTypes, Component } from 'react';
+import { connect } from 'react-redux';
 import ColorPicker from 'react-color';
 import Immutable from 'immutable';
 
-import {actions as imageActions} from 'redux/modules/views/image';
-import {actions as colorListActions} from 'redux/modules/colorList';
+import { actions as imageActions } from 'redux/modules/views/image';
+import { actions as colorListActions } from 'redux/modules/colorList';
 
-import {colorType, layoutType} from 'utils/propTypes';
+import { colorType, layoutType } from 'utils/propTypes';
 
 import ColorPickerInput from 'components/inputs/ColorPickerInput';
 import RGBAInput from 'components/inputs/RGBAInput';
@@ -17,8 +17,8 @@ import ColorNav from 'components/colors/nav';
 import classes from './Colors.scss';
 
 const mapStateToProps =
-  ({imageView, layout, colorList}) => {
-    const {color} = imageView.toJS();
+  ({ imageView, layout, colorList }) => {
+    const { color } = imageView.toJS();
     const colors = colorList.toJS();
 
     return {
@@ -47,14 +47,14 @@ export class Colors extends Component {
   };
 
   handleColorChange(e) {
-    const {setColor} = this.props;
-    const {rgb} = e;
+    const { setColor } = this.props;
+    const { rgb } = e;
 
-    setColor({color: rgb});
+    setColor({ color: rgb });
   }
 
   handleAddColorClick(e) {
-    const {colors, color, addColor} = this.props;
+    const { colors, color, addColor } = this.props;
 
     const colorExists =
       colors.some(

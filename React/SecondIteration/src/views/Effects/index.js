@@ -1,14 +1,14 @@
-import React, {PropTypes, Component} from 'react';
-import {connect} from 'react-redux';
+import React, { PropTypes, Component } from 'react';
+import { connect } from 'react-redux';
 
-import {pixelsType} from 'utils/propTypes';
+import { pixelsType } from 'utils/propTypes';
 
-import {actions} from 'redux/modules/pixels.js';
+import { actions } from 'redux/modules/pixels.js';
 
 import classes from './Effects.scss';
 
 const mapStateToProps =
-  ({pixels}) => ({
+  ({ pixels }) => ({
     pixels: pixels.toJS(),
   });
 

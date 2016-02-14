@@ -1,6 +1,6 @@
 import rgba from 'rgba-convert';
 
-import {isString, isObject, isArray} from 'utils/types';
+import { isString, isObject, isArray } from 'utils/types';
 
 export const colorsTo =
   (convertTo, colors) => {

@@ -1,10 +1,10 @@
-import {createAction} from 'redux-action';
-import {handleActions} from 'redux-actions';
+import { createAction } from 'redux-action';
+import { handleActions } from 'redux-actions';
 import Immutable from 'immutable';
 
-import {text, fontId, fonts, textColor} from 'GLOBALS';
+import { text, fontId, fonts, textColor } from 'GLOBALS';
 
-import {toInt} from 'utils/types';
+import { toInt } from 'utils/types';
 
 const defaultValues = {
   text,
@@ -49,8 +49,8 @@ export const actions = {
 // Reducer
 // ------------------------------------
 export default handleActions({
-  [SET_TEXT]: (state, {payload}) => state.set('text', payload),
-  [SET_FONT]: (state, {payload}) => console.log(payload) || state.set('fontId', payload),
-  [SET_COLOR]: (state, {payload: {name, value}}) => state.setIn(['textColor', name], value),
+  [SET_TEXT]: (state, { payload }) => state.set('text', payload),
+  [SET_FONT]: (state, { payload }) => console.log(payload) || state.set('fontId', payload),
+  [SET_COLOR]: (state, { payload: { name, value }}) => state.setIn(['textColor', name], value),
 
 }, initialState);

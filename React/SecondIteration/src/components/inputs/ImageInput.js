@@ -1,19 +1,19 @@
-import React, {Component, PropTypes} from 'react';
-import {connect} from 'react-redux';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 
-import {actions} from 'redux/modules/pixels';
-import {actions as imageActions} from 'redux/modules/views/image';
+import { actions } from 'redux/modules/pixels';
+import { actions as imageActions } from 'redux/modules/views/image';
 
-import {getIconCssClass} from 'utils/icons';
+import { getIconCssClass } from 'utils/icons';
 
-import {pixelsType} from 'utils/propTypes';
-import {getImagePixels} from 'utils/images';
-import {makePixelsArray} from 'utils/pixels';
+import { pixelsType } from 'utils/propTypes';
+import { getImagePixels } from 'utils/images';
+import { makePixelsArray } from 'utils/pixels';
 
 import classes from './ImageInput.scss';
 
 const mapStateToProps =
-  ({imageView, pixels}) => ({
+  ({ imageView, pixels }) => ({
     pixels: makePixelsArray(pixels),
     visibleColumns: imageView.get('visibleColumns'),
     totalColumns: imageView.get('totalColumns'),
@@ -45,7 +45,7 @@ export class ImageInput extends Component {
   }
 
   onClearCanvasClick(e) {
-    const {canvas} = this.refs;
+    const { canvas } = this.refs;
 
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -65,18 +65,18 @@ export class ImageInput extends Component {
 
     if (pixels.length) {
       setPixels(pixels);
-      setColumns({value: columns});
+      setColumns({ value: columns });
     }
   }
 
   onImageInputchange(e) {
-    const {pixels, rows, visibleColumns, totalColumns} = this.props;
-    const {canvas} = this.refs;
+    const { pixels, rows, visibleColumns, totalColumns } = this.props;
+    const { canvas } = this.refs;
 
-    const {files} = e.target;
+    const { files } = e.target;
     const file = files[0];
 
-    getImagePixels(file, canvas, pixels, totalColumns, visibleColumns, rows, ({data, pixels, width, height}) => {
+    getImagePixels(file, canvas, pixels, totalColumns, visibleColumns, rows, ({ data, pixels, width, height }) => {
       this.setState({
         imageUrl: data,
         pixels,
@@ -87,8 +87,8 @@ export class ImageInput extends Component {
   }
 
   render() {
-    const {label} = this.props;
-    const {pixels} = this.state;
+    const { label } = this.props;
+    const { pixels } = this.state;
 
     // XXX block(time) const fontSize = pixels.length ? '50px' : '200px';
 
@@ -132,4 +132,4 @@ export class ImageInput extends Component {
   }
 }
 
-export default connect(mapStateToProps, {...actions, ...imageActions})(ImageInput);
+export default connect(mapStateToProps, { ...actions, ...imageActions })(ImageInput);

@@ -1,11 +1,11 @@
 import React, { PropTypes } from 'react';
 
-import {onInputChange} from 'utils/inputs';
+import { onInputChange } from 'utils/inputs';
 
 import classes from './ApSettings.scss';
 
 export const ApSettings =
-  ({ssid, onInputChange, onFormSubmit}) =>
+  ({ ssid, onInputChange, onFormSubmit }) =>
     <form
       className={classes['container']}
       onSubmit={onFormSubmit}

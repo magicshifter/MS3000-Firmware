@@ -1,5 +1,5 @@
-import {createAction} from 'redux-action';
-import {handleActions} from 'redux-actions';
+import { createAction } from 'redux-action';
+import { handleActions } from 'redux-actions';
 import Immutable from 'immutable';
 
 import {
@@ -8,7 +8,7 @@ import {
   zoomLevel, minZoomLevel, maxZoomLevel,
 } from 'GLOBALS';
 
-const {height, width} = layout;
+const { height, width } = layout;
 
 export const defaultState = Immutable.Map({
   fontSize,
@@ -56,7 +56,7 @@ export const ZOOM_OUT = 'ZOOM_OUT';
 
 export const windowResize = createAction(
   WINDOW_RESIZE,
-  (value = {width: window.innerWidth, height: window.innerHeight}) => value
+  (value = { width: window.innerWidth, height: window.innerHeight }) => value
 );
 
 export const scrollEvent = createAction(
@@ -87,14 +87,14 @@ export const actions = {
 
 export default handleActions({
   [WINDOW_RESIZE]:
-    (state, {payload}) =>
+    (state, { payload }) =>
       state
         .set('width', window.innerWidth)
         .set('height', window.innerHeight),
 
   [SCROLL_EVENT]:
-    (state, {payload}) => {
-      const {wheelDeltaY} = payload;
+    (state, { payload }) => {
+      const { wheelDeltaY } = payload;
       return state.set('zoomLevel', zoomView(state, wheelDeltaY));
     },
 

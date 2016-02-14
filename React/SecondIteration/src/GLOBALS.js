@@ -1,6 +1,6 @@
 import mColors from 'material-colors';
 
-import {colorsToObj} from 'utils/colors';
+import { colorsToObj } from 'utils/colors';
 
 export const materialColors = colorsToObj(mColors);
 
@@ -21,8 +21,8 @@ export const minZoomLevel = 0.5;
 export const maxZoomLevel = 3;
 
 export const links = [
-  {to: '/info', icon: 'info'},
-  {to: '/settings', icon: 'settings'},
+  { to: '/info', icon: 'info' },
+  { to: '/settings', icon: 'settings' },
 ];
 
 export const pixelEditorUrlBase = '/paint';
@@ -43,24 +43,24 @@ export const secondaryLinks =
       to: `${pixelEditorUrlBase}/${url}`,
       text: url,
       icon: url,
-      style: {...pixelEditorSubUrls[url]},
+      style: { ...pixelEditorSubUrls[url]},
     })
   );
 
-export const defaultLedColor = {r: 0, b: 0, g: 0, a: 255};
+export const defaultLedColor = { r: 0, b: 0, g: 0, a: 255 };
 
-export const defaultEditorColor = {r: 28, b: 255, g: 250, a: 255};
+export const defaultEditorColor = { r: 28, b: 255, g: 250, a: 255 };
 export const uiColor = defaultEditorColor;
 
 export const colorList = [
-  {r: 0, g: 0, b: 0, a: 255},
-  {r: 255, g: 0, b: 0, a: 255},
-  {r: 0, g: 255, b: 0, a: 255},
-  {r: 0, g: 0, b: 255, a: 255},
-  {r: 255, g: 255, b: 0, a: 255},
-  {r: 255, g: 0, b: 255, a: 255},
-  {r: 0, g: 255, b: 255, a: 255},
-  {r: 255, g: 255, b: 255, a: 255},
+  { r: 0, g: 0, b: 0, a: 255 },
+  { r: 255, g: 0, b: 0, a: 255 },
+  { r: 0, g: 255, b: 0, a: 255 },
+  { r: 0, g: 0, b: 255, a: 255 },
+  { r: 255, g: 255, b: 0, a: 255 },
+  { r: 255, g: 0, b: 255, a: 255 },
+  { r: 0, g: 255, b: 255, a: 255 },
+  { r: 255, g: 255, b: 255, a: 255 },
 ];
 
 export const menuTextColor = materialColors['black'];

@@ -11,7 +11,7 @@ const paths = config.utils_paths;
 debug('Create webpack compiler.');
 const compiler = require('webpack')(require('../build/webpack.config'));
 
-compiler.run(function(err, stats) {
+compiler.run(function (err, stats) {
   const jsonStats = stats.toJson();
 
   debug('Webpack compile completed.');

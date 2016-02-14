@@ -1,5 +1,5 @@
-import {createAction} from 'redux-action';
-import {handleActions} from 'redux-actions';
+import { createAction } from 'redux-action';
+import { handleActions } from 'redux-actions';
 import Immutable from 'immutable';
 import localforage from 'localforage';
 
@@ -50,15 +50,15 @@ export const actions = {
 // ------------------------------------
 export default handleActions({
   [SET_SETTINGS]:
-    (state, {payload}) =>
+    (state, { payload }) =>
       Immutable.Map(payload),
 
   [SAVE_SETTINGS]:
-    (state, {payload}) =>
+    (state, { payload }) =>
       localforage.setItem('settings', payload),
 
   [LOAD_SETTINGS]:
-    (state, {payload}) =>
+    (state, { payload }) =>
       localforage.getItem('settings'),
 
 }, initialState);

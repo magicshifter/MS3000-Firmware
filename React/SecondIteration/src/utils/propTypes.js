@@ -1,6 +1,6 @@
-import {PropTypes} from 'react';
+import { PropTypes } from 'react';
 
-import {isHexString} from 'utils/types';
+import { isHexString } from 'utils/types';
 
 /*
  * Color Types

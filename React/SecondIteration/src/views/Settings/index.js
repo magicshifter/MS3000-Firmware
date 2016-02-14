@@ -1,13 +1,13 @@
-import React, {PropTypes, Component} from 'react';
-import {connect} from 'react-redux';
+import React, { PropTypes, Component } from 'react';
+import { connect } from 'react-redux';
 
-import {actions} from 'redux/modules/views/settings';
-import {settingsViewType} from 'utils/propTypes';
+import { actions } from 'redux/modules/views/settings';
+import { settingsViewType } from 'utils/propTypes';
 
 import ApSettings from './ap';
 import UiSettings from './ui';
 
-import {onInputChange} from 'utils/inputs';
+import { onInputChange } from 'utils/inputs';
 
 import classes from './SettingsView.scss';
 
@@ -25,7 +25,7 @@ export class SettingsView extends Component {
   constructor(props) {
     super(props);
 
-    const {settings} = props;
+    const { settings } = props;
 
     // this.inputChange = onInputChange.bind(this);
     this.formSubmit = this.formSubmit.bind(this);
@@ -38,7 +38,7 @@ export class SettingsView extends Component {
   }
 
   formSubmit(e) {
-    const {setSettings} = this.props;
+    const { setSettings } = this.props;
     setSettings(this.state);
 
     e.preventDefault();
@@ -46,7 +46,7 @@ export class SettingsView extends Component {
   }
 
   render() {
-    const {protocol, host, syslogIp, ssid} = this.state;
+    const { protocol, host, syslogIp, ssid } = this.state;
 
     return (
       <div className={[classes['container'], 'container'].join(' ')}>

@@ -1,11 +1,11 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 
 import NumberInput from 'components/inputs/NumberInput';
 
 import classes from './ColorInput.scss';
 
 export const ColorInput =
-  ({val, name, label, setColorValue, min = 0, max = 255}) =>
+  ({ val, name, label, setColorValue, min = 0, max = 255 }) =>
     <li className={classes['container']}>
       <NumberInput
         type='text'

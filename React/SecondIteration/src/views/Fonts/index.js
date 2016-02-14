@@ -1,23 +1,23 @@
-import React, {PropTypes, Component} from 'react';
-import {connect} from 'react-redux';
+import React, { PropTypes, Component } from 'react';
+import { connect } from 'react-redux';
 import rgba from 'rgba-convert';
 
-import {actions} from 'redux/modules/views/text';
-import {actions as pixelActions} from 'redux/modules/pixels';
-import {actions as imageActions} from 'redux/modules/views/image';
+import { actions } from 'redux/modules/views/text';
+import { actions as pixelActions } from 'redux/modules/pixels';
+import { actions as imageActions } from 'redux/modules/views/image';
 
 import FontSelect from 'components/inputs/FontSelect';
 
-import {fontType, pixelsType, colorType} from 'utils/propTypes';
-import {makePixelsArray} from 'utils/pixels';
+import { fontType, pixelsType, colorType } from 'utils/propTypes';
+import { makePixelsArray } from 'utils/pixels';
 
 import classes from './Font.scss';
 
 const mapStateToProps =
   (state) => {
-    const {totalColumns, rows, color} = state.imageView.toJS();
+    const { totalColumns, rows, color } = state.imageView.toJS();
     const pixels = makePixelsArray(state.pixels);
-    const {fonts, fontId, text} = state.textView.toJS();
+    const { fonts, fontId, text } = state.textView.toJS();
     return {
       fonts,
       fontId,
@@ -86,13 +86,13 @@ export class Font extends Component {
           const rawIdx = 4 * (column + row * w);
 
           var pixel = pixels[pixelIdx];
-          pixel.color = {r: rawData[rawIdx + 0], g: rawData[rawIdx + 1], b: rawData[rawIdx + 2], a: 255};
+          pixel.color = { r: rawData[rawIdx + 0], g: rawData[rawIdx + 1], b: rawData[rawIdx + 2], a: 255 };
         }
       }
     }
 
     setPixels(pixels);
-    setColumns({value: w});
+    setColumns({ value: w });
   }
 
   render() {
@@ -131,4 +131,4 @@ export class Font extends Component {
   }
 }
 
-export default connect(mapStateToProps, {...actions, ...imageActions, ...pixelActions})(Font);
+export default connect(mapStateToProps, { ...actions, ...imageActions, ...pixelActions })(Font);
