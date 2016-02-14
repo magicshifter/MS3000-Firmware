@@ -1,10 +1,10 @@
-import React, {Component, PropTypes} from 'react';
-import {connect} from 'react-redux';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 import FloatingButton from 'components/inputs/FloatingButton';
 import PixelEditorMoveMenu from './PixelEditorMoveMenu';
 
-import {actions} from 'redux/modules/layout';
+import { actions } from 'redux/modules/layout';
 
 import classes from './PixelEditorMenu.scss';
 
@@ -20,7 +20,7 @@ export class PixelEditorMenu extends Component {
   };
 
   render() {
-    const {zoomIn, zoomOut} = this.props;
+    const { zoomIn, zoomOut } = this.props;
 
     return (
       <nav className={classes['container']}>

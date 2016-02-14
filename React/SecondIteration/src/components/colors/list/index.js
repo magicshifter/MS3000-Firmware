@@ -1,13 +1,13 @@
-import React, {PropTypes, Component} from 'react';
-import {connect} from 'react-redux';
+import React, { PropTypes, Component } from 'react';
+import { connect } from 'react-redux';
 
 import ColorIndicator from 'components/colors/indicator';
 import ColorRemover from 'components/colors/remover';
 
-import {actions as colorListActions} from 'redux/modules/colorList';
-import {actions as imageActions} from 'redux/modules/views/image';
+import { actions as colorListActions } from 'redux/modules/colorList';
+import { actions as imageActions } from 'redux/modules/views/image';
 
-import {colorType} from 'utils/propTypes';
+import { colorType } from 'utils/propTypes';
 
 import classes from './ColorList.scss';
 
@@ -17,7 +17,7 @@ const actions = {
 };
 
 const mapStateToProps =
-  ({imageView, colorList}) => ({
+  ({ imageView, colorList }) => ({
     colors: colorList.toArray().map(color => color.toObject()),
     uiColor: imageView.toJS().color,
   });
@@ -33,7 +33,7 @@ export class ColorList extends Component {
   };
 
   render() {
-    const {colors, setColor, removeColor} = this.props;
+    const { colors, setColor, removeColor } = this.props;
 
     return (
       <div className={classes['container']}>

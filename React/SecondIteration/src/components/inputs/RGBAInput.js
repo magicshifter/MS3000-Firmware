@@ -1,13 +1,13 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 
-import {colorType, hexStringType} from 'utils/propTypes';
+import { colorType, hexStringType } from 'utils/propTypes';
 
 import ColorInput from 'components/colors/input';
 
 import classes from './RGBAInput.scss';
 
 export const RGBAInput =
-  ({color, setColorValue, showAlpha}) =>
+  ({ color, setColorValue, showAlpha }) =>
     <div className={classes['container']}>
       <ul>
         {color && Object.keys(color).map(key => (

@@ -4,7 +4,7 @@ import MenuLink from './MenuLink.js';
 
 import classes from './Menu.scss';
 
-import {links} from 'GLOBALS';
+import { links } from 'GLOBALS';
 
 export const Menu =
   () =>

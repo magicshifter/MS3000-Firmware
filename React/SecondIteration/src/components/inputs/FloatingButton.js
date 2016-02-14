@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 
 import classes from './FloatingButton.scss';
 import iconClasses from 'styles/icons.scss';
@@ -12,7 +12,7 @@ const getCssClass =
   };
 
 export const FloatingButton =
-  ({onClick, icon, children, title, text, cssClass}) => {
+  ({ onClick, icon, children, title, text, cssClass }) => {
     return (
       <button
         className={getCssClass(cssClass, icon)}

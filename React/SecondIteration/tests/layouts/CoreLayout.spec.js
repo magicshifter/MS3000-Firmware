@@ -15,12 +15,12 @@ function shallowRenderWithProps(props = {}) {
   );
 }
 
-describe('(Layout) Core', function() {
+describe('(Layout) Core', function () {
   let _component;
   let _props;
   let _child;
 
-  beforeEach(function() {
+  beforeEach(function () {
     _child = <h1 className='child'>Child</h1>;
     _props = {
       children: _child,
@@ -29,7 +29,7 @@ describe('(Layout) Core', function() {
     _component = shallowRenderWithProps(_props);
   });
 
-  it('Should render as a <div>.', function() {
+  it('Should render as a <div>.', function () {
     expect(_component.type).to.equal('div');
   });
 });

@@ -2,14 +2,14 @@ import React from 'react';
 
 import MenuLink from './MenuLink';
 
-import {colorType} from 'utils/propTypes';
+import { colorType } from 'utils/propTypes';
 
-import {secondaryLinks} from 'GLOBALS';
+import { secondaryLinks } from 'GLOBALS';
 
 import classes from './SecondaryMenu.scss';
 
 export const SecondaryMenu =
-  ({color}) =>
+  ({ color }) =>
     <nav className={classes['container']}>
       <ul>
         {secondaryLinks.map(

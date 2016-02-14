@@ -1,9 +1,9 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 
-import {getIconCssClass} from 'utils/icons';
+import { getIconCssClass } from 'utils/icons';
 
 export const ColorRemover =
-  ({colorId, removeColor}) =>
+  ({ colorId, removeColor }) =>
     <i
       title='remove color'
       className={getIconCssClass('trash')}

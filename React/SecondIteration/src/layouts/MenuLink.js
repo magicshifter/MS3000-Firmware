@@ -1,14 +1,14 @@
-import React, {PropTypes} from 'react';
-import {Link, IndexLink} from 'react-router';
+import React, { PropTypes } from 'react';
+import { Link, IndexLink } from 'react-router';
 import rgba from 'rgba-convert';
 
-import {getIconCssClass} from 'utils/icons';
-import {isColor} from 'utils/types';
+import { getIconCssClass } from 'utils/icons';
+import { isColor } from 'utils/types';
 
 import classes from './MenuLink.scss';
 
 export const MenuLink =
-  ({text, to, icon, style, color}) => {
+  ({ text, to, icon, style, color }) => {
     if (isColor(color) && icon === 'colors') {
       style = {
         color: rgba.css(color),

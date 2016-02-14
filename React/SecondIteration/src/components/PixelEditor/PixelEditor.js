@@ -1,11 +1,10 @@
-import React, {PropTypes, Component} from 'react';
-import {connect} from 'react-redux';
+import React, { PropTypes, Component } from 'react';
+import { connect } from 'react-redux';
 
-import {actions} from 'redux/modules/pixels';
+import { actions } from 'redux/modules/pixels';
 
-import {pixelsType, layoutType, colorType} from 'utils/propTypes';
-import {getPixelId, makePixelsArray} from 'utils/pixels';
-import {multimax} from 'utils/math';
+import { pixelsType, layoutType, colorType } from 'utils/propTypes';
+import { getPixelId, makePixelsArray } from 'utils/pixels';
 
 import Pixel from 'components/PixelEditor/Pixel';
 import PixelEditorMenu from 'components/PixelEditor/PixelEditorMenu';
@@ -15,7 +14,7 @@ import ColorList from 'components/colors/list';
 import classes from './PixelEditor.scss';
 
 const mapStateToProps =
-  ({imageView, pixels, layout}) => ({
+  ({ imageView, pixels, layout }) => ({
     pixels: makePixelsArray(pixels),
     color: imageView.get('color'),
     totalColumns: imageView.get('totalColumns'),
@@ -35,7 +34,7 @@ export class PixelEditor extends Component {
   };
 
   render() {
-    const {layout, rows, totalColumns, visibleColumns, pixels} = this.props;
+    const { layout, rows, totalColumns, visibleColumns, pixels } = this.props;
 
     const zoom = layout.zoomLevel;
     const widthMargin = layout.width * 0.2;
@@ -43,7 +42,7 @@ export class PixelEditor extends Component {
     const maxWidth = (layout.width - widthMargin) * zoom;
     const maxHeight = (layout.height - heightMargin) * zoom;
 
-    const pxSize = Math.min(maxWidth/visibleColumns, maxHeight/rows);
+    const pxSize = Math.min(maxWidth / visibleColumns, maxHeight / rows);
 
     let rowArray = [];
     for (let i = 0; i < rows; i++) {

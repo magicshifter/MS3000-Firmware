@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {browserHistory} from 'react-router';
+import { browserHistory } from 'react-router';
 import routes from './routes';
 import Root from './containers/Root';
 import configureStore from './redux/configureStore';

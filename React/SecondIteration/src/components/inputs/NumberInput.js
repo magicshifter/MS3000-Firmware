@@ -1,7 +1,7 @@
-import React, {Component, PropTypes} from 'react';
+import React, { Component, PropTypes } from 'react';
 
-import {minmax} from 'utils/math';
-import {isNumber} from 'utils/types';
+import { minmax } from 'utils/math';
+import { isNumber } from 'utils/types';
 
 import classes from './NumberInput.scss';
 
@@ -29,7 +29,7 @@ export default class NumberInput extends Component {
   }
 
   onChange(e) {
-    const {name, min, max, action} = this.props;
+    const { name, min, max, action } = this.props;
 
     let value = minmax(parseInt(e.target.value, 10), min, max);
 
@@ -37,11 +37,11 @@ export default class NumberInput extends Component {
       value = 0;
     }
 
-    action({name, value});
+    action({ name, value });
   }
 
   render() {
-    const {val, name, label, min, max, step} = this.props;
+    const { val, name, label, min, max, step } = this.props;
 
     return (
       <div className={classes['container']}>

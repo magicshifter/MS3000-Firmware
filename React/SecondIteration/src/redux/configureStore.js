@@ -1,8 +1,8 @@
 import thunk from 'redux-thunk';
 import rootReducer from './rootReducer';
-import {applyMiddleware, compose, createStore} from 'redux';
-import {syncHistory} from 'react-router-redux';
-import {browserHistory} from 'react-router';
+import { applyMiddleware, compose, createStore } from 'redux';
+import { syncHistory } from 'react-router-redux';
+import { browserHistory } from 'react-router';
 
 import devTools from 'containers/DevTools';
 

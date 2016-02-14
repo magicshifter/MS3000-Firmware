@@ -1,6 +1,6 @@
 
 export const onInputChange =
-  (e) => {
-    const {name, value} = e.target;
-    this.setState({[name]: value});
+  (e, self) => {
+    const { name, value } = e.target;
+    self.setState({ [name]: value });
   };

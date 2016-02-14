@@ -1,15 +1,15 @@
-import React, {Component, PropTypes} from 'react';
-import {connect} from 'react-redux';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 
-import {saveAs} from 'filesaver.js';
+import { saveAs } from 'filesaver.js';
 
 import classes from './FileUploadInput.scss';
 
 const mapStateToProps =
-  ({settingsView, pixels, imageView}) => {
-    const {host} = settingsView.toJS();
+  ({ settingsView, pixels, imageView }) => {
+    const { host } = settingsView.toJS();
     const pxs = pixels.toJS();
-    const {rows, totalColumns, visibleColumns} = imageView.toJS();
+    const { rows, totalColumns, visibleColumns } = imageView.toJS();
 
     return {
       url: `http://${host}`,
@@ -51,17 +51,17 @@ export class FileUploadInput extends Component {
       return w * h;
     } else if (bitPerPixel === 1) {
       if ((w * h) % 8) {
-        alert('CalcBufferSize: Ugly 1bit BufferSize: ' + (w * h / 8));
+        window.alert('CalcBufferSize: Ugly 1bit BufferSize: ' + (w * h / 8));
         return Math.ceil(w * h / 8);
       }
       return w * h / 8;
     } else {
-      alert('CalcBufferSize: Unknown bitPerPixel Value: ' + (w * h / 8));
+      window.alert('CalcBufferSize: Unknown bitPerPixel Value: ' + (w * h / 8));
     }
   }
 
   getBlob() {
-    const {height, width, pixels, totalWidth} = this.props;
+    const { height, width, pixels, totalWidth } = this.props;
 
     const subType = 'bitmap';
     const headerSize = 16;
@@ -101,7 +101,7 @@ export class FileUploadInput extends Component {
       }
     }
 
-    const blob = new Blob([fileData]);
+    const blob = new window.Blob([fileData]);
     return blob;
   }
 
@@ -128,15 +128,15 @@ export class FileUploadInput extends Component {
     }
     // console.log({url});
 
-    const formData = new FormData();
+    const formData = new window.FormData();
     formData.append('uploadFile', blob, fileName);
 
-    const request = new XMLHttpRequest();
+    const request = new window.XMLHttpRequest();
     request.onload =
       () =>
         request.status === 200
         ? console.log('Uploaded!')
-        : console.warn(`Error ${status} occurred when trying to upload your file.`);
+        : console.warn(`Error ${request.status} occurred when trying to upload your file.`);
 
     request.timeout = 3000;
     request.ontimeout =

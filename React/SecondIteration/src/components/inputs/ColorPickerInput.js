@@ -1,8 +1,8 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 import rgba from 'rgba-convert';
-import {Saturation, Hue} from 'react-color/lib/components/common';
+import { Saturation, Hue } from 'react-color/lib/components/common';
 
-import {colorType, hexStringType} from 'utils/propTypes';
+import { colorType, hexStringType } from 'utils/propTypes';
 
 import classes from './ColorPickerInput.scss';
 
