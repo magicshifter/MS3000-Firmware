@@ -43,8 +43,7 @@ export class PixelEditor extends Component {
     const maxWidth = (layout.width - widthMargin) * zoom;
     const maxHeight = (layout.height - heightMargin) * zoom;
 
-    const pixelListSize = multimax(layout.width, maxWidth, maxHeight);
-    var pxSize = Math.max(Math.floor(pixelListSize / (Math.max(visibleColumns, rows) + 1)), 1) * zoom;
+    const pxSize = Math.min(maxWidth/visibleColumns, maxHeight/rows);
 
     let rowArray = [];
     for (let i = 0; i < rows; i++) {
