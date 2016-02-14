@@ -4,11 +4,14 @@ import {connect} from 'react-redux';
 import {actions} from 'redux/modules/views/settings';
 import {settingsViewType} from 'utils/propTypes';
 
-import AccesspointForm from './accesspoints';
+import ApSettings from './ap';
+import UiSettings from './ui';
 
 import {onInputChange} from 'utils/inputs';
 
 import classes from './SettingsView.scss';
+
+import GLOBALS from 'GLOBALS';
 
 const mapStateToProps =
   state => ({
@@ -24,63 +27,44 @@ export class SettingsView extends Component {
   constructor(props) {
     super(props);
 
-    this.onInputChange = onInputChange.bind(this);
+    this.inputChange = onInputChange.bind(this);
+    this.formSubmit = this.formSubmit.bind(this);
 
-    this.state = props.settings || {};
+    this.state = props.settings || {
+      ssid: GLOBALS.ssid,
+      syslogIp: GLOBALS.syslogIp,
+      host: GLOBALS.host,
+      protocol: GLOBALS.protocol,
+    };
+  }
+
+  formSubmit() {
+    const {setSettings} = this.props;
+    setSettings(this.state);
+
+    return false;
   }
 
   render() {
-    const {setSettings} = this.props;
-    const {protocol, host, syslogIp} = this.state;
+    const {protocol, host, syslogIp, ssid} = this.state;
 
     return (
       <div className={[classes['container'], 'container'].join(' ')}>
         <h2>Settings:</h2>
 
-        <div className={classes['form']}>
-          <ul>
-            <li style={{display: 'none'}} key='protocol'>
-              <label>protocol:</label>
-              <input
-                type='text'
-                name='protocol'
-                onChange={this.onInputChange}
-                value={protocol}
-              />
-            </li>
+        <UiSettings
+          onInputChange={this.inputChange}
+          protocol={protocol}
+          host={host}
+          syslogIp={syslogIp}
+          onFormSubmit={this.formSubmit}
+        />
 
-            <li key='host'>
-              <label>hostname:</label>
-              <input
-                type='text'
-                name='host'
-                onChange={this.onInputChange}
-                value={host}
-              />
-            </li>
-
-            <li key='syslogIp'>
-              <label>syslog ip:</label>
-              <input
-                type='text'
-                name='syslogIp'
-                onChange={this.onInputChange}
-                value={syslogIp}
-              />
-            </li>
-
-            <li
-              key='submit'
-            >
-              <input
-                type='submit'
-                value='Save Settings'
-                onClick={() => setSettings(this.state)}
-              />
-            </li>
-          </ul>
-        </div>
-        <AccesspointForm />
+        <ApSettings
+          ssid={ssid}
+          onInputChange={this.inputChange}
+          onFormSubmit={this.formSubmit}
+        />
       </div>
     );
   }
