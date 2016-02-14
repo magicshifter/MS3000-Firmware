@@ -9,8 +9,8 @@ import {fontType} from 'utils/propTypes';
 import classes from './FontSelect.scss';
 
 const mapStateToProps =
-  (state) => {
-    const {fonts, fontId} = state.textView.toJS();
+  ({textView}) => {
+    const {fonts, fontId} = textView.toJS();
     return {
       fonts,
       fontId,

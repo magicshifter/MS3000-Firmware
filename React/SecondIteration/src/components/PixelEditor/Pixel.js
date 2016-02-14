@@ -9,8 +9,7 @@ import {actions} from 'redux/modules/pixels';
 import classes from './Pixel.scss';
 
 const mapStateToProps =
-  state => {
-    const {imageView} = state;
+  ({imageView}) => {
     return {
       color: imageView.get('color'),
       rows: imageView.get('rows'),

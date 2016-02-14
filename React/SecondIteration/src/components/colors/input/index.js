@@ -1,42 +1,30 @@
-import React, {Component, PropTypes} from 'react';
+import React, {PropTypes} from 'react';
 
 import NumberInput from 'components/inputs/NumberInput';
 
 import classes from './ColorInput.scss';
 
-export default class ColorInput extends Component {
-  static propTypes = {
-    val: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired,
-    min: PropTypes.number,
-    max: PropTypes.number,
-    label: PropTypes.string.isRequired,
-    setColorValue: PropTypes.func.isRequired,
-  };
+export const ColorInput =
+  ({val, name, label, setColorValue, min = 0, max = 255}) =>
+    <li className={classes['container']}>
+      <NumberInput
+        type='text'
+        label={label}
+        name={name}
+        val={val}
+        min={min}
+        max={max}
+        action={setColorValue}
+      />
+    </li>;
 
-  render() {
-    const {
-      val,
-      name,
-      label,
-      setColorValue,
-      min = 0,
-      max = 255,
-    } = this.props;
+ColorInput.propTypes = {
+  val: PropTypes.number.isRequired,
+  name: PropTypes.string.isRequired,
+  min: PropTypes.number,
+  max: PropTypes.number,
+  label: PropTypes.string.isRequired,
+  setColorValue: PropTypes.func.isRequired,
+};
 
-    return (
-      <li className={classes['container']}>
-        <NumberInput
-          type='text'
-          label={label}
-          name={name}
-          val={val}
-          min={min}
-          max={max}
-          action={setColorValue}
-        />
-      </li>
-    );
-  }
-}
-
+export default ColorInput;

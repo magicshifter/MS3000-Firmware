@@ -17,15 +17,10 @@ const actions = {
 };
 
 const mapStateToProps =
-  state => {
-    const { color } = state.imageView.toJS();
-    const colors = state.colorList.toArray().map(color => color.toObject());
-
-    return {
-      colors,
-      uiColor: color,
-    };
-  };
+  ({imageView, colorList}) => ({
+    colors: colorList.toArray().map(color => color.toObject()),
+    uiColor: imageView.toJS().color,
+  });
 
 export class ColorList extends Component {
   static propTypes = {

@@ -1,4 +1,4 @@
-import React, {Component, PropTypes} from 'react';
+import React, {PropTypes} from 'react';
 
 import {colorType, hexStringType} from 'utils/propTypes';
 
@@ -6,37 +6,32 @@ import ColorInput from 'components/colors/input';
 
 import classes from './RGBAInput.scss';
 
-export default class RGBAInput extends Component {
+export const RGBAInput =
+  ({color, setColorValue, showAlpha}) =>
+    <div className={classes['container']}>
+      <ul>
+        {color && Object.keys(color).map(key => (
+          typeof color[key] === 'number' &&
+          (key !== 'a' || showAlpha) &&
+          <ColorInput
+            val={color[key]}
+            key={key}
+            name={key}
+            label={key.toUpperCase()}
+            setColorValue={setColorValue}
+          />
+        ))}
+      </ul>
+    </div>;
 
-  static propTypes = {
-    color: PropTypes.oneOfType([colorType, hexStringType]).isRequired,
-    setColorValue: PropTypes.func.isRequired,
-    showAlpha: PropTypes.bool,
-  };
+RGBAInput.propTypes = {
+  color: PropTypes.oneOfType([colorType, hexStringType]).isRequired,
+  setColorValue: PropTypes.func.isRequired,
+  showAlpha: PropTypes.bool,
+};
 
-  static defaultProps = {
-    showAlpha: false,
-  };
+RGBAInput.defaultProps = {
+  showAlpha: false,
+};
 
-  render() {
-    const {color, setColorValue, showAlpha} = this.props;
-
-    return (
-      <div className={classes['container']}>
-         <ul>
-          {color && Object.keys(color).map(key => (
-            typeof color[key] === 'number' &&
-            (key !== 'a' || showAlpha) &&
-            <ColorInput
-              val={color[key]}
-              key={key}
-              name={key}
-              label={key.toUpperCase()}
-              setColorValue={setColorValue}
-            />
-          ))}
-        </ul>
-      </div>
-    );
-  }
-}
+export default RGBAInput;

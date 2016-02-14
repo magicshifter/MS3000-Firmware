@@ -15,18 +15,14 @@ import ColorList from 'components/colors/list';
 import classes from './PixelEditor.scss';
 
 const mapStateToProps =
-  state => {
-    const {imageView, pixels, layout} = state;
-
-    return {
-      pixels: makePixelsArray(pixels),
-      color: imageView.get('color'),
-      totalColumns: imageView.get('totalColumns'),
-      visibleColumns: imageView.get('visibleColumns'),
-      rows: imageView.get('rows'),
-      layout: layout.toJS(),
-    };
-  };
+  ({imageView, pixels, layout}) => ({
+    pixels: makePixelsArray(pixels),
+    color: imageView.get('color'),
+    totalColumns: imageView.get('totalColumns'),
+    visibleColumns: imageView.get('visibleColumns'),
+    rows: imageView.get('rows'),
+    layout: layout.toJS(),
+  });
 
 export class PixelEditor extends Component {
   static propTypes = {

@@ -6,8 +6,7 @@ import {saveAs} from 'filesaver.js';
 import classes from './FileUploadInput.scss';
 
 const mapStateToProps =
-  state => {
-    const {settingsView, pixels, imageView} = state;
+  ({settingsView, pixels, imageView}) => {
     const {host} = settingsView.toJS();
     const pxs = pixels.toJS();
     const {rows, totalColumns, visibleColumns} = imageView.toJS();

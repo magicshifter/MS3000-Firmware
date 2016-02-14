@@ -12,15 +12,13 @@ import {makePixelsArray} from 'utils/pixels';
 
 import classes from './ImageInput.scss';
 
-const mapStateToProps = (state) => {
-  const {imageView, pixels} = state;
-  return {
+const mapStateToProps =
+  ({imageView, pixels}) => ({
     pixels: makePixelsArray(pixels),
     visibleColumns: imageView.get('visibleColumns'),
     totalColumns: imageView.get('totalColumns'),
     rows: imageView.get('rows'),
-  };
-};
+  });
 
 export class ImageInput extends Component {
   static propTypes = {
