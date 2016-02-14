@@ -5,7 +5,6 @@ import {actions} from 'redux/modules/pixels';
 
 import {pixelsType, layoutType, colorType} from 'utils/propTypes';
 import {getPixelId, makePixelsArray} from 'utils/pixels';
-import {multimax} from 'utils/math';
 
 import Pixel from 'components/PixelEditor/Pixel';
 import PixelEditorMenu from 'components/PixelEditor/PixelEditorMenu';
@@ -43,7 +42,7 @@ export class PixelEditor extends Component {
     const maxWidth = (layout.width - widthMargin) * zoom;
     const maxHeight = (layout.height - heightMargin) * zoom;
 
-    const pxSize = Math.min(maxWidth/visibleColumns, maxHeight/rows);
+    const pxSize = Math.min(maxWidth / visibleColumns, maxHeight / rows);
 
     let rowArray = [];
     for (let i = 0; i < rows; i++) {
