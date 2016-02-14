@@ -27,21 +27,26 @@ export class SettingsView extends Component {
   constructor(props) {
     super(props);
 
-    this.inputChange = onInputChange.bind(this);
+    // this.inputChange = onInputChange.bind(this);
     this.formSubmit = this.formSubmit.bind(this);
 
     this.state = props.settings || {
-      ssid: GLOBALS.ssid,
-      syslogIp: GLOBALS.syslogIp,
-      host: GLOBALS.host,
-      protocol: GLOBALS.protocol,
+      ssid: GLOBALS.ssid || '',
+      syslogIp: GLOBALS.syslogIp || '',
+      host: GLOBALS.host || '',
+      protocol: GLOBALS.protocol || '',
     };
   }
 
-  formSubmit() {
+  inputChange(e) {
+    onInputChange(e, this);
+  }
+
+  formSubmit(e) {
     const {setSettings} = this.props;
     setSettings(this.state);
 
+    e.preventDefault();
     return false;
   }
 
@@ -53,7 +58,7 @@ export class SettingsView extends Component {
         <h2>Settings:</h2>
 
         <UiSettings
-          onInputChange={this.inputChange}
+          onInputChange={e => this.inputChange(e, this)}
           protocol={protocol}
           host={host}
           syslogIp={syslogIp}
@@ -62,7 +67,7 @@ export class SettingsView extends Component {
 
         <ApSettings
           ssid={ssid}
-          onInputChange={this.inputChange}
+          onInputChange={e => this.inputChange(e, this)}
           onFormSubmit={this.formSubmit}
         />
       </div>
