@@ -1,7 +1,22 @@
-.container {
-  width: 300px;
+@media (orientation: portrait) {
+  body {
+    .container {
+      &:before {
+        left: 79px;
+        top: auto;
+      }
+    }
+  }
+}
 
-  &:before {
-    top: 82px;
+@media (orientation: landscape) {
+  body {
+    .container {
+      width: 300px;
+
+      &:before {
+        top: 82px;
+      }
+    }
   }
 }

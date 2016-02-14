@@ -1,8 +1,6 @@
 .container {
   color: #fff;
-  left: 110px;
   position: absolute;
-  top: 60px;
 }
 
 .clicker {
@@ -22,14 +20,51 @@
     z-index: 2;
 
     &:before {
-      border-bottom: 10px solid transparent;
-      border-right: 10px solid rgba(53, 53, 53, .9);
-      border-top: 10px solid transparent;
       content: '';
       height: 0;
-      left: -10px;
       position: absolute;
       width: 0;
+    }
+  }
+}
+
+
+@media (orientation: portrait) {
+  .container {
+    left: 110px;
+    top: auto;
+    bottom: 75px;
+  }
+
+  .children {
+    > div {
+      &:before {
+        border-top: 10px solid rgba(53, 53, 53, .9);
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        left: 22px;
+        bottom: -10px;
+        top: auto;
+        right: auto;
+      }
+    }
+  }
+}
+
+@media (orientation: landscape) {
+  .container {
+    left: 110px;
+    top: 60px;
+  }
+
+  .children {
+    > div {
+      &:before {
+        border-bottom: 10px solid transparent;
+        border-right: 10px solid rgba(53, 53, 53, .9);
+        border-top: 10px solid transparent;
+        left: -10px;
+      }
     }
   }
 }

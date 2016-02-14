@@ -1,4 +1,18 @@
-.container {
-  top: 258px;
-  width: 300px;
+@media (orientation: landscape) {
+  body {
+    .container {
+      top: 258px;
+      width: 300px;
+    }
+  }
+}
+
+@media (orientation: portrait) {
+  body {
+    .container {
+      &:before {
+        left: 247px;
+      }
+    }
+  }
 }

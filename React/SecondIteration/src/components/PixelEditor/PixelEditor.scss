@@ -8,7 +8,6 @@
   width: 100000px;
   height: 100000px;
   position: relative;
-  left: 120px;
 }
 
 .table {
@@ -50,5 +49,17 @@
         }
       }
     }
+  }
+}
+
+@media (orientation: portrait) {
+  .sub_container {
+    left: 10px;
+  }
+}
+
+@media (orientation: landscape) {
+  .sub_container {
+    left: 120px;
   }
 }

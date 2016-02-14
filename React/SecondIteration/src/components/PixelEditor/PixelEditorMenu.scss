@@ -14,7 +14,6 @@
 }
 
 .navi {
-
   .btn_left {
     float: left;
   }
@@ -31,5 +30,11 @@
 
   .btn_right {
     float: right;
+  }
+}
+
+@media (max-width: 400px), (max-height: 400px) {
+  .container {
+    display: none;
   }
 }

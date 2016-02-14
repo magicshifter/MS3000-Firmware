@@ -1,7 +1,28 @@
-.container {
-  width: 300px;
+@media (orientation: portrait) {
+  body {
+    .container {
+      display: inline-block;
 
-  &:before {
-    top: 145px;
+      &:before {
+        left: 136px;
+      }
+
+      li {
+        float: left;
+      }
+    }
+  }
+}
+
+@media (orientation: landscape) {
+  body {
+    .container {
+      width: 300px;
+      top: 136px;
+
+      &:before {
+        top: 9px;
+      }
+    }
   }
 }
