@@ -108,8 +108,12 @@ void CommandInterfacePoll()
 			msSystem.slog("upload open.. ");
 
 			if (SPIFFS.exists(filename)) {
+				msSystem.msLEDs.fillLEDs(10, 10, 0, 0x0f);
+				msSystem.msLEDs.updateLEDs();
 				msSystem.slogln("Removing previous copy..");
 				SPIFFS.remove(filename);
+				msSystem.msLEDs.fillLEDs(20, 0, 0, 0x0f);
+				msSystem.msLEDs.updateLEDs();
 			}
 
 			File spiffsFile = SPIFFS.open(filename, "w");
