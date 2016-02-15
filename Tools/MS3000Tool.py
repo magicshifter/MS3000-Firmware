@@ -645,26 +645,26 @@ def initMS3000():
 	ser = openPort(5)
 	issueUploadMS3000(ser, "settings_ap.bin", "settings/ap.bin")
 	sleep(delay)
-	issueUploadMS3000(ser, "../../Assets/MS3000_defaultconfig/index.html", "index.html")
+	issueUploadMS3000(ser, "../../MS3000-Assets/MS3000_defaultconfig/index.html", "index.html")
 	sleep(delay)
-	issueUploadMS3000(ser, "../../Assets/MS3000_defaultconfig/index.js.gz", "index.js.gz")
+	issueUploadMS3000(ser, "../../MS3000-Assets/MS3000_defaultconfig/index.js.gz", "index.js.gz")
 	sleep(delay)
-	issueUploadMS3000(ser, "../../Assets/MS3000_defaultconfig/magicshifter.appcache", "magicshifter.appcache")
+	issueUploadMS3000(ser, "../../MS3000-Assets/MS3000_defaultconfig/magicshifter.appcache", "magicshifter.appcache")
 	sleep(delay)
-	issueUploadMS3000(ser, "../../Assets/MS3000_defaultconfig/MagicShifter.html", "MagicShifter.html")
+	issueUploadMS3000(ser, "../../MS3000-Assets/MS3000_defaultconfig/MagicShifter.html", "MagicShifter.html")
 	sleep(delay)
-	issueUploadMS3000(ser, "../../Assets/MS3000_defaultconfig/admin.html", "admin.html")
+	issueUploadMS3000(ser, "../../MS3000-Assets/MS3000_defaultconfig/admin.html", "admin.html")
 
 	imgs = ["heart.magicBitmap", "smilie.magicBitmap", "star.magicBitmap", "oneup.magicBitmap", "mario.magicBitmap", "mario.magicBitmap", "blueGhost.magicBitmap", "redGhost.magicBitmap", "BubbleBobble.magicBitmap", "invader.magicBitmap", "giraffe.magicBitmap", "cursor.magicBitmap", "nyancat.magicBitmap"]
 
 	for img in imgs:
 		sleep(delay)
-		issueUploadMS3000(ser, "../../Assets/magicBitmaps/" + img, img)
+		issueUploadMS3000(ser, "../../MS3000-Assets/magicBitmaps/" + img, img)
 
         fonts = ["font10x16.magicFont", "font4x5.magicFont", "font6x8.magicFont", "font7x12.magicFont"]
 	for font in fonts:
 		sleep(delay)
-		issueUploadMS3000(ser, "../../Assets/fonts/" + font, font)
+		issueUploadMS3000(ser, "../../MS3000-Assets/fonts/" + font, font)
 
 	end = time.time()
 	print "time elapsed: ", end - start
