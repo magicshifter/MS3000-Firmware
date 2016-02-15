@@ -155,12 +155,12 @@ class MagicShakeMode:public MagicShifterBaseMode {
 
 		if (msSystem.msButtons.msBtnAHit == true) {
 			msSystem.msButtons.msBtnAHit = false;
-			newCursor--;
+			newCursor++;
 		}
 
 		if (msSystem.msButtons.msBtnBHit == true) {
 			msSystem.msButtons.msBtnBHit = false;
-			newCursor++;
+			newCursor--;
 		}
 
 		if (newCursor != dirCursor) {

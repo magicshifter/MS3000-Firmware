@@ -68,7 +68,15 @@ class SystemTextMode:public MagicShifterBaseMode {
 			msSystem.slogln(String(sysCursor));
 			needsTextUpdate = true;
 		}
-
+		if (msSystem.msButtons.msBtnBHit) {
+			msSystem.msButtons.msBtnBHit = false;	// !J! todo: button callbacks
+			sysCursor--;
+			if (sysCursor < 0)
+				sysCursor = 4;
+			msSystem.slog("cursor:");
+			msSystem.slogln(String(sysCursor));
+			needsTextUpdate = true;
+		}
 		if (msSystem.msButtons.msBtnPwrHit) {
 			msSystem.slogln("btpwr");
 			if (sysCursor == STR_WIFI) { // WIFI
@@ -109,7 +117,7 @@ class SystemTextMode:public MagicShifterBaseMode {
 					setText((char *) String("WIFI").c_str(), (char *) String("ON").c_str(), aGREEN);
 
 				Coordinate_s tPos;
-				tPos.x = 20;
+				tPos.x = 15;
 				tPos.y = 0;
 				tPos.y += msGlobals.tBitmap4x5.header.frameHeight;
 				if  (WiFi.status() != WL_CONNECTED)
@@ -128,8 +136,7 @@ class SystemTextMode:public MagicShifterBaseMode {
 
 		if (lPOVMode.step()) {
 			return true;
-		} else {
-			
+		} else {	
 			delay(30);
 			return false;
 		}

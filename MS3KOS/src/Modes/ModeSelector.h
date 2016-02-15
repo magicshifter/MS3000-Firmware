@@ -67,12 +67,12 @@ class ModeSelectorMode:public MagicShifterBaseMode {
 		// cycle through the texts ..
 		if (msSystem.msButtons.msBtnAHit) {
 			msSystem.msButtons.msBtnAHit = false;	// !J! todo: button callbacks
-			setIndex(currentIdx + 1);
+			setIndex(currentIdx - 1);
 		}
 		// cycle through the texts ..
 		if (msSystem.msButtons.msBtnBHit) {
 			msSystem.msButtons.msBtnBHit = false;	// !J! todo: button callbacks
-			setIndex(currentIdx - 1);
+			setIndex(currentIdx + 1);
 		}
 
 		if (lPOVMode.step()) {

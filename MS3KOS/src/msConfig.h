@@ -106,8 +106,8 @@
 #define RGB_BUFFER_SIZE (4*MAX_LEDS)
 
 // double features as bootloader button
-#define PIN_BUTTON_A  0
-#define PIN_BUTTON_B 12
+#define PIN_BUTTON_A 12
+#define PIN_BUTTON_B 0
 
 #define DEFAULT_FACTORY_MODE 0
 //
