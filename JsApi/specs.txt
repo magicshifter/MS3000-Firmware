@@ -1,8 +1,0 @@
-api endpoints:
-/leds
-/led
-/settings
-  /ap
-  /server
-
-/upload

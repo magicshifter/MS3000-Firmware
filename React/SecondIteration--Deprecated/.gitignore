@@ -1,6 +1,0 @@
-.idea/
-cellspace.sublime-project
-cellspace.sublime-workspace
-node_modules
-npm-debug.log
-dist/*

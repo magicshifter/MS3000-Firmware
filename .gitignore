@@ -41,6 +41,5 @@ trsh/*
 *.dSYM/
 
 # platformio stuff:
-.pioenvs/*
+MS3KOS/.pioenvs/*
 *.pioenvs*
-Firmware/platformIO/.pioenvs/*

@@ -1,7 +1,0 @@
-
-
-Todo:
-	_ Syslog (WAN) log function.
-	_ Syslog (HTTP) log function.
-	_ Execution environment.
-	_ 
