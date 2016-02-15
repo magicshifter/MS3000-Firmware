@@ -808,7 +808,7 @@ class MagicShifterSystem {
 		EEPROM.begin(512);
 		Serial.begin(921600);
 
-		delay(350);	// needed to give some OS drivers time to sync
+		delay(750);	// needed to give some OS drivers time to sync
 
 		slogln(String("\r\nMagicShifter 3000 OS V" + String(MS3KOS_VERSION)));
 
