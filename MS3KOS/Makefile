@@ -1,6 +1,9 @@
 MS3000PORT?=/dev/ttyUSB0
 
 run:
+	platformio run 
+
+test:
 	platformio run --target upload
 
 viaserial:
