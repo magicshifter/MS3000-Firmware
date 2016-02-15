@@ -703,7 +703,7 @@ def issueUploadMS3000(ser, sourceFilename, targetFilename):
 		#print Str2Hex(headerString)	
 		sleep(0.5)	
 		ser.write(headerString)
-		sleep(0.5)
+		sleep(1.2)
 		#sleep(0.5)			
 		dataString = array.array('B', data).tostring()
 		#print Str2Hex(dataString)	
