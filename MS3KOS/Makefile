@@ -2,16 +2,16 @@ MS3000_PORT?=`pio serialports list --json-output | python -c 'exec("""\nimport j
 MS3000_PORT?=/dev/ttyUSB0
 
 run:
-	pio run -p ${MS3000_PORT}
+	platformio run --upload-port ${MS3000_PORT}
 
 test:
-	pio run --target upload -p ${MS3000_PORT}
+	platformio run --target upload --upload-port ${MS3000_PORT}
 
 viaserial:
-	pio run --target upload --upload-port ${MS3000_PORT} 
+	platformio run --target upload --upload-port ${MS3000_PORT} 
 
 setup:
-	pio run
+	platformio run
 
 monitor:
 	pio serialports monitor -b 921600 --dtr 0 --rts 0 -p ${MS3000_PORT}
