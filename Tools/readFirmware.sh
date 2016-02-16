@@ -7,7 +7,7 @@
 
 firmwareName=MS3000_Firmware.bin
 
-./esptool/esptool.py --port /dev/tty.SLAB_USBtoUART --baud 115200 read_flash 0x00000 0x3FFFFF $firmwareName 
+./esptool/esptool.py --port $1 --baud 921600 read_flash 0x00000 0x400000 $firmwareName 
 
 
 
