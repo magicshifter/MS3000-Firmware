@@ -179,6 +179,7 @@ class MagicShakeMode:public MagicShifterBaseMode {
 		if (lPOVMode.step()) {
 			return true;
 		} else {
+
 			float fX = msGlobals.ggAccel[0];
 			float fY = msGlobals.ggAccel[1];
 			msModeBouncingBall.
@@ -186,7 +187,9 @@ class MagicShakeMode:public MagicShifterBaseMode {
 							msGlobals.ggLastMicros) / 1000.0, fX * 3);
 			msModeBouncingBall.simpleBouncingBall();
 
-			delay(30);
+			if (msGlobals.ggEnableWIFI)
+				delay(30);
+	
 			return false;
 		}
 

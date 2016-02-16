@@ -135,8 +135,8 @@ class BouncingBallMode {
 	bool allowFlash = false;
 	bool smoothLanding = false;
 
-	const float minFlashSpeed = 0.18;
-	const float maxFlashLandingSpeed = 0.027;
+	const float minFlashSpeed = 1.0;
+	const float maxFlashLandingSpeed = 0.1;
 	const float minFastPeriod = 0.00005;
 	const float flashDifficulty = 1;
 
@@ -184,8 +184,9 @@ class BouncingBallMode {
 		vel += sec * g * 0.004;
 		pos += vel * 0.004;
 
-		if (vel < (-minFlashSpeed * flashDifficulty)
-			|| vel > (minFlashSpeed * flashDifficulty)) {
+		float velAbs = vel < 0 ? -vel : vel;
+
+		if (velAbs < (minFlashSpeed * flashDifficulty)) {
 			//allowFlashTimer += sec;
 			//if (allowFlashTimer > minFastPeriod)
 			allowFlash = true;
@@ -194,9 +195,8 @@ class BouncingBallMode {
 			//if (allowFlashTimer < 0) allowFlashTimer = 0;
 		}
 
-		smoothLanding = vel < (maxFlashLandingSpeed / flashDifficulty)
-			&& vel > (-maxFlashLandingSpeed / flashDifficulty);
-
+		smoothLanding = velAbs < (maxFlashLandingSpeed / flashDifficulty);
+		
 		if (pos < 0) {
 			pos = 0;
 			vel = -vel * 0.9;
