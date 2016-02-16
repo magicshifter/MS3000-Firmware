@@ -98,8 +98,8 @@ class SystemTextMode:public MagicShifterBaseMode {
 
 		if (needsTextUpdate) {
 			if (sysCursor == STR_VERSION) {
-				setText((char *) String("VERSION").c_str(),
-						MS3KOS_VERSION, aWHITE);
+				setText((char *)String("VERSION").c_str(),
+						(char *)MS3KOS_VERSION, aWHITE);
 			}
 			if (sysCursor == STR_IP) {
 				setText((char *) String("IP").c_str(),
@@ -123,12 +123,12 @@ class SystemTextMode:public MagicShifterBaseMode {
 				if  (WiFi.status() != WL_CONNECTED)
 				{
 					msGlobals.tBitmap4x5.color = aRED;
-					msMagicShakeText.plotTextString("N", msGlobals.tBitmap4x5, tPos);
+					msMagicShakeText.plotTextString((char *)"N", msGlobals.tBitmap4x5, tPos);
 				}
 				else
 				{	
 					msGlobals.tBitmap4x5.color = aGREEN;
-					msMagicShakeText.plotTextString("Y", msGlobals.tBitmap4x5, tPos);
+					msMagicShakeText.plotTextString((char *)"Y", msGlobals.tBitmap4x5, tPos);
 				}
 				lPOVMode.setImage(&msMagicShakeText);
 			}
