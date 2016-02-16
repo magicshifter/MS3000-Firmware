@@ -701,13 +701,13 @@ def issueUploadMS3000(ser, sourceFilename, targetFilename):
 		headerString = array.array('B', headerString).tostring()
 		print dataLen
 		#print Str2Hex(headerString)	
-		sleep(0.5)	
+		sleep(1.0)	
 		ser.write(headerString)
-		sleep(1.2)
+		sleep(4.0)
 		#sleep(0.5)			
 		dataString = array.array('B', data).tostring()
 		#print Str2Hex(dataString)	
-		SendInChunks(ser, dataString, 32, 0.004) #0.003	
+		SendInChunks(ser, dataString, 32, 0.010) #0.003	
 
 		response = ser.readline()
 		return response
