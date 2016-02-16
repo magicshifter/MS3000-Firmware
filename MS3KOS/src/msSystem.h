@@ -600,7 +600,7 @@ class MagicShifterSystem {
 		18, 22, 26, 31
 	};
 
-#define BRIGHTNESS_UI_LEVEL 128
+#define BRIGHTNESS_UI_LEVEL 0xFF
 
 // -- brightness handling:
 	void brightnessControl() {

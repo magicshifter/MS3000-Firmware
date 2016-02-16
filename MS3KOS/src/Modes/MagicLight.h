@@ -148,7 +148,7 @@ class MagicLightMode : public MagicShifterBaseMode {
 				dir = (dir + 1) % 2;
 			}
 			else {
-				msSystem.msLEDs.fillLEDs(0, 0, 0);
+				msSystem.msLEDs.fillLEDs(0, 0, 0, msGlobals.ggBrightness);
 				msSystem.msLEDs.setLED(start, 255, 255, 255, msGlobals.ggBrightness);
 				msSystem.msLEDs.updateLEDs();
 			}
@@ -207,7 +207,7 @@ class MagicLightMode : public MagicShifterBaseMode {
 
 				msSystem.msLEDs.fillLEDs(0, 0, 0, msGlobals.ggBrightness);
 				if (i >= 0 && i < MAX_LEDS)
-				msSystem.msLEDs.setLED(i, r, g, b);
+				msSystem.msLEDs.setLED(i, r, g, b, msGlobals.ggBrightness);
 				msSystem.msLEDs.updateLEDs();
 				if (d)
 					delay(d);
