@@ -19,6 +19,6 @@ monitor:
 	pio serialports monitor -b 921600 --dtr 0 --rts 0 -p ${MS3000_PORT}
 
 reset-device:
-	-echo "^T^R" | pio serialports monitor --quiet -b 921600 --dtr 0 --rts 1 -p ${MS3000_PORT} 
+	-@echo "^T^R" | pio serialports monitor --quiet -b 921600 --dtr 0 --rts 1 -p ${MS3000_PORT} 
 	@echo "(Inappropriate ioctl is actually appropriate for a reset.. everything is okay!)"
 
