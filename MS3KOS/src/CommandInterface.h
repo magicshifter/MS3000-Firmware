@@ -112,17 +112,21 @@ void CommandInterfacePoll()
 				msSystem.msLEDs.updateLEDs();
 				msSystem.slogln("Removing previous copy..");
 				SPIFFS.remove(filename);
-				msSystem.msLEDs.fillLEDs(20, 0, 0, 0x0f);
-				msSystem.msLEDs.updateLEDs();
+				
 			}
 
 			File spiffsFile = SPIFFS.open(filename, "w");
 			msSystem.slog("ggUploadFile opened:");
 			msSystem.slogln(filename);
 
+			msSystem.msLEDs.fillLEDs(20, 0, 0, 0x0f);
+			msSystem.msLEDs.updateLEDs();
+
 			if (!spiffsFile) {
 				msSystem.slogln("ERROR: COULD NOT open file!!!");
 			} else {
+				int ledIdx = -1;
+
 				msSystem.slog("Opened file for writing...");
 				long time = millis();
 				for (uint32_t index = 0; index < dataSize;
@@ -144,6 +148,13 @@ void CommandInterfacePoll()
 					//WriteBytes(sectorAddr + index, usbBuffer, byteIndex);
 
 					yield();
+
+					int currentLedIdx = (16 * index)/dataSize;
+					if (currentLedIdx > ledIdx && ledIdx <= 15) {
+						ledIdx = currentLedIdx;
+						msSystem.msLEDs.setLED(ledIdx, 0,15, 0, 2);
+						msSystem.msLEDs.updateLEDs();
+					}
 				}
 				time = millis() - time;
 
