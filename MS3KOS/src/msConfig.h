@@ -7,6 +7,11 @@
 
 #undef DEBUG_OUTPUT
 
+// MIDI enabled?
+#define CONFIG_ENABLE_MIDI
+// Accelerometer enabled?
+#define CONFIG_ENABLE_ACCEL
+
 // Chip ID's's
 // 16299018 // jv's proto
 // 16298245 // 'p2' proto
@@ -48,10 +53,6 @@
 #define MAX_FILENAME_LENGTH 32
 #define MAX_TEXT_LENGTH 16
 
-// MIDI enabled?
-#define CONFIG_ENABLE_MIDI
-// Accelerometer enabled?
-#define CONFIG_ENABLE_ACCEL
 
 // 192.168.4.1 is the IP it always has in softAP mode
 #define SCAN_FIRST_MODE 1
