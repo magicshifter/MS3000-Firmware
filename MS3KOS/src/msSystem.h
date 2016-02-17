@@ -343,7 +343,7 @@ class MagicShifterSystem {
 
 	UIConfig msUIConfig;
 
-
+	bool msMIDIActive = true;
 	int msFrame = 0;
 	bool msSensorOK = false;
 	long msPowerCountDown = 0;
@@ -354,11 +354,15 @@ class MagicShifterSystem {
 	// todo:switch slog from OFF, to BANNED (MIDI), to UDP .. etc.
 
 	void slog(String msg) {
+#ifndef CONFIG_ENABLE_MIDI
 		Serial.print(msg);
+#endif
 		msSysLog.sendSysLogMsg(msg);
 	};
 	void slogln(String msg) {
+#ifndef CONFIG_ENABLE_MIDI
 		Serial.println(msg);
+#endif
 		msSysLog.sendSysLogMsg(msg);
 	};
 
@@ -806,7 +810,14 @@ class MagicShifterSystem {
 		msLEDs.initLEDBuffer();
 
 		EEPROM.begin(512);
+
+#ifdef CONFIG_ENABLE_MIDI
+#warning "MIDI has been enabled - Serial I/O at 31250"
+		Serial.begin(31250);
+#else
 		Serial.begin(921600);
+#endif
+
 
 		delay(750);	// needed to give some OS drivers time to sync
 

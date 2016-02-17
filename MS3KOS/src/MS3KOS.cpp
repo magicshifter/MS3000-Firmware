@@ -39,13 +39,13 @@ MagicShifterSystem msSystem;
 #include "WebServer/WebServer.h"
 MagicShifterWebServer msWebServer;
 
+// GUI modes, well actually .. modes are more of an 'app' ..
+#include "Modes/Modes.h"
+
 // MIDI can be configured on or off 
 #ifdef CONFIG_ENABLE_MIDI
 #include "MIDI/MidiShifter.h"
 #endif
-
-// GUI modes, well actually .. modes are more of an 'app' ..
-#include "Modes/Modes.h"
 
 // Begin MagicShifter3000 operation
 void setup()

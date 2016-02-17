@@ -49,7 +49,7 @@
 #define MAX_TEXT_LENGTH 16
 
 // MIDI enabled?
-//#define CONFIG_ENABLE_MIDI
+#define CONFIG_ENABLE_MIDI
 // Accelerometer enabled?
 #define CONFIG_ENABLE_ACCEL
 
