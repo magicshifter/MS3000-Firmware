@@ -16,6 +16,13 @@
 
 #include "ModeSelector.h"
 
+
+// MIDI can be configured on or off 
+#ifdef CONFIG_ENABLE_MIDI
+#include "MIDI/MidiShifter.h"
+#endif
+
+
 MagicShakeMode msMagicShake;
 SystemTextMode msSysText;
 MagicMagnetMode msMagicMagnet;
