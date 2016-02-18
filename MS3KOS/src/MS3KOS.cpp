@@ -80,7 +80,7 @@ void setup()
 // 	msSystem.slogln((*aMode)->modeName);
 // }
 
-	msGlobals.ggModeList[msGlobals.ggCurrentMode]->step();
+	msGlobals.ggModeList[msGlobals.ggCurrentMode]->start();
 }
 
 void loop()
@@ -88,7 +88,7 @@ void loop()
 	// inside time-frame
 	if (msGlobals.ggLastFrameMicros + msGlobals.ggSpeedMicros < micros()) {
 
-		msSystem.loop();
+		msSystem.step();
 
 		msWebServer.loop();
 

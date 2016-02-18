@@ -880,7 +880,7 @@ class MagicShifterSystem {
 		ESP.restart();
 	}
 
-	void loop() {
+	void step() {
 		msGlobals.ggLastMicros = msGlobals.ggCurrentMicros;
 		msGlobals.ggCurrentMicros = micros();
 		

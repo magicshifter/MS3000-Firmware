@@ -33,7 +33,7 @@ class MagicLightMode : public MagicShifterBaseMode {
 		if (firstRun)
 			firstRun = false;
 		else
-			msSystem.loop();
+			msSystem.step();
 
 		if (msSystem.msButtons.msBtnPwrHit) {
 			msSystem.slogln("btnPwr");
