@@ -90,7 +90,7 @@ void loop()
 
 		msSystem.step();
 
-		msWebServer.loop();
+		msWebServer.step();
 
 		msGlobals.ggLFrameTime =
 			msGlobals.ggCurrentMicros - msGlobals.ggLastFrameMicros;

@@ -133,7 +133,7 @@ class MagicShifterWebServer {
 	}
 
 
-	void loop(void) {
+	void step(void) {
 #ifdef USE_MDNS
 		// CRASHES in new toolchain 
 		msSystem.msDNS.update();
