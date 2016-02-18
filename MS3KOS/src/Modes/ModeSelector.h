@@ -7,9 +7,6 @@ class ModeSelectorMode:public MagicShifterBaseMode {
 	int currentIdx = 0;
 
   public:
-	const int maxModes = NUM_MS_MODES;
-	const char *modeNames[NUM_MS_MODES] = { "Mgc", "Lgt", "Cmps", "SVals", "Rmt" };
-
 
 	void setText(const char *label) {
 		MSColor aRED = { 0xff, 0x00, 0x00 };
@@ -26,28 +23,29 @@ class ModeSelectorMode:public MagicShifterBaseMode {
 		lPOVMode.setImage(&msMagicShakeText);
 	}
 
-	void start() {
+	virtual void start() {
 		setIndex(0);
 	}
 
 // stop the mode
-	void stop(void) {
+	virtual void stop(void) {
 		lPOVMode.setImage(NULL);
 	}
 
 	void setIndex(int idx) {
 		if (idx < 0) {
-			idx = maxModes - 1;
+			idx = msGlobals.ggModeList.size() - 1;
 		}
-		if (idx >= maxModes) {
+		if (idx >= msGlobals.ggModeList.size()) {
 			idx = 0;
 		}
 		currentIdx = idx;
-		setText(modeNames[currentIdx]);
+
+		setText(msGlobals.ggModeList[currentIdx]->modeName.c_str());
 	}
 
 // step through a frame of the mode 
-	int step() {
+	int select() {
 		int index = currentIdx;
 		int posIdx = index;
 

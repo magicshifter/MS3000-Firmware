@@ -23,6 +23,11 @@ class MagicLightMode : public MagicShifterBaseMode {
 	int colorIdx = 6;
 
   public:
+
+	MagicLightMode() { 
+		 	modeName = "Lgt";
+	}
+
     bool hackUIResponsive() {
 		int oldlMode = lMode;
 		if (firstRun)

@@ -873,6 +873,7 @@ class MagicShifterSystem {
 
 		slogSysInfo();
 
+		
 	}
 
 	void restart() {

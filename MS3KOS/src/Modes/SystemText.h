@@ -15,8 +15,9 @@ class SystemTextMode:public MagicShifterBaseMode {
 	bool shouldBlackenBackground = true;
 
   public:
-	const char *modeName = "SystemText";
-
+  	SystemTextMode() { 
+		 	modeName = "SVals";
+	}
 
 	void setText(char *label, char *value, MSColor color) {
 		

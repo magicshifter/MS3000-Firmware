@@ -8,47 +8,28 @@
 // start happens when the user selects the mode
 // stop happens when the user switches to another mode, before any other modes are started
 // step allows the mode time to itself to compute, do and schedule things
-class IMode {
-  public:
-	// name of the mode - overwrite
-	// start the mode
-	// void start(MagicShifterSystem &msSystem);
-	void start();
-	// stop the mode
-	void stop(void);
-	// step through an event frame of the mode
-	bool step();
-	// update LED's only
-	void update();
-};
 
-class MagicShifterBaseMode:public IMode {
+class MagicShifterBaseMode {
 
   private:
 
   public:
-	const char *modeName = "BaseMode";
-
+  	// a unique name for the  mode
+	String modeName = "BaseMode";
 	// start the mode
 	// void start(MagicShifterSystem &msSystem)
-	void start() {
-		// m_msSystem = msSystem;
-
-	}
-	// stop the mode void stop(void) {
-		//m_msSystem = NULL; //}
+	virtual void start() {};
+	// stop the mode 
+	virtual void stop(void) {};
 
 	// step through a frame of the mode 
-	bool step() {
-		//frame++; &etc.
-	}
+	virtual bool step() {};
 
 	// update LED's only
-	void update() {
-	};
+	virtual void update() {};
+
 	// reset
-	void reset() {
-	};
+	virtual void reset() {};
 
 };
 

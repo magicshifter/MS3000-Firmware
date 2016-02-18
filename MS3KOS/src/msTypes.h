@@ -1,6 +1,7 @@
 #ifndef _MSTYPES_H
 #define  _MSTYPES_H
 
+#include "Modes/BaseMode.h"
 
 #define COLOR_CODING_RGB
 

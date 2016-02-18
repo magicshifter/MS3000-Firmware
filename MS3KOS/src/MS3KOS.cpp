@@ -42,6 +42,7 @@ MagicShifterWebServer msWebServer;
 // GUI modes, well actually .. modes are more of an 'app' ..
 #include "Modes/Modes.h"
 
+
 // Begin MagicShifter3000 operation
 void setup()
 {
@@ -64,17 +65,25 @@ void setup()
 
 	msSystem.showBatteryStatus(true);
 
-	// initialize the modules ..
-	msMagicShake.start();
-	msSysText.start();
-	msMagicMagnet.start();
-	msModeSelector.start();
+	// configure all modes available in the main menu
+	msGlobals.ggModeList.push_back(&msMagicShake);
+	msGlobals.ggModeList.push_back(&msMagicLight);
+	msGlobals.ggModeList.push_back(&msMagicMagnet);
+	msGlobals.ggModeList.push_back(&msSysText);
+	msGlobals.ggModeList.push_back(&msMagicRemote);
+	msGlobals.ggModeList.push_back(&msMagicBeat);
 
+	// start all modes
+	std::vector <MagicShifterBaseMode *>::iterator aMode;
+
+	for(aMode=msGlobals.ggModeList.begin(); aMode!=msGlobals.ggModeList.end(); ++aMode){
+    	(*aMode)->start();
+		msSystem.slogln((*aMode)->modeName);
+	}
 }
 
 void loop()
 {
-
 	// inside time-frame
 	if (msGlobals.ggLastFrameMicros + msGlobals.ggSpeedMicros < micros()) {
 
@@ -88,25 +97,15 @@ void loop()
 		msGlobals.ggLastFrameMicros = msGlobals.ggCurrentMicros;
 
 		if (msSystem.modeMenuActivated) {
-			int newMode = msModeSelector.step();
+			int newMode = msModeSelector.select();
 			if (newMode >= 0) {
 				msSystem.modeMenuActivated = false;
-				msGlobals.ggCurrentMode = newMode;
+				msGlobals.ggCurrentMode = newMode;	
 			}
 		} else {
-			// dispatch to the mode handler .. 
-			if (msGlobals.ggCurrentMode == 4) {	// remote-light
-				msSystem.msLEDs.loadBuffer(msGlobals.ggRGBLEDBuf);
-				msSystem.msLEDs.updateLEDs();
-				delay(10);
-			} else if (msGlobals.ggCurrentMode == 3) {	// system values
-				msSysText.step();
-			} else if (msGlobals.ggCurrentMode == 2) {	// compass
-				msMagicMagnet.step();
-			} else if (msGlobals.ggCurrentMode == 1) {	// flashlight / disco!
-				msMagicLight.step();
-			} else if (msGlobals.ggCurrentMode == 0) { // magic shake
-				msMagicShake.step();
+			if (msGlobals.ggCurrentMode < msGlobals.ggModeList.size()) {
+				// despatch to mode
+				msGlobals.ggModeList[msGlobals.ggCurrentMode]->step();
 			}
 		}
 

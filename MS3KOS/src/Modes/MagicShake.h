@@ -30,9 +30,9 @@ class MagicShakeMode:public MagicShifterBaseMode {
 	bool correctBrightness = false;
 
   public:
-	const char *modeName = "MagicShake";
 
 	 MagicShakeMode() {
+	 	modeName = "Mgc";
 	}
 	// Get a file from the list of onboard files, filtering only .magicBitmap files// fileIndex: the idx of the file in the list// maxFiles: returns the length of the list// return: filename when found, empty string when not found
 		String getFileNameAtIndex(int fileIndex, int &maxFiles) {
@@ -140,7 +140,6 @@ class MagicShakeMode:public MagicShifterBaseMode {
 	}
 
 	void reset() {
-		msSystem.slogln("MagicShake reset.");
 		stop();
 		start();
 	}

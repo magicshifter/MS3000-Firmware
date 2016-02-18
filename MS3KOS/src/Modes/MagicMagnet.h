@@ -13,7 +13,9 @@ class MagicMagnetMode:public MagicShifterBaseMode {
 
   public:
 
-	const char *modeName = "MagicMagnet";
+  	MagicMagnetMode() { 
+		 	modeName = "Cmps";
+	}
 
 	void start() {
 	} void stop(void) {

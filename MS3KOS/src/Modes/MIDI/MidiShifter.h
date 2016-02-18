@@ -589,29 +589,6 @@ public:
 	    }
 	    //*/
 
-	// internal button usage
-		if (msBtnALongHit) {
-			// powerDown();   // !J!
-		}
-
-		if (msBtnBHit) {
-			msGlobals.ggBrightness += 2;
-			if (msGlobals.ggBrightness > 31) {
-				msGlobals.ggBrightness = 31;
-			}
-
-			msGlobals.ggCurrentMode =
-				(msGlobals.ggCurrentMode + 1) % NUM_MS_MODES;
-		}
-		if (msBtnBLongHit) {
-			msGlobals.ggBrightness -= 6;
-			if (msGlobals.ggBrightness < 1) {
-				msGlobals.ggBrightness = 1;
-			}
-
-			msGlobals.ggCurrentMode =
-				(msGlobals.ggCurrentMode + 1) % NUM_MS_MODES;
-		}
 	}
 
 	// ---------------------------------------------------------------------- Main Entry Point

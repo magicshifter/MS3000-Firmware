@@ -1,5 +1,6 @@
 #ifndef _MSGLOBALS_H
 #define _MSGLOBALS_H
+#include <vector>
 
 #include "msTypes.h"
 #include "StackClass.h"
@@ -42,6 +43,11 @@ class MagicShifterGlobals {
 	bool ggEnableWIFI = true;
 
 	struct APConfig ggAPConfig;
+
+
+	std::vector <MagicShifterBaseMode *> ggModeList;
+
+	// set of modes
 
 	MSBitmap tBitmap4x5;
 	MSBitmap tBitmap6x8;
