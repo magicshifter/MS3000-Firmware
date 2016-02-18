@@ -5,13 +5,11 @@
 #include "msTypes.h"
 #include "StackClass.h"
 
-
 void l_safeStrncpy(char *dest, const char *source, int n)
 {
 	strncpy(dest, source, n);
 	dest[n - 1] = '\0';
 }
-
 
 class MagicShifterGlobals {
   public:
@@ -44,10 +42,9 @@ class MagicShifterGlobals {
 
 	struct APConfig ggAPConfig;
 
-
+	// set of modes
 	std::vector <MagicShifterBaseMode *> ggModeList;
 
-	// set of modes
 
 	MSBitmap tBitmap4x5;
 	MSBitmap tBitmap6x8;
@@ -60,9 +57,7 @@ class MagicShifterGlobals {
 		NOT_OK = 3
 	};
 
-
 };
-
 
 // #else
 // extern MagicShifterGlobals msGlobals;

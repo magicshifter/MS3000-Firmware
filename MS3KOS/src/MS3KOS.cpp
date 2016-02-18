@@ -73,6 +73,10 @@ void setup()
 	msGlobals.ggModeList.push_back(&msMagicRemote);
 	msGlobals.ggModeList.push_back(&msMagicBeat);
 
+#ifdef CONFIG_ENABLE_MIDI
+	msGlobals.ggModeList.push_back(&msMIDIShifter);
+#endif
+
 	msGlobals.ggModeList[msGlobals.ggCurrentMode]->start();
 }
 

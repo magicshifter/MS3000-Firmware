@@ -404,6 +404,10 @@ private:
 
 public:
 
+	MIDIShifterMode() {
+		modeName = "Arpi";
+	}
+
 	void MIDI_Program_Change(miby_this_t a_miby)
 	{
 		_arp.arpProgramChange(curr_midiview.midi_channel, MIBY_ARG0(a_miby));
@@ -591,6 +595,12 @@ public:
 
 	}
 
+	void stop()
+	{
+		// !J! todo: all notes off
+		_arp.arpSoundOff();
+	}
+
 	// ---------------------------------------------------------------------- Main Entry Point
 	void start()
 	{
@@ -617,14 +627,14 @@ public:
 	}
 
 	// ------------------------------------------------------------- Main MIDI Frame Processor
-	void step(miby_t * miby)
+	bool step()
 	{
 		uint8_t midi_inb;
 
 		// pull midi_inbox
 		if (Serial1.available()) {
 			MIDI_Get(&midi_inb, 1);
-			miby_parse(miby, midi_inb);
+			miby_parse(&miby, midi_inb);
 		} else						// !J! TODO: Soft-thru, etc.
 		{
 			// MIDI_Put(&midi_buf[0], 4);

@@ -68,9 +68,9 @@ void handleGETStatus(void)
 	response +=
 		"\"ggCurrentMicros\":" + String(msGlobals.ggCurrentMicros) + ",";
 	response += "\"accelRaw\":[";
-	response += String(msGlobals.ggAccelCount[0]) + ",";
-	response += String(msGlobals.ggAccelCount[1]) + ",";
-	response += String(msGlobals.ggAccelCount[2]);
+	response += String(msGlobals.ggAccelCount[XAXIS]) + ",";
+	response += String(msGlobals.ggAccelCount[YAXIS]) + ",";
+	response += String(msGlobals.ggAccelCount[ZAXIS]);
 	response += "],";
 	response += "\"msGlobals.ggAccel\":[";
 	response += String(msGlobals.ggAccel[0]) + ",";

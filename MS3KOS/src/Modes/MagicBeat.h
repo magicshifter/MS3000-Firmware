@@ -30,7 +30,7 @@ public:
 	virtual bool step(void) {
 
 		avgZ *= 31;
-		avgZ += msGlobals.ggAccelCount[2];
+		avgZ += msGlobals.ggAccelCount[ZAXIS];
 		if (avgZ >= 0) {
 			avgZ += 0 + 15;
 		} else {
@@ -41,7 +41,7 @@ public:
 		frame++;
 
 		if (renderMode == 0) {
-			xPos = 7 * (1 << FIXED_SHIFT) + (1 << (FIXED_SHIFT - 1)) + (((msGlobals.ggAccelCount[2] - avgZ) * 40) >> sensitivity);
+			xPos = 7 * (1 << FIXED_SHIFT) + (1 << (FIXED_SHIFT - 1)) + (((msGlobals.ggAccelCount[ZAXIS] - avgZ) * 40) >> sensitivity);
 			if (xPos < 0)
 				xPos = 0;
 			if (xPos > 15 * (1 << FIXED_SHIFT))
@@ -63,7 +63,7 @@ public:
 			msSystem.msLEDs.updateLEDs();
 
 		} else { // renderMode = 1
-			xPos = (msGlobals.ggAccelCount[2] - avgZ);
+			xPos = (msGlobals.ggAccelCount[ZAXIS] - avgZ);
 			
 			if (xPos < 0)
 				xPos = -xPos;
