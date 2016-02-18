@@ -73,13 +73,14 @@ void setup()
 	msGlobals.ggModeList.push_back(&msMagicRemote);
 	msGlobals.ggModeList.push_back(&msMagicBeat);
 
-	// start all modes
-	std::vector <MagicShifterBaseMode *>::iterator aMode;
+// start all modes
+// std::vector <MagicShifterBaseMode *>::iterator aMode;
+// for(aMode=msGlobals.ggModeList.begin(); aMode!=msGlobals.ggModeList.end(); ++aMode){
+//    	(*aMode)->start();
+// 	msSystem.slogln((*aMode)->modeName);
+// }
 
-	for(aMode=msGlobals.ggModeList.begin(); aMode!=msGlobals.ggModeList.end(); ++aMode){
-    	(*aMode)->start();
-		msSystem.slogln((*aMode)->modeName);
-	}
+	msGlobals.ggModeList[msGlobals.ggCurrentMode]->step();
 }
 
 void loop()
@@ -99,8 +100,11 @@ void loop()
 		if (msSystem.modeMenuActivated) {
 			int newMode = msModeSelector.select();
 			if (newMode >= 0) {
+				// stop all modes..
+				msGlobals.ggModeList[msGlobals.ggCurrentMode]->stop();
 				msSystem.modeMenuActivated = false;
-				msGlobals.ggCurrentMode = newMode;	
+				msGlobals.ggCurrentMode = newMode;
+				msGlobals.ggModeList[msGlobals.ggCurrentMode]->start();
 			}
 		} else {
 			if (msGlobals.ggCurrentMode < msGlobals.ggModeList.size()) {
