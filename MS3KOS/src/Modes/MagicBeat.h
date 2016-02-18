@@ -5,11 +5,12 @@ private:
 	int frame = 0;
 	long avgZ = 0;
 	long xPos;
-
 	int colIdx = 1;
-	int discoIdx = 0;
-	uint8_t r, g, b;
+	int sensitivity = 0;
+	int renderMode = 0;
 
+	// Color of our beat
+	uint8_t r, g, b;
 
 public:
 	MagicBeatMode() {
@@ -17,8 +18,8 @@ public:
 	}
 
 	virtual void start() {
-			r = g = 0;
-			b = 255;
+		r = g = 0;
+		b = 255;
 	}
 
 	virtual void stop(void) {
@@ -39,8 +40,8 @@ public:
 
 		frame++;
 
-		if (!discoIdx) {
-			xPos = 7 * (1 << FIXED_SHIFT) + (1 << (FIXED_SHIFT - 1)) + (msGlobals.ggAccelCount[2] - avgZ) * 40;
+		if (renderMode == 0) {
+			xPos = 7 * (1 << FIXED_SHIFT) + (1 << (FIXED_SHIFT - 1)) + (((msGlobals.ggAccelCount[2] - avgZ) * 40) >> sensitivity);
 			if (xPos < 0)
 				xPos = 0;
 			if (xPos > 15 * (1 << FIXED_SHIFT))
@@ -61,12 +62,16 @@ public:
 
 			msSystem.msLEDs.updateLEDs();
 
-		} else {
+		} else { // renderMode = 1
 			xPos = (msGlobals.ggAccelCount[2] - avgZ);
+			
 			if (xPos < 0)
 				xPos = -xPos;
-			xPos >>= (discoIdx - 1);
+
+			xPos >>= sensitivity;
+			
 			xPos -= 5;
+
 			if (xPos > 16)
 				xPos = 16;
 
@@ -78,15 +83,27 @@ public:
 			msSystem.msLEDs.updateLEDs();
 		}
 
+		if (msSystem.msButtons.msBtnALongHit) {
+			renderMode++;
+			if (renderMode > 1) renderMode = 0;
+			msSystem.msButtons.msBtnALongHit = false;
+
+		}
+		if (msSystem.msButtons.msBtnBLongHit) {
+			renderMode--;
+			if (renderMode < 0) renderMode = 1;
+			msSystem.msButtons.msBtnBLongHit = false;
+		}
+
 		if (msSystem.msButtons.msBtnAHit)
 		{
-			discoIdx = (discoIdx + 1) % 6;
+			sensitivity = (sensitivity + 1) % 6;
 			msSystem.msButtons.msBtnAHit = false;
 		}
 
 		if (msSystem.msButtons.msBtnBHit)
 		{
-			discoIdx = (discoIdx + 5) % 6;
+			sensitivity = (sensitivity + 5) % 6;
 			msSystem.msButtons.msBtnBHit = false;
 		}
 

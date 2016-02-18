@@ -73,13 +73,6 @@ void setup()
 	msGlobals.ggModeList.push_back(&msMagicRemote);
 	msGlobals.ggModeList.push_back(&msMagicBeat);
 
-// start all modes
-// std::vector <MagicShifterBaseMode *>::iterator aMode;
-// for(aMode=msGlobals.ggModeList.begin(); aMode!=msGlobals.ggModeList.end(); ++aMode){
-//    	(*aMode)->start();
-// 	msSystem.slogln((*aMode)->modeName);
-// }
-
 	msGlobals.ggModeList[msGlobals.ggCurrentMode]->start();
 }
 
