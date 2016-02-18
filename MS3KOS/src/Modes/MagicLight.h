@@ -36,18 +36,15 @@ class MagicLightMode : public MagicShifterBaseMode {
 			msSystem.step();
 
 		if (msSystem.msButtons.msBtnPwrHit) {
-			msSystem.slogln("btnPwr");
 			centerAction++;
 			msSystem.msButtons.msBtnPwrHit = false;
 		}
 
 		if (msSystem.msButtons.msBtnAHit) {
-			msSystem.slogln("btnA");
 			lMode--;
 			msSystem.msButtons.msBtnAHit = false;
 		}
 		if (msSystem.msButtons.msBtnBHit) {
-			msSystem.slogln("btnB");
 			lMode++;
 			msSystem.msButtons.msBtnBHit = false;
 		}
@@ -65,7 +62,6 @@ class MagicLightMode : public MagicShifterBaseMode {
 			msSystem.msLEDs.fillLEDs(0, 0, 0, msGlobals.ggBrightness);
 			msSystem.msLEDs.updateLEDs();
 		}
-
 
 		return msSystem.modeMenuActivated;
 	}

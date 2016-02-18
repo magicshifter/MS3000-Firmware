@@ -35,7 +35,7 @@ class MagicPOVMode:public MagicShifterBaseMode {
 	bool step() {
 		if (msImage != NULL) {
 			// check accelerometer
-			if (shakeSync.update(msGlobals.ggAccel[1])) {
+			if (shakeSync.update(msGlobals.ggAccel[YAXIS])) {
 				int index = shakeSync.getFrameIndex();
 
 				if (index > 0) {

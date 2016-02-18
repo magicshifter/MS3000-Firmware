@@ -73,9 +73,9 @@ void handleGETStatus(void)
 	response += String(msGlobals.ggAccelCount[ZAXIS]);
 	response += "],";
 	response += "\"msGlobals.ggAccel\":[";
-	response += String(msGlobals.ggAccel[0]) + ",";
-	response += String(msGlobals.ggAccel[1]) + ",";
-	response += String(msGlobals.ggAccel[2]);
+	response += String(msGlobals.ggAccel[XAXIS]) + ",";
+	response += String(msGlobals.ggAccel[YAXIS]) + ",";
+	response += String(msGlobals.ggAccel[ZAXIS]);
 	response += "],";
 	response += "\"ip\":\"";
 	response += String(0xFF & (ip >> 0)) + ".";

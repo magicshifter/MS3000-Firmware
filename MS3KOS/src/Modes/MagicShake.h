@@ -179,8 +179,8 @@ class MagicShakeMode:public MagicShifterBaseMode {
 			return true;
 		} else {
 
-			float fX = msGlobals.ggAccel[0];
-			float fY = msGlobals.ggAccel[1];
+			float fX = msGlobals.ggAccel[XAXIS];
+			float fY = msGlobals.ggAccel[YAXIS];
 			msModeBouncingBall.
 				applyForce((msGlobals.ggCurrentMicros -
 							msGlobals.ggLastMicros) / 1000.0, fX * 3);
