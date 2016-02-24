@@ -15,6 +15,7 @@ class SystemTextMode:public MagicShifterBaseMode {
 	bool shouldBlackenBackground = true;
 	int ptbMode = 0;
 	int ptuMode = 0;
+	bool needsTextUpdate = false;
 
 struct powerMode_t
 {
@@ -112,7 +113,6 @@ struct powerMode_t
 
 // step through a frame of the mode 
 	bool step() {
-		bool needsTextUpdate = false;
 		
 		bool isConnectedToAP = (WiFi.status() == WL_CONNECTED);
 		bool isBatteryLow = msSystem.lowBatteryMillis != 0;
@@ -233,7 +233,6 @@ struct powerMode_t
 		if (lPOVMode.step()) {
 			return true;
 		} else {	
-
 			// !J! : note - debug code to indicate values
 			// msSystem.slog("bV:"); msSystem.slogln(String(msSystem.batteryVoltage));
 			msSystem.msLEDs.fillLEDs(0, 0, 0);
@@ -260,6 +259,8 @@ struct powerMode_t
 			}
 
 			msSystem.msLEDs.updateLEDs();
+
+			needsTextUpdate = true;
 
 			delay(30);
 
