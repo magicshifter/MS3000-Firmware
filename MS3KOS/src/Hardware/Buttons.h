@@ -51,13 +51,17 @@ class MagicShifterButtons {
 	bool msBtnActive = false;
 
 	bool powerButtonPressed(void) {
+		msGlobals.ggLastADValue = analogRead(A0);
 		// had unusual high values on one of the 100x PCBs so this threshold is bigger now
-		return analogRead(A0) > 970;
-	} void setup() {
+		return msGlobals.ggLastADValue > 970;
+	}; 
+
+
+	void setup() {
 		// init pin modes
 		pinMode(PIN_BUTTON_A, INPUT);
 		pinMode(PIN_BUTTON_B, INPUT);
-	}
+	};
 
 
 	void resetButtons() {

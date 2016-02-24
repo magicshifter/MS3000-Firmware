@@ -606,8 +606,8 @@ void handleLedsSet()
 /*
 struct UIConfig
 {
-  int powerdownTimeUSB;
-  int powerdownTimeBattery;
+  int timeoutHighPower;
+  int timeoutLowPower;
   int defaultBrightness;
 };
 */
@@ -620,11 +620,11 @@ void handleGetUISettings(void)
   msSystem.Settings.getUIConfig(&config);
 
   String response = "{";
-    response += "\"powerdownTimeUSB\":";
-    response += config.powerdownTimeUSB;
+    response += "\"timeoutHighPower\":";
+    response += config.timeoutHighPower;
     response += ",";
-    response += "\"powerdownTimeBattery\":";
-    response += config.powerdownTimeBattery;
+    response += "\"timeoutLowPower\":";
+    response += config.timeoutLowPower;
     response += ",";
     response += "\"defaultBrightness\":";
     response += config.defaultBrightness;
@@ -649,13 +649,13 @@ void handleSetUISettings(void)
       msSystem.slogln("arg: ");
       msSystem.slogln(msSystem.msESPServer.arg(i));
 
-      if (strcmp(msSystem.msESPServer.argName(i).c_str(), "powerdownTimeUSB") == 0)
+      if (strcmp(msSystem.msESPServer.argName(i).c_str(), "timeoutHighPower") == 0)
       {
-        config.powerdownTimeUSB = atoi(msSystem.msESPServer.arg(i).c_str());
+        config.timeoutHighPower = atoi(msSystem.msESPServer.arg(i).c_str());
       }
-      else if (strcmp(msSystem.msESPServer.argName(i).c_str(), "powerdownTimeBattery") == 0)
+      else if (strcmp(msSystem.msESPServer.argName(i).c_str(), "timeoutLowPower") == 0)
       {
-        config.powerdownTimeBattery = atoi(msSystem.msESPServer.arg(i).c_str());
+        config.timeoutLowPower = atoi(msSystem.msESPServer.arg(i).c_str());
       }
       else if (strcmp(msSystem.msESPServer.argName(i).c_str(), "defaultBrightness") == 0)
       {

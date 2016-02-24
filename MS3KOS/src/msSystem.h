@@ -70,6 +70,7 @@ class MagicShifterSystem {
 	}
 
   public:
+
 	const String apConfigPath = "settings/ap.bin";
 	const String apServerConfigPath = "settings/server1.bin";
 	const String apListConfigPath = "settings/aplist1.bin";
@@ -82,8 +83,8 @@ class MagicShifterSystem {
 		//msSystem.slogln(String(sizeof(*config)));
 		bool result = loadData(uiSettingsConfigPath, config, sizeof(*config));
 		if (!result) {
-			config->powerdownTimeUSB = 0;
-			config->powerdownTimeBattery = 1000 * 1000 * 10 * 60;
+			config->timeoutHighPower = 0;
+			config->timeoutLowPower = 1000 * 1000 * 10 * 60;
 			config->defaultBrightness = 2;
 		}
 		return result;
@@ -341,14 +342,18 @@ class MagicShifterSystem {
 	MDNSResponder msDNS;
 	ESP8266WebServer msESPServer;
 
-	UIConfig msUIConfig;
 
 	bool msMIDIActive = true;
 	int msFrame = 0;
 	bool msSensorOK = false;
-	long msPowerCountDown = 0;
+	unsigned long msPowerCountDown = 0;
 
 	int modeMenuActivated = false;
+
+	int lowBatteryMillis;
+	float  batteryVoltage = 0.0;
+
+
 
   public:
 	// todo:switch slog from OFF, to BANNED (MIDI), to UDP .. etc.
@@ -469,12 +474,12 @@ class MagicShifterSystem {
 		slog("Reset info: ");
 		slogln(String(ESP.getResetInfo()));
 
-		slog("powerdownTimeUSB: ");
-		slogln(String(msUIConfig.powerdownTimeUSB));
-		slog("powerdownTimeBattery: ");
-		slogln(String(msUIConfig.powerdownTimeBattery));
+		slog("timeoutHighPower: ");
+		slogln(String(msGlobals.ggUIConfig.timeoutHighPower));
+		slog("timeoutLowPower: ");
+		slogln(String(msGlobals.ggUIConfig.timeoutLowPower));
 		slog("defaultBrightness: ");
-		slogln(String(msUIConfig.defaultBrightness));
+		slogln(String(msGlobals.ggUIConfig.defaultBrightness));
 	};
 
 
@@ -831,9 +836,9 @@ class MagicShifterSystem {
 		else
 			slog("noSPIFFS:");
 
-		Settings.getUIConfig(&msUIConfig);
+		Settings.getUIConfig(&msGlobals.ggUIConfig);
 
-		msGlobals.ggBrightness = msUIConfig.defaultBrightness;
+		msGlobals.ggBrightness = msGlobals.ggUIConfig.defaultBrightness;
 
 		msLEDs.bootSwipe();
 
@@ -881,19 +886,43 @@ class MagicShifterSystem {
 	}
 
 	void step() {
+
+
 		msGlobals.ggLastMicros = msGlobals.ggCurrentMicros;
 		msGlobals.ggCurrentMicros = micros();
+		msGlobals.ggCurrentMillis = millis();
 		
 		displayButtons();
 		msButtons.step();
 		msSensor.step();
 
-		if (msButtons.msBtnActive) {
-			msPowerCountDown = msGlobals.ggCurrentMicros;
+		batteryVoltage = calculateVoltage(msGlobals.ggLastADValue);
+
+		if (batteryVoltage < 4.0) {
+			if (lowBatteryMillis == 0)
+				lowBatteryMillis = msGlobals.ggCurrentMillis;
+		}
+		else
+		{
+			lowBatteryMillis = 0;
 		}
 
-		if (msUIConfig.powerdownTimeBattery != 0) {
-			if (msPowerCountDown < msGlobals.ggCurrentMicros - POWER_TIMEOUT) {
+		if (msButtons.msBtnActive) {
+			msPowerCountDown = msGlobals.ggCurrentMillis;
+		}
+
+		if (msGlobals.ggUIConfig.timeoutHighPower != 0) {
+			// note! unsigned values!
+			if (msPowerCountDown + msGlobals.ggUIConfig.timeoutHighPower < msGlobals.ggCurrentMillis) {
+				powerDown();
+			}
+		}
+
+		if ((lowBatteryMillis != 0) && 
+			(msGlobals.ggUIConfig.timeoutLowPower != 0) && 
+			(lowBatteryMillis + (10 * 1000) < msGlobals.ggCurrentMillis)) { // 10 seconds 
+			// note! unsigned values!
+			if (msPowerCountDown + msGlobals.ggUIConfig.timeoutLowPower < msGlobals.ggCurrentMillis) {
 				powerDown();
 			}
 		}
@@ -919,11 +948,10 @@ class MagicShifterSystem {
 		return analogRead(A0);
 	}
 
-
-	float getBatteryVoltage(void) {
-		int adValue = getADValue();
+	float calculateVoltage(int adValue)
+	{
 		int ad1V = 1023;
-		float avg = 3.2;
+//		static float avg = 4.2;
 
 		//float r1 = 180, r2 = 390, r3 = 330; // gamma??? or (not beta)
 		// !J! todo: magic numbers are bad voodoo
@@ -931,10 +959,15 @@ class MagicShifterSystem {
 
 		float voltage = ((float) (r1 + r2 + r3) * adValue) / (r1 * ad1V);
 
-		static float p = 0.01;
-		avg = p * 0.02 + voltage * (1 - p);
+//		float p = 0.05;
+//		avg = p * voltage + (1-p) * avg;
 
-		return avg;
+		return voltage;
+	}
+
+	float getBatteryVoltage(void) {
+		int adValue = getADValue();
+		return calculateVoltage(adValue);
 	}
 
 	IPAddress getIP() {

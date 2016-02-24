@@ -65,24 +65,39 @@ class MagicMagnetMode:public MagicShifterBaseMode {
 			int (atan2
 				 (msGlobals.ggMagnet[YAXIS],
 				  -msGlobals.ggMagnet[XAXIS]) * 180 / M_PI);
+
 		msSystem.msLEDs.fillLEDs(0, 0, 0);
 		int lednr = map(abs(degrees), 0, 180, 0, 15);
 
-		if (lMode <= 1) {
-			for (int lC = 0; lC < lednr; lC++)
-				msSystem.msLEDs.setLED(lC, 0, 255, 0, msGlobals.ggBrightness);	// !J! hack
+		msSystem.slog("magnetometer:degrees:");
+		msSystem.slogln(String(degrees));
 
-			for (int lC = lednr + 1; lC < MAX_LEDS; lC++)
-				msSystem.msLEDs.setLED(lC, 255, 0, 0, msGlobals.ggBrightness);	// !J! hack
-		}
 
-		if ((lMode == 0) || (lMode == 2))
-			msSystem.msLEDs.setLED(lednr, 0, 255, 0,
-								   msGlobals.ggBrightness);
+		int degNorth = -degrees;
+		int degSouth = 180 - degrees;
 
-		if (lMode == 1)
-			msSystem.msLEDs.setLED(lednr, 0, 0, 255,
-								   msGlobals.ggBrightness);
+		if (degSouth>180) degSouth-=360;
+		int ledNorth = map(abs(degNorth), 0, 180, 0, 15);
+		int ledSouth = map(abs(degSouth), 0, 180, 0, 15);
+
+		msSystem.msLEDs.setLED(ledSouth, 0, 255, 0, msGlobals.ggBrightness);
+		msSystem.msLEDs.setLED(ledNorth, 255, 0, 0, msGlobals.ggBrightness);
+
+		// if (lMode <= 1) {
+		// 	for (int lC = 0; lC < lednr; lC++)
+		// 		msSystem.msLEDs.setLED(lC, 0, 255, 0, msGlobals.ggBrightness);	// !J! hack
+
+		// 	for (int lC = lednr + 1; lC < MAX_LEDS; lC++)
+		// 		msSystem.msLEDs.setLED(lC, 255, 0, 0, msGlobals.ggBrightness);	// !J! hack
+		// }
+
+		// if ((lMode == 0) || (lMode == 2))
+		// 	msSystem.msLEDs.setLED(lednr, 0, 255, 0,
+		// 						   msGlobals.ggBrightness);
+
+		// if (lMode == 1)
+		// 	msSystem.msLEDs.setLED(lednr, 0, 0, 255,
+		// 						   msGlobals.ggBrightness);
 
 		msSystem.msLEDs.updateLEDs();
 

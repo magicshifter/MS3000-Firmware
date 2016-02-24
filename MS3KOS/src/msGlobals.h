@@ -1,6 +1,7 @@
 #ifndef _MSGLOBALS_H
 #define _MSGLOBALS_H
 #include <vector>
+#include <map> 
 
 #include "msTypes.h"
 #include "StackClass.h"
@@ -20,15 +21,17 @@ class MagicShifterGlobals {
 	int ggMagnet[3];			// Stores the 16-bit signed value
 	int ggAccelCount[3];		// Stores the 12-bit signed value
 	long ggAccelTime;
-	long ggLFrameTime;
-	long ggCurrentMode = DEFAULT_FACTORY_MODE;	// POV mode
+	unsigned long ggLFrameTime;
+#warning "DEBUG MODESET"
+	long ggCurrentMode = 3;// DEFAULT_FACTORY_MODE;	// POV mode
 	int ggBtn1State = 0;
 	long ggCurrentMicros = 0;
-	long ggLastMicros = 0;
-	long ggSpeedMicros = 800;
-	long ggLastFrameMicros = 0;
-	long ggCurrentFrame = 0;
-	long ggBootTime = 0;
+	unsigned long ggCurrentMillis = 0;
+	unsigned long ggLastMicros = 0;
+	unsigned long ggSpeedMicros = 800;
+	unsigned long ggLastFrameMicros = 0;
+	unsigned long ggCurrentFrame = 0;
+	unsigned long ggBootTime = 0;
 	bool ggModeAP = false;
 	// make it larger to be on the safe side when base64 decoding
 	byte ggRGBLEDBuf[RGB_BUFFER_SIZE + 4];
@@ -39,12 +42,17 @@ class MagicShifterGlobals {
 	long ggTimePostedAt = 0;
 	bool ggDebugSerial = true;
 	bool ggEnableWIFI = true;
+	unsigned long ggPowerTimeout;	//	millis until we should power-off
+
+	int ggLastADValue;		// last AD value sampled during button step
 
 	struct APConfig ggAPConfig;
+	struct APInfo  ggSoftAP;
+
+	UIConfig ggUIConfig;			// web-influenced config for GUI values
 
 	// set of modes
 	std::vector <MagicShifterBaseMode *> ggModeList;
-
 
 	MSBitmap tBitmap4x5;
 	MSBitmap tBitmap6x8;

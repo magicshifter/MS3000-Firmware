@@ -64,7 +64,8 @@ struct APInfo {
   public:
 	 APInfo() {
 		clear();
-	} void clear(void) {
+	} 
+	void clear(void) {
 		memset(ssid, 0, sizeof(ssid));
 		memset(password, 0, sizeof(password));
 	}
@@ -86,12 +87,16 @@ struct ServerConfig {
 struct APConfig {
 	struct APInfo apInfo;
 	bool forceAPMode;
+	void clear(void) {
+		apInfo.clear();
+		forceAPMode = false;
+	}
 };
 
 struct UIConfig {
 	int initialMode;
-	long powerdownTimeUSB;
-	long powerdownTimeBattery;
+	unsigned long timeoutHighPower;
+	unsigned long timeoutLowPower;
 	int defaultBrightness;
 };
 

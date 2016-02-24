@@ -138,8 +138,11 @@ bool AutoConnect()
 							(msGlobals.ggAPConfig.apInfo,
 							 CONNECTION_TIMEOUT)) {
 							msGlobals.ggModeAP = false;
+							msGlobals.ggSoftAP.clear();
+
 							msSystem.feedbackAnimation(msGlobals.
 													   feedbackType::OK);
+
 							return true;
 						}
 					}
@@ -161,6 +164,8 @@ bool AutoConnect()
 	msSystem.Settings.getAPConfig(&softAPInfo);
 	if (TrySoftAP(softAPInfo)) {
 		msGlobals.ggModeAP = true;
+		msGlobals.ggSoftAP = softAPInfo;
+
 		return true;
 	}
 
