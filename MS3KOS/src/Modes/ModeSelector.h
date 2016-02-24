@@ -24,7 +24,7 @@ class ModeSelectorMode:public MagicShifterBaseMode {
 	}
 
 	virtual void start() {
-		setIndex(0);
+		setIndex(msGlobals.ggCurrentMode);
 	}
 
 // stop the mode

@@ -823,9 +823,6 @@ class MagicShifterSystem {
 		Serial.begin(921600);
 #endif
 
-
-		delay(750);	// needed to give some OS drivers time to sync
-
 		slogln(String("\r\nMagicShifter 3000 OS V" + String(MS3KOS_VERSION)));
 
 		// wake up filesystem
@@ -841,8 +838,6 @@ class MagicShifterSystem {
 		msGlobals.ggBrightness = msGlobals.ggUIConfig.defaultBrightness;
 
 		msLEDs.bootSwipe();
-
-		
 
 		// all engines turn on
 		pinMode(PIN_PWR_MGT, INPUT);

@@ -78,6 +78,8 @@ void setup()
 #endif
 
 	msGlobals.ggModeList[msGlobals.ggCurrentMode]->start();
+
+	msModeSelector.start();
 }
 
 void loop()

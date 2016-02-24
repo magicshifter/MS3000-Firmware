@@ -6,6 +6,12 @@ class MagicRemoteMode : public MagicShifterBaseMode {
   	}
 
 	virtual void start() {
+		for(int i=0;i<RGB_BUFFER_SIZE;i+=4) {
+			msGlobals.ggRGBLEDBuf[i] = msGlobals.ggBrightness |= 0xE0;
+			msGlobals.ggRGBLEDBuf[i+1] = i * 4;
+			msGlobals.ggRGBLEDBuf[i+2] = 255 - i * 16;
+			msGlobals.ggRGBLEDBuf[i+3] = 0;
+		}
 	}
 	virtual void stop(void) {
 	}
