@@ -25,7 +25,7 @@ class MagicLightMode : public MagicShifterBaseMode {
   public:
 
 	MagicLightMode() { 
-		 	modeName = "Lgt";
+		 	modeName = "Light";
 	}
 
     bool hackUIResponsive() {

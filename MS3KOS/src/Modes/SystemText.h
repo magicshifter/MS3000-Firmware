@@ -35,7 +35,7 @@ struct powerMode_t
 
   public:
   	SystemTextMode() { 
-		 	modeName = "SVals";
+		 	modeName = "Values";
 	}
 
 	void setText(char *label, char *value, MSColor color, char *value2, MSColor color2) {

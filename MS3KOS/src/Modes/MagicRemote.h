@@ -2,7 +2,7 @@ class MagicRemoteMode : public MagicShifterBaseMode {
 
   public:
   	MagicRemoteMode() {
-  		modeName = "Rmt";
+  		modeName = "Remote";
   	}
 
 	virtual void start() {

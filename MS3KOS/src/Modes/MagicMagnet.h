@@ -14,7 +14,7 @@ class MagicMagnetMode:public MagicShifterBaseMode {
   public:
 
   	MagicMagnetMode() { 
-		 	modeName = "Cmps";
+		 	modeName = "Compass";
 	}
 
 	void start() {

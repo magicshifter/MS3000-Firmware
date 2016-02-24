@@ -32,7 +32,7 @@ class MagicShakeMode:public MagicShifterBaseMode {
   public:
 
 	 MagicShakeMode() {
-	 	modeName = "Mgc";
+	 	modeName = "Image";
 	}
 	// Get a file from the list of onboard files, filtering only .magicBitmap files// fileIndex: the idx of the file in the list// maxFiles: returns the length of the list// return: filename when found, empty string when not found
 		String getFileNameAtIndex(int fileIndex, int &maxFiles) {
