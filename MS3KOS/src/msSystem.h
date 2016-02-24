@@ -950,7 +950,7 @@ class MagicShifterSystem {
 
 	float calculateVoltage(int adValue)
 	{
-		int ad1V = 1023;
+		int ad1V = 1024;
 //		static float avg = 4.2;
 
 		//float r1 = 180, r2 = 390, r3 = 330; // gamma??? or (not beta)
