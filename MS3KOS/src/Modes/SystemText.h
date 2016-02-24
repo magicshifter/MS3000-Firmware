@@ -13,8 +13,8 @@ class SystemTextMode:public MagicShifterBaseMode {
 	bool correctBrightness = false;
 	int sysCursor = 0;
 	bool shouldBlackenBackground = true;
-	int ptbMode = 0;
-	int ptuMode = 0;
+	int ptLoMode = 0;	// index
+	int ptHiMode = 0;
 	bool needsTextUpdate = false;
 
 struct powerMode_t
@@ -23,12 +23,14 @@ struct powerMode_t
 	unsigned long powertime;
 } ;
 
-#define NUM_POWER_MODES 4
-	powerMode_t POWERMODES[NUM_POWER_MODES] = {
-		{"10sec", 10 * 1000} ,
-		{"10m",10 * 1000 * 60},
-		{"30m",30 * 1000 * 60},
-		{"Infi",0}
+#define NUM_POWER_MODES 6
+	powerMode_t predefinedPowerModes[NUM_POWER_MODES] = {
+		{"Infi",0},
+		{"5m", 5 * 60 * 1000} ,
+		{"10m",10 * 60 * 1000},
+		{"30m",30 * 60 * 1000},
+		{"1hr",60 * 60 * 1000},
+		{"2hr",2 * 60 * 60 * 1000},
 	};
 
   public:
@@ -91,6 +93,15 @@ struct powerMode_t
 
 	void start() {
 		setText((char *) "SYSTEM", (char *) "VALUES", aBLUE);
+
+		for (int i=0;i<NUM_POWER_MODES;i++){
+			if (predefinedPowerModes[i].powertime <= msGlobals.ggUIConfig.timeoutLowPower)
+				ptLoMode = i;
+			if (predefinedPowerModes[i].powertime <= msGlobals.ggUIConfig.timeoutHighPower)
+				ptHiMode = i;
+		}
+
+
 	}
 
 // stop the mode
@@ -154,20 +165,20 @@ struct powerMode_t
 			}
 			if (sysCursor == STR_POWER_LO) {
 				// power-timeout modes
-				ptbMode++;
-				if(ptbMode >= NUM_POWER_MODES)
-					ptbMode=0;
+				ptLoMode++;
+				if(ptLoMode >= NUM_POWER_MODES)
+					ptLoMode=0;
 
-				msGlobals.ggUIConfig.timeoutLowPower = POWERMODES[ptbMode].powertime;
+				msGlobals.ggUIConfig.timeoutLowPower = predefinedPowerModes[ptLoMode].powertime;
 				msSystem.Settings.setUIConfig(&msGlobals.ggUIConfig);
 			}
 			if (sysCursor == STR_POWER_HI) {
 				// power-timeout modes
-				ptuMode++;
-				if(ptuMode >= NUM_POWER_MODES)
-					ptuMode=0;
+				ptHiMode++;
+				if(ptHiMode >= NUM_POWER_MODES)
+					ptHiMode=0;
 
-				msGlobals.ggUIConfig.timeoutHighPower = POWERMODES[ptuMode].powertime;
+				msGlobals.ggUIConfig.timeoutHighPower = predefinedPowerModes[ptHiMode].powertime;
 				msSystem.Settings.setUIConfig(&msGlobals.ggUIConfig);
 			}
 
@@ -198,10 +209,10 @@ struct powerMode_t
 				}
 			} else if (sysCursor == STR_POWER_LO) {
 				setText((char *) String("P-LO").c_str(),
-						(char *)POWERMODES[ptbMode].label.c_str(), aWHITE);
+						(char *)predefinedPowerModes[ptLoMode].label.c_str(), aWHITE);
 			} else if (sysCursor == STR_POWER_HI) {
 				setText((char *) String("P-HI").c_str(),
-						(char *)POWERMODES[ptuMode].label.c_str(), aWHITE);
+						(char *)predefinedPowerModes[ptHiMode].label.c_str(), aWHITE);
 			} else if (sysCursor == STR_POWER_VALUE) {
 				setLargeText((char *) String("VOLT").c_str(),
 						(char *)String(msSystem.batteryVoltage).c_str(), isBatteryLow ? aRED : aGREEN);
