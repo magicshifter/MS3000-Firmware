@@ -42,7 +42,6 @@ class MagicShifterGlobals {
 	long ggTimePostedAt = 0;
 	bool ggDebugSerial = true;
 	bool ggEnableWIFI = true;
-	unsigned long ggPowerTimeout;	//	millis until we should power-off
 
 	int ggLastADValue;		// last AD value sampled during button step
 

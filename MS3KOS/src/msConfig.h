@@ -17,7 +17,7 @@
 // 16298245 // 'p2' proto
 //  1210204 //"in-production" Chip
 
-#define AP_NAME_OVERRIDE "MS3000.prototype"
+#define AP_NAME_OVERRIDE "MS3000"
 
 // HW_ID is passed one of these constants from Makefile -DHW_ID=.. 
 
