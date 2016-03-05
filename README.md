@@ -36,12 +36,18 @@ As of the date of this document we use these operating systems to develop MagicS
 
 ##Getting Started Checklist
 
+##User Manual
+
+[Don't forget to RTFM! Here is the User Manual: https://github.com/magicshifter/MS3000/wiki/UserManual](https://github.com/magicshifter/MS3000/wiki/UserManual)
+
+
+
 * Download the Platform.io tools from [platformio.org](http://platformio.org/#!/get-started)
 * Update platformio if needed (`` platformio update && platformio upgrade ``)
-* Clone the Base Firmware repository (`` git clone https://github.com/magicshifter/MagicShifter 3000.git ``)
+* Clone the Base Firmware repository (`` git clone https://github.com/magicshifter/MS3000.git ``)
 * Read All README.md's!
 * Connect your MagicShifter3000 to your computer with the USB cable.
-* (`` cd MagicShifter 3000 && make update && make ``)
+* (`` cd MS3000 && make update && make ``)
 * Test that your MagicShifter 3000 survived the final reboot.
 
 ## The MagicShifter 3000 Application Platform 
@@ -51,7 +57,7 @@ The Firmware consists of a base OS, (submodule: MagicShifter 3000-Firmware), whi
 ##Project Master and Sub-module Repositories
 We have organized the project as a single, master Git repository, which references the other sub-modules to compile a completed firmware image.  This means that you can drive the process of building a complete firmware image from the 'top-most' repository: 
 
-	https://github.com/magicshifter/MagicShifter 3000.git - the preferred developer front door.
+	https://github.com/magicshifter/MS3000 - the preferred developer front door.
 	
 This master repository is set up to manage and produce the build products of each sub-module, assembling the results into a functioning MagicShifter 3000.  This is what we use to produce final Firmware releases.
 
@@ -74,7 +80,7 @@ However, it is possible to focus only on the specific module you are interested 
 	
 	
 ##Official MagicShifter 3000 Team Firmware Releases 
-[You can download the official team releases here:](https://github.com/magicshifter/MagicShifter 3000/releases) https://github.com/magicshifter/MagicShifter 3000/releases
+[You can download the official team releases here:](https://github.com/magicshifter/MS3000/releases) https://github.com/magicshifter/MS3000/releases
 
 We encourage you to use the MagicShifter 3000 for your needs - of course, please feel free to submit a Pull Request if you come up with something that you think should be in the official releases.
 
@@ -111,4 +117,9 @@ Once you have a WiFi connection with a MagicShifter 3000, it is possible to use 
 [MagicShifter 3000 PixelEditor URL](http://magicshifter.local/index.html)
 
 [MagicShifter 3000 local admin](http://magicshifter.local/admin.html)
+
+The User Manual contains additional info on how to access and remotely program the MagicShifter3000.  User Manual is available here:
+
+[https://github.com/magicshifter/MS3000/wiki/UserManual](https://github.com/magicshifter/MS3000/wiki/UserManual)
+
 

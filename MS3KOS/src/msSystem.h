@@ -492,8 +492,8 @@ class MagicShifterSystem {
 
 	// tell power controller to power down
 	void powerDown() {
+		slogln("POWERDOWN: Now we sleep forever..");
 		showBatteryStatus(false);
-
 		// works even with pulldown but output seems to make more sense
 		//pinMode(PIN_PWR_MGT, INPUT_PULLDOWN);
 		pinMode(PIN_PWR_MGT, OUTPUT);
@@ -502,7 +502,17 @@ class MagicShifterSystem {
 		delay(1000);
 	}
 
+	// sets the current shifter Mode .. 
+	void setMode(int newMode)
+	{
+		if (newMode < msGlobals.ggModeList.size()) {
+			
+			msGlobals.ggModeList[msGlobals.ggCurrentMode]->stop();
+			msGlobals.ggCurrentMode = newMode;
+			msGlobals.ggModeList[newMode]->start();
 
+		}
+	}
 
 	void feedbackAnimation(int mode) {
 		int r, g, b = 0x00;

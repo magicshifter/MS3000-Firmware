@@ -490,8 +490,11 @@ void handleSetMode(void)
 			msSystem.slogln("arg: ");
 			msSystem.slogln(msSystem.msESPServer.arg(i));
 
-			msGlobals.ggCurrentMode =
+			int newMode = 
 				atoi(msSystem.msESPServer.arg(i).c_str());
+			
+			msSystem.setMode(newMode);
+
 		}
 
 		if (success) {
