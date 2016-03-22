@@ -187,7 +187,7 @@ class MagicShakeMode:public MagicShifterBaseMode {
 			msModeBouncingBall.simpleBouncingBall();
 
 			if (msGlobals.ggEnableWIFI)
-				delay(200);
+				delay(100);
 	
 			return false;
 		}
