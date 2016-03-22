@@ -22,3 +22,7 @@ reset-device:
 	-@echo "^T^R" | pio serialports monitor --quiet -b 921600 --dtr 0 --rts 1 -p ${MS3000_PORT} 
 	@echo "(Inappropriate ioctl is actually appropriate for a reset.. everything is okay!)"
 
+
+clean:
+	# !J! Todo: BUILD_PRODUCT_DIR
+	rm -rf .pioenvs

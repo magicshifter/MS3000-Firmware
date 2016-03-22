@@ -8,7 +8,8 @@
 #undef DEBUG_OUTPUT
 
 // MIDI enabled?
-// #define CONFIG_ENABLE_MIDI
+//#define CONFIG_ENABLE_MIDI
+
 // Accelerometer enabled?
 #define CONFIG_ENABLE_ACCEL
 

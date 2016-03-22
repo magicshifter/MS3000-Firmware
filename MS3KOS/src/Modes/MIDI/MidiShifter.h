@@ -44,6 +44,7 @@
 #define LOWEST_ARP_TEMPO (20)
 
 
+
 // Current View per MIDI input
 typedef struct {
 	uint8_t midi_channel;		// MIDI channel of View
@@ -55,7 +56,6 @@ MIDIViewT curr_midiview;
 
 uint8_t arp_play_state = 0;
 uint8_t arp_frame = 0;			// internal beat, which is 1/16th of the actual beat (see arp_bpm)
-
 
 // -- MIDI I/O
 // Send a MIDI message
@@ -402,6 +402,10 @@ private:
 
 	int microsSinceLast = 0;
 
+#ifdef CONFIG_MIDI_RTP_MIDI
+	bool	isRTPConnected;
+#endif
+
 public:
 
 	MIDIShifterMode() {
@@ -601,6 +605,7 @@ public:
 		_arp.arpSoundOff();
 	}
 
+
 	// ---------------------------------------------------------------------- Main Entry Point
 	void start()
 	{
@@ -624,8 +629,8 @@ public:
 
 		_arp.arpSoundOff();
 
-	}
 
+	}
 	// ------------------------------------------------------------- Main MIDI Frame Processor
 	bool step()
 	{
@@ -648,6 +653,8 @@ public:
 		_arp.arp_frame_time = micros();
 
 		envFrame();
+
+		return true;
 	}
 
 

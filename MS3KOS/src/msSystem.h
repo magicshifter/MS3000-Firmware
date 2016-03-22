@@ -14,15 +14,65 @@
 #include <Base64.h>
 #include <EEPROM.h>
 #include <SPI.h>
+// #include <WiFi.h>
+// #include <WiFiUdp.h>
 
 #include "Hardware/EEPROMString.h"
 #include "Hardware/LEDHardware.h"
 #include "Hardware/Sensor.h"
 #include "Hardware/Buttons.h"
-
 #include "msImage.h"
-
 #include "msSysLog.h"
+
+// RTPMIDI is usable over WiFi ?
+#define CONFIG_MIDI_RTP_MIDI
+
+#ifdef CONFIG_ENABLE_MIDI
+#include "AppleMidi.h"
+
+bool isRTPConnected = false;
+
+// -----------------------------------------------------------------------------
+void OnRTPMIDI_Connect(uint32_t ssrc, char* name) {
+  isRTPConnected = true;
+  Serial.print("Connected to session ");
+  Serial.println(name);
+}
+
+// -----------------------------------------------------------------------------
+// rtpMIDI session. Device disconnected
+// -----------------------------------------------------------------------------
+void OnRTPMIDI_Disconnect(uint32_t ssrc) {
+  isRTPConnected = false;
+  Serial.println("Disconnected");
+}
+
+// -----------------------------------------------------------------------------
+//
+// -----------------------------------------------------------------------------
+void OnRTPMIDI_NoteOn(byte channel, byte note, byte velocity) {
+  Serial.print("Incoming NoteOn from channel:");
+  Serial.print(String(channel));
+  Serial.print(" note:");
+  Serial.print(String(note));
+  Serial.print(" velocity:");
+  Serial.println(String(velocity));
+}
+
+// -----------------------------------------------------------------------------
+//
+// -----------------------------------------------------------------------------
+void OnRTPMIDI_NoteOff(byte channel, byte note, byte velocity) {
+  Serial.print("Incoming NoteOff from channel:");
+  Serial.print(String(channel));
+  Serial.print(" note:");
+  Serial.print(String(note));
+  Serial.print(" velocity:");
+  Serial.println(String(velocity));
+}
+
+#endif // #ifdef CONFIG_ENABLE_MIDI
+
 
 // forward-declared here because it is a client of msSystem ..
 void CommandInterfacePoll();
@@ -30,31 +80,30 @@ void CommandInterfacePoll();
 class MagicShifterSystem;
 extern MagicShifterSystem msSystem;
 
-
-
 // TODO: all init and all sensors and leds in here :)
 // (accelerometer wuld also be a class but the MAgicShifter object has one ;)
 class MagicShifterSystem {
 	class SettingsManager {
-  private:
-	// used in resetAPList & getNextAP
-	int apListIndex = -1;
-	File apListFile;
+		private:
+			// used in resetAPList & getNextAP
+			int apListIndex = -1;
+			File apListFile;
 
-  private:
-	 bool loadData(String path, void *config, int len) {
-		if (SPIFFS.exists((char *) path.c_str())) {
-			File file = SPIFFS.open((char *) path.c_str(), "r");
-			 file.read((uint8_t *) config, len);
-			 file.close();
-			 return true;
-		} else {
-			msSystem.
-				slog("webserver: loadData: can not open config file ");
-			msSystem.slogln((char *) path.c_str());
-		}
-		return false;
-	}
+		private:
+	 
+	 		bool loadData(String path, void *config, int len) {
+				if (SPIFFS.exists((char *) path.c_str())) {
+					File file = SPIFFS.open((char *) path.c_str(), "r");
+				 	file.read((uint8_t *) config, len);
+				 	file.close();
+				 	return true;
+				} else {
+					msSystem.
+						slog("webserver: loadData: can not open config file ");
+					msSystem.slogln((char *) path.c_str());
+				}
+				return false;
+			}
 
 	bool saveData(String path, void *config, int len) {
 		File file = SPIFFS.open((char *) path.c_str(), "w");
@@ -328,6 +377,9 @@ class MagicShifterSystem {
 	}
 };
 
+#ifdef CONFIG_ENABLE_MIDI
+APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_Defs.h
+#endif
 
   private:
 
@@ -827,7 +879,7 @@ class MagicShifterSystem {
 		EEPROM.begin(512);
 
 #ifdef CONFIG_ENABLE_MIDI
-#warning "MIDI has been enabled - Serial I/O at 31250"
+#warning "MIDI has been enabled - Serial I/O at 31250 - serial logging disabled (use wlan)"
 		Serial.begin(31250);
 #else
 		Serial.begin(921600);
@@ -881,8 +933,20 @@ class MagicShifterSystem {
 		MagicShifterImage::LoadBitmapBuffer("font10x16.magicFont",
 											&msGlobals.tBitmap10x16);
 
-		slogSysInfo();
 
+#ifdef CONFIG_ENABLE_MIDI
+#ifdef CONFIG_MIDI_RTP_MIDI
+		// Create a session and wait for a remote host to connect to us
+		AppleMIDI.begin("MS3000_MIDI_RTP");
+		AppleMIDI.OnConnected(OnRTPMIDI_Connect);
+		AppleMIDI.OnDisconnected(OnRTPMIDI_Disconnect);
+		AppleMIDI.OnReceiveNoteOn(OnRTPMIDI_NoteOn);
+		AppleMIDI.OnReceiveNoteOff(OnRTPMIDI_NoteOff);
+		msSystem.slogln("APPLEMIDI::: Sending NoteOn/Off of note 45, every second");
+#endif
+#endif
+
+		slogSysInfo();
 		
 	}
 
