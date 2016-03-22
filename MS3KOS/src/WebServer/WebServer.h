@@ -107,7 +107,7 @@ class MagicShifterWebServer {
 		msSystem.msESPServer.on("/",[]() {
 								HandleServeStaticFile("index.html");}
 		);
-		//msSystem.msESPServer.on("favicon.gif", HandleServeStaticFile("favicon.gif"));
+		// msSystem.msESPServer.on("favicon.gif", HandleServeStaticFile("favicon.gif"));
 		//msSystem.msESPServer.on("manifest.appcache", HandleServeStaticFile("manifest.appcache"));
 
 //  msSystem.msESPServer.onFileUpload(handleFileUpload);

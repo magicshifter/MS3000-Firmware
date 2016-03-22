@@ -32,6 +32,10 @@
 
 bool isRTPConnected = false;
 
+
+extern "C" void esp_schedule();
+extern "C" void esp_yield();
+
 // -----------------------------------------------------------------------------
 void OnRTPMIDI_Connect(uint32_t ssrc, char* name) {
   isRTPConnected = true;
@@ -405,7 +409,7 @@ APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_De
 	int lowBatteryMillis;
 	float  batteryVoltage = 0.0;
 
-
+	bool wifiDelayHack = true;
 
   public:
 	// todo:switch slog from OFF, to BANNED (MIDI), to UDP .. etc.
@@ -954,6 +958,17 @@ APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_De
 		ESP.restart();
 	}
 
+	void setWifiDelayHack(bool state)
+	{
+		wifiDelayHack = state;
+	}
+
+	void local_yield()
+	{
+		if (wifiDelayHack)
+			delay(1);
+	}
+
 	void step() {
 
 
@@ -964,6 +979,8 @@ APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_De
 		displayButtons();
 		msButtons.step();
 		msSensor.step();
+
+		local_yield();
 
 		batteryVoltage = calculateVoltage(msGlobals.ggLastADValue);
 
@@ -987,6 +1004,7 @@ APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_De
 			}
 		}
 
+
 		if ((lowBatteryMillis != 0) && 
 			(msGlobals.ggUIConfig.timeoutLowPower != 0) && 
 			(lowBatteryMillis + (10 * 1000) < msGlobals.ggCurrentMillis)) { // 10 seconds 
@@ -1005,6 +1023,10 @@ APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_De
 
 		CommandInterfacePoll();
 		brightnessControl();
+
+		msESPServer.handleClient(); 
+
+		local_yield();
 
 	}
 
