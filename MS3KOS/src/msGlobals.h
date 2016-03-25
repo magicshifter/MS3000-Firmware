@@ -28,7 +28,6 @@ class MagicShifterGlobals {
 	long ggCurrentMicros = 0;
 	unsigned long ggCurrentMillis = 0;
 	unsigned long ggLastMicros = 0;
-	unsigned long ggSpeedMicros = 800;
 	unsigned long ggLastFrameMicros = 0;
 	unsigned long ggCurrentFrame = 0;
 	unsigned long ggBootTime = 0;
