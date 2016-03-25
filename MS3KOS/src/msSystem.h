@@ -409,7 +409,7 @@ APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_De
 	int lowBatteryMillis;
 	float  batteryVoltage = 0.0;
 
-	bool wifiDelayHack = true;
+	bool shouldLocalYield = true;
 
   public:
 	// todo:switch slog from OFF, to BANNED (MIDI), to UDP .. etc.
@@ -958,18 +958,20 @@ APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_De
 		ESP.restart();
 	}
 
-	void setWifiDelayHack(bool state)
+	void setLocalYieldState(bool state)
 	{
-		wifiDelayHack = state;
+		shouldLocalYield = state;
 	}
 
 	void local_yield()
 	{
-		if (wifiDelayHack)
+		if (shouldLocalYield)
 			delay(1);
 	}
 
 	void step() {
+
+		local_yield();
 
 
 		msGlobals.ggLastMicros = msGlobals.ggCurrentMicros;
@@ -1028,6 +1030,14 @@ APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_De
 
 		local_yield();
 
+// if (shouldLocalYield) {
+// msLEDs.fillLEDs(0, 0, 100, msGlobals.ggBrightness);
+// msLEDs.updateLEDs();
+// }
+// else{
+// 	msLEDs.fillLEDs(100, 0, 0, msGlobals.ggBrightness);
+// msLEDs.updateLEDs();
+// }
 	}
 
 

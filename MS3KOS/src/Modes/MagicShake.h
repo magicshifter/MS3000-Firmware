@@ -184,6 +184,7 @@ class MagicShakeMode:public MagicShifterBaseMode {
 			msModeBouncingBall.
 				applyForce((msGlobals.ggCurrentMicros -
 							msGlobals.ggLastMicros) / 1000.0, fX * 3);
+				
 			msSystem.local_yield();
 
 			msModeBouncingBall.simpleBouncingBall();

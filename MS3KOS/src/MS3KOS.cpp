@@ -108,7 +108,7 @@ void loop()
 		} else {
 			if (msGlobals.ggCurrentMode < msGlobals.ggModeList.size()) {
 				// despatch to mode
-				msSystem.setWifiDelayHack(!msGlobals.ggModeList[msGlobals.ggCurrentMode]->step());
+				msSystem.setLocalYieldState(!msGlobals.ggModeList[msGlobals.ggCurrentMode]->step());
 			}
 		}
 
