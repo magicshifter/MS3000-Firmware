@@ -133,7 +133,7 @@ class MagicShifterSystem {
 		bool result = loadData(uiSettingsConfigPath, config, sizeof(*config));
 		if (!result) {
 			config->timeoutHighPower = 0;
-			config->timeoutLowPower = 1000 * 1000 * 10 * 60;
+			config->timeoutLowPower =  10 * 60 * 1000; // 10 minutes
 			config->defaultBrightness = 2;
 		}
 		return result;
@@ -1002,12 +1002,13 @@ APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_De
 
 	void local_yield()
 	{
-
 		if (shouldLocalYield)
-			delay(1);
+			delay(10);
 	}
 
 	void step() {
+
+		local_yield();
 
 		msGlobals.ggLastMicros = msGlobals.ggCurrentMicros;
 		msGlobals.ggCurrentMicros = micros();
@@ -1016,6 +1017,8 @@ APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_De
 		displayButtons();
 		msButtons.step();
 		msSensor.step();
+
+		local_yield();
 
 		batteryVoltage = calculateVoltage(msGlobals.ggLastADValue);
 
