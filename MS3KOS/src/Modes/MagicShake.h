@@ -189,8 +189,6 @@ class MagicShakeMode:public MagicShifterBaseMode {
 
 			msModeBouncingBall.simpleBouncingBall();
 
-			msSystem.local_yield();
-
 			return false;
 		}
 
