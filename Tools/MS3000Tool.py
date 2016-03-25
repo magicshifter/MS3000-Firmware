@@ -645,6 +645,8 @@ def initMS3000():
 	ser = openPort(5)
 	issueUploadMS3000(ser, "settings_ap.bin", "settings/ap.bin")
 	sleep(delay)
+	issueUploadMS3000(ser, "../../MS3000-WebInterface/dist/bundled/favicon.ico", "favicon.ico")
+	sleep(delay)
 	issueUploadMS3000(ser, "../../MS3000-WebInterface/dist/bundled/index.html", "index.html")
 	sleep(delay)
 	issueUploadMS3000(ser, "../../MS3000-WebInterface/dist/bundled/index.js.gz", "index.js.gz")
