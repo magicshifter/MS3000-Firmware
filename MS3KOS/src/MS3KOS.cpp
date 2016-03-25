@@ -85,38 +85,38 @@ void setup()
 void loop()
 {
 	// inside time-frame
-	if (msGlobals.ggLastFrameMicros + msGlobals.ggSpeedMicros < micros()) {
+	msWebServer.step();
 
-		msSystem.step();
+	msSystem.step();
 
-		msWebServer.step();
+	msGlobals.ggLFrameTime =
+		msGlobals.ggCurrentMicros - msGlobals.ggLastFrameMicros;
+	msGlobals.ggCurrentFrame++;
+	msGlobals.ggLastFrameMicros = msGlobals.ggCurrentMicros;
 
-		msGlobals.ggLFrameTime =
-			msGlobals.ggCurrentMicros - msGlobals.ggLastFrameMicros;
-		msGlobals.ggCurrentFrame++;
-		msGlobals.ggLastFrameMicros = msGlobals.ggCurrentMicros;
-
-		if (msSystem.modeMenuActivated) {
-			int newMode = msModeSelector.select();
-			if (newMode >= 0) {
-				// stop all modes..
-				msGlobals.ggModeList[msGlobals.ggCurrentMode]->stop();
-				msSystem.modeMenuActivated = false;
-				msGlobals.ggCurrentMode = newMode;
-				msGlobals.ggModeList[msGlobals.ggCurrentMode]->start();
-			}
-		} else {
-			if (msGlobals.ggCurrentMode < msGlobals.ggModeList.size()) {
-				// despatch to mode
-				msSystem.setLocalYieldState(!msGlobals.ggModeList[msGlobals.ggCurrentMode]->step());
-			}
+	if (msSystem.modeMenuActivated) {
+		int newMode = msModeSelector.select();
+		if (newMode >= 0) {
+			// stop all modes..
+			msGlobals.ggModeList[msGlobals.ggCurrentMode]->stop();
+			msSystem.modeMenuActivated = false;
+			msGlobals.ggCurrentMode = newMode;
+			msGlobals.ggModeList[msGlobals.ggCurrentMode]->start();
 		}
+	} else {
+		if (msGlobals.ggCurrentMode < msGlobals.ggModeList.size()) {
+			// despatch to mode
 
-		// fault-checks
-		if (msGlobals.ggFault > 0) {
-			Serial.print("FAULT:");
-			Serial.println(String(msGlobals.ggFault));
-			msSystem.msLEDs.errorSwipe();
+			msSystem.setLocalYieldState(
+				!msGlobals.ggModeList[msGlobals.ggCurrentMode]->step()
+				);
 		}
+	}
+
+	// fault-checks
+	if (msGlobals.ggFault > 0) {
+		Serial.print("FAULT:");
+		Serial.println(String(msGlobals.ggFault));
+		msSystem.msLEDs.errorSwipe();
 	}
 }
