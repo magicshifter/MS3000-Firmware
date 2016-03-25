@@ -110,14 +110,14 @@ struct powerMode_t
 	}
 
 	enum {
-		STR_IP = 0,
-		STR_SOFTIP = 1,
+		STR_VERSION = 0,
+		STR_WIFI = 1,
 		STR_SSID = 2,
-		STR_POWER_LO  = 3, 
-		STR_POWER_HI  = 4,
-		STR_POWER_VALUE = 5, 
-		STR_WIFI = 6,
-		STR_VERSION = 7
+		STR_IP = 3,
+		STR_SOFTIP = 4,
+		STR_POWER_LO  = 5, 
+		STR_POWER_HI  = 6,
+		STR_POWER_VALUE = 7 
 	};
 
 #define NUM_SYS_TEXTS 8
