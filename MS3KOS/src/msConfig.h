@@ -18,7 +18,7 @@
 // 16298245 // 'p2' proto
 //  1210204 //"in-production" Chip
 
-#define AP_NAME_OVERRIDE "MS3000"
+#define AP_NAME_OVERRIDE "MS3000.gigi"
 
 // HW_ID is passed one of these constants from Makefile -DHW_ID=.. 
 
@@ -39,7 +39,7 @@
 
 // v1 == breadboard pcb
 // 2 == 0.9 pcb :)
-#define MS3KOS_VERSION "0.9.1"
+#define MS3KOS_VERSION "0.9.2"
 
 #define MIN_TIME_CLICK 10000
 #define MIN_TIME_LONG_CLICK 1000 * 750

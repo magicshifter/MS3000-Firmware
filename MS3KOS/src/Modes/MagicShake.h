@@ -35,6 +35,7 @@ class MagicShakeMode:public MagicShifterBaseMode {
 	 	modeName = "Image";
 	}
 	// Get a file from the list of onboard files, filtering only .magicBitmap files// fileIndex: the idx of the file in the list// maxFiles: returns the length of the list// return: filename when found, empty string when not found
+
 		String getFileNameAtIndex(int fileIndex, int &maxFiles) {
 		Dir POVDir;
 		msSystem.slog("getFileNameAtIndex:");
@@ -47,6 +48,7 @@ class MagicShakeMode:public MagicShifterBaseMode {
 		String currentFilename = "";
 
 		while (1) {
+
 			if (!POVDir.next())
 				break;			// end of list
 
@@ -184,11 +186,11 @@ class MagicShakeMode:public MagicShifterBaseMode {
 			msModeBouncingBall.
 				applyForce((msGlobals.ggCurrentMicros -
 							msGlobals.ggLastMicros) / 1000.0, fX * 3);
+
 			msModeBouncingBall.simpleBouncingBall();
 
-			if (msGlobals.ggEnableWIFI)
-				delay(200);
-	
+			msSystem.local_yield();
+
 			return false;
 		}
 

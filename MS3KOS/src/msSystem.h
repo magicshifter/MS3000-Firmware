@@ -316,7 +316,7 @@ class MagicShifterSystem {
 		if (firstFreePos >= 0) {
 			msSystem.slogln("found hole!");
 			msSystem.slogln(String(firstFreePos));
-			apListFile = SPIFFS.open((char *) path.c_str(), "a+");
+			apListFile = SPIFFS.open((char *) path.c_str(), "w+");
 			apListFile.seek(firstFreePos, SeekSet);
 		} else {
 			msSystem.slogln("appending at end");
@@ -405,7 +405,7 @@ APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_De
 	int lowBatteryMillis;
 	float  batteryVoltage = 0.0;
 
-
+	bool shouldLocalYield = true;
 
   public:
 	// todo:switch slog from OFF, to BANNED (MIDI), to UDP .. etc.
@@ -867,6 +867,45 @@ APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_De
 
 	}
 
+// NOTE: this is being left in for future testing of SPIFFS .. 
+  void TEST_SPIFFS_bug()
+  {
+
+    const char* debugPath = "XXXXX";
+    uint8_t testVals[] = {1,23, 3, 7};
+    uint8_t readBuffer[] = {0,0,0,0};
+    //File file = SPIFFS.open((char *)debugPath.c_str(), "w");
+    
+    slogln("openin for w: ");
+    slogln(String(debugPath));
+    
+    File file = SPIFFS.open(debugPath, "w");
+
+    slogln("opended for w: ");
+    slogln(String((bool)file));
+
+    slogln("writin: ");
+    slogln(String(testVals[1]));
+
+    file.write((uint8_t *)testVals, sizeof testVals);
+    file.close();
+
+    slogln("openin for r: ");
+    slogln(String(debugPath));
+    
+    File fileR = SPIFFS.open(debugPath, "r");
+
+    slogln("opended for r: ");
+    slogln(String((bool)fileR));
+
+    slogln("readin: ");
+
+    fileR.read((uint8_t *)readBuffer, sizeof readBuffer);
+    fileR.close();
+
+    slogln("readback: ");
+    slogln(String(readBuffer[1]));
+  };
 
 
 	// gets the basic stuff set up
@@ -894,6 +933,8 @@ APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_De
 			slog("done:");
 		else
 			slog("noSPIFFS:");
+
+		// TEST_SPIFFS_bug();
 
 		Settings.getUIConfig(&msGlobals.ggUIConfig);
 
@@ -954,8 +995,19 @@ APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_De
 		ESP.restart();
 	}
 
-	void step() {
+	void setLocalYieldState(bool state)
+	{
+		shouldLocalYield = state;
+	}
 
+	void local_yield()
+	{
+
+		if (shouldLocalYield)
+			delay(1);
+	}
+
+	void step() {
 
 		msGlobals.ggLastMicros = msGlobals.ggCurrentMicros;
 		msGlobals.ggCurrentMicros = micros();
@@ -987,6 +1039,7 @@ APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_De
 			}
 		}
 
+
 		if ((lowBatteryMillis != 0) && 
 			(msGlobals.ggUIConfig.timeoutLowPower != 0) && 
 			(lowBatteryMillis + (10 * 1000) < msGlobals.ggCurrentMillis)) { // 10 seconds 
@@ -1005,6 +1058,8 @@ APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_De
 
 		CommandInterfacePoll();
 		brightnessControl();
+
+		local_yield();
 
 	}
 
