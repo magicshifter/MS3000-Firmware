@@ -1003,7 +1003,9 @@ APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_De
 	void local_yield()
 	{
 		if (shouldLocalYield)
-			delay(10);
+			delay(1);
+		else
+			yield();
 	}
 
 	void step() {
