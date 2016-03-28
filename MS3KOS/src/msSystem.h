@@ -24,11 +24,11 @@
 #include "msImage.h"
 #include "msSysLog.h"
 
-// RTPMIDI is usable over WiFi ?
-#define CONFIG_MIDI_RTP_MIDI
 
 #ifdef CONFIG_ENABLE_MIDI
 #include "AppleMidi.h"
+// RTPMIDI is usable over WiFi ?
+#define CONFIG_MIDI_RTP_MIDI
 
 bool isRTPConnected = false;
 
