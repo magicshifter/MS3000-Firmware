@@ -919,8 +919,8 @@ APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_De
 
 #ifdef CONFIG_ENABLE_MIDI
 #warning "MIDI has been enabled - Serial I/O at 31250 - serial logging disabled (use wlan)"
-		Serial.begin(31250);
-#else
+		// Serial.begin(31250);
+// #else
 		Serial.begin(921600);
 #endif
 
@@ -1003,7 +1003,7 @@ APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_De
 	void local_yield()
 	{
 		if (shouldLocalYield)
-			delay(1);
+			delay(random(7,15));
 		else
 			yield();
 	}
