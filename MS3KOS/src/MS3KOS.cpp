@@ -95,6 +95,7 @@ void loop()
 	msGlobals.ggLastFrameMicros = msGlobals.ggCurrentMicros;
 
 	if (msSystem.modeMenuActivated) {
+		msSystem.setLocalYieldState(false);
 		int newMode = msModeSelector.select();
 		if (newMode >= 0) {
 			// stop all modes..
