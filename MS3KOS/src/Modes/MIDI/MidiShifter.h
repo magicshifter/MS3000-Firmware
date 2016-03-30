@@ -456,32 +456,32 @@ public:
 	{
 		int c;
 
-		msSystem.slogln("Current Dump:");
+		msSystem.slog("Current Dump:");
 
-		msSystem.slogln(" T: ");
-		msSystem.slogln(anEnvelope.timer, DEC);
+		msSystem.slog(" T: ");
+		msSystem.slog(anEnvelope.timer, DEC);
 
-		msSystem.slogln(" L: ");
-		msSystem.slogln(anEnvelope.level, DEC);
+		msSystem.slog(" L: ");
+		msSystem.slog(anEnvelope.level, DEC);
 
-		msSystem.slogln(" C: ");
-		msSystem.slogln((unsigned int) anEnvelope.current, HEX);
+		msSystem.slog(" C: ");
+		msSystem.slog((unsigned int) anEnvelope.current, HEX);
 
-		msSystem.slogln(" IDLE: ");
+		msSystem.slog(" IDLE: ");
 		msSystem.slogln(anEnvelope.is_idle, DEC);
 
 		msSystem.slogln("Envelope Dump:");
 
 		for (c = 0; c <= ENV_RELEASE; c++) {
-			msSystem.slogln("Stage:");
-			msSystem.slogln((unsigned int) &anEnvelope.stages[c], HEX);
-			msSystem.slogln(" ");
-			msSystem.slogln(c, DEC);
-			msSystem.slogln(" L:");
-			msSystem.slogln(anEnvelope.stages[c].level, DEC);
-			msSystem.slogln(" / D:");
-			msSystem.slogln(anEnvelope.stages[c].duration, DEC);
-			msSystem.slogln(" @ C:");
+			msSystem.slog("Stage:");
+			msSystem.slog((unsigned int) &anEnvelope.stages[c], HEX);
+			msSystem.slog(" ");
+			msSystem.slog(c, DEC);
+			msSystem.slog(" L:");
+			msSystem.slog(anEnvelope.stages[c].level, DEC);
+			msSystem.slog(" / D:");
+			msSystem.slog(anEnvelope.stages[c].duration, DEC);
+			msSystem.slog(" @ C:");
 			msSystem.slogln(anEnvelope.stages[c].coeff, DEC);
 
 		}
@@ -609,6 +609,18 @@ public:
 	// ---------------------------------------------------------------------- Main Entry Point
 	void start()
 	{
+
+#ifdef CONFIG_MIDI_RTP_MIDI
+		// Create a session and wait for a remote host to connect to us
+#warning "MS30000 MIDI RTP ENABLED!"
+		AppleMIDI.OnConnected(OnRTPMIDI_Connect);
+		AppleMIDI.OnDisconnected(OnRTPMIDI_Disconnect);
+		AppleMIDI.OnReceiveNoteOn(OnRTPMIDI_NoteOn);
+		AppleMIDI.OnReceiveNoteOff(OnRTPMIDI_NoteOff);
+		AppleMIDI.begin("MS3000_MIDI_RTP");
+		// msSystem.slogln("APPLEMIDI::: Sending NoteOn/Off of note 45, every second");
+#endif
+
 		// Debug - set an LED so we know we made it ..
 		msSystem.msLEDs.fillLEDs(0, 0, 0);
 		msSystem.msLEDs.setLED(0, 0, 100, 0);
@@ -636,6 +648,12 @@ public:
 	{
 		uint8_t midi_inb;
 
+#ifdef CONFIG_MIDI_RTP_MIDI
+		AppleMIDI.run();
+#endif
+
+
+#if 0
 		// pull midi_inbox
 		if (Serial1.available()) {
 			MIDI_Get(&midi_inb, 1);
@@ -644,6 +662,8 @@ public:
 		{
 			// MIDI_Put(&midi_buf[0], 4);
 		}
+#endif
+
 		midi_frame++;
 
 		// minimize latency introduced by the Arp frame
@@ -652,9 +672,9 @@ public:
 
 		_arp.arp_frame_time = micros();
 
-		envFrame();
+		// envFrame();
 
-		return true;
+		return false;
 	}
 
 

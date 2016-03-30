@@ -63,11 +63,11 @@ uint16_t adsr_envelope_tick(adsr_envelope * env)
 {
 	estage *es = env->current;
 
-	msSystem.slogln("Current Stage:");
-	msSystem.slogln((unsigned int) es, HEX);
-	msSystem.slogln("Timer:");
-	msSystem.slogln(env->timer, DEC);
-	msSystem.slogln("Duration:");
+	msSystem.slog("Current Stage:");
+	msSystem.slog((unsigned int) es, HEX);
+	msSystem.slog("Timer:");
+	msSystem.slog(env->timer, DEC);
+	msSystem.slog("Duration:");
 	msSystem.slogln(es->duration, DEC);
 
 	if (env->timer >= es->duration) {	// next stage
