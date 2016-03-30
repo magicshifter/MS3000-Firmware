@@ -990,7 +990,7 @@ class MagicShifterSystem {
 	void local_yield()
 	{
 		// wifi needs time, otherwise we  ..
-		if (WiFi.status() == WL_CONNECTED) {
+		if (msGlobals.ggEnableWIFI) {
 			if (_shouldLocalYield)
 				delay(random(35,50));  // !J!: DEBUG ONLY
 		}
