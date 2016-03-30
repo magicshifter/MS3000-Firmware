@@ -30,6 +30,8 @@
 // RTPMIDI is usable over WiFi ?
 #define CONFIG_MIDI_RTP_MIDI
 
+APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_Defs.h
+
 bool isRTPConnected = false;
 
 // -----------------------------------------------------------------------------
@@ -377,10 +379,6 @@ class MagicShifterSystem {
 	}
 };
 
-#ifdef CONFIG_ENABLE_MIDI
-APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_Defs.h
-#endif
-
   private:
 
   public:
@@ -405,22 +403,22 @@ APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_De
 	int lowBatteryMillis;
 	float  batteryVoltage = 0.0;
 
-	bool shouldLocalYield = true;
+	bool _shouldLocalYield = true;
 
   public:
 	// todo:switch slog from OFF, to BANNED (MIDI), to UDP .. etc.
 
 	void slog(String msg) {
-#ifndef CONFIG_ENABLE_MIDI
+// #ifndef CONFIG_ENABLE_MIDI
 		Serial.print(msg);
-#endif
-		msSysLog.sendSysLogMsg(msg);
+// #endif
+		// msSysLog.sendSysLogMsg(msg);
 	};
 	void slogln(String msg) {
-#ifndef CONFIG_ENABLE_MIDI
+// #ifndef CONFIG_ENABLE_MIDI
 		Serial.println(msg);
-#endif
-		msSysLog.sendSysLogMsg(msg);
+// #endif
+		// msSysLog.sendSysLogMsg(msg);
 	};
 
 	void slog(int8_t & msg, int base) {
@@ -975,17 +973,6 @@ APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_De
 											&msGlobals.tBitmap10x16);
 
 
-#ifdef CONFIG_ENABLE_MIDI
-#ifdef CONFIG_MIDI_RTP_MIDI
-		// Create a session and wait for a remote host to connect to us
-		AppleMIDI.begin("MS3000_MIDI_RTP");
-		AppleMIDI.OnConnected(OnRTPMIDI_Connect);
-		AppleMIDI.OnDisconnected(OnRTPMIDI_Disconnect);
-		AppleMIDI.OnReceiveNoteOn(OnRTPMIDI_NoteOn);
-		AppleMIDI.OnReceiveNoteOff(OnRTPMIDI_NoteOff);
-		msSystem.slogln("APPLEMIDI::: Sending NoteOn/Off of note 45, every second");
-#endif
-#endif
 
 		slogSysInfo();
 		
@@ -997,15 +984,17 @@ APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_De
 
 	void setLocalYieldState(bool state)
 	{
-		shouldLocalYield = state;
+		_shouldLocalYield = state;
 	}
 
 	void local_yield()
 	{
-		if (shouldLocalYield)
-			delay(random(7,15));
-		else
-			yield();
+		// wifi needs time, otherwise we  ..
+		if (WiFi.status() == WL_CONNECTED) {
+			if (_shouldLocalYield)
+				delay(random(35,50));  // !J!: DEBUG ONLY
+		}
+		// else yield();
 	}
 
 	void step() {
