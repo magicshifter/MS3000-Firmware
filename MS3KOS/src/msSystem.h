@@ -688,6 +688,7 @@ class MagicShifterSystem {
 			while (skip) {
 				delay(1);
 
+				getADValue();
 				msButtons.step();
 				msSensor.step();
 
@@ -918,7 +919,7 @@ class MagicShifterSystem {
 #ifdef CONFIG_ENABLE_MIDI
 #warning "MIDI has been enabled - Serial I/O at 31250 - serial logging disabled (use wlan)"
 		// Serial.begin(31250);
-// #else
+#else
 		Serial.begin(921600);
 #endif
 
@@ -991,10 +992,14 @@ class MagicShifterSystem {
 	{
 		// wifi needs time, otherwise we  ..
 		if (msGlobals.ggEnableWIFI) {
-			if (_shouldLocalYield)
-				delay(random(35,50));  // !J!: DEBUG ONLY
+			if (_shouldLocalYield) {
+				if (msGlobals.ggModeAP)
+					delay(random(35,50));
+				else 
+					delay(1);
+			}
 		}
-		// else yield();
+		else yield();
 	}
 
 	void step() {
@@ -1006,10 +1011,14 @@ class MagicShifterSystem {
 		msGlobals.ggCurrentMillis = millis();
 		
 		displayButtons();
+
+		// AD Value reading is slow	
+		getADValue();
+
+		brightnessControl();
+
 		msButtons.step();
 		msSensor.step();
-
-		local_yield();
 
 		batteryVoltage = calculateVoltage(msGlobals.ggLastADValue);
 
@@ -1051,9 +1060,6 @@ class MagicShifterSystem {
 		}
 
 		CommandInterfacePoll();
-		brightnessControl();
-
-		local_yield();
 
 	}
 
@@ -1062,8 +1068,12 @@ class MagicShifterSystem {
 		msButtons.msLongClickOK = enable;
 	}
 
+	// slow analog read
+	// we store the value so that it is available per
+	// module step()
 	int getADValue(void) {
-		return analogRead(A0);
+		msGlobals.ggLastADValue = analogRead(A0);
+		return msGlobals.ggLastADValue;
 	}
 
 	float calculateVoltage(int adValue)
@@ -1084,7 +1094,7 @@ class MagicShifterSystem {
 	}
 
 	float getBatteryVoltage(void) {
-		int adValue = getADValue();
+		int adValue = msGlobals.ggLastADValue;
 		return calculateVoltage(adValue);
 	}
 

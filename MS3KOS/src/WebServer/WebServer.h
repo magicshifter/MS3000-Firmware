@@ -134,10 +134,6 @@ class MagicShifterWebServer {
 
 
 	void step(void) {
-#ifdef USE_MDNS
-		// CRASHES in new toolchain 
-		msSystem.msDNS.update();
-#endif
 		msSystem.msESPServer.handleClient();
 	}
 

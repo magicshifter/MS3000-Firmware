@@ -11,10 +11,52 @@ void printIPInfo()
 	WiFi.printDiag(Serial);
 }
 
+
+void WiFiEvent(WiFiEvent_t event) {
+    // Serial.printf("[WiFi-event] event: %d\n", event);
+
+    switch(event) {
+        case WIFI_EVENT_STAMODE_GOT_IP:
+            Serial.println("WiFi connected");
+            Serial.println("IP address: ");
+            Serial.println(WiFi.localIP());
+            break;
+        case WIFI_EVENT_STAMODE_DISCONNECTED:
+            Serial.println("WiFi lost connection");
+            break;
+		case WIFI_EVENT_STAMODE_CONNECTED:
+            Serial.println("WiFi STA connected");
+		break;
+		case WIFI_EVENT_STAMODE_AUTHMODE_CHANGE:
+            Serial.println("WiFi AUTH change");
+		break;
+		case WIFI_EVENT_STAMODE_DHCP_TIMEOUT:
+            Serial.println("WiFi DHCP Timeout");
+		break;
+		case WIFI_EVENT_SOFTAPMODE_STACONNECTED:
+            Serial.println("WiFi SoftAP STA connected");
+		break;
+		case WIFI_EVENT_SOFTAPMODE_STADISCONNECTED:
+            Serial.println("WiFi SoftAP STA disconnected");
+		break;
+		case WIFI_EVENT_SOFTAPMODE_PROBEREQRECVED:
+            Serial.println("WiFi PROBEREQRECVE");
+		break;
+		case WIFI_EVENT_MAX:
+            Serial.println("WiFi EVENT MAX");
+		break;
+        default:
+            Serial.println("WiFi something else");
+        break;
+    }
+}
+
+
 bool TryConnect(struct APInfo &apInfo, int timeoutMs)
 {
 	msSystem.slog("wifi: trying to connect to AP: ");
 	msSystem.slogln(apInfo.ssid);
+    
 	WiFi.begin(apInfo.ssid, apInfo.password, 9);
 	msSystem.slog("wifi: using password: ");
 	msSystem.slogln(apInfo.password);
@@ -83,6 +125,8 @@ bool TrySoftAP(struct APInfo & apInfo)
 
 bool AutoConnect()
 {
+
+    WiFi.onEvent(WiFiEvent);
 
 #ifdef SCAN_FIRST_MODE
 	// if (!forceAPMode)

@@ -51,7 +51,6 @@ class MagicShifterButtons {
 	bool msBtnActive = false;
 
 	bool powerButtonPressed(void) {
-		msGlobals.ggLastADValue = analogRead(A0);
 		// had unusual high values on one of the 100x PCBs so this threshold is bigger now
 		return msGlobals.ggLastADValue > 970;
 	}; 

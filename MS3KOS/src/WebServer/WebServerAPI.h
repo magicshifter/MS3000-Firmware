@@ -49,7 +49,7 @@ void handleGETStatus(void)
 {
 	msSystem.slogln("handleGETStatus");
 
-	int adValue = msSystem.getADValue();
+	int adValue = msGlobals.ggLastADValue;
 	float voltage = msSystem.getBatteryVoltage();
 
 	uint32_t ip = (uint32_t) msSystem.getIP();
