@@ -40,7 +40,7 @@ void WiFiEvent(WiFiEvent_t event) {
             Serial.println("WiFi SoftAP STA disconnected");
 		break;
 		case WIFI_EVENT_SOFTAPMODE_PROBEREQRECVED:
-            Serial.println("WiFi PROBEREQRECVE");
+            Serial.println("WiFi PROBE Request recv'd");
 		break;
 		case WIFI_EVENT_MAX:
             Serial.println("WiFi EVENT MAX");
