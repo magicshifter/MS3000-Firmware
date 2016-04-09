@@ -11,6 +11,8 @@ class MagicMagnetMode:public MagicShifterBaseMode {
 	int frame = 0;
 	int lMode = 0;
 
+	const int MAX_MODES = 3;
+
   public:
 
   	MagicMagnetMode() { 
@@ -18,7 +20,9 @@ class MagicMagnetMode:public MagicShifterBaseMode {
 	}
 
 	void start() {
-	} void stop(void) {
+	} 
+
+	void stop() {
 	}
 
 	bool step() {
@@ -26,7 +30,6 @@ class MagicMagnetMode:public MagicShifterBaseMode {
 
 		frame++;
 
-		// AccelPoll();
 		if (msSystem.msButtons.msBtnAHit) {
 			lMode--;
 			msSystem.msButtons.msBtnAHit = false;
@@ -35,9 +38,11 @@ class MagicMagnetMode:public MagicShifterBaseMode {
 			lMode++;
 			msSystem.msButtons.msBtnBHit = false;
 		}
+
 		if (lMode < 0)
-			lMode = 3;
-		if (lMode > 3)
+			lMode = MAX_MODES;
+		
+		if (lMode > MAX_MODES)
 			lMode = 0;
 
 		msSystem.msSensor.readMagnetometerData(msGlobals.ggMagnet);
@@ -54,12 +59,6 @@ class MagicMagnetMode:public MagicShifterBaseMode {
 		} else {
 			autoCalResetCounter = 0;
 		}
-
-		//    msSystem.msLEDs.fillLEDs(frame % 300 == 0 ? v : 0, frame % 300 == 100 ? v : 0, frame % 300 == 200 ? v : 0);
-		//    msSystem.msLEDs.setLED(15, centerBtnPressed ? 100 : 0, powerBtnPressed ? 100 : 0, 0);
-		//    updateLedsWithBlank();
-
-		// if (!MagicShifter_Poll()) break;
 
 		int degrees =
 			int (atan2
