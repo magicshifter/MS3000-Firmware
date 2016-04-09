@@ -5,8 +5,8 @@ private:
 	int frame = 0;
 	float avgZ = 0;
 	int colIdx = 1;
-	int sensitivity = 0;
-		int renderMode = 1;
+	int sensitivity = 3;
+	int renderMode = 1;
 
 	// Color of our beat
 	uint8_t r, g, b;
@@ -26,6 +26,12 @@ public:
 
 	const int axis = 2;
 	const float avgF = 1./32.0;
+
+	void slog_sensitivity()
+	{
+		msSystem.slog("sensitivity:");
+		msSystem.slogln(String(sensitivity));
+	}
 
 	virtual bool step(void) {
 		float xPos;
@@ -105,6 +111,7 @@ public:
 			msSystem.msLEDs.updateLEDs();
 		//}
 
+		// 
 		if (msSystem.msButtons.msBtnALongHit) {
 			renderMode++;
 			if (renderMode > 1) renderMode = 0;
@@ -121,12 +128,14 @@ public:
 		{
 			sensitivity = (sensitivity + 1) % 6;
 			msSystem.msButtons.msBtnAHit = false;
+			slog_sensitivity();
 		}
 
 		if (msSystem.msButtons.msBtnBHit)
 		{
 			sensitivity = (sensitivity + 5) % 6;
 			msSystem.msButtons.msBtnBHit = false;
+			slog_sensitivity();
 		}
 
 		if (msSystem.msButtons.msBtnPwrHit) {
@@ -137,6 +146,8 @@ public:
 			b = (colIdx & 4) ? 255 : 0;
 			msSystem.msButtons.msBtnPwrHit = false;
 		}
+
+
 
 	} 
 };
