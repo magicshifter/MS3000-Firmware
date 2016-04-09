@@ -46,19 +46,19 @@ struct powerMode_t
 
 		tPos.x = 0;
 		tPos.y = 0;
-		msGlobals.tBitmap4x5.color = aBLUE;
-		msMagicShakeText.plotTextString(label, msGlobals.tBitmap4x5, tPos);
+		msGlobals.ggtBitmap4x5.color = aBLUE;
+		msMagicShakeText.plotTextString(label, msGlobals.ggtBitmap4x5, tPos);
 
-		tPos.y += msGlobals.tBitmap4x5.header.frameHeight;
-		msGlobals.tBitmap4x5.color = color;
+		tPos.y += msGlobals.ggtBitmap4x5.header.frameHeight;
+		msGlobals.ggtBitmap4x5.color = color;
 
-		msMagicShakeText.plotTextString(value, msGlobals.tBitmap4x5, tPos);
+		msMagicShakeText.plotTextString(value, msGlobals.ggtBitmap4x5, tPos);
 
 		if (value2 != NULL) {
-			tPos.y += msGlobals.tBitmap4x5.header.frameHeight;
-			msGlobals.tBitmap4x5.color = color2;
+			tPos.y += msGlobals.ggtBitmap4x5.header.frameHeight;
+			msGlobals.ggtBitmap4x5.color = color2;
 
-			msMagicShakeText.plotTextString(value2, msGlobals.tBitmap4x5, tPos);
+			msMagicShakeText.plotTextString(value2, msGlobals.ggtBitmap4x5, tPos);
 		}
 
 		lPOVMode.setImage(&msMagicShakeText);
@@ -74,13 +74,13 @@ struct powerMode_t
 
 		tPos.x = 0;
 		tPos.y = 0;
-		msGlobals.tBitmap4x5.color = aBLUE;
-		msMagicShakeText.plotTextString(label, msGlobals.tBitmap4x5, tPos);
+		msGlobals.ggtBitmap4x5.color = aBLUE;
+		msMagicShakeText.plotTextString(label, msGlobals.ggtBitmap4x5, tPos);
 
-		tPos.y += msGlobals.tBitmap4x5.header.frameHeight;
-		msGlobals.tBitmap6x8.color = color;
+		tPos.y += msGlobals.ggtBitmap4x5.header.frameHeight;
+		msGlobals.ggtBitmap6x8.color = color;
 
-		msMagicShakeText.plotTextString(value, msGlobals.tBitmap6x8, tPos);
+		msMagicShakeText.plotTextString(value, msGlobals.ggtBitmap6x8, tPos);
 
 		lPOVMode.setImage(&msMagicShakeText);
 
@@ -225,17 +225,17 @@ struct powerMode_t
 				Coordinate_s tPos;
 				tPos.x = 15;
 				tPos.y = 0;
-				tPos.y += msGlobals.tBitmap4x5.header.frameHeight;
+				tPos.y += msGlobals.ggtBitmap4x5.header.frameHeight;
 
 				if (!isConnectedToAP)
 				{
-					msGlobals.tBitmap4x5.color = aRED;
-					msMagicShakeText.plotTextString((char *)"N", msGlobals.tBitmap4x5, tPos);
+					msGlobals.ggtBitmap4x5.color = aRED;
+					msMagicShakeText.plotTextString((char *)"N", msGlobals.ggtBitmap4x5, tPos);
 				}
 				else
 				{	
-					msGlobals.tBitmap4x5.color = aGREEN;
-					msMagicShakeText.plotTextString((char *)"Y", msGlobals.tBitmap4x5, tPos);
+					msGlobals.ggtBitmap4x5.color = aGREEN;
+					msMagicShakeText.plotTextString((char *)"Y", msGlobals.ggtBitmap4x5, tPos);
 				}
 				lPOVMode.setImage(&msMagicShakeText);
 			}

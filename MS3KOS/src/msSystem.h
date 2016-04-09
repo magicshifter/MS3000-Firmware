@@ -965,13 +965,13 @@ class MagicShifterSystem {
 
 		// global font objects
 		MagicShifterImage::LoadBitmapBuffer("font4x5.magicFont",
-											&msGlobals.tBitmap4x5);
+											&msGlobals.ggtBitmap4x5);
 		MagicShifterImage::LoadBitmapBuffer("font6x8.magicFont",
-											&msGlobals.tBitmap6x8);
+											&msGlobals.ggtBitmap6x8);
 		MagicShifterImage::LoadBitmapBuffer("font7x12.magicFont",
-											&msGlobals.tBitmap7x12);
+											&msGlobals.ggtBitmap7x12);
 		MagicShifterImage::LoadBitmapBuffer("font10x16.magicFont",
-											&msGlobals.tBitmap10x16);
+											&msGlobals.ggtBitmap10x16);
 
 
 
@@ -1042,7 +1042,6 @@ class MagicShifterSystem {
 			}
 		}
 
-
 		if ((lowBatteryMillis != 0) && 
 			(msGlobals.ggUIConfig.timeoutLowPower != 0) && 
 			(lowBatteryMillis + (10 * 1000) < msGlobals.ggCurrentMillis)) { // 10 seconds 
@@ -1062,7 +1061,6 @@ class MagicShifterSystem {
 		CommandInterfacePoll();
 
 	}
-
 
 	void enableLongClicks(bool enable) {
 		msButtons.msLongClickOK = enable;

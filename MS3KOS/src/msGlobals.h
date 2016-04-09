@@ -14,7 +14,6 @@ void l_safeStrncpy(char *dest, const char *source, int n)
 
 class MagicShifterGlobals {
   public:
-	// state !J! TODO: clean all this up 
 	long ggFault = 0;			// TODO: reset-reason/test-fault/etc.
 	int ggBrightness = 3;
 	float ggAccel[3];			// Stores the real accel value in g's
@@ -42,6 +41,7 @@ class MagicShifterGlobals {
 	bool ggDebugSerial = true;
 	bool ggEnableWIFI = true;
 
+	// center button is read by AD
 	int ggLastADValue;		// last AD value sampled during button step
 
 	struct APConfig ggAPConfig;
@@ -52,10 +52,10 @@ class MagicShifterGlobals {
 	// set of modes
 	std::vector <MagicShifterBaseMode *> ggModeList;
 
-	MSBitmap tBitmap4x5;
-	MSBitmap tBitmap6x8;
-	MSBitmap tBitmap10x16;
-	MSBitmap tBitmap7x12;
+	MSBitmap ggtBitmap4x5;
+	MSBitmap ggtBitmap6x8;
+	MSBitmap ggtBitmap10x16;
+	MSBitmap ggtBitmap7x12;
 
 	enum feedbackType {
 		MODE_MENU = 1,

@@ -17,9 +17,9 @@ class ModeSelectorMode:public MagicShifterBaseMode {
 
 		tPos.x = 0;
 		tPos.y = 0;
-		msGlobals.tBitmap6x8.color = aWhile;
+		msGlobals.ggtBitmap6x8.color = aWhile;
 		msMagicShakeText.plotTextString((char *) label,
-										msGlobals.tBitmap6x8, tPos);
+										msGlobals.ggtBitmap6x8, tPos);
 		lPOVMode.setImage(&msMagicShakeText);
 	}
 
