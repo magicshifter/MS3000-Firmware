@@ -22,7 +22,9 @@ class CircleBall {
 		angle = .0;
 		velocity = .0;
 		radius = r;
-	} float PI_HACK = 3.1415;
+	};
+
+	float PI_HACK = 3.1415;
 
 	float calX = 1;
 	float calY = 0;
@@ -109,8 +111,10 @@ class BouncingBallMode {
 	float vel = 0;
 
   public:
-	 BouncingBallMode(float r) {
-	} void flash(int start, int end) {
+  	
+	BouncingBallMode(float r) {};
+
+	void flash(int start, int end) {
 		int delta = 1;
 
 		if (start > end) {
