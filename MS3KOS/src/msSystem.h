@@ -11,6 +11,9 @@
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 
+#include <WiFiManager.h>          //https://github.com/tzapu/WiFiManager WiFi Configuration Magic
+
+
 #include <Base64.h>
 #include <EEPROM.h>
 #include <SPI.h>
@@ -24,16 +27,44 @@
 #include "msImage.h"
 #include "msSysLog.h"
 
+//
+// !J!  note: here we use a timer to sample the
+// middle button (power-down/brightness control)
+// it is done in a timer because the AD op is slow
+// and therefore better done outside the context
+// of the main runloop
+//
+#include "user_interface.h"
 
+os_timer_t aPowerButtonTimer;
+#define POWER_BUTTON_TIMER_PERIOD 125
+// bool tickOccured;
+void PowerButtonTimerCallback(void *pArg) {
+	os_intr_lock();
+	// tickOccured = true;
+	msGlobals.ggLastADValue = analogRead(A0);
+	os_intr_unlock();
+} // End of timerCallback
+
+void initPowerButtonTimer()
+{
+	os_timer_setfn(&aPowerButtonTimer, PowerButtonTimerCallback, NULL);
+	os_timer_arm(&aPowerButtonTimer, POWER_BUTTON_TIMER_PERIOD, true);
+}
+
+//
+// MIDI features can be configured in or out of
+// the project according to Serial needs.
+// e.g. debugging
+//
 #ifdef CONFIG_ENABLE_MIDI
 #include "AppleMidi.h"
-// RTPMIDI is usable over WiFi ?
+// RTPMIDI is usable over WiFi
 #define CONFIG_MIDI_RTP_MIDI
-
 APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_Defs.h
-
 bool isRTPConnected = false;
 
+// RTP MIDI event handlers:
 // -----------------------------------------------------------------------------
 void OnRTPMIDI_Connect(uint32_t ssrc, char* name) {
   isRTPConnected = true;
@@ -41,17 +72,11 @@ void OnRTPMIDI_Connect(uint32_t ssrc, char* name) {
   Serial.println(name);
 }
 
-// -----------------------------------------------------------------------------
-// rtpMIDI session. Device disconnected
-// -----------------------------------------------------------------------------
 void OnRTPMIDI_Disconnect(uint32_t ssrc) {
   isRTPConnected = false;
   Serial.println("Disconnected");
 }
 
-// -----------------------------------------------------------------------------
-//
-// -----------------------------------------------------------------------------
 void OnRTPMIDI_NoteOn(byte channel, byte note, byte velocity) {
   Serial.print("Incoming NoteOn from channel:");
   Serial.print(String(channel));
@@ -61,9 +86,6 @@ void OnRTPMIDI_NoteOn(byte channel, byte note, byte velocity) {
   Serial.println(String(velocity));
 }
 
-// -----------------------------------------------------------------------------
-//
-// -----------------------------------------------------------------------------
 void OnRTPMIDI_NoteOff(byte channel, byte note, byte velocity) {
   Serial.print("Incoming NoteOff from channel:");
   Serial.print(String(channel));
@@ -72,8 +94,8 @@ void OnRTPMIDI_NoteOff(byte channel, byte note, byte velocity) {
   Serial.print(" velocity:");
   Serial.println(String(velocity));
 }
-
-#endif // #ifdef CONFIG_ENABLE_MIDI
+#endif
+//CONFIG_ENABLE_MIDI
 
 
 // forward-declared here because it is a client of msSystem ..
@@ -259,7 +281,7 @@ class MagicShifterSystem {
 	void deleteAP(char *ssid) {
 
 		String path = apListConfigPath;
-		File apListFile = SPIFFS.open((char *) path.c_str(), "a+");
+		File apListFile = SPIFFS.open((char *) path.c_str(), "w+");
 
 		APInfo apInfoDummy;
 		const int requiredBytes = sizeof(apInfoDummy);
@@ -391,7 +413,7 @@ class MagicShifterSystem {
 	MagicShifterButtons msButtons;
 	MDNSResponder msDNS;
 	ESP8266WebServer msESPServer;
-
+	WiFiManager msWifiManager;
 
 	bool msMIDIActive = true;
 	int msFrame = 0;
@@ -953,6 +975,8 @@ class MagicShifterSystem {
 
 		msButtons.setup();
 
+		initPowerButtonTimer();
+
 #ifdef CONFIG_ENABLE_ACCEL
 		// accelerometer 
 		msSensor.initI2C();
@@ -988,23 +1012,11 @@ class MagicShifterSystem {
 		_shouldLocalYield = state;
 	}
 
-	void local_yield()
-	{
-		// wifi needs time, otherwise we  ..
-		if (msGlobals.ggEnableWIFI) {
-			if (_shouldLocalYield) {
-				if (msGlobals.ggModeAP)
-					delay(random(35,50));
-				else 
-					delay(1);
-			}
-		}
-		else yield();
-	}
 
 	void step() {
 
-		local_yield();
+		// this is needed, as we have timers and stuff.
+		yield();
 
 		msGlobals.ggLastMicros = msGlobals.ggCurrentMicros;
 		msGlobals.ggCurrentMicros = micros();
@@ -1012,8 +1024,7 @@ class MagicShifterSystem {
 		
 		displayButtons();
 
-		// AD Value reading is slow	
-		getADValue();
+		// getADValue(); // !J! we use timer
 
 		brightnessControl();
 
