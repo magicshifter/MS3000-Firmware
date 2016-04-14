@@ -86,7 +86,7 @@ void handleGETStatus(void)
 	msSystem.msESPServer.send(200, "text/plain", response);
 }
 
-bool parseAPInfoFromServerArgs(APInfo & apInfo)
+bool parseAPInfoFromServerArgs(APAuth & apInfo)
 {
 	bool success = true;
 	for (int i = 0; i < msSystem.msESPServer.args(); i++) {
@@ -234,7 +234,7 @@ void handleGETAPSettings(void)
 {
 	msSystem.slogln("handleGETAPSettings");
 
-	APInfo apInfo;
+	APAuth apInfo;
 	msSystem.Settings.getAPConfig(&apInfo);
 
 	String response = "{";
@@ -255,7 +255,7 @@ void handlePOSTAPSettings(void)
 
 	if (msSystem.msESPServer.args() >= 2) {
 		// load old settings
-		APInfo apInfo;
+		APAuth apInfo;
 		msSystem.Settings.getAPConfig(&apInfo);
 
 		if (parseAPInfoFromServerArgs(apInfo)) {
@@ -314,7 +314,7 @@ void handleGETPreferredAPSettings(void)
 {
 	msSystem.slogln("handleGETPreferredAPSettings");
 
-	APInfo apInfo;
+	APAuth apInfo;
 	msSystem.Settings.getPreferredAP(&apInfo);
 
 	String response = "{";
@@ -334,7 +334,7 @@ void handlePOSTPreferredAPSettings(void)
 	msSystem.slogln("handlePOSTPreferredAPSettings");
 
 	if (msSystem.msESPServer.args() >= 2) {
-		APInfo apInfo;
+		APAuth apInfo;
 		msSystem.Settings.getPreferredAP(&apInfo);
 
 		if (parseAPInfoFromServerArgs(apInfo)) {
@@ -357,7 +357,7 @@ void handleGETAPList(void)
 {
 	msSystem.slogln("handleGETAPList");
 
-	APInfo apInfo;
+	APAuth apInfo;
 	msSystem.Settings.getPreferredAP(&apInfo);
 
 	String response = "[";
@@ -433,7 +433,7 @@ void handlePOSTAPListAdd(void)
 	msSystem.slogln("handlePOSTAPListAdd");
 
 	if (msSystem.msESPServer.args() >= 2) {
-		APInfo apInfo;
+		APAuth apInfo;
 		memset(apInfo.ssid, 0, sizeof(apInfo.ssid));
 		memset(apInfo.password, 0, sizeof(apInfo.password));
 
@@ -456,7 +456,7 @@ void handlePOSTAPListDelete(void)
 	msSystem.slogln("handlePOSTAPListDelete");
 
 	if (msSystem.msESPServer.args() >= 1) {
-		APInfo apInfo;
+		APAuth apInfo;
 		strcpy(apInfo.ssid, "");
 		strcpy(apInfo.password, "");
 

@@ -205,7 +205,7 @@ struct powerMode_t
 				}
 				else {
 					setText((char *) String("SSID").c_str(),
-							(char *)msGlobals.ggSoftAP.ssid , aWHITE);
+							(char *)msGlobals.ggSoftAP.auth.ssid , aWHITE);
 				}
 			} else if (sysCursor == STR_POWER_LO) {
 				setText((char *) String("P-LO").c_str(),

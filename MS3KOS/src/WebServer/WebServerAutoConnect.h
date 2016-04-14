@@ -52,7 +52,7 @@ void WiFiEvent(WiFiEvent_t event) {
 }
 
 
-bool TryConnect(struct APInfo &apInfo, int timeoutMs)
+bool TryConnect(struct APAuth &apInfo, int timeoutMs)
 {
 	msSystem.slog("wifi: trying to connect to AP: ");
 	msSystem.slogln(apInfo.ssid);
@@ -99,7 +99,7 @@ bool TryConnect(struct APInfo &apInfo, int timeoutMs)
 
 
 
-bool TrySoftAP(struct APInfo & apInfo)
+bool TrySoftAP(struct APAuth & apInfo)
 {
 	msSystem.slogln("wifi: configuring access point: ");
 	msSystem.slogln(apInfo.ssid);
@@ -131,10 +131,10 @@ bool AutoConnect()
 #ifdef SCAN_FIRST_MODE
 	// if (!forceAPMode)
 	{
-		if (msSystem.Settings.getPreferredAP(&msGlobals.ggAPConfig.apInfo)) {
+		if (msSystem.Settings.getPreferredAP(&msGlobals.ggAPConfig.apInfo.auth)) {
 			msSystem.slogln("wifi: using stored configuration.");
 			if (TryConnect
-				(msGlobals.ggAPConfig.apInfo, CONNECTION_TIMEOUT)) {
+				(msGlobals.ggAPConfig.apInfo.auth, CONNECTION_TIMEOUT)) {
 				msGlobals.ggModeAP = false;
 				return true;
 			}
@@ -173,13 +173,13 @@ bool AutoConnect()
 
 			msSystem.Settings.resetAPList();
 
-			while (msSystem.Settings.getNextAP(&msGlobals.ggAPConfig.apInfo)) {
+			while (msSystem.Settings.getNextAP(&msGlobals.ggAPConfig.apInfo.auth)) {
 				for (int i = 0; i < n; i++) {
 					if (strcmp
 						(WiFi.SSID(i).c_str(),
-						 msGlobals.ggAPConfig.apInfo.ssid) == 0) {
+						 msGlobals.ggAPConfig.apInfo.auth.ssid) == 0) {
 						if (TryConnect
-							(msGlobals.ggAPConfig.apInfo,
+							(msGlobals.ggAPConfig.apInfo.auth,
 							 CONNECTION_TIMEOUT)) {
 							msGlobals.ggModeAP = false;
 							msGlobals.ggSoftAP.clear();
@@ -203,10 +203,10 @@ bool AutoConnect()
 	msSystem.slogln("wifi: fallback to standalone access point.");
 	// WiFi.disconnect(false);
 
-	APInfo softAPInfo;
+	APAuthHelper softAPInfo;
 
-	msSystem.Settings.getAPConfig(&softAPInfo);
-	if (TrySoftAP(softAPInfo)) {
+	msSystem.Settings.getAPConfig(&softAPInfo.auth);
+	if (TrySoftAP(softAPInfo.auth)) {
 		msGlobals.ggModeAP = true;
 		msGlobals.ggSoftAP = softAPInfo;
 
