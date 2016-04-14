@@ -1,0 +1,140 @@
+# !J! Basic MS3000 server tests
+
+all:	settings_ap_set listwlans
+
+server_favicon.gif:
+	@echo "server favicon
+
+server_root:
+	@echo "server root"
+	@curl http://192.168.4.1/
+
+delete:
+	@echo "server delete"
+	@read -n 1 -p "Are you sure you want to DELETE the MagicShifter you are connected to?  Press Any Key to Do So (or Control-C to Quit this Test)" null
+	( curl http://192.168.4.1/delete )
+
+download:
+	@echo "server download"
+	@curl http://192.168.4.1/download
+
+format:
+	@echo "server format"
+	@read -n 1 -p "Are you sure you want to FORMAT the MagicShifter you are connected to?  Press Any Key to Do So (or Control-C to Quit this Test)" null
+	@curl http://192.168.4.1/format
+
+info:
+	@echo "server info"
+	@curl http://192.168.4.1/info
+
+info_about:
+	@echo "server info about"
+	@curl http://192.168.4.1/info_about
+
+info_status:
+	@echo "server info status"
+	@curl http://192.168.4.1/info_status
+
+kill:
+	@echo "server kill"
+	@read -n 1 -p "Are you sure you want to kill the MagicShifter you are connected to?  Press Any Key to Do So (or Control-C to Quit this Test)" null
+	@curl http://192.168.4.1/kill
+
+led:
+	@echo "server led"
+	@curl http://192.168.4.1/led
+
+leds:
+	@echo "server leds"
+	@curl http://192.168.4.1/leds
+
+list:
+	@echo "server list"
+	@curl http://192.168.4.1/list
+
+listwlans:
+	@echo "list wlans"
+	@curl http://192.168.4.1/listwlans
+
+mode:
+	@echo "server mode"
+	@curl http://192.168.4.1/mode
+
+read:
+	@echo "server read"
+	@curl http://192.168.4.1/read
+
+restart:
+	@echo "server restart"
+	@read -n 1 -p "Are you sure you want to restart the MagicShifter you are connected to?  Press Any Key to Do So (or Control-C to Quit this Test)" null
+	@curl http://192.168.4.1/restart
+
+settings:
+	@echo "server settings"
+	@curl http://192.168.4.1/settings
+
+settings_ap_set:
+	@echo "post new wifi setting"
+	@curl -d "ssid=abcd\&pwd=1234" http://192.168.4.1/settings/ap
+
+settings_ap_get:
+	@echo "server setting ap"
+	@curl http://192.168.4.1/settings/ap
+
+settings_server:
+	@echo "server settings server get"
+	@curl http://192.168.4.1/settings/ap
+
+settings_server_set:
+	@echo "server settings server set"
+	@curl http://192.168.4.1/settings/server
+
+settings_syslog_set:
+	@echo "server settings syslog set"
+	@curl http://192.168.4.1/settings/syslog
+
+settings_syslog_get:
+	@echo "server settings syslog get"
+	@curl http://192.168.4.1/settings/syslog
+
+settings_ui:
+	@echo "server settings ui"
+	@curl http://192.168.4.1/settings/ui
+
+settings_ui_set:
+	@echo "server settings ui set"
+	@curl http://192.168.4.1/settings/ui/set
+
+settings_wifi_add:
+	@echo "server settings wifi add"
+	@curl http://192.168.4.1/settings/wifi/add
+
+settings_wifi_delete:
+	@echo "server settings wifi delete"
+	@curl http://192.168.4.1/settings/wifi/delete
+
+settings_wifi_list:
+	@echo "server settings wifi list"
+	@curl http://192.168.4.1/settings/wifi/list
+
+settings_wifi_preferred:
+	@echo "server settings get wifi preferred"
+	@curl http://192.168.4.1/settings/wifi/preferred
+
+settings_wifi_preferred_set:
+	@echo "server settings set wifi preferred"
+	@curl http://192.168.4.1/settings/wifi/preferred/set
+
+time_get:
+	@echo "sever get time"
+	@curl http://192.168.4.1/time
+
+time_set:
+	@echo "sever set time"
+	@curl http://192.168.4.1/time
+
+upload:
+	@echo "server upload"
+	@curl http://192.168.4.1/upload
+
+
