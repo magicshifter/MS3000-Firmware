@@ -310,156 +310,71 @@ class MagicShifterSystem {
 
 	}
 
-
-	// add an ap Auth structure to the list
+	//
+	// add an AP Auth structure to the list
 	// if its there already, update the password
-	// if its not there, add it to the end of the list
-typedef std::map<String, String> AuthItems;
-typedef std::map<String, String>::iterator AuthItems_it;
-
-	void addAP_n(struct APAuth *apInfo) {
+	// if its not there, add it to the list
+	//
+	void addAP(struct APAuth *apInfo) {
 		String path = apListConfigPath;
-		AuthItems aItems;
+
+		typedef std::map<String, String> AuthItems;
+		typedef std::map<String, String>::iterator AuthItems_it;
+		AuthItems authItems;
 
 		File inFile;
 		APAuth inAPAuth;
 
+		// open the existing AP settings file if we can, and construct the map
 		if (SPIFFS.exists((char *)path.c_str()))  {
 			inFile = SPIFFS.open((char *) path.c_str(), "r");
 		}
-
 		if (inFile) {
 			msSystem.slog("webserver: opened AP config file:");
 			msSystem.slogln(path);
 
 			// create a list of AP entries already in the file
 			while (inFile.read((uint8_t *) &inAPAuth, sizeof (APAuth)) == sizeof(APAuth)) {
-				aItems[inAPAuth.ssid] = inAPAuth.password;
-				msSystem.slog("PUSH:");
-				msSystem.slogln(inAPAuth.ssid);
+				authItems[inAPAuth.ssid] = inAPAuth.password;
 			}
 
 			inFile.close();
+
 		} else {
 			msSystem.slog("webserver: couldn't open AP inFile:");
 			msSystem.slogln(path);
 		}
 
 		// check if there is an entry in the map for the incoming apInfo
-	    auto existingAP = aItems.find(apInfo->ssid);
+		// (map could also be empty)
+	    auto existingAP = authItems.find(apInfo->ssid);
 	    
-	    if (existingAP != aItems.end()) {
-        	msSystem.slog(">>>> setpass:");
+	    if (existingAP != authItems.end()) {
+	    	// we found it, so set the new password
 	    	existingAP->second = apInfo->password;
-        	msSystem.slogln(String(existingAP->second));
-	    } else { 	// .. otherwise, add one
-        	msSystem.slog(">>>> createnew:");
-	    	aItems[apInfo->ssid] = apInfo->password;
-        	msSystem.slogln(String(aItems[apInfo->ssid]));
+	    } else { 	// .. otherwise, add one and set the password
+	    	authItems[apInfo->ssid] = apInfo->password;
 	    }
-			
+
+		// dump the map back to the file
 		File outFile = SPIFFS.open((char *) path.c_str(), "w+");
 		if (outFile) {
-			// dump the map back to the file
 			AuthItems_it it;
-    		for(it = aItems.begin(); it != aItems.end(); it++)
+    		for(it = authItems.begin(); it != authItems.end(); it++)
     		{
     			APAuth t_Auth;
-	       	 	msSystem.slog(">>>> ssid:");
-	       	 	msSystem.slog(String(it->first));
-		        msSystem.slog(" pasword:");
-	        	msSystem.slogln(String(it->second));
 	        	l_safeStrncpy(t_Auth.ssid, it->first.c_str(), MAX_AP_LEN);
 	        	l_safeStrncpy(t_Auth.password, it->second.c_str(), MAX_AP_LEN);
-
-	        	msSystem.slog(">>>> auth ssid:");
-	        	msSystem.slog(String(t_Auth.ssid));
-		        msSystem.slog(" password:");
-	        	msSystem.slogln(String(t_Auth.password));
-
 				outFile.write((uint8_t *)&t_Auth, sizeof(APAuth));
 		    }
 
-	    	msSystem.slog(">>>> sizeof APAuth:");
-    		msSystem.slog(String(sizeof(APAuth)));
-
 	    	outFile.close();
+			msSystem.slog("webserver: saved AP configuration");
+			msSystem.slogln(path);
 		} else {
 			msSystem.slog("webserver: couldn't save AP outFile:");
 			msSystem.slogln(path);
 		}
-
-	}
-
-	void addAP(struct APAuth *apInfo) {
-
-		String path = apListConfigPath;
-		const int requiredBytes = sizeof(*apInfo);
-		APAuth apAuthDummy;
-		int apListIndex = 0;
-		int firstFreePos = -1;
-
-addAP_n(apInfo);
-return;
-
-		File apListFile = SPIFFS.open((char *) path.c_str(), "r");
-
-		if (!apListFile) {
-			msSystem.slog("webserver: cannot open file:");
-			msSystem.slogln(path);
-		} else {
-			while (apListFile.
-				   read((uint8_t *) & apAuthDummy,
-						requiredBytes) == requiredBytes) {
-
-				if (firstFreePos < 0
-					&& msSystem.msEEPROMs.
-					memcmpByte((byte *) & apAuthDummy, 0, requiredBytes)) {
-					firstFreePos = apListIndex * requiredBytes;
-				} else if (strcmp(apAuthDummy.ssid, apInfo->ssid) == 0) {
-					firstFreePos = apListIndex * requiredBytes;
-					break;
-				}
-				apListIndex++;
-			}
-			apListFile.close();
-		}
-
-		if (firstFreePos >= 0) {
-			msSystem.slog("found hole:");
-			msSystem.slogln(String(firstFreePos));
-			apListFile = SPIFFS.open((char *) path.c_str(), "w+");
-			
-			// !J! BUG: SeekSet doesn't work, so we use SeekEnd instead
-			int seekPos = apListFile.size() - firstFreePos;
-			msSystem.slog("seekPos:");
-			msSystem.slogln(String(seekPos));
-
-			apListFile.seek(seekPos, SeekEnd);
-		} else {
-			msSystem.slogln("appending at end");
-			apListFile = SPIFFS.open((char *) path.c_str(), "a+");
-
-			if (apListFile) {
-				apListFile.seek(0, SeekEnd);
-			}
-			else {
-				msSystem.slogln("creating new file");
-				apListFile = SPIFFS.open((char *) path.c_str(), "w+");
-			}
-		}
-
-		// now write the data
-		if (!apListFile) {
-			msSystem.slog("webserver: creation failed: ");
-			msSystem.slogln(path);
-		} else {
-			apListFile.write((uint8_t *) apInfo, requiredBytes);
-			apListFile.close();
-			msSystem.slog("webserver: configuration saved: ");
-			msSystem.slogln(path);
-		}
-
 
 	}
 
