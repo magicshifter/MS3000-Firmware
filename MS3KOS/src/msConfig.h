@@ -39,7 +39,7 @@
 
 // v1 == breadboard pcb
 // 2 == 0.9 pcb :)
-#define MS3KOS_VERSION "0.9.2"
+#define MS3KOS_VERSION "0.9.4"
 
 #define MIN_TIME_CLICK 10000
 #define MIN_TIME_LONG_CLICK 1000 * 750
