@@ -101,7 +101,7 @@ class MagicMagnetMode:public MagicShifterBaseMode {
 
 		msSystem.msLEDs.updateLEDs();
 
-		// delay(35);
+		delay(25);
 
 	}
 
