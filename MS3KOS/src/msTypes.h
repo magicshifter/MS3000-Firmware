@@ -57,17 +57,22 @@ struct MSBitmap {
 };
 
 #define MAX_AP_LEN 48
-struct APInfo {
+
+struct APAuth {
 	char ssid[MAX_AP_LEN];
 	char password[MAX_AP_LEN];
+};
+
+struct APAuthHelper {
+	APAuth auth;
 
   public:
-	 APInfo() {
+	 APAuthHelper() {
 		clear();
 	} 
 	void clear(void) {
-		memset(ssid, 0, sizeof(ssid));
-		memset(password, 0, sizeof(password));
+		memset(auth.ssid, 0, sizeof(auth.ssid));
+		memset(auth.password, 0, sizeof(auth.password));
 	}
 };
 
@@ -85,7 +90,7 @@ struct ServerConfig {
 };
 
 struct APConfig {
-	struct APInfo apInfo;
+	struct APAuthHelper apInfo;
 	bool forceAPMode;
 	void clear(void) {
 		apInfo.clear();

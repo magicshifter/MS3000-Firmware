@@ -45,7 +45,7 @@ class MagicShifterGlobals {
 	int ggLastADValue;		// last AD value sampled during button step
 
 	struct APConfig ggAPConfig;
-	struct APInfo  ggSoftAP;
+	struct APAuthHelper  ggSoftAP;
 
 	UIConfig ggUIConfig;			// web-influenced config for GUI values
 

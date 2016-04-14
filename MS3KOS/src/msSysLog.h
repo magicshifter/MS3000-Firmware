@@ -46,8 +46,8 @@ class MagicShifterSysLog {
 
 		if (WiFi.status() != WL_CONNECTED) {
 
-			WiFi.begin(msGlobals.ggAPConfig.apInfo.ssid,
-					   msGlobals.ggAPConfig.apInfo.password);
+			WiFi.begin(msGlobals.ggAPConfig.apInfo.auth.ssid,
+					   msGlobals.ggAPConfig.apInfo.auth.password);
 
 			int Attempt = 0;
 			while (WiFi.status() != WL_CONNECTED) {
