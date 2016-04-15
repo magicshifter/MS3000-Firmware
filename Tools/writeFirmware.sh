@@ -10,6 +10,6 @@ else
 fi	
 
 echo "Firmware Name: " $firmwareName
-./esptool-ck/esptool -vv -cd ck -cb 460800 -cp $1  -cf $firmwareName
+./esptool-ck/esptool -vv -cd ck -cb 921600 -cp $1  -cf $firmwareName
 
 
