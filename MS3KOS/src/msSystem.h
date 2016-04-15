@@ -107,6 +107,9 @@ extern MagicShifterSystem msSystem;
 // TODO: all init and all sensors and leds in here :)
 // (accelerometer wuld also be a class but the MAgicShifter object has one ;)
 class MagicShifterSystem {
+
+#define WL_MAC_ADDR_LENGTH 6
+
 	class SettingsManager {
 		private:
 			// used in resetAPList & getNextAP
@@ -115,32 +118,48 @@ class MagicShifterSystem {
 
 		private:
 	 
-	 		bool loadData(String path, void *config, int len) {
+			bool loadData(String path, void *config, int len) {
 				if (SPIFFS.exists((char *) path.c_str())) {
 					File file = SPIFFS.open((char *) path.c_str(), "r");
-				 	file.read((uint8_t *) config, len);
-				 	file.close();
-				 	return true;
+					file.read((uint8_t *) config, len);
+					file.close();
+					
+					return true;
 				} else {
-					msSystem.
-						slog("webserver: loadData: can not open config file ");
+					msSystem.slog("webserver: loadData: can not open config file ");
 					msSystem.slogln((char *) path.c_str());
 				}
+
 				return false;
 			}
 
-	bool saveData(String path, void *config, int len) {
-		File file = SPIFFS.open((char *) path.c_str(), "w");
-		if (file) {
-			file.write((uint8_t *) config, len);
-			file.close();
-			return true;
-		} else {
-			msSystem.slog("webserver: can not open config file ");
-			msSystem.slogln((char *) path.c_str());
-			return false;
-		}
-	}
+			bool saveData(String path, void *config, int len) {
+				File file = SPIFFS.open((char *) path.c_str(), "w");
+				if (file) {
+					file.write((uint8_t *) config, len);
+					file.close();
+				
+					return true;
+				} else {
+					msSystem.slog("webserver: can not open config file ");
+					msSystem.slogln((char *) path.c_str());
+				
+					return false;
+				}
+			}
+
+			String getUniqueSystemName() 
+			{
+				uint8_t mac[WL_MAC_ADDR_LENGTH];
+				WiFi.softAPmacAddress(mac);
+				String macID = String(mac[WL_MAC_ADDR_LENGTH - 2], HEX) + String(mac[WL_MAC_ADDR_LENGTH - 1], HEX);
+				
+				macID.toUpperCase();
+				String UniqueSystemName = String(AP_NAME_OVERRIDE) + String("-") + macID;
+
+				return UniqueSystemName;
+			}
+
 
   public:
 
@@ -226,18 +245,18 @@ class MagicShifterSystem {
 			File file = SPIFFS.open((char *) path.c_str(), "r");
 			file.read((uint8_t *) config, sizeof(*config));
 			file.close();
+
 			return true;
+
 		} else {
 			msSystem.slogln("webserver: AP config missing:");
 			msSystem.slogln((char *) path.c_str());
 		}
 
-
-#ifdef AP_NAME_OVERRIDE
-		l_safeStrncpy(config->ssid, AP_NAME_OVERRIDE,
+		// don't have a config file, so we return a default
+		l_safeStrncpy(config->ssid, getUniqueSystemName().c_str(),
 					  sizeof(config->ssid));
 		l_safeStrncpy(config->password, "", sizeof(config->password));
-#endif
 
 		return false;
 	}
@@ -1046,9 +1065,16 @@ class MagicShifterSystem {
 		
 	}
 
+	// restart the system
 	void restart() {
+		
 		ESP.restart();
+		
+		do { 
+			delay(1);
+		} while(1); // !J! wait until the restart completes
 	}
+
 
 	void setLocalYieldState(bool state)
 	{
