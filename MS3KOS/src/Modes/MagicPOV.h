@@ -1,5 +1,6 @@
 
-#define FRAME_MULTIPLY 2
+#define DEFAULT_FRAME_MULTIPLIER 4
+#define MAX_FRAME_MULTIPLIER 12 
 
 class MagicPOVMode:public MagicShifterBaseMode {
 
@@ -7,8 +8,16 @@ class MagicPOVMode:public MagicShifterBaseMode {
 	MagicShifterImageAbstr * msImage = NULL;
 	POVShakeSync shakeSync;
 	bool correctBrightness = false;
+	int frameMultiplier = DEFAULT_FRAME_MULTIPLIER;
 
   public:
+
+  	void setFrameMultiplier(int newMult)
+  	{
+  		if ((newMult > 0) && (newMult < MAX_FRAME_MULTIPLIER)) {
+  			frameMultiplier = newMult;
+	  	}
+	}
 
 	void setImage(MagicShifterImageAbstr * lImage) {
 		// if (msImage != NULL) 
@@ -17,7 +26,7 @@ class MagicPOVMode:public MagicShifterBaseMode {
 		msImage = lImage;
 
 		if (lImage != NULL) {
-			shakeSync.setFrames(msImage->getWidth() * FRAME_MULTIPLY);
+			shakeSync.setFrames(msImage->getWidth() * frameMultiplier);
 		} else
 			 shakeSync.setFrames(0);
 	}
@@ -41,7 +50,7 @@ class MagicPOVMode:public MagicShifterBaseMode {
 				if (index > 0) {
 					byte povData[RGB_BUFFER_SIZE];
 
-					int frame_index = index / FRAME_MULTIPLY;
+					int frame_index = index / frameMultiplier;
 
 					msImage->getFrameData(frame_index, povData);
 

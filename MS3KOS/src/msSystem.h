@@ -278,35 +278,65 @@ class MagicShifterSystem {
 
 	}
 
+	//
+	// delete an AP Auth structure from the list
+	// if its not our ssid, add it to the list,
+	// otherwise ignore it 
+	// and save the list again
+	//
 	void deleteAP(char *ssid) {
-
 		String path = apListConfigPath;
-		File apListFile = SPIFFS.open((char *) path.c_str(), "w+");
 
-		APAuth apAuthDummy;
-		const int requiredBytes = sizeof(apAuthDummy);
-		int apListIndex = 0;
+		typedef std::map<String, String> AuthItems;
+		typedef std::map<String, String>::iterator AuthItems_it;
+		AuthItems authItems;
 
-		int lastPos = apListFile.position();
+		File inFile;
+		APAuth inAPAuth;
 
-		while (apListFile.read((uint8_t *) & apAuthDummy, requiredBytes) ==
-			   requiredBytes) {
-			if (strcmp(apAuthDummy.ssid, ssid) == 0) {
-				msSystem.slogln("webserver: deleting wifi:");
-				msSystem.slogln(ssid);
-
-				memset(apAuthDummy.ssid, 0, sizeof(apAuthDummy.ssid));
-				memset(apAuthDummy.password, 0, sizeof(apAuthDummy.password));
-				
-				int calcPos = apListIndex * requiredBytes;
-				apListFile.seek(calcPos, SeekSet);
-				apListFile.write((uint8_t *) & apAuthDummy, requiredBytes);
-				break;
-			}
-			apListIndex++;
-			lastPos = apListFile.position();
+		// open the existing AP settings file if we can, and construct the map
+		if (SPIFFS.exists((char *)path.c_str()))  {
+			inFile = SPIFFS.open((char *) path.c_str(), "r");
 		}
-		apListFile.close();
+		if (inFile) {
+			msSystem.slog("webserver: opened AP config file:");
+			msSystem.slogln(path);
+
+			// create a list of AP entries already in the file
+			while (inFile.read((uint8_t *) &inAPAuth, sizeof (APAuth)) == sizeof(APAuth)) {
+				// exclude the one we want to delete
+				if (strncmp(inAPAuth.ssid, ssid, MAX_AP_LEN) == 0)
+					continue;
+				else
+					authItems[inAPAuth.ssid] = inAPAuth.password;
+			}
+
+			inFile.close();
+
+		} else {
+			msSystem.slog("webserver: couldn't open AP inFile:");
+			msSystem.slogln(path);
+		}
+
+		// dump the map back to the file
+		File outFile = SPIFFS.open((char *) path.c_str(), "w+");
+		if (outFile) {
+			AuthItems_it it;
+    		for(it = authItems.begin(); it != authItems.end(); it++)
+    		{
+    			APAuth t_Auth;
+	        	l_safeStrncpy(t_Auth.ssid, it->first.c_str(), MAX_AP_LEN);
+	        	l_safeStrncpy(t_Auth.password, it->second.c_str(), MAX_AP_LEN);
+				outFile.write((uint8_t *)&t_Auth, sizeof(APAuth));
+		    }
+
+	    	outFile.close();
+			msSystem.slog("webserver: saved AP configuration");
+			msSystem.slogln(path);
+		} else {
+			msSystem.slog("webserver: couldn't save AP outFile:");
+			msSystem.slogln(path);
+		}
 
 	}
 

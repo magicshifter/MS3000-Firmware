@@ -101,6 +101,7 @@ struct powerMode_t
 				ptHiMode = i;
 		}
 
+		lPOVMode.setFrameMultiplier(2);
 
 	}
 

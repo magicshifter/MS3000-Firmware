@@ -131,6 +131,7 @@ class MagicShakeMode:public MagicShifterBaseMode {
 	//  shake the last-uploaded .magicBitmap (if set)
 	//  prime the file list, which may update dynamically during our session
 	void start() {
+		lPOVMode.setFrameMultiplier(6);
 		lPOVMode.start();
 		loadImageByIndex(0);
 	}
