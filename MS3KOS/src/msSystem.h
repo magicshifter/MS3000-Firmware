@@ -28,31 +28,6 @@
 #include "msSysLog.h"
 
 //
-// !J!  note: here we use a timer to sample the
-// middle button (power-down/brightness control)
-// it is done in a timer because the AD op is slow
-// and therefore better done outside the context
-// of the main runloop
-//
-#include "user_interface.h"
-
-os_timer_t aPowerButtonTimer;
-#define POWER_BUTTON_TIMER_PERIOD 125
-// bool tickOccured;
-void PowerButtonTimerCallback(void *pArg) {
-	os_intr_lock();
-	// tickOccured = true;
-	msGlobals.ggLastADValue = analogRead(A0);
-	os_intr_unlock();
-} // End of timerCallback
-
-void initPowerButtonTimer()
-{
-	os_timer_setfn(&aPowerButtonTimer, PowerButtonTimerCallback, NULL);
-	os_timer_arm(&aPowerButtonTimer, POWER_BUTTON_TIMER_PERIOD, true);
-}
-
-//
 // MIDI features can be configured in or out of
 // the project according to Serial needs.
 // e.g. debugging
@@ -493,16 +468,10 @@ class MagicShifterSystem {
 	// todo:switch slog from OFF, to BANNED (MIDI), to UDP .. etc.
 
 	void slog(String msg) {
-// #ifndef CONFIG_ENABLE_MIDI
-		Serial.print(msg);
-// #endif
-		// msSysLog.sendSysLogMsg(msg);
+		msSysLog.sendSysLogMsg(msg);
 	};
 	void slogln(String msg) {
-// #ifndef CONFIG_ENABLE_MIDI
-		Serial.println(msg);
-// #endif
-		// msSysLog.sendSysLogMsg(msg);
+		msSysLog.sendSysLogMsg(msg);
 	};
 
 	void slog(int8_t & msg, int base) {
@@ -1154,26 +1123,9 @@ class MagicShifterSystem {
 		return msGlobals.ggLastADValue;
 	}
 
-	float calculateVoltage(int adValue)
-	{
-		int ad1V = 1024;
-//		static float avg = 4.2;
-
-		//float r1 = 180, r2 = 390, r3 = 330; // gamma??? or (not beta)
-		// !J! todo: magic numbers are bad voodoo
-		float r1 = 220, r2 = 820, r3 = 0;	// alpha
-
-		float voltage = ((float) (r1 + r2 + r3) * adValue) / (r1 * ad1V);
-
-//		float p = 0.05;
-//		avg = p * voltage + (1-p) * avg;
-
-		return voltage;
-	}
 
 	float getBatteryVoltage(void) {
-		int adValue = msGlobals.ggLastADValue;
-		return calculateVoltage(adValue);
+		return calculateVoltage(msGlobals.ggLastADValue);
 	}
 
 	IPAddress getIP() {
@@ -1192,7 +1144,7 @@ class MagicShifterSystem {
 		for (int x = 0; x < len; x++) {
 			if (x % 4 == 0)
 				slogln("");
-			slog(":");
+			// slog(":");
 			Serial.print(buf[x], HEX);;
 		}
 		slogln("<<EOF");

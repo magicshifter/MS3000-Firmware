@@ -16,14 +16,17 @@
 #include "MagicRemote.h"
 #include "MagicBeat.h"
 
-#include "ModeSelector.h"
+#include "PowerEmergency.h"
 
+#include "ModeSelector.h"
 
 // MIDI can be configured on or off 
 #ifdef CONFIG_ENABLE_MIDI
 #include "MIDI/MidiShifter.h"
 MIDIShifterMode msMIDIShifter;
 #endif
+
+PowerEmergencyMode msPowerEmergencyMode;
 
 ModeSelectorMode msModeSelector;
 

@@ -5,10 +5,15 @@
 #include <WiFiUdp.h>
 #include <IPAddress.h>
 
-#undef _DO_SERIAL_ECHO
+#ifdef CONFIG_ENABLE_MIDI
+#undef _DO_SERIAL_OUTPUT
+#else
+#define _DO_SERIAL_OUTPUT
+#endif
+
 
 // #define this to get syslog before normal AP autoconnect
-// #define SYSLOG_AUTO_CONNECT
+#define SYSLOG_AUTO_CONNECT
 
 IPAddress parseIPString(char *str)
 {
@@ -93,28 +98,22 @@ class MagicShifterSysLog {
 	// poll serial and route it to syslog server
 	void pollSerial() {
 		if (WiFi.status() == WL_CONNECTED) {
-#if _DO_SERIAL_ECHO
-			str = Serial.readStringUntil('\n');
-			str.trim();
-			unsigned int msg_length = str.length();
-			if (msg_length > 0) {
-				sendSysLogMsg(str);
-			}
-#endif
 		} else {
 			connect_wifi();
 		}
 	}
 
 	void sendSysLogMsg(String aMsg) {
-		String newMsg = " 009.local <45>" + aMsg;	// !J! todo: fix level/service?
+		// String newMsg = " 009.local <45>MAGICSHIFTER:" + aMsg;	// !J! todo: fix level/service?
+		String newMsg = "" + aMsg;	// !J! todo: fix level/service?
 
 		unsigned int msg_length = newMsg.length();
 		byte *p = (byte *) malloc(msg_length);
 		memcpy(p, (char *) newMsg.c_str(), msg_length);
 
-		// Serial.print("SYSLOGMSG:");
-		// Serial.println(newMsg);
+#ifdef _DO_SERIAL_OUTPUT
+		Serial.println(newMsg);
+#endif
 
 		sysLogUDP.beginPacket(syslogServer, 514);
 		sysLogUDP.write(p, msg_length);

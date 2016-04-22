@@ -119,5 +119,6 @@
 #define COLUMNMULTIPLY 2
 
 #define FAULT_NO_ACCELEROMETER 0xf1
+#define FAULT_VERY_LOW_POWER 0xf2
 
 #endif
