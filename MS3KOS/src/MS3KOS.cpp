@@ -45,9 +45,8 @@ MagicShifterGlobals msGlobals;
 os_timer_t aPowerButtonTimer;
 #define POWER_BUTTON_TIMER_PERIOD 125
 
+// !J! TODO: Adjust this:
 #define MIN_POWER_LEVEL_THRESHOLD (3.0f)
-
-
 
 float calculateVoltage(int adValue)
 {
