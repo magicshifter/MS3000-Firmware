@@ -9,7 +9,7 @@
 //					  continue to normal operation
 //
 
-#define POWERDOWN_LIVE_TIME (10 * 1000)
+#define POWERDOWN_LIVE_TIME (60 * 1000)
 #define BLINK_PERIOD (125)
 
 class PowerEmergencyMode : public MagicShifterBaseMode {
