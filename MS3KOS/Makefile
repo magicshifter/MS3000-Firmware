@@ -5,6 +5,10 @@ MS3000_PORT?=/dev/ttyUSB0
 
 all:	clean test
 
+pio-deps:
+	@echo "NOTE: installing platform dependencies with PlatformIO"
+	 pio lib install 567 222
+
 setup:
 	platformio run
 
