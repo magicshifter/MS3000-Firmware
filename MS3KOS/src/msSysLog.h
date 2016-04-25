@@ -5,12 +5,6 @@
 #include <WiFiUdp.h>
 #include <IPAddress.h>
 
-#ifdef CONFIG_ENABLE_MIDI
-#undef _DO_SERIAL_OUTPUT
-#else
-#define _DO_SERIAL_OUTPUT
-#endif
-
 
 // #define this to get syslog before normal AP autoconnect
 #define SYSLOG_AUTO_CONNECT
@@ -31,8 +25,6 @@ IPAddress parseIPString(char *str)
 		return IPAddress(values[0], values[1], values[2], values[3]);
 	} else
 		return IPAddress(0, 0, 0, 0);
-
-
 }
 
 class MagicShifterSysLog {
@@ -112,6 +104,7 @@ class MagicShifterSysLog {
 		memcpy(p, (char *) newMsg.c_str(), msg_length);
 
 #ifdef _DO_SERIAL_OUTPUT
+#warning "SERIAL OUTPUT HAS BEEN ENABLED"
 		Serial.println(newMsg);
 #endif
 

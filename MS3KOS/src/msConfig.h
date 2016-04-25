@@ -10,6 +10,12 @@
 // MIDI enabled?
 // #define CONFIG_ENABLE_MIDI
 
+#ifdef CONFIG_ENABLE_MIDI
+#undef _DO_SERIAL_OUTPUT
+#else
+#define _DO_SERIAL_OUTPUT
+#endif
+
 // Accelerometer enabled?
 #define CONFIG_ENABLE_ACCEL
 

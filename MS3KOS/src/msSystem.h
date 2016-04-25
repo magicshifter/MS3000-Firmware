@@ -70,8 +70,6 @@ void OnRTPMIDI_NoteOff(byte channel, byte note, byte velocity) {
   Serial.println(String(velocity));
 }
 #endif
-//CONFIG_ENABLE_MIDI
-
 
 // forward-declared here because it is a client of msSystem ..
 void CommandInterfacePoll();
@@ -969,12 +967,12 @@ class MagicShifterSystem {
 
 		EEPROM.begin(512);
 
-#ifdef CONFIG_ENABLE_MIDI
-#warning "MIDI has been enabled - Serial I/O at 31250 - serial logging disabled (use wlan)"
+// #ifdef CONFIG_ENABLE_MIDI
+// #warning "MIDI has been enabled - Serial I/O at 31250 - serial logging disabled (use wlan)"
 		// Serial.begin(31250);
-#else
+// #else
 		Serial.begin(921600);
-#endif
+// #endif
 
 		slogln(String("\r\nMagicShifter 3000 OS V" + String(MS3KOS_VERSION)));
 

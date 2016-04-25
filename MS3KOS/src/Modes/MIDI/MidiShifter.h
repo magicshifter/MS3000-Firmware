@@ -12,24 +12,6 @@
  *
  */
 
-//#include "../firmware.h"
-
-//#include "list.h"             // light list library (future-use)
-
-// Neil Johnsons' tight MIDI Byte parser:
-// #include "miby.h"
-#include "miby.cpp"				// included like this because Arduino
-
-// NOTE: the configuration for the miby callbacks is done in MidiModeMibyConfig.h
-// .. which refers to functions declared in this module.  -D is used at build
-// time for configuration - see Makefile
-
-// Standard MIDI 1.0 definitions and other constants
-#include "midi_defs.h"
-
-// ADSR Envelope calculator
-#include "envelope.h"
-
 // Status Indicator LED's - for the Arpeggiator, etc.
 #define LED_ARP_COUNTER (13)
 #define LED_MEASURE_COUNTER (14)
@@ -42,8 +24,6 @@
 #define BUFFER_MASK (0x3F)
 #define ARP_DURATION_FOR_BPM(v) (600000/v/2)
 #define LOWEST_ARP_TEMPO (20)
-
-
 
 // Current View per MIDI input
 typedef struct {
@@ -77,25 +57,6 @@ static uint16_t MIDI_Get(uint8_t * data, uint16_t length)
 	}
 	return count;
 }
-
-// -- MIDI Event Handlers
-// MIDI Event handlers, configured for use by miby
-void MIDI_Start(miby_this_t a_miby)
-{
-	if (arp_play_state == 0) {
-		arp_play_state = 1;
-		arp_frame = 0;
-	}
-}
-
-void MIDI_Stop(miby_this_t a_miby)
-{
-	if (arp_play_state == 1) {
-		arp_play_state = 0;
-		// arpSoundOff();
-	}
-}
-
 
 // A Basic Arpeggiator class for use by the MIDI Module:
 // inspired by RobG @ 43oh
@@ -369,7 +330,6 @@ private:
 	uint8_t sync_count;				// sync counter
 	uint16_t midi_frame = 0;		// current MIDI Processing frame
 
-	MIDIArpeggiator _arp;
 
 	// Envelopes - used for the LED's
 	adsr_envelope anEnvelope;
@@ -408,49 +368,11 @@ private:
 
 public:
 
+	MIDIArpeggiator _arp;
+
 	MIDIShifterMode() {
 		modeName = "Arpi";
 	}
-
-	void MIDI_Program_Change(miby_this_t a_miby)
-	{
-		_arp.arpProgramChange(curr_midiview.midi_channel, MIBY_ARG0(a_miby));
-	}
-
-	void MIDI_Control_Change(miby_this_t a_miby)
-	{
-		msSystem.msLEDs.setLED(LED_CONTROL_CHANGE, 0, 100, 100);
-		// TODO: Channel processing
-		// if (curr_midiview.midi_channel == MIBY_CHAN(a_miby)) {
-		// any controller can be used, cc#1 for now (modwheel)
-		if (MIBY_ARG0(a_miby) == 1) {
-			_arp.arp_bpm = LOWEST_ARP_TEMPO + (MIBY_ARG1(a_miby));
-			_arp.arp_beat_duration = ARP_DURATION_FOR_BPM(_arp.arp_bpm);
-		}
-		// }
-	}
-
-	void MIDI_Note_On(miby_this_t a_miby)
-	{
-		_arp.arpNoteOn(curr_midiview.midi_channel, MIBY_ARG0(a_miby),
-				  MIBY_ARG1(a_miby));
-		msSystem.msLEDs.setLED(LED_NOTE_EVENT, 0, 0, 100);
-	}
-
-	void MIDI_Note_Off(miby_this_t a_miby)
-	{
-		uint8_t note_msg[3];
-		note_msg[0] = MIBY_STATUSBYTE(a_miby);
-		note_msg[1] = MIBY_ARG0(a_miby);
-		note_msg[2] = MIBY_ARG1(a_miby);
-
-		MIDI_Put(note_msg, 3);
-
-		msSystem.msLEDs.setLED(LED_NOTE_EVENT, 0, 0, 0);
-	}
-
-
-
 
 	void envDump()
 	{
@@ -612,7 +534,6 @@ public:
 
 #ifdef CONFIG_MIDI_RTP_MIDI
 		// Create a session and wait for a remote host to connect to us
-#warning "MS30000 MIDI RTP ENABLED!"
 		AppleMIDI.OnConnected(OnRTPMIDI_Connect);
 		AppleMIDI.OnDisconnected(OnRTPMIDI_Disconnect);
 		AppleMIDI.OnReceiveNoteOn(OnRTPMIDI_NoteOn);
@@ -690,4 +611,3 @@ public:
 
 
 };
-
