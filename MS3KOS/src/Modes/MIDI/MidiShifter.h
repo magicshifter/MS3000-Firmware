@@ -26,7 +26,7 @@
 #define LOWEST_ARP_TEMPO (20)
 
 // Current View per MIDI input
-typedef struct {
+ typedef struct {
 	uint8_t midi_channel;		// MIDI channel of View
 	uint16_t time_base;			// Base Time for sequencer-Put
 	void *v_arg;				// user data
@@ -34,20 +34,18 @@ typedef struct {
 
 MIDIViewT curr_midiview;
 
-uint8_t arp_play_state = 0;
-uint8_t arp_frame = 0;			// internal beat, which is 1/16th of the actual beat (see arp_bpm)
 
 // -- MIDI I/O
-// Send a MIDI message
+// Send a MIDI message over Serial1
 // returns the # of bytes sent
-static uint16_t MIDI_Put(uint8_t * data, uint16_t length)
+static uint16_t UART_MIDI_Put(uint8_t * data, uint16_t length)
 {
 	return (Serial1.write(data, length));
 }
 
-// Receive a MIDI message if its available
+// Receive a MIDI message on Serial1 if its available
 // returns the # of bytes received in the message (count should be length)
-static uint16_t MIDI_Get(uint8_t * data, uint16_t length)
+static uint16_t UART_MIDI_Get(uint8_t * data, uint16_t length)
 {
 	int8_t count;
 	count = 0;
@@ -57,6 +55,7 @@ static uint16_t MIDI_Get(uint8_t * data, uint16_t length)
 	}
 	return count;
 }
+
 
 // A Basic Arpeggiator class for use by the MIDI Module:
 // inspired by RobG @ 43oh
@@ -112,54 +111,57 @@ private:
 #define NUM_ARP_PATTERNS 8
 	const ArpPatternT arp_patterns[NUM_ARP_PATTERNS][4] = {	// arp_patterns 4/4
 		{{0, BEAT1, EIGHTH},
-		 {2, BEAT2, EIGHTH},
-		 {0, BEAT3, EIGHTH},
+		{2, BEAT2, EIGHTH},
+		{0, BEAT3, EIGHTH},
 		 {2, BEAT4, EIGHTH}},		//
-		{{0, BEAT1, EIGHTH},
+		 {{0, BEAT1, EIGHTH},
 		 {0, BEAT2, EIGHTH},
 		 {2, BEAT3, EIGHTH},
 		 {2, BEAT4, EIGHTH}},		//
-		{{0, BEAT1, EIGHTH},
+		 {{0, BEAT1, EIGHTH},
 		 {0, BEAT2, EIGHTH},
 		 {2, BEAT3, EIGHTH},
 		 {4, BEAT4, EIGHTH}},		//
-		{{0, BEAT1, EIGHTH},
+		 {{0, BEAT1, EIGHTH},
 		 {2, BEAT2, EIGHTH},
 		 {4, BEAT3, EIGHTH},
 		 {6, BEAT4, EIGHTH}},		//
-		{{0, BEAT1, EIGHTH},
+		 {{0, BEAT1, EIGHTH},
 		 {12, BEAT2, EIGHTH},
 		 {0, BEAT3, EIGHTH},
 		 {12, BEAT4, EIGHTH}},		//
-		{{0, BEAT1, EIGHTH},
+		 {{0, BEAT1, EIGHTH},
 		 {0, BEAT2, EIGHTH},
 		 {12, BEAT3, EIGHTH},
 		 {12, BEAT4, EIGHTH}},		//
-		{{0, BEAT1, EIGHTH},
+		 {{0, BEAT1, EIGHTH},
 		 {0, BEAT2, EIGHTH},
 		 {4, BEAT3, EIGHTH},
 		 {12, BEAT4, EIGHTH}},		//
-		{{0, BEAT1, EIGHTH},
+		 {{0, BEAT1, EIGHTH},
 		 {2, BEAT1 + 8, EIGHTH},
 		 {4, BEAT2, QUARTER},
 		 {6, BEAT4, EIGHTH}},		//
-	};
+		};
 
 
 public:
-	uint8_t arp_bpm = LOWEST_ARP_TEMPO;
-	uint32_t arp_beat_duration = 0;
-	uint32_t arp_frame_time = 0;
+		uint8_t arp_play_state = 0;
+		uint8_t arp_frame = 0;			// internal beat, which is 1/16th of the actual beat (see arp_bpm)
+
+		uint8_t arp_bpm = LOWEST_ARP_TEMPO;
+		uint32_t arp_beat_duration = 0;
+		uint32_t arp_frame_time = 0;
 
 
-	void arpLEDIndicator()
-	{
+		void arpLEDIndicator()
+		{
 		// Blink Arpeggiator LED's
-		if (arp_frame == 0) {
-			msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 100, 0, 0);
-			msSystem.msLEDs.setLED(LED_MEASURE_COUNTER, 0, 100, 0);
-		} else if ((arp_frame & 0x0F) == 0) {
-			msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 0, 100, 0);
+			if (arp_frame == 0) {
+				msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 100, 0, 0);
+				msSystem.msLEDs.setLED(LED_MEASURE_COUNTER, 0, 100, 0);
+			} else if ((arp_frame & 0x0F) == 0) {
+				msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 0, 100, 0);
 		} else {					// LEDs off
 			msSystem.msLEDs.setLED(LED_ARP_COUNTER, 100, 0, 0);
 			msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 0, 0, 0);
@@ -195,11 +197,11 @@ public:
 				// if you don't use getNextNaturalNote in arpNoteOn, use getNextNaturalNote
 				// here instead
 				uint8_t note = getNextNaturalNoteAdd(new_note,
-													 arp_patterns[new_pattern]
-													 [event_idx].note_offset);
+					arp_patterns[new_pattern]
+					[event_idx].note_offset);
 				// on
 				arp_events[event_idx].beat =
-					arp_patterns[new_pattern][event_idx].beat;
+				arp_patterns[new_pattern][event_idx].beat;
 				arp_events[event_idx].note = note;
 				arp_events[event_idx].on_off = 1;
 
@@ -207,8 +209,8 @@ public:
 				// assuming that the beat and the duration is correctly calculated, sum
 				// must be < 64
 				arp_events[event_idx + 4].beat =
-					arp_patterns[new_pattern][event_idx].beat +
-					arp_patterns[new_pattern][event_idx].note_duration;
+				arp_patterns[new_pattern][event_idx].beat +
+				arp_patterns[new_pattern][event_idx].note_duration;
 
 				arp_events[event_idx + 4].note = note;
 				arp_events[event_idx + 4].on_off = 0;
@@ -228,7 +230,7 @@ public:
 		while (event_idx < 8) {
 			if (arp_events[event_idx].beat == arp_frame) {
 				arpPlayNote(arp_events[event_idx].note,
-							arp_events[event_idx].on_off);
+					arp_events[event_idx].on_off);
 			}
 			event_idx++;
 		}
@@ -242,7 +244,7 @@ public:
 	void arpPlayNote(uint8_t noteNumber, uint8_t on_off)
 	{
 		arpPushMIDI((on_off ? MIDI_NOTE_ON : MIDI_NOTE_OFF) +
-					curr_midiview.midi_channel);
+			curr_midiview.midi_channel);
 		arpPushMIDI(noteNumber);
 		arpPushMIDI(current_velocity);
 
@@ -280,7 +282,7 @@ public:
 	void arpSendMIDI()
 	{
 		while (arp_fifo_in_index != arp_fifo_out_index) {	// send whatever is in the buffer
-			MIDI_Put(&arp_fifo[++arp_fifo_out_index & BUFFER_MASK], 1);
+			UART_MIDI_Put(&arp_fifo[++arp_fifo_out_index & BUFFER_MASK], 1);
 		}
 	}
 
@@ -319,6 +321,8 @@ public:
 
 };
 
+
+
 class MIDIShifterMode : public MagicShifterBaseMode {
 
 private:
@@ -329,7 +333,6 @@ private:
 	uint8_t midi_mode = 0;			// Mode of this module (future-use)
 	uint8_t sync_count;				// sync counter
 	uint16_t midi_frame = 0;		// current MIDI Processing frame
-
 
 	// Envelopes - used for the LED's
 	adsr_envelope anEnvelope;
@@ -362,9 +365,6 @@ private:
 
 	int microsSinceLast = 0;
 
-#ifdef CONFIG_MIDI_RTP_MIDI
-	bool	isRTPConnected;
-#endif
 
 public:
 
@@ -373,6 +373,7 @@ public:
 	MIDIShifterMode() {
 		modeName = "Arpi";
 	}
+
 
 	void envDump()
 	{
@@ -436,6 +437,7 @@ public:
 		anEnvelope.current = &anEnvelope.stages[ENV_START];	// active
 
 	}
+
 
 	// calculate the envelopes
 	void envFrame()
@@ -527,19 +529,18 @@ public:
 		_arp.arpSoundOff();
 	}
 
-
 	// ---------------------------------------------------------------------- Main Entry Point
 	void start()
 	{
 
-#ifdef CONFIG_MIDI_RTP_MIDI
+#ifdef CONFIG_MIDI_RTP
 		// Create a session and wait for a remote host to connect to us
-		AppleMIDI.OnConnected(OnRTPMIDI_Connect);
-		AppleMIDI.OnDisconnected(OnRTPMIDI_Disconnect);
-		AppleMIDI.OnReceiveNoteOn(OnRTPMIDI_NoteOn);
-		AppleMIDI.OnReceiveNoteOff(OnRTPMIDI_NoteOff);
+		AppleMIDI.OnConnected(MIDIShifterMode::RTP_MIDI_Connect);
+		AppleMIDI.OnDisconnected(RTP_MIDI_Disconnect);
+		AppleMIDI.OnReceiveNoteOn(RTP_MIDI_Note_On);
+		AppleMIDI.OnReceiveNoteOff(RTP_MIDI_Note_Off);
 		AppleMIDI.begin("MS3000_MIDI_RTP");
-		// msSystem.slogln("APPLEMIDI::: Sending NoteOn/Off of note 45, every second");
+		msSystem.slogln("APPLEMIDI::: Sending NoteOn/Off of note 45, every second");
 #endif
 
 		// Debug - set an LED so we know we made it ..
@@ -569,22 +570,15 @@ public:
 	{
 		uint8_t midi_inb;
 
-#ifdef CONFIG_MIDI_RTP_MIDI
+#ifdef CONFIG_MIDI_RTP
 		AppleMIDI.run();
 #endif
-
-
-#if 0
 		// pull midi_inbox
-		if (Serial1.available()) {
-			MIDI_Get(&midi_inb, 1);
+		if (Serial1.available() && 
+			(UART_MIDI_Get(&midi_inb, 1) > 0)) {
 			miby_parse(&miby, midi_inb);
-		} else						// !J! TODO: Soft-thru, etc.
-		{
-			// MIDI_Put(&midi_buf[0], 4);
 		}
-#endif
-
+		
 		midi_frame++;
 
 		// minimize latency introduced by the Arp frame
@@ -596,11 +590,11 @@ public:
 		// envFrame();
 
 		return false;
-	}
+	};
 
 
 	// TODO: MIDI Sync
-	void MIDISync()
+	void MIDI_Sync()
 	{
 		if (sync_count < 24) {
 			sync_count = sync_count + 1;
@@ -608,6 +602,5 @@ public:
 			sync_count = 0;
 		}
 	}
-
 
 };

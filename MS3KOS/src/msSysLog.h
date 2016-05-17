@@ -103,8 +103,7 @@ class MagicShifterSysLog {
 		byte *p = (byte *) malloc(msg_length);
 		memcpy(p, (char *) newMsg.c_str(), msg_length);
 
-#ifdef _DO_SERIAL_OUTPUT
-#warning "SERIAL OUTPUT HAS BEEN ENABLED"
+#ifndef CONFIG_MIDI_ONBOARD
 		Serial.println(newMsg);
 #endif
 

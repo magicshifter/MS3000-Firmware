@@ -33,63 +33,12 @@ extern "C" {
 MagicShifterGlobals msGlobals;
 // note: beyond this point, please consider the above globals.
 
-//
-// !J!  note: here we use a timer to sample the
-// middle button (power-down/brightness control)
-// it is done in a timer because the AD op is slow
-// and therefore better done outside the context
-// of the main runloop
-//
-#include "user_interface.h"
-
-os_timer_t aPowerButtonTimer;
-#define POWER_BUTTON_TIMER_PERIOD 125
-
-// !J! TODO: Adjust this:
-#define MIN_POWER_LEVEL_THRESHOLD (3.0f)
-
-float calculateVoltage(int adValue)
-{
-	int ad1V = 1024;
-//		static float avg = 4.2;
-
-	//float r1 = 180, r2 = 390, r3 = 330; // gamma??? or (not beta)
-	// !J! todo: magic numbers are bad voodoo
-	float r1 = 220, r2 = 820, r3 = 0;	// alpha
-
-	float voltage = ((float) (r1 + r2 + r3) * adValue) / (r1 * ad1V);
-
-//		float p = 0.05;
-//		avg = p * voltage + (1-p) * avg;
-
-	return voltage;
-}
-
-void PowerButtonTimerCallback(void *pArg) {
-	os_intr_lock();
-	// tickOccured = true;
-	msGlobals.ggLastADValue = analogRead(A0);
-
-	if (calculateVoltage(msGlobals.ggLastADValue) <= MIN_POWER_LEVEL_THRESHOLD)
-		msGlobals.ggFault = FAULT_VERY_LOW_POWER;
-
-	os_intr_unlock();
-} // End of timerCallback
-
-void initPowerButtonTimer()
-{
-	os_timer_setfn(&aPowerButtonTimer, PowerButtonTimerCallback, NULL);
-	os_timer_arm(&aPowerButtonTimer, POWER_BUTTON_TIMER_PERIOD, true);
-}
-
-
-
-
 #include "msSystem.h"
 MagicShifterSystem msSystem;
 // note: WebServer and msSystem are in love
 #include "WebServer/WebServer.h"
 MagicShifterWebServer msWebServer;
+
 
 // GUI modes, well actually .. modes are more of an 'app' ..
 #include "Modes/Modes.h"
@@ -126,7 +75,7 @@ void setup()
 	msGlobals.ggModeList.push_back(&msMagicRemote);
 	msGlobals.ggModeList.push_back(&msMagicBeat);
 
-#ifdef CONFIG_ENABLE_MIDI
+#ifdef CONFIG_MIDI_ONBOARD
 	msGlobals.ggCurrentMode = 6;
 	msGlobals.ggModeList.push_back(&msMIDIShifter);
 #endif
@@ -175,7 +124,7 @@ void loop()
 		Serial.println(String(msGlobals.ggFault));
 		switch (msGlobals.ggFault) {
 			case FAULT_VERY_LOW_POWER:
-				msPowerEmergencyMode.start();
+				msPowerEmergencyMode.step();
 			break;
 			case FAULT_NO_ACCELEROMETER:
 				msSystem.msLEDs.errorSwipe();

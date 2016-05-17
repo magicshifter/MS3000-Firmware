@@ -5,6 +5,14 @@
 #include <math.h>
 #include <Wire.h>				// Used for I2C
 #include <Arduino.h>
+
+// See: 
+// https://github.com/platformio/platformio/issues/646#issuecomment-216244875
+// #undef min
+// #undef max
+//
+
+
 #include <Esp.h>
 
 typedef struct estage estage;
@@ -63,12 +71,12 @@ uint16_t adsr_envelope_tick(adsr_envelope * env)
 {
 	estage *es = env->current;
 
-	msSystem.slog("Current Stage:");
-	msSystem.slog((unsigned int) es, HEX);
-	msSystem.slog("Timer:");
-	msSystem.slog(env->timer, DEC);
-	msSystem.slog("Duration:");
-	msSystem.slogln(es->duration, DEC);
+	// slog("Current Stage:");
+	// slog((unsigned int) es, HEX);
+	// slog("Timer:");
+	// slog(env->timer, DEC);
+	// slog("Duration:");
+	// slogln(es->duration, DEC);
 
 	if (env->timer >= es->duration) {	// next stage
 		env->current = (estage *) es->next;

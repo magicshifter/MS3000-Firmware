@@ -20,16 +20,10 @@
 
 #include "ModeSelector.h"
 
-// MIDI can be configured on or off 
-#ifdef CONFIG_ENABLE_MIDI
-#include "miby.h"
-#include "MIDI/MibyConfig.h"
-#include "MIDI/midi_defs.h"
-#include "MIDI/envelope.h"
+#ifdef CONFIG_MIDI_ONBOARD
 #include "MIDI/MidiShifter.h"
 MIDIShifterMode msMIDIShifter;
-#include "MIDI/RawMIDIHandlers.h"
-
+#include "MIDI/MibyConfig.h"
 #endif
 
 PowerEmergencyMode msPowerEmergencyMode;

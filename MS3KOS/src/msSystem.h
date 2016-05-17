@@ -4,15 +4,22 @@
 #include <math.h>
 #include <Wire.h>				// Used for I2C
 #include <Arduino.h>
-#include <Esp.h>
 
+// See: 
+// https://github.com/platformio/platformio/issues/646#issuecomment-216244875
+// #undef min
+// #undef max
+//
+
+#include <Esp.h>
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 
-#include <WiFiManager.h>          //https://github.com/tzapu/WiFiManager WiFi Configuration Magic
-
+//https://github.com/tzapu/WiFiManager WiFi Configuration Magic
+//pio lib install 567
+#include <WiFiManager.h>          
 
 #include <Base64.h>
 #include <EEPROM.h>
@@ -20,56 +27,64 @@
 // #include <WiFi.h>
 // #include <WiFiUdp.h>
 
+#include "user_interface.h"
+
 #include "Hardware/EEPROMString.h"
 #include "Hardware/LEDHardware.h"
 #include "Hardware/Sensor.h"
 #include "Hardware/Buttons.h"
 #include "msImage.h"
 #include "msSysLog.h"
+#include "msMIDI.h"
 
 //
-// MIDI features can be configured in or out of
-// the project according to Serial needs.
-// e.g. debugging
+// !J!  note: here we use a timer to sample the
+// middle button (power-down/brightness control)
+// it is done in a timer because the AD op is slow
+// and therefore better done outside the context
+// of the main runloop
 //
-#ifdef CONFIG_ENABLE_MIDI
-#include "AppleMidi.h"
-// RTPMIDI is usable over WiFi
-#define CONFIG_MIDI_RTP_MIDI
-APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_Defs.h
-bool isRTPConnected = false;
 
-// RTP MIDI event handlers:
-// -----------------------------------------------------------------------------
-void OnRTPMIDI_Connect(uint32_t ssrc, char* name) {
-  isRTPConnected = true;
-  Serial.print("Connected to session ");
-  Serial.println(name);
+os_timer_t aPowerButtonTimer;
+#define POWER_BUTTON_TIMER_PERIOD 125
+
+// !J! TODO: Adjust this:
+#define MIN_POWER_LEVEL_THRESHOLD (3.38f)
+
+float calculateVoltage(int adValue)
+{
+	int ad1V = 1024;
+//		static float avg = 4.2;
+
+	//float r1 = 180, r2 = 390, r3 = 330; // gamma??? or (not beta)
+	// !J! todo: magic numbers are bad voodoo
+	float r1 = 220, r2 = 820, r3 = 0;	// alpha
+
+	float voltage = ((float) (r1 + r2 + r3) * adValue) / (r1 * ad1V);
+
+//		float p = 0.05;
+//		avg = p * voltage + (1-p) * avg;
+
+	return voltage;
 }
 
-void OnRTPMIDI_Disconnect(uint32_t ssrc) {
-  isRTPConnected = false;
-  Serial.println("Disconnected");
+void PowerButtonTimerCallback(void *pArg) {
+	os_intr_lock();
+	// tickOccured = true;
+	msGlobals.ggLastADValue = analogRead(A0);
+
+	if (calculateVoltage(msGlobals.ggLastADValue) <= MIN_POWER_LEVEL_THRESHOLD)
+		msGlobals.ggFault = FAULT_VERY_LOW_POWER;
+
+	os_intr_unlock();
+} // End of timerCallback
+
+void initPowerButtonTimer()
+{
+	os_timer_setfn(&aPowerButtonTimer, PowerButtonTimerCallback, NULL);
+	os_timer_arm(&aPowerButtonTimer, POWER_BUTTON_TIMER_PERIOD, true);
 }
 
-void OnRTPMIDI_NoteOn(byte channel, byte note, byte velocity) {
-  Serial.print("Incoming NoteOn from channel:");
-  Serial.print(String(channel));
-  Serial.print(" note:");
-  Serial.print(String(note));
-  Serial.print(" velocity:");
-  Serial.println(String(velocity));
-}
-
-void OnRTPMIDI_NoteOff(byte channel, byte note, byte velocity) {
-  Serial.print("Incoming NoteOff from channel:");
-  Serial.print(String(channel));
-  Serial.print(" note:");
-  Serial.print(String(note));
-  Serial.print(" velocity:");
-  Serial.println(String(velocity));
-}
-#endif
 
 // forward-declared here because it is a client of msSystem ..
 void CommandInterfacePoll();
@@ -967,7 +982,7 @@ class MagicShifterSystem {
 
 		EEPROM.begin(512);
 
-// #ifdef CONFIG_ENABLE_MIDI
+// #ifdef CONFIG_MIDI_ONBOARD
 // #warning "MIDI has been enabled - Serial I/O at 31250 - serial logging disabled (use wlan)"
 		// Serial.begin(31250);
 // #else

@@ -8,13 +8,8 @@
 #undef DEBUG_OUTPUT
 
 // MIDI enabled?
-// #define CONFIG_ENABLE_MIDI
-
-#ifdef CONFIG_ENABLE_MIDI
-#undef _DO_SERIAL_OUTPUT
-#else
-#define _DO_SERIAL_OUTPUT
-#endif
+#define CONFIG_MIDI_ONBOARD
+#define CONFIG_MIDI_RTP
 
 // Accelerometer enabled?
 #define CONFIG_ENABLE_ACCEL
