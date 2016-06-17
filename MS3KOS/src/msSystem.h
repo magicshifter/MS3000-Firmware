@@ -586,9 +586,14 @@ class MagicShifterSystem {
 
 	// reset the power controller
 	void powerStabilize() {
+
+#ifdef CONFIG_PWR_FORCE
+		// this forces pwr_enable to high in the circuit so it doesn't turn off
 		digitalWrite(PIN_PWR_MGT, HIGH);
 		pinMode(PIN_PWR_MGT, OUTPUT);
 		digitalWrite(PIN_PWR_MGT, HIGH);
+#endif
+
 	}
 
 	// tell power controller to power down
