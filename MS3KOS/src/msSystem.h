@@ -584,11 +584,49 @@ class MagicShifterSystem {
 	};
 
 
+	int  loadCalibration()
+	{
+		File calibFile;
+		uint16_t calib = 0;
+
+		calibFile = SPIFFS.open(CALIBRATION_FILENAME, "r");
+
+		if (calibFile) {
+			calibFile.read((unsigned byte *)&calib, sizeof (int));
+			calibFile.close();
+		}
+
+		return calib;
+	}
+
+	void saveCalibration(int calib_value)
+	{
+		File calibFile;
+	
+		calibFile = SPIFFS.open(CALIBRATION_FILENAME, "w");
+
+		if (calibFile) {
+			calibFile.write((unsigned byte *)&calib_value, sizeof (int));
+			calibFile.close();
+		}
+	}
+
+	void powerCalibrate() {
+		saveCalibration(msGlobals.ggLastADValue);
+		msGlobals.batVoltCalibration = msGlobals.ggLastADValue;
+	}
+
+
 	// reset the power controller
 	void powerStabilize() {
+
+#ifdef CONFIG_PWR_FORCE
+		// this forces pwr_enable to high in the circuit so it doesn't turn off
 		digitalWrite(PIN_PWR_MGT, HIGH);
 		pinMode(PIN_PWR_MGT, OUTPUT);
 		digitalWrite(PIN_PWR_MGT, HIGH);
+#endif
+
 	}
 
 	// tell power controller to power down
@@ -990,6 +1028,8 @@ class MagicShifterSystem {
 
 		msGlobals.ggBrightness = msGlobals.ggUIConfig.defaultBrightness;
 
+		msGlobals.batVoltCalibration = msSystem.loadCalibration();
+
 		msLEDs.bootSwipe();
 
 		// all engines turn on
@@ -1067,7 +1107,7 @@ class MagicShifterSystem {
 		msButtons.step();
 		msSensor.step();
 
-		batteryVoltage = calculateVoltage(msGlobals.ggLastADValue);
+		batteryVoltage = calculateVoltage(msGlobals.ggLastADValue, msGlobals.batVoltCalibration);
 
 		if (batteryVoltage < 4.0) {
 			if (lowBatteryMillis == 0)
@@ -1123,7 +1163,7 @@ class MagicShifterSystem {
 
 
 	float getBatteryVoltage(void) {
-		return calculateVoltage(msGlobals.ggLastADValue);
+		return calculateVoltage(msGlobals.ggLastADValue, msGlobals.batVoltCalibration);
 	}
 
 	IPAddress getIP() {

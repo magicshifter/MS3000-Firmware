@@ -61,6 +61,13 @@
 #define MAX_TEXT_LENGTH 16
 
 
+#define BUTTON_PWR_THRESHOLD_DEFAULT 970
+
+// !J! we want to configure this
+#undef CONFIG_PWR_FORCE 
+
+#define CALIBRATION_FILENAME "settings/calibration.bin"
+
 // 192.168.4.1 is the IP it always has in softAP mode
 #define SCAN_FIRST_MODE 1
 

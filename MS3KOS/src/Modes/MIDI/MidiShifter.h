@@ -34,8 +34,6 @@ typedef struct {
 
 MIDIViewT curr_midiview;
 
-uint8_t arp_play_state = 0;
-uint8_t arp_frame = 0;			// internal beat, which is 1/16th of the actual beat (see arp_bpm)
 
 // -- MIDI I/O
 // Send a MIDI message
@@ -51,7 +49,10 @@ static uint16_t MIDI_Get(uint8_t * data, uint16_t length)
 {
 	int8_t count;
 	count = 0;
-	while ((length > 0) && (data[count] = Serial1.read()) != -1) {
+	
+	while ( (Serial1.available()) && 
+		    ((length > 0) && 
+		     (data[count] = Serial1.read()) != -1) ) {
 		count++;
 		length--;
 	}
@@ -147,26 +148,29 @@ private:
 
 
 public:
+	uint8_t arp_play_state = 0;
+	uint8_t arp_frame = 0;			// internal beat, which is 1/16th of the actual beat (see arp_bpm)
+	
 	uint8_t arp_bpm = LOWEST_ARP_TEMPO;
 	uint32_t arp_beat_duration = 0;
 	uint32_t arp_frame_time = 0;
 
 
-	void arpLEDIndicator()
-	{
-		// Blink Arpeggiator LED's
-		if (arp_frame == 0) {
-			msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 100, 0, 0);
-			msSystem.msLEDs.setLED(LED_MEASURE_COUNTER, 0, 100, 0);
-		} else if ((arp_frame & 0x0F) == 0) {
-			msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 0, 100, 0);
-		} else {					// LEDs off
-			msSystem.msLEDs.setLED(LED_ARP_COUNTER, 100, 0, 0);
-			msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 0, 0, 0);
-			msSystem.msLEDs.setLED(LED_MEASURE_COUNTER, 0, 0, 0);
-		}
-
+void arpUIupdate()
+{
+	// Blink Arpeggiator LED's
+	if (arp_frame == 0) {
+		msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 100, 0, 0);
+		msSystem.msLEDs.setLED(LED_MEASURE_COUNTER, 0, 100, 0);
+	} else if ((arp_frame & 0x0F) == 0) {
+		msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 0, 100, 0);
+	} else {					// LEDs off
+		msSystem.msLEDs.setLED(LED_ARP_COUNTER, 100, 0, 0);
+		msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 0, 0, 0);
+		msSystem.msLEDs.setLED(LED_MEASURE_COUNTER, 0, 0, 0);
 	}
+
+}
 
 
 	// --------------------------------------------------------------------------- ARPEGGIATOR
@@ -233,10 +237,12 @@ public:
 			event_idx++;
 		}
 
-		arpLEDIndicator();
 
 		// gather time data for next arp Frame
 		arp_frame++;
+
+arpUIupdate();
+
 	}
 
 	void arpPlayNote(uint8_t noteNumber, uint8_t on_off)

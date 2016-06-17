@@ -118,10 +118,11 @@ struct powerMode_t
 		STR_SOFTIP = 4,
 		STR_POWER_LO  = 5, 
 		STR_POWER_HI  = 6,
-		STR_POWER_VALUE = 7 
+		STR_POWER_VALUE = 7,
+		STR_CALIBRATION = 8
 	};
 
-#define NUM_SYS_TEXTS 8
+#define NUM_SYS_TEXTS 9
 
 // step through a frame of the mode 
 	bool step() {
@@ -130,6 +131,17 @@ struct powerMode_t
 		bool isBatteryLow = msSystem.lowBatteryMillis != 0;
 
 		// cycle through the texts ..
+		if (msSystem.msButtons.msBtnALongHit) {
+			msSystem.msButtons.msBtnALongHit = false;
+			msSystem.showBatteryStatus(true);
+		}
+
+		if (msSystem.msButtons.msBtnBLongHit) {
+			msSystem.msButtons.msBtnBLongHit = false;
+			if (sysCursor == STR_CALIBRATION)
+				msSystem.powerCalibrate();
+		}
+
 		if (msSystem.msButtons.msBtnAHit) {
 			msSystem.msButtons.msBtnAHit = false;	// !J! todo: button callbacks
 			sysCursor++;
@@ -183,6 +195,7 @@ struct powerMode_t
 				msSystem.Settings.setUIConfig(&msGlobals.ggUIConfig);
 			}
 
+
 			needsTextUpdate = true;
 		}
 
@@ -215,8 +228,11 @@ struct powerMode_t
 				setText((char *) String("P-HI").c_str(),
 						(char *)predefinedPowerModes[ptHiMode].label.c_str(), aWHITE);
 			} else if (sysCursor == STR_POWER_VALUE) {
-				setLargeText((char *) String("VOLT").c_str(),
+				setText((char *) String("VOLT").c_str(),
 						(char *)String(msSystem.batteryVoltage).c_str(), isBatteryLow ? aRED : aGREEN);
+			} else if (sysCursor == STR_CALIBRATION) {
+				setText((char *) String("CALIB").c_str(),
+						(char *)String(msGlobals.batVoltCalibration).c_str(), isBatteryLow ? aRED : aGREEN);
 			} else if (sysCursor == STR_WIFI) {
 				if  (!msGlobals.ggEnableWIFI)
 					setText((char *) String("WIFI").c_str(), (char *) String("OFF").c_str(), aRED);
