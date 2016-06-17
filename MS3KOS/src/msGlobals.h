@@ -44,6 +44,8 @@ class MagicShifterGlobals {
 	// center button is read by AD
 	int ggLastADValue;		// last AD value sampled during button step
 
+	int batVoltCalibration  = 0;
+
 	struct APConfig ggAPConfig;
 	struct APAuthHelper  ggSoftAP;
 
