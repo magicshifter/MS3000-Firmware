@@ -52,7 +52,7 @@ class MagicShifterButtons {
 
 	bool powerButtonPressed(void) {
 		// had unusual high values on one of the 100x PCBs so this threshold is bigger now
-		return msGlobals.ggLastADValue > 970;
+		return msGlobals.ggLastADValue > BUTTON_PWR_THRESHOLD_DEFAULT;
 	}; 
 
 

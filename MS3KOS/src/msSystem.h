@@ -70,8 +70,6 @@ void OnRTPMIDI_NoteOff(byte channel, byte note, byte velocity) {
   Serial.println(String(velocity));
 }
 #endif
-//CONFIG_ENABLE_MIDI
-
 
 // forward-declared here because it is a client of msSystem ..
 void CommandInterfacePoll();
@@ -586,11 +584,49 @@ class MagicShifterSystem {
 	};
 
 
+	int  loadCalibration()
+	{
+		File calibFile;
+		uint16_t calib = 0;
+
+		calibFile = SPIFFS.open(CALIBRATION_FILENAME, "r");
+
+		if (calibFile) {
+			calibFile.read((unsigned byte *)&calib, sizeof (int));
+			calibFile.close();
+		}
+
+		return calib;
+	}
+
+	void saveCalibration(int calib_value)
+	{
+		File calibFile;
+	
+		calibFile = SPIFFS.open(CALIBRATION_FILENAME, "w");
+
+		if (calibFile) {
+			calibFile.write((unsigned byte *)&calib_value, sizeof (int));
+			calibFile.close();
+		}
+	}
+
+	void powerCalibrate() {
+		saveCalibration(msGlobals.ggLastADValue);
+		msGlobals.batVoltCalibration = msGlobals.ggLastADValue;
+	}
+
+
 	// reset the power controller
 	void powerStabilize() {
+
+#ifdef CONFIG_PWR_FORCE
+		// this forces pwr_enable to high in the circuit so it doesn't turn off
 		digitalWrite(PIN_PWR_MGT, HIGH);
 		pinMode(PIN_PWR_MGT, OUTPUT);
 		digitalWrite(PIN_PWR_MGT, HIGH);
+#endif
+
 	}
 
 	// tell power controller to power down
@@ -969,12 +1005,12 @@ class MagicShifterSystem {
 
 		EEPROM.begin(512);
 
-#ifdef CONFIG_ENABLE_MIDI
-#warning "MIDI has been enabled - Serial I/O at 31250 - serial logging disabled (use wlan)"
+// #ifdef CONFIG_ENABLE_MIDI
+// #warning "MIDI has been enabled - Serial I/O at 31250 - serial logging disabled (use wlan)"
 		// Serial.begin(31250);
-#else
+// #else
 		Serial.begin(921600);
-#endif
+// #endif
 
 		slogln(String("\r\nMagicShifter 3000 OS V" + String(MS3KOS_VERSION)));
 
@@ -991,6 +1027,8 @@ class MagicShifterSystem {
 		Settings.getUIConfig(&msGlobals.ggUIConfig);
 
 		msGlobals.ggBrightness = msGlobals.ggUIConfig.defaultBrightness;
+
+		msGlobals.batVoltCalibration = msSystem.loadCalibration();
 
 		msLEDs.bootSwipe();
 
@@ -1069,7 +1107,7 @@ class MagicShifterSystem {
 		msButtons.step();
 		msSensor.step();
 
-		batteryVoltage = calculateVoltage(msGlobals.ggLastADValue);
+		batteryVoltage = calculateVoltage(msGlobals.ggLastADValue, msGlobals.batVoltCalibration);
 
 		if (batteryVoltage < 4.0) {
 			if (lowBatteryMillis == 0)
@@ -1125,7 +1163,7 @@ class MagicShifterSystem {
 
 
 	float getBatteryVoltage(void) {
-		return calculateVoltage(msGlobals.ggLastADValue);
+		return calculateVoltage(msGlobals.ggLastADValue, msGlobals.batVoltCalibration);
 	}
 
 	IPAddress getIP() {

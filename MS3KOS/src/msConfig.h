@@ -10,6 +10,12 @@
 // MIDI enabled?
 // #define CONFIG_ENABLE_MIDI
 
+#ifdef CONFIG_ENABLE_MIDI
+#undef _DO_SERIAL_OUTPUT
+#else
+#define _DO_SERIAL_OUTPUT
+#endif
+
 // Accelerometer enabled?
 #define CONFIG_ENABLE_ACCEL
 
@@ -39,7 +45,7 @@
 
 // v1 == breadboard pcb
 // 2 == 0.9 pcb :)
-#define MS3KOS_VERSION "1.0.0"
+#define MS3KOS_VERSION "1.2.0"
 
 #define MIN_TIME_CLICK 10000
 #define MIN_TIME_LONG_CLICK 1000 * 750
@@ -54,6 +60,13 @@
 #define MAX_FILENAME_LENGTH 32
 #define MAX_TEXT_LENGTH 16
 
+
+#define BUTTON_PWR_THRESHOLD_DEFAULT 970
+
+// !J! we want to configure this
+#undef CONFIG_PWR_FORCE 
+
+#define CALIBRATION_FILENAME "settings/calibration.bin"
 
 // 192.168.4.1 is the IP it always has in softAP mode
 #define SCAN_FIRST_MODE 1

@@ -11,7 +11,9 @@ class MagicShifterEEPROMString {
 	void safeStrncpy(char *dest, const char *source, int n) {
 		strncpy(dest, source, n);
 		dest[n - 1] = '\0';
-	} void loadString(char *str, int len) {
+	} 
+
+	void loadString(char *str, int len) {
 		for (int i = 0; i < len; i++) {
 			str[i] = EEPROM.read(i);
 		}
@@ -24,8 +26,6 @@ class MagicShifterEEPROMString {
 		}
 		return EEPROM.commit();
 	}
-
-
 
 	bool memcmpByte(const byte * data, byte referenceValue, int len) {
 		for (int i = 0; i < len; i++) {
