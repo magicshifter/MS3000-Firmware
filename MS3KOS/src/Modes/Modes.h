@@ -26,8 +26,8 @@
 #include "MIDI/MibyConfig.h"
 #include "MIDI/midi_defs.h"
 #include "MIDI/envelope.h"
-#include "MIDI/MidiShifter.h"
-MIDIShifterMode msMIDIShifter;
+#include "MIDI/MagicArpeggiator.h"
+MIDIArpeggiatorMode msMIDIShifter;
 #include "MIDI/RawMIDIHandlers.h"
 
 #endif

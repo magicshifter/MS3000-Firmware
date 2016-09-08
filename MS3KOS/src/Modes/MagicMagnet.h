@@ -11,6 +11,10 @@ class MagicMagnetMode:public MagicShifterBaseMode {
 	int frame = 0;
 	int lMode = 0;
 
+#ifdef CONFIG_ENABLE_OSC
+	OSCMessage omsg = OSCMessage("/someaddress");
+#endif
+
 	const int MAX_MODES = 3;
 
   public:
@@ -20,6 +24,7 @@ class MagicMagnetMode:public MagicShifterBaseMode {
 	}
 
 	void start() {
+		
 	} 
 
 	void stop() {
@@ -100,6 +105,9 @@ class MagicMagnetMode:public MagicShifterBaseMode {
 		}
 
 		msSystem.msLEDs.updateLEDs();
+
+		// !J! hak: send OSC Msg.
+		omsg.add(lednr);
 
 		delay(25);
 

@@ -156,22 +156,37 @@ public:
 	uint32_t arp_frame_time = 0;
 
 
-void arpUIupdate()
-{
-	// Blink Arpeggiator LED's
-	if (arp_frame == 0) {
-		msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 100, 0, 0);
-		msSystem.msLEDs.setLED(LED_MEASURE_COUNTER, 0, 100, 0);
-	} else if ((arp_frame & 0x0F) == 0) {
-		msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 0, 100, 0);
-	} else {					// LEDs off
-		msSystem.msLEDs.setLED(LED_ARP_COUNTER, 100, 0, 0);
-		msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 0, 0, 0);
-		msSystem.msLEDs.setLED(LED_MEASURE_COUNTER, 0, 0, 0);
+	void arpUIupdate()
+	{
+		// Blink Arpeggiator LED's
+		if (arp_frame == 0) {
+			msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 100, 0, 0);
+			msSystem.msLEDs.setLED(LED_MEASURE_COUNTER, 0, 100, 0);
+		} else if ((arp_frame & 0x0F) == 0) {
+			msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 0, 100, 0);
+		} else {					// LEDs off
+			msSystem.msLEDs.setLED(LED_ARP_COUNTER, 100, 0, 0);
+			msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 0, 0, 0);
+			msSystem.msLEDs.setLED(LED_MEASURE_COUNTER, 0, 0, 0);
+		}
+
 	}
 
-}
+	void arpStart()
+	{
+		if (arp_play_state == 0) {
+			arp_play_state = 1;
+			arp_frame = 0;
+		}
+	}
 
+	void arpStop()
+	{
+		if (arp_play_state == 1) {
+			arp_play_state = 0;
+			// arpSoundOff();
+		}
+	}
 
 	// --------------------------------------------------------------------------- ARPEGGIATOR
 	// Process a frame of the Arpeggiator
@@ -325,7 +340,7 @@ arpUIupdate();
 
 };
 
-class MIDIShifterMode : public MagicShifterBaseMode {
+class MIDIArpeggiatorMode : public MagicShifterBaseMode {
 
 private:
 	// miby parser is used
@@ -376,7 +391,7 @@ public:
 
 	MIDIArpeggiator _arp;
 
-	MIDIShifterMode() {
+	MIDIArpeggiatorMode() {
 		modeName = "Arpi";
 	}
 

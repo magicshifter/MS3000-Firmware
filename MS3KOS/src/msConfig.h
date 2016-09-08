@@ -8,7 +8,10 @@
 #undef DEBUG_OUTPUT
 
 // MIDI enabled?
-// #define CONFIG_ENABLE_MIDI
+#define CONFIG_ENABLE_MIDI
+
+#define CONFIG_ENABLE_OSC
+
 
 #ifdef CONFIG_ENABLE_MIDI
 #undef _DO_SERIAL_OUTPUT

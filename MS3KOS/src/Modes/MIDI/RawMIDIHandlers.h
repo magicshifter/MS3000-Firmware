@@ -7,18 +7,14 @@
 // MIDI Event handlers, configured for use by miby
 void MIDI_Start(miby_this_t a_miby)
 {
-	if (arp_play_state == 0) {
-		arp_play_state = 1;
-		arp_frame = 0;
-	}
+	// raw start the _arp
+	msMIDIShifter._arp.arpStart();
 }
 
 void MIDI_Stop(miby_this_t a_miby)
 {
-	if (arp_play_state == 1) {
-		arp_play_state = 0;
-		// arpSoundOff();
-	}
+	// raw stop the _arp
+	msMIDIShifter._arp.arpStop();
 }
 
 void MIDI_Program_Change(miby_this_t a_miby)

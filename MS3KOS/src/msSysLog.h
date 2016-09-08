@@ -5,27 +5,8 @@
 #include <WiFiUdp.h>
 #include <IPAddress.h>
 
-
 // #define this to get syslog before normal AP autoconnect
 #define SYSLOG_AUTO_CONNECT
-
-IPAddress parseIPString(char *str)
-{
-// char str[] = "123 190 42 175";
-	uint8_t values[4];
-	uint8_t valuesCount = 0;
-
-	char *p = strtok(str, ".");
-	while (p != NULL && valuesCount < 4) {
-		values[valuesCount++] = atoi(p);
-		p = strtok(NULL, ".");
-	}
-
-	if (valuesCount == 4) {
-		return IPAddress(values[0], values[1], values[2], values[3]);
-	} else
-		return IPAddress(0, 0, 0, 0);
-}
 
 class MagicShifterSysLog {
 
@@ -36,8 +17,10 @@ class MagicShifterSysLog {
 
   public:
 
+  	//
 	void connect_wifi() {
 
+	// we may wish to configure syslog on/off for dev/user modes
 #ifdef SYSLOG_AUTO_CONNECT
 		WiFi.mode(WIFI_AP_STA);
 
@@ -70,9 +53,12 @@ class MagicShifterSysLog {
 			Serial.print("syslog: host address: ");
 			Serial.println(syslogServer);
 		}
-	} void setup(char *syslogHostIPStr) {
+	};
 
-		syslogServer = parseIPString(syslogHostIPStr);
+	// 
+	void setup(char *syslogHostIPStr) {
+
+		syslogServer = syslogServer.fromString(syslogHostIPStr);
 
 		Serial.print("syslog: configured host is:");
 		Serial.println(syslogServer);
