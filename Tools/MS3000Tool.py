@@ -248,7 +248,7 @@ def issueDump(device, cmd, timeout):
 	ser = None
 	try:    
 		ser = serial.Serial(device, baudrate, timeout=timeout)#timeout=None
-		port.setRTS(False)
+		ser.setRTS(False)
 		ser.write(cmd)
 		response = ser.readline()
 		return response
