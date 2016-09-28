@@ -31,4 +31,5 @@ reset-device:
 
 clean:
 	# !J! Todo: BUILD_PRODUCT_DIR
-	rm -rf .pioenvs
+	pio run -t clean
+	#rm -rf .pioenvs

@@ -25,7 +25,11 @@ extern "C" {
 #include <json/jsontree.h>
 }
 //compiler.c.elf.libs=-lm -lgcc -lhal -lphy -lnet80211 -llwip -lwpa -lmain -lpp -lsmartconfig -lc -ljson
+#include <vector>
+#include <map> 
+
 #include <FS.h>
+
 // note: local configuration, globals, and system objects get created now.
 #include "msConfig.h"
 
@@ -43,7 +47,6 @@ MagicShifterGlobals msGlobals;
 
 #include "msSystem.h"
 MagicShifterSystem msSystem;
-// note: WebServer and msSystem are in love
 #include "WebServer/WebServer.h"
 MagicShifterWebServer msWebServer;
 

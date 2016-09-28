@@ -1,7 +1,5 @@
 #ifndef _MSGLOBALS_H
 #define _MSGLOBALS_H
-#include <vector>
-#include <map> 
 
 #include "msTypes.h"
 #include "StackClass.h"
