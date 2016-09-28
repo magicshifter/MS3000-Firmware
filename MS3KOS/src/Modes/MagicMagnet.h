@@ -107,7 +107,9 @@ class MagicMagnetMode:public MagicShifterBaseMode {
 		msSystem.msLEDs.updateLEDs();
 
 		// !J! hak: send OSC Msg.
+#ifdef CONFIG_ENABLE_OSC
 		omsg.add(lednr);
+#endif
 
 		delay(25);
 
