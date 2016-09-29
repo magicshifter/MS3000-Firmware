@@ -90,18 +90,19 @@ void WiFiEvent(WiFiEvent_t event) {
 
 void setDebugCallbacks()
 {
-    WiFi.onEvent(WiFiEvent); // deprecated
 
-// non-deprecated, but doesn't seem to work..
+	// !J! deprecated
 #if 0
+    WiFi.onEvent(WiFiEvent); // deprecated
+#endif
+
 	WiFi.onStationModeConnected(WifiOnStationModeConnected);
 	WiFi.onStationModeDisconnected(WifiOnStationModeDisconnected);
 	WiFi.onStationModeAuthModeChanged(WifiOnStationModeAuthModeChanged);
 	WiFi.onStationModeGotIP(WifiOnStationModeGotIP);
-	WiFi.onStationModeDHCPTimeout(WifiOnStationModeDHCPTimeout);
+	//WiFi.onStationModeDHCPTimeout(WifiOnStationModeDHCPTimeout);	// ?? !J!
 	WiFi.onSoftAPModeStationConnected(WifiOnSoftAPModeStationConnected);
 	WiFi.onSoftAPModeStationDisconnected(WifiOnSoftAPModeStationDisconnected);
-#endif
 
 }
 
