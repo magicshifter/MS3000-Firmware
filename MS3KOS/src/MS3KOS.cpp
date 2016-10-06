@@ -87,7 +87,7 @@ void setup()
 
 #ifdef CONFIG_ENABLE_MIDI
 	// msGlobals.ggCurrentMode = 6;
-	msGlobals.ggModeList.push_back(&msMIDIShifter);
+	msGlobals.ggModeList.push_back(&msMIDIArpeggiator);
 #endif
 
 	msGlobals.ggModeList[msGlobals.ggCurrentMode]->start();
@@ -109,7 +109,6 @@ void loop()
 	msGlobals.ggLastFrameMicros = msGlobals.ggCurrentMicros;
 
 	if (msSystem.modeMenuActivated) {
-		msSystem.setLocalYieldState(false);
 		int newMode = msModeSelector.select();
 		if (newMode >= 0) {
 			// stop all modes..
@@ -121,10 +120,7 @@ void loop()
 	} else {
 		if (msGlobals.ggCurrentMode < msGlobals.ggModeList.size()) {
 			// despatch to mode
-
-			msSystem.setLocalYieldState(
-				!msGlobals.ggModeList[msGlobals.ggCurrentMode]->step()
-				);
+			msGlobals.ggModeList[msGlobals.ggCurrentMode]->step();
 		}
 	}
 

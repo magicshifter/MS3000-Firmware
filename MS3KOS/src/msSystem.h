@@ -73,10 +73,6 @@ void OnRTPMIDI_NoteOff(byte channel, byte note, byte velocity) {
 }
 #endif // CONFIG_MIDI_RTP_MIDI
 
-// OSC = Open Sound Control
-#ifdef CONFIG_ENABLE_OSC
-#include "OSCMessage.h"
-#endif // CONFIG_ENABLE_OSC
 
 
 // forward-declared here because it is a client of msSystem ..
@@ -471,8 +467,6 @@ class MagicShifterSystem {
 
 	int lowBatteryMillis;
 	float  batteryVoltage = 0.0;
-
-	bool _shouldLocalYield = true;
 
   public:
 	// todo:switch slog from OFF, to BANNED (MIDI), to UDP .. etc.
@@ -1092,12 +1086,6 @@ class MagicShifterSystem {
 		do { 
 			delay(1);
 		} while(1); // !J! wait until the restart completes
-	}
-
-
-	void setLocalYieldState(bool state)
-	{
-		_shouldLocalYield = state;
 	}
 
 
