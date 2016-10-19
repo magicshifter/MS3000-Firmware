@@ -553,15 +553,6 @@ public:
 	void start()
 	{
 
-#ifdef CONFIG_MIDI_RTP_MIDI
-		// Create a session and wait for a remote host to connect to us
-		AppleMIDI.OnConnected(OnRTPMIDI_Connect);
-		AppleMIDI.OnDisconnected(OnRTPMIDI_Disconnect);
-		AppleMIDI.OnReceiveNoteOn(OnRTPMIDI_NoteOn);
-		AppleMIDI.OnReceiveNoteOff(OnRTPMIDI_NoteOff);
-		AppleMIDI.begin("MS3000_MIDI_RTP");
-		// msSystem.slogln("APPLEMIDI::: Sending NoteOn/Off of note 45, every second");
-#endif
 
 		// Debug - set an LED so we know we made it ..
 		msSystem.msLEDs.fillLEDs(0, 0, 0, msGlobals.ggBrightness);
@@ -590,23 +581,20 @@ public:
 	{
 		uint8_t midi_inb;
 
-#ifdef CONFIG_MIDI_RTP_MIDI
-		AppleMIDI.run();
-#endif
+		msSystem.msButtons.resetButtons();
 
-		// consume button events if necessary ..
-		if (msSystem.msButtons.msBtnPwrHit) {
-			msSystem.msButtons.msBtnPwrHit = false;
-		}
+		// // consume button events if necessary ..
+		// if (msSystem.msButtons.msBtnPwrHit) {
+		// 	msSystem.msButtons.msBtnPwrHit = false;
+		// }
 
-		if (msSystem.msButtons.msBtnAHit) {
-			msSystem.msButtons.msBtnAHit = false;
-		}
-		if (msSystem.msButtons.msBtnBHit) {
-			msSystem.msButtons.msBtnBHit = false;
-		}
+		// if (msSystem.msButtons.msBtnAHit) {
+		// 	msSystem.msButtons.msBtnAHit = false;
+		// }
+		// if (msSystem.msButtons.msBtnBHit) {
+		// 	msSystem.msButtons.msBtnBHit = false;
+		// }
 
-#if 0
 
 		// pull midi_inbox
 		if (Serial1.available()) {
@@ -626,7 +614,6 @@ public:
 		_arp.arp_frame_time = micros();
 
 		// envFrame();
-#endif
 
 		return false;
 	}

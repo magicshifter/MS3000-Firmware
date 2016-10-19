@@ -38,6 +38,12 @@
 // schemes
 #include "msSettingsManager.h"
 
+// forward-declared here because it is a client of msSystem ..
+void CommandInterfacePoll();
+
+class MagicShifterSystem;
+extern MagicShifterSystem msSystem;
+
 // MIDI features can be configured in or out of
 // the project according to Serial needs, and can be
 // enabled for WiFi.
@@ -85,18 +91,9 @@ void OnRTPMIDI_NoteOff(byte channel, byte note, byte velocity) {
 #endif // CONFIG_MIDI_RTP_MIDI
 
 
-
-// forward-declared here because it is a client of msSystem ..
-void CommandInterfacePoll();
-
-class MagicShifterSystem;
-extern MagicShifterSystem msSystem;
-
-
 // TODO: all init and all sensors and leds in here :)
 // (accelerometer wuld also be a class but the MAgicShifter object has one ;)
 class MagicShifterSystem {
-
 
 	class SettingsManager {
 
@@ -1144,6 +1141,14 @@ class MagicShifterSystem {
 		}
 	}
 
+	void updateGlobalFrameCounts()
+	{
+		// update timing post-system work
+		msGlobals.ggLFrameTime = msGlobals.ggCurrentMicros - msGlobals.ggLastFrameMicros;
+		msGlobals.ggCurrentFrame++;
+		msGlobals.ggLastFrameMicros = msGlobals.ggCurrentMicros;
+	}
+
 	// internal system loop - handles the system UI, basic buttons, mode-switching, etc.
 	void step() {
 
@@ -1175,12 +1180,12 @@ class MagicShifterSystem {
 			}
 		}
 
+#ifndef CONFIG_ENABLE_MIDI
+		// poll the serial interface for test/flash commands, etc.
 		CommandInterfacePoll();
+#endif
 
-		// update timing post-system work
-		msGlobals.ggLFrameTime = msGlobals.ggCurrentMicros - msGlobals.ggLastFrameMicros;
-		msGlobals.ggCurrentFrame++;
-		msGlobals.ggLastFrameMicros = msGlobals.ggCurrentMicros;
+		updateGlobalFrameCounts();
 
 	}
 

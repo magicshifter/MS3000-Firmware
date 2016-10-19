@@ -7,7 +7,12 @@
 // rudimentary mode for displaying an msImage with POV
 #include "UI/ShakeSync.h"
 
-// MIDI can be configured on or off 
+// OSC = Open Sound Control.  Can be used to send magnetometer/sensor data, for example
+#ifdef CONFIG_ENABLE_OSC
+#include "OSCMessage.h"
+#endif // CONFIG_ENABLE_OSC
+
+// MIDI modes and features can be configured, i.e. MIDIShifter project
 #ifdef CONFIG_ENABLE_MIDI
 #include "miby.h"
 #include "MIDI/MibyConfig.h"
@@ -16,12 +21,6 @@
 #include "MIDI/MagicArpeggiator.h"
 MIDIArpeggiatorMode msMIDIArpeggiator;
 #include "MIDI/RawMIDIHandlers.h"
-
-// OSC = Open Sound Control
-#ifdef CONFIG_ENABLE_OSC
-#include "OSCMessage.h"
-#endif // CONFIG_ENABLE_OSC
-
 #endif // CONFIG_ENABLE_MIDI
 
 #include "MagicPOV.h"
