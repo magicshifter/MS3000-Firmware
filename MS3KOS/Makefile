@@ -7,7 +7,7 @@ all:	clean test
 
 pio-deps:
 	@echo "NOTE: installing platform dependencies with PlatformIO"
-	 pio lib install 567 222
+	pio lib install 222 64 423 35 568 170 567
 
 setup:
 	platformio run
