@@ -1,9 +1,14 @@
 /*
- * MagicShifter3000 OS, Copyright (c) wizards@Work
- * Authors: wizard23(pt), seclorum(jv)
+ * MagicShifter3000 OS, Copyright (c) wizards@Work 2016
+ * Authors: wizard23(pt), seclorum(jv), jaeh(je)
  * Notes: 
  *          All code is conflated by headers (.h):w
  *          Code prefix- is ms*, as in msConfig, msSystem, etc.
+ *
+ * The purpose of this code is to provide the MS3000 user with 
+ * a unique and engaging user interface, with the available LED's 
+ * and button configurations, as well as additional Web-based UI
+ * for configuration and interaction.
  */
 
 extern "C" {
@@ -35,20 +40,12 @@ extern "C" {
 
 #include "msGlobals.h"
 MagicShifterGlobals msGlobals;
-// note: beyond this point, please consider the above globals.
-
-//
-// !J!  note: here we use a timer to sample the
-// middle button (power-down/brightness control)
-// it is done in a timer because the AD op is slow
-// and therefore better done outside the context
-// of the main runloop
-//
 
 #include "msSystem.h"
 MagicShifterSystem msSystem;
 #include "WebServer/WebServer.h"
 MagicShifterWebServer msWebServer;
+
 
 // GUI modes, well actually .. modes are more of an 'app' ..
 #include "Modes/Modes.h"
@@ -92,36 +89,42 @@ void setup()
 
 	msGlobals.ggModeList[msGlobals.ggCurrentMode]->start();
 
+
+msSystem.slog("Mode Size:"); msSystem.slogln(String(msGlobals.ggModeList.size()));
+
 	msModeSelector.start();
 }
 
 
+//
+// main OS loop - despatch steps for each of:
+//	system
+//  webserver
+//  check for menu-mode
+//  check for faults
+
 void loop()
 {
-	// inside time-frame
+	// let WebServer process events.
 	msWebServer.step();
 
+	// let SystemUI process events.
 	msSystem.step();
 
-	msGlobals.ggLFrameTime =
-		msGlobals.ggCurrentMicros - msGlobals.ggLastFrameMicros;
-	msGlobals.ggCurrentFrame++;
-	msGlobals.ggLastFrameMicros = msGlobals.ggCurrentMicros;
-
+	// if SystemUI events trigger it (UI), display the mode-selector menu:
 	if (msSystem.modeMenuActivated) {
 		int newMode = msModeSelector.select();
 		if (newMode >= 0) {
 			// stop all modes..
 			msGlobals.ggModeList[msGlobals.ggCurrentMode]->stop();
 			msSystem.modeMenuActivated = false;
+
 			msGlobals.ggCurrentMode = newMode;
 			msGlobals.ggModeList[msGlobals.ggCurrentMode]->start();
 		}
 	} else {
-		if (msGlobals.ggCurrentMode < msGlobals.ggModeList.size()) {
-			// despatch to mode
-			msGlobals.ggModeList[msGlobals.ggCurrentMode]->step();
-		}
+		// despatch to current mode
+		msGlobals.ggModeList[msGlobals.ggCurrentMode]->step();
 	}
 
 	// fault-checks

@@ -179,7 +179,7 @@ class MagicShifterButtons {
 	}
 
 	#define SYNC_CLICK_TIME_MS 250
-	bool checkMenueEnterCondition() {
+	bool menuButtonsSelected() {
 		if ((msBtnAHit && (millis() - msBtnBLastHitTime) < SYNC_CLICK_TIME_MS) ||
 			(msBtnBHit && (millis() - msBtnALastHitTime) < SYNC_CLICK_TIME_MS) ||
 			(msBtnALongHit && (millis() - msBtnBLastLongHitTime) < SYNC_CLICK_TIME_MS) ||

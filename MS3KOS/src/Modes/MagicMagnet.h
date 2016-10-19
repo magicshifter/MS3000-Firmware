@@ -12,7 +12,8 @@ class MagicMagnetMode:public MagicShifterBaseMode {
 	int lMode = 0;
 
 #ifdef CONFIG_ENABLE_OSC
-	OSCMessage omsg = OSCMessage("/someaddress");
+	// local OSC message
+	OSCMessage lOSCMessage = OSCMessage("/magicshifter3000/magnetometer/LED/");
 #endif
 
 	const int MAX_MODES = 3;
@@ -53,10 +54,10 @@ class MagicMagnetMode:public MagicShifterBaseMode {
 		msSystem.msSensor.readMagnetometerData(msGlobals.ggMagnet);
 
 		if ((msSystem.msSensor.readRegister(0x5E) & 0x02)) {
-			msSystem.slogln("magnetometer:go!");
+msSystem.slogln("magnetometer:go!");
 			autoCalResetCounter++;
 			if (autoCalResetCounter > 10) {
-				msSystem.slogln("magnetometer:reset");
+msSystem.slogln("magnetometer:reset");
 				// M_CTRL_REG2: Hybrid auto increment, Magnetic measurement min/max detection function reset
 				msSystem.msSensor.writeRegister(0x5C, 0x24);
 				autoCalResetCounter = 0;
@@ -70,11 +71,11 @@ class MagicMagnetMode:public MagicShifterBaseMode {
 				 (msGlobals.ggMagnet[YAXIS],
 				  -msGlobals.ggMagnet[XAXIS]) * 180 / M_PI);
 
-		msSystem.msLEDs.fillLEDs(0, 0, 0);
+		msSystem.msLEDs.fillLEDs(0, 0, 0, msGlobals.ggBrightness);
 		int lednr = map(abs(degrees), 0, 180, 0, 15);
 
-		msSystem.slog("magnetometer:degrees:");
-		msSystem.slogln(String(degrees));
+msSystem.slog("magnetometer:degrees:");
+msSystem.slogln(String(degrees));
 
 		int degNorth = -degrees;
 		int degSouth = 180 - degrees;
@@ -108,7 +109,7 @@ class MagicMagnetMode:public MagicShifterBaseMode {
 
 		// !J! hak: send OSC Msg.
 #ifdef CONFIG_ENABLE_OSC
-		omsg.add(lednr);
+		lOSCMessage.add(lednr);
 #endif
 
 		delay(25);

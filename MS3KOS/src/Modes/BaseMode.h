@@ -17,19 +17,15 @@ class MagicShifterBaseMode {
   	// a unique name for the  mode
 	String modeName = "BaseMode";
 	// start the mode
+
 	// void start(MagicShifterSystem &msSystem)
 	virtual void start() {};
+
 	// stop the mode 
 	virtual void stop(void) {};
 
 	// step through a frame of the mode 
 	virtual bool step() {};
-
-	// update LED's only
-	virtual void update() {};
-
-	// reset
-	virtual void reset() {};
 
 };
 

@@ -142,8 +142,6 @@ class MagicShifterLEDs {
 	}
 
 
-	// void fillLEDs(byte r, byte g, byte b, byte gs);
-
 	void initLEDBuffer() {
 		ledBuffer[0] = 0;
 		ledBuffer[1] = 0;
@@ -183,10 +181,10 @@ class MagicShifterLEDs {
 	}
 
 
-	void setLED(int index, byte r, byte g, byte b, byte gs = 0x1F) {
+	void setLED(int index, byte r, byte g, byte b, byte brightness = 0x1F) {
 #if (LED_TYPE == LED_TYPE_APA102)
 		int idx = index << 2;
-		RGB_COLORS[idx] = 0xE0 | gs;
+		RGB_COLORS[idx] = 0xE0 | brightness;
 		RGB_COLORS[idx + 1] = b;
 		RGB_COLORS[idx + 2] = g;
 		RGB_COLORS[idx + 3] = r;
@@ -198,9 +196,9 @@ class MagicShifterLEDs {
 #endif
 	}
 
-	void fillLEDs(byte r, byte g, byte b, byte gs = 0x1F) {
+	void fillLEDs(byte r, byte g, byte b, byte brightness = 0x1F) {
 		for (int idx = 0; idx < MAX_LEDS; idx++) {
-			setLED(idx, r, g, b, gs);
+			setLED(idx, r, g, b, brightness);
 		}
 	}
 

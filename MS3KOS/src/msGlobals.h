@@ -2,7 +2,7 @@
 #define _MSGLOBALS_H
 
 #include "msTypes.h"
-#include "StackClass.h"
+// #include "StackClass.h"
 
 void l_safeStrncpy(char *dest, const char *source, int n)
 {
@@ -19,8 +19,7 @@ class MagicShifterGlobals {
 	int ggAccelCount[3];		// Stores the 12-bit signed value
 	long ggAccelTime;
 	unsigned long ggLFrameTime;
-//#warning "DEBUG MODESET"
-	long ggCurrentMode = 0;//DEFAULT_FACTORY_MODE;	// POV mode
+	long ggCurrentMode = DEFAULT_FACTORY_MODE;	// POV mode
 	int ggBtn1State = 0;
 	long ggCurrentMicros = 0;
 	unsigned long ggCurrentMillis = 0;

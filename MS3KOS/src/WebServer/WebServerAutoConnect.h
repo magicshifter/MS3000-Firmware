@@ -8,7 +8,7 @@ void printIPInfo()
 	msSystem.slogln("wifi: soft AP IP: ");
 	msSystem.slogln(String(WiFi.softAPIP().toString()));
 
-	WiFi.printDiag(Serial);
+	// WiFi.printDiag(Serial);
 }
 
 void WifiOnStationModeConnected(const WiFiEventStationModeConnected WifiEvent)

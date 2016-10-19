@@ -32,7 +32,7 @@ void PowerButtonTimerCallback(void *pArg) {
 	os_intr_unlock();
 } // End of timerCallback
 
-void initPowerButtonTimer()
+void initMS3000SystemTimers()
 {
 	os_timer_setfn(&aPowerButtonTimer, PowerButtonTimerCallback, NULL);
 	os_timer_arm(&aPowerButtonTimer, POWER_BUTTON_TIMER_PERIOD, true);

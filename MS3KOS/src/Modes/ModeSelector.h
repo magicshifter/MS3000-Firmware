@@ -1,10 +1,17 @@
+//
+// the main mode selector for the ms3000 interface
+//
+
 class ModeSelectorMode:public MagicShifterBaseMode {
 
   private:
 	// MagicShifterImageAbstr *msImage;
+
+	// local POVMode for the text
 	MagicPOVMode lPOVMode;
 	MagicShifterImageText msMagicShakeText;
-	int currentIdx = 0;
+	
+	int _currentMode = 0;
 
   public:
 
@@ -25,6 +32,7 @@ class ModeSelectorMode:public MagicShifterBaseMode {
 
 	virtual void start() {
 		setIndex(msGlobals.ggCurrentMode);
+
 	}
 
 // stop the mode
@@ -39,54 +47,56 @@ class ModeSelectorMode:public MagicShifterBaseMode {
 		if (idx >= msGlobals.ggModeList.size()) {
 			idx = 0;
 		}
-		currentIdx = idx;
+		_currentMode = idx;
 
-		setText(msGlobals.ggModeList[currentIdx]->modeName.c_str());
+		setText(msGlobals.ggModeList[_currentMode]->modeName.c_str());
 	}
 
 // step through a frame of the mode 
 	int select() {
-		int index = currentIdx;
-		int posIdx = index;
+		int _index = _currentMode;
+		int _posIdx = _index;
 
 		// button handling
 		if (msSystem.msButtons.msBtnPwrHit) {
-			for (int i = 0; i < 4; i++) {
-				msSystem.msLEDs.setLED(posIdx, 255, 255, 255,
+			// blink selected mode 4 times
+			for (byte i = 0; i < 4; i++) {
+				msSystem.msLEDs.setLED(_posIdx, 255, 255, 255,
 									   msGlobals.ggBrightness);
 				msSystem.msLEDs.updateLEDs();
 				delay(50);
-				msSystem.msLEDs.setLED(posIdx, 0, 0, 0);
+				msSystem.msLEDs.setLED(_posIdx, 0, 0, 0);
 				msSystem.msLEDs.updateLEDs();
 				delay(50);
 			}
-			return index;
+			return _index;
 		}
 		// cycle through the texts ..
 		if (msSystem.msButtons.msBtnAHit) {
 			msSystem.msButtons.msBtnAHit = false;	// !J! todo: button callbacks
-			setIndex(currentIdx - 1);
+			setIndex(_currentMode - 1);
 		}
 		// cycle through the texts ..
 		if (msSystem.msButtons.msBtnBHit) {
 			msSystem.msButtons.msBtnBHit = false;	// !J! todo: button callbacks
-			setIndex(currentIdx + 1);
+			setIndex(_currentMode + 1);
 		}
 
 		if (lPOVMode.step()) {
 			return -1;
 		} else {
-			int colIdx = 1 + (index % 7);
-			int r = (colIdx >> 0) % 2 ? 255 : 0;
-			int g = (colIdx >> 1) % 2 ? 255 : 0;
-			int b = (colIdx >> 2) % 2 ? 255 : 0;
+			int selectedMode = 1 + (_index % 7);
 
-			for (byte i = 0; i < 16; i++) {
-				if (i == posIdx) {
-					msSystem.msLEDs.setLED(i, r, g, b,
+			int r = (selectedMode >> 0) % 2 ? 255 : 0;
+			int g = (selectedMode >> 1) % 2 ? 255 : 0;
+			int b = (selectedMode >> 2) % 2 ? 255 : 0;
+
+			for (byte j = 0; j < 16; j++) {
+				if (j == _posIdx) {
+					msSystem.msLEDs.setLED(j, r, g, b,
 										   msGlobals.ggBrightness);
 				} else {
-					msSystem.msLEDs.setLED(i, 0, 0, 0);
+					msSystem.msLEDs.setLED(j, 0, 0, 0, msGlobals.ggBrightness);
 				}
 			}
 

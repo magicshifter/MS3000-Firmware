@@ -160,14 +160,14 @@ public:
 	{
 		// Blink Arpeggiator LED's
 		if (arp_frame == 0) {
-			msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 100, 0, 0);
-			msSystem.msLEDs.setLED(LED_MEASURE_COUNTER, 0, 100, 0);
+			msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 100, 0, 0, msGlobals.ggBrightness);
+			msSystem.msLEDs.setLED(LED_MEASURE_COUNTER, 0, 100, 0, msGlobals.ggBrightness);
 		} else if ((arp_frame & 0x0F) == 0) {
-			msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 0, 100, 0);
+			msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 0, 100, 0, msGlobals.ggBrightness);
 		} else {					// LEDs off
-			msSystem.msLEDs.setLED(LED_ARP_COUNTER, 100, 0, 0);
-			msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 0, 0, 0);
-			msSystem.msLEDs.setLED(LED_MEASURE_COUNTER, 0, 0, 0);
+			msSystem.msLEDs.setLED(LED_ARP_COUNTER, 100, 0, 0, msGlobals.ggBrightness);
+			msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 0, 0, 0, msGlobals.ggBrightness);
+			msSystem.msLEDs.setLED(LED_MEASURE_COUNTER, 0, 0, 0, msGlobals.ggBrightness);
 		}
 
 	}
@@ -564,8 +564,8 @@ public:
 #endif
 
 		// Debug - set an LED so we know we made it ..
-		msSystem.msLEDs.fillLEDs(0, 0, 0);
-		msSystem.msLEDs.setLED(0, 0, 100, 0);
+		msSystem.msLEDs.fillLEDs(0, 0, 0, msGlobals.ggBrightness);
+		msSystem.msLEDs.setLED(0, 0, 100, 0, msGlobals.ggBrightness);
 
 		// Initial view
 		curr_midiview.midi_channel = 0;
@@ -594,8 +594,20 @@ public:
 		AppleMIDI.run();
 #endif
 
+		// consume button events if necessary ..
+		if (msSystem.msButtons.msBtnPwrHit) {
+			msSystem.msButtons.msBtnPwrHit = false;
+		}
+
+		if (msSystem.msButtons.msBtnAHit) {
+			msSystem.msButtons.msBtnAHit = false;
+		}
+		if (msSystem.msButtons.msBtnBHit) {
+			msSystem.msButtons.msBtnBHit = false;
+		}
 
 #if 0
+
 		// pull midi_inbox
 		if (Serial1.available()) {
 			MIDI_Get(&midi_inb, 1);
@@ -604,7 +616,6 @@ public:
 		{
 			// MIDI_Put(&midi_buf[0], 4);
 		}
-#endif
 
 		midi_frame++;
 
@@ -615,6 +626,7 @@ public:
 		_arp.arp_frame_time = micros();
 
 		// envFrame();
+#endif
 
 		return false;
 	}

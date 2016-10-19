@@ -22,11 +22,20 @@
 #include "Hardware/LEDHardware.h"
 #include "Hardware/Sensor.h"
 #include "Hardware/Buttons.h"
+
+// Custom image handler for MS3000 POV images
 #include "msImage.h"
 #include "msSysLog.h"
 
+// Note: here we use a timer to sample the
+// middle button (power-down/brightness control)
+// it is done in a timer because the AD op is slow
+// and therefore better done outside the context
+// of the main runloop
 #include "button_timers.h"
 
+// Settings are managed with different storage/longevity/rendering 
+// schemes
 #include "msSettingsManager.h"
 
 // MIDI features can be configured in or out of
@@ -37,7 +46,9 @@
 #ifdef CONFIG_ENABLE_MIDI
 #include "AppleMidi.h"
 // RTPMIDI is usable over WiFi
-#define CONFIG_MIDI_RTP_MIDI
+#endif
+
+#ifdef CONFIG_MIDI_RTP_MIDI
 APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_Defs.h
 bool isRTPConnected = false;
 
@@ -767,7 +778,7 @@ class MagicShifterSystem {
 #define BRIGHTNESS_UI_LEVEL 0xFF
 
 // -- brightness handling:
-	void brightnessControl() {
+	void brightnessControlStep() {
 		int newIdx = msGlobals.ggBrightness;
 		float avgV = 0;
 		int newV = 0, lastV = -1;
@@ -778,7 +789,7 @@ class MagicShifterSystem {
 		if ((msButtons.powerButtonPressed()) &&
 			(msButtons.msBtnPwrPressTime > BRIGHTNESS_CONTROL_TIME)) {
 
-			slogln("brightnesscontrol EVENT");
+			slogln("brightnessControlStep EVENT");
 
 			while (skip) {
 				delay(1);
@@ -1050,7 +1061,7 @@ class MagicShifterSystem {
 
 		msButtons.setup();
 
-		initPowerButtonTimer();
+		initMS3000SystemTimers();
 
 #ifdef CONFIG_ENABLE_ACCEL
 		// accelerometer 
@@ -1088,25 +1099,7 @@ class MagicShifterSystem {
 		} while(1); // !J! wait until the restart completes
 	}
 
-
-	void step() {
-
-		// this is needed, as we have timers and stuff.
-		yield();
-
-		msGlobals.ggLastMicros = msGlobals.ggCurrentMicros;
-		msGlobals.ggCurrentMicros = micros();
-		msGlobals.ggCurrentMillis = millis();
-		
-		displayButtons();
-
-		// getADValue(); // !J! we use timer
-
-		brightnessControl();
-
-		msButtons.step();
-		msSensor.step();
-
+	void calculateBatteryLevel() {
 		batteryVoltage = calculateVoltage(msGlobals.ggLastADValue, msGlobals.batVoltCalibration);
 
 		if (batteryVoltage < 4.0) {
@@ -1117,6 +1110,17 @@ class MagicShifterSystem {
 		{
 			lowBatteryMillis = 0;
 		}
+	}
+
+	void updateGlobalTiming(){
+		msGlobals.ggLastMicros = msGlobals.ggCurrentMicros;
+		msGlobals.ggCurrentMicros = micros();
+		msGlobals.ggCurrentMillis = millis();
+	}
+
+	void powerDownStep()
+	{
+		calculateBatteryLevel();
 
 		if (msButtons.msBtnActive) {
 			msPowerCountDown = msGlobals.ggCurrentMillis;
@@ -1129,6 +1133,7 @@ class MagicShifterSystem {
 			}
 		}
 
+		// 
 		if ((lowBatteryMillis != 0) && 
 			(msGlobals.ggUIConfig.timeoutLowPower != 0) && 
 			(lowBatteryMillis + (10 * 1000) < msGlobals.ggCurrentMillis)) { // 10 seconds 
@@ -1137,8 +1142,33 @@ class MagicShifterSystem {
 				powerDown();
 			}
 		}
+	}
 
-		if (msButtons.checkMenueEnterCondition()) {
+	// internal system loop - handles the system UI, basic buttons, mode-switching, etc.
+	void step() {
+
+		// let timers spin for AD read 
+		yield();
+
+		// displayButtons(); // for debugging
+
+		// time globals are subsequently used
+		updateGlobalTiming();
+
+		// getADValue(); // !J! timer does it instead
+
+		// check for and display the brightness control if users holds middle button
+		brightnessControlStep();
+
+		// buttons and sensor handling
+		msButtons.step();
+		msSensor.step();
+
+		// power down if user, or battery state, requires it
+		powerDownStep();
+
+		// check for the menu buttons being held down by the user
+		if (msButtons.menuButtonsSelected()) {
 			if (!modeMenuActivated) {
 				modeMenuActivated = true;
 				feedbackAnimation(msGlobals.feedbackType::MODE_MENU);
@@ -1146,6 +1176,11 @@ class MagicShifterSystem {
 		}
 
 		CommandInterfacePoll();
+
+		// update timing post-system work
+		msGlobals.ggLFrameTime = msGlobals.ggCurrentMicros - msGlobals.ggLastFrameMicros;
+		msGlobals.ggCurrentFrame++;
+		msGlobals.ggLastFrameMicros = msGlobals.ggCurrentMicros;
 
 	}
 

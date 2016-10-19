@@ -2,7 +2,7 @@
 #define _MAGICLIGHT_MODE_H
 
 //
-// render the magnetometer sensor data
+// render some magic lights
 // 
 
 class MagicLightMode : public MagicShifterBaseMode {
@@ -28,7 +28,9 @@ class MagicLightMode : public MagicShifterBaseMode {
 		 	modeName = "Light";
 	}
 
-    bool hackUIResponsive() {
+	// depending on button-presses, let the user select
+	// sub-mode options
+    bool magicLightSubModeSelector() {
 		int oldlMode = lMode;
 		if (firstRun)
 			firstRun = false;
@@ -63,6 +65,7 @@ class MagicLightMode : public MagicShifterBaseMode {
 			msSystem.msLEDs.updateLEDs();
 		}
 
+		// .. propagate the menu mode, in case its activited..
 		return msSystem.modeMenuActivated;
 	}
 
@@ -76,11 +79,11 @@ class MagicLightMode : public MagicShifterBaseMode {
 		frame++;
 		firstRun = true;
 
-		hackUIResponsive();
+		magicLightSubModeSelector();
 
 		if (lMode == 0) {
 			if (frame % pDelay == 0) {
-				msSystem.msLEDs.fillLEDs(0, 0, 0);
+				msSystem.msLEDs.fillLEDs(0, 0, 0, msGlobals.ggBrightness);
 				msSystem.msLEDs.setLED((xx + 0 * 3) & 0xF, 255, 0, 0, msGlobals.ggBrightness);
 
 				msSystem.msLEDs.setLED((xx + 1 * 3) & 0xF, 255, 255, 0, msGlobals.ggBrightness);
@@ -167,7 +170,7 @@ class MagicLightMode : public MagicShifterBaseMode {
 
 		i = start;
 		do {
-			if (hackUIResponsive()) {
+			if (magicLightSubModeSelector()) {
 				return;
 			}
 
@@ -202,8 +205,8 @@ class MagicLightMode : public MagicShifterBaseMode {
 		{
 			i = currentStart;
 			do {
-				if (hackUIResponsive()) {
-									return;
+				if (magicLightSubModeSelector()) {
+					return;
 				}
 
 				msSystem.msLEDs.fillLEDs(0, 0, 0, msGlobals.ggBrightness);
