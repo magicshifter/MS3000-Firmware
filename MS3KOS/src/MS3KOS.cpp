@@ -109,18 +109,6 @@ void setup()
 #ifdef CONFIG_ENABLE_MIDI
 	// msGlobals.ggCurrentMode = 6;
 	msGlobals.ggModeList.push_back(&msMIDIArpeggiator);
-
-	// if configured for it, also enable the rtpMIDI handlers
-#ifdef CONFIG_MIDI_RTP_MIDI
-	// Create a session and wait for a remote host to connect to us
-	AppleMIDI.OnConnected(OnRTPMIDI_Connect);
-	AppleMIDI.OnDisconnected(OnRTPMIDI_Disconnect);
-	AppleMIDI.OnReceiveNoteOn(OnRTPMIDI_NoteOn);
-	AppleMIDI.OnReceiveNoteOff(OnRTPMIDI_NoteOff);
-	AppleMIDI.begin("MS3000_MIDI_RTP");
-	// msSystem.slogln("APPLEMIDI::: Sending NoteOn/Off of note 45, every second");
-#endif
-
 #endif
 
 	// Show the battery power level on startup
@@ -137,6 +125,7 @@ void setup()
 // main OS loop - despatch steps for each of:
 //	a) system user interface events (buttons/sensors/power)
 //  b) webserver events
+//  c) if configured, MIDI and rtpMIDI too..
 //
 // then check for menu-mode flags, switch immediately to menu-mode if necessary
 //   .. otherwise, let the currently selected mode execute a step()

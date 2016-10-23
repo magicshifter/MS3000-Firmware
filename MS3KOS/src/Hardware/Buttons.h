@@ -65,7 +65,6 @@ class MagicShifterButtons {
 
 	void resetButtons() {
 		msBtnActive = false;
-
 		msBtnAHit = false;
 		msBtnBHit = false;
 		msBtnPwrHit = false;

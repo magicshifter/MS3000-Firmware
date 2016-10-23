@@ -13,11 +13,12 @@
  */
 
 // Status Indicator LED's - for the Arpeggiator, etc.
+#define LED_BUTTON_EVENT 0
+#define LED_NOTE_EVENT (8)
 #define LED_ARP_COUNTER (13)
 #define LED_MEASURE_COUNTER (14)
 #define LED_BEAT_COUNTER (15)
 #define LED_CONTROL_CHANGE (10)
-#define LED_NOTE_EVENT (8)
 
 // Arpeggiator constants -----------------------------------------------------------------
 #define BUFFER_SIZE (64)
@@ -256,7 +257,7 @@ public:
 		// gather time data for next arp Frame
 		arp_frame++;
 
-arpUIupdate();
+		arpUIupdate();
 
 	}
 
@@ -553,11 +554,6 @@ public:
 	void start()
 	{
 
-
-		// Debug - set an LED so we know we made it ..
-		msSystem.msLEDs.fillLEDs(0, 0, 0, msGlobals.ggBrightness);
-		msSystem.msLEDs.setLED(0, 0, 100, 0, msGlobals.ggBrightness);
-
 		// Initial view
 		curr_midiview.midi_channel = 0;
 
@@ -576,32 +572,32 @@ public:
 
 
 	}
-	// ------------------------------------------------------------- Main MIDI Frame Processor
+
+	// main MIDI frame processor
+	// 
 	bool step()
 	{
 		uint8_t midi_inb;
 
-		msSystem.msButtons.resetButtons();
+		// consume button events if necessary ..
+		if (msSystem.msButtons.msBtnPwrHit) {
+		}
+		if (msSystem.msButtons.msBtnAHit) {
+			msSystem.msLEDs.setLED(LED_BUTTON_EVENT, 0, 100, 0, msGlobals.ggBrightness); 
+		}
+		if (msSystem.msButtons.msBtnBHit) {
+			// Debug - set an LED so we know we made it ..
+			msSystem.msLEDs.setLED(LED_BUTTON_EVENT, 100, 0, 0, msGlobals.ggBrightness);
+		}
 
-		// // consume button events if necessary ..
-		// if (msSystem.msButtons.msBtnPwrHit) {
-		// 	msSystem.msButtons.msBtnPwrHit = false;
-		// }
-
-		// if (msSystem.msButtons.msBtnAHit) {
-		// 	msSystem.msButtons.msBtnAHit = false;
-		// }
-		// if (msSystem.msButtons.msBtnBHit) {
-		// 	msSystem.msButtons.msBtnBHit = false;
-		// }
-
-
-		// pull midi_inbox
+		// pull midi_inbox, parse it with miby
 		if (Serial1.available()) {
+			// we Get exactly 1 byte of MIDI data at a time, and feed it to miby
 			MIDI_Get(&midi_inb, 1);
+
 			miby_parse(&miby, midi_inb);
-		} else						// !J! TODO: Soft-thru, etc.
-		{
+		} else {
+			// !J! TODO: Soft-thru, etc. 
 			// MIDI_Put(&midi_buf[0], 4);
 		}
 
@@ -614,6 +610,8 @@ public:
 		_arp.arp_frame_time = micros();
 
 		// envFrame();
+
+		msSystem.msLEDs.updateLEDs();
 
 		return false;
 	}

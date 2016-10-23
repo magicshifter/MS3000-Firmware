@@ -180,6 +180,10 @@ class MagicShifterLEDs {
 #endif
 	}
 
+	// void setLED(int index, byte r, byte g, byte b)
+	// {
+	// 	setLED(index,r,g,b,0x40); // !J! debug
+	// }
 
 	void setLED(int index, byte r, byte g, byte b, byte brightness = 0x1F) {
 #if (LED_TYPE == LED_TYPE_APA102)

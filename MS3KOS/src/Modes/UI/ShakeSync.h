@@ -1,3 +1,9 @@
+//
+// provide a general-purpose framework for modules to submit a "shake image"
+// .. POV/Magic Images, etc. through a common interface and share-able 
+// buffer.
+//
+
 #ifndef _SHAKESYNC_H
 #define _SHAKESYNC_H
 

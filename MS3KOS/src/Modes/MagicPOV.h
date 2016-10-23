@@ -35,12 +35,15 @@ class MagicPOVMode:public MagicShifterBaseMode {
 		// setImage(NULL);
 	}
 
-// stop the mode
+	// stop the mode
 	void stop(void) {
 		shakeSync.setFrames(0);
 	}
 
-// step through a frame of the mode 
+	// step through a frame of the magic light mode
+	// in this case we will attempt these dynamics:
+	// a) just resting, a kind of 'spirit-level'
+	// b) if the user shakes, we submit the POV image selected
 	bool step() {
 		if (msImage != NULL) {
 			// check accelerometer

@@ -32,7 +32,7 @@
 // it is done in a timer because the AD op is slow
 // and therefore better done outside the context
 // of the main runloop
-#include "button_timers.h"
+#include "msButtonTimers.h"
 
 // Settings are managed with different storage/longevity/rendering 
 // schemes

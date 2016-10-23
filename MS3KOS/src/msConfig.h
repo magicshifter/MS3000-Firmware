@@ -19,10 +19,9 @@
 #define _DO_SERIAL_OUTPUT
 #endif
 
-// 
+// !J! debug 
 #warning "Serial enabled even though MIDI in use.."
 #define _DO_SERIAL_OUTPUT
-
 
 // Accelerometer enabled?
 #define CONFIG_ENABLE_ACCEL
