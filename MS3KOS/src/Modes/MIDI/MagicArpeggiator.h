@@ -13,11 +13,12 @@
  */
 
 // Status Indicator LED's - for the Arpeggiator, etc.
+#define LED_BUTTON_EVENT 0
+#define LED_NOTE_EVENT (8)
 #define LED_ARP_COUNTER (13)
 #define LED_MEASURE_COUNTER (14)
 #define LED_BEAT_COUNTER (15)
 #define LED_CONTROL_CHANGE (10)
-#define LED_NOTE_EVENT (8)
 
 // Arpeggiator constants -----------------------------------------------------------------
 #define BUFFER_SIZE (64)
@@ -156,22 +157,37 @@ public:
 	uint32_t arp_frame_time = 0;
 
 
-void arpUIupdate()
-{
-	// Blink Arpeggiator LED's
-	if (arp_frame == 0) {
-		msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 100, 0, 0);
-		msSystem.msLEDs.setLED(LED_MEASURE_COUNTER, 0, 100, 0);
-	} else if ((arp_frame & 0x0F) == 0) {
-		msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 0, 100, 0);
-	} else {					// LEDs off
-		msSystem.msLEDs.setLED(LED_ARP_COUNTER, 100, 0, 0);
-		msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 0, 0, 0);
-		msSystem.msLEDs.setLED(LED_MEASURE_COUNTER, 0, 0, 0);
+	void arpUIupdate()
+	{
+		// Blink Arpeggiator LED's
+		if (arp_frame == 0) {
+			msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 100, 0, 0, msGlobals.ggBrightness);
+			msSystem.msLEDs.setLED(LED_MEASURE_COUNTER, 0, 100, 0, msGlobals.ggBrightness);
+		} else if ((arp_frame & 0x0F) == 0) {
+			msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 0, 100, 0, msGlobals.ggBrightness);
+		} else {					// LEDs off
+			msSystem.msLEDs.setLED(LED_ARP_COUNTER, 100, 0, 0, msGlobals.ggBrightness);
+			msSystem.msLEDs.setLED(LED_BEAT_COUNTER, 0, 0, 0, msGlobals.ggBrightness);
+			msSystem.msLEDs.setLED(LED_MEASURE_COUNTER, 0, 0, 0, msGlobals.ggBrightness);
+		}
+
 	}
 
-}
+	void arpStart()
+	{
+		if (arp_play_state == 0) {
+			arp_play_state = 1;
+			arp_frame = 0;
+		}
+	}
 
+	void arpStop()
+	{
+		if (arp_play_state == 1) {
+			arp_play_state = 0;
+			// arpSoundOff();
+		}
+	}
 
 	// --------------------------------------------------------------------------- ARPEGGIATOR
 	// Process a frame of the Arpeggiator
@@ -241,7 +257,7 @@ void arpUIupdate()
 		// gather time data for next arp Frame
 		arp_frame++;
 
-arpUIupdate();
+		arpUIupdate();
 
 	}
 
@@ -325,7 +341,7 @@ arpUIupdate();
 
 };
 
-class MIDIShifterMode : public MagicShifterBaseMode {
+class MIDIArpeggiatorMode : public MagicShifterBaseMode {
 
 private:
 	// miby parser is used
@@ -376,7 +392,7 @@ public:
 
 	MIDIArpeggiator _arp;
 
-	MIDIShifterMode() {
+	MIDIArpeggiatorMode() {
 		modeName = "Arpi";
 	}
 
@@ -538,20 +554,6 @@ public:
 	void start()
 	{
 
-#ifdef CONFIG_MIDI_RTP_MIDI
-		// Create a session and wait for a remote host to connect to us
-		AppleMIDI.OnConnected(OnRTPMIDI_Connect);
-		AppleMIDI.OnDisconnected(OnRTPMIDI_Disconnect);
-		AppleMIDI.OnReceiveNoteOn(OnRTPMIDI_NoteOn);
-		AppleMIDI.OnReceiveNoteOff(OnRTPMIDI_NoteOff);
-		AppleMIDI.begin("MS3000_MIDI_RTP");
-		// msSystem.slogln("APPLEMIDI::: Sending NoteOn/Off of note 45, every second");
-#endif
-
-		// Debug - set an LED so we know we made it ..
-		msSystem.msLEDs.fillLEDs(0, 0, 0);
-		msSystem.msLEDs.setLED(0, 0, 100, 0);
-
 		// Initial view
 		curr_midiview.midi_channel = 0;
 
@@ -570,26 +572,34 @@ public:
 
 
 	}
-	// ------------------------------------------------------------- Main MIDI Frame Processor
+
+	// main MIDI frame processor
+	// 
 	bool step()
 	{
 		uint8_t midi_inb;
 
-#ifdef CONFIG_MIDI_RTP_MIDI
-		AppleMIDI.run();
-#endif
+		// consume button events if necessary ..
+		if (msSystem.msButtons.msBtnPwrHit) {
+		}
+		if (msSystem.msButtons.msBtnAHit) {
+			msSystem.msLEDs.setLED(LED_BUTTON_EVENT, 0, 100, 0, msGlobals.ggBrightness); 
+		}
+		if (msSystem.msButtons.msBtnBHit) {
+			// Debug - set an LED so we know we made it ..
+			msSystem.msLEDs.setLED(LED_BUTTON_EVENT, 100, 0, 0, msGlobals.ggBrightness);
+		}
 
-
-#if 0
-		// pull midi_inbox
+		// pull midi_inbox, parse it with miby
 		if (Serial1.available()) {
+			// we Get exactly 1 byte of MIDI data at a time, and feed it to miby
 			MIDI_Get(&midi_inb, 1);
+
 			miby_parse(&miby, midi_inb);
-		} else						// !J! TODO: Soft-thru, etc.
-		{
+		} else {
+			// !J! TODO: Soft-thru, etc. 
 			// MIDI_Put(&midi_buf[0], 4);
 		}
-#endif
 
 		midi_frame++;
 
@@ -600,6 +610,8 @@ public:
 		_arp.arp_frame_time = micros();
 
 		// envFrame();
+
+		msSystem.msLEDs.updateLEDs();
 
 		return false;
 	}

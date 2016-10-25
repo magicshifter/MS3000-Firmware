@@ -7,7 +7,7 @@ all:	clean test
 
 pio-deps:
 	@echo "NOTE: installing platform dependencies with PlatformIO"
-	 pio lib install 567 222
+	pio lib install 222 64 423 35 568 170 567
 
 setup:
 	platformio run
@@ -28,7 +28,10 @@ reset-device:
 	-@echo "^T^R" | pio serialports monitor --quiet -b 921600 --dtr 0 --rts 1 -p ${MS3000_PORT} 
 	@echo "(Inappropriate ioctl is actually appropriate for a reset.. everything is okay!)"
 
+pio-deps-clean:
+	rm -rf .piolibdeps/
 
 clean:
 	# !J! Todo: BUILD_PRODUCT_DIR
-	rm -rf .pioenvs
+	pio run -t clean
+	#rm -rf .pioenvs

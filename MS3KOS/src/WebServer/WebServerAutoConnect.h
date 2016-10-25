@@ -8,47 +8,102 @@ void printIPInfo()
 	msSystem.slogln("wifi: soft AP IP: ");
 	msSystem.slogln(String(WiFi.softAPIP().toString()));
 
-	WiFi.printDiag(Serial);
+	// WiFi.printDiag(Serial);
 }
 
+void WifiOnStationModeConnected(const WiFiEventStationModeConnected WifiEvent)
+{
+	msSystem.slogln("WiFi STA connect");
+}
 
+void WifiOnStationModeDisconnected(const WiFiEventStationModeDisconnected WifiEvent)
+{
+	msSystem.slogln("WiFi STA disconnect");
+}
+
+void WifiOnStationModeAuthModeChanged(const WiFiEventStationModeAuthModeChanged WifiEvent)
+{
+	msSystem.slogln("WiFi AUTH MODE Change");
+}
+
+void WifiOnStationModeGotIP(const WiFiEventStationModeGotIP WifiEvent)
+{
+	msSystem.slog("WiFi Got IP Address:");
+	msSystem.slogln(WiFi.localIP().toString());
+}
+
+void WifiOnStationModeDHCPTimeout()
+{
+	msSystem.slogln("WiFi DHCP Timeout");
+}
+
+void WifiOnSoftAPModeStationConnected(const WiFiEventSoftAPModeStationConnected WifiEvent)
+{
+	msSystem.slogln("WiFi Soft AP STA connect");
+}
+
+void WifiOnSoftAPModeStationDisconnected(const WiFiEventSoftAPModeStationDisconnected WifiEvent)
+{
+	msSystem.slogln("WiFi Soft AP STA disconnect");
+}
+
+// deprecated
 void WiFiEvent(WiFiEvent_t event) {
-    // Serial.printf("[WiFi-event] event: %d\n", event);
+    // msSystem.slogf("[WiFi-event] event: %d\n", event);
 
     switch(event) {
         case WIFI_EVENT_STAMODE_GOT_IP:
-            Serial.println("WiFi connected");
-            Serial.println("IP address: ");
-            Serial.println(WiFi.localIP());
+            msSystem.slogln("WiFi connected");
+            msSystem.slogln("IP address: ");
+            msSystem.slogln(WiFi.localIP().toString());
             break;
         case WIFI_EVENT_STAMODE_DISCONNECTED:
-            Serial.println("WiFi lost connection");
+            msSystem.slogln("WiFi lost connection");
             break;
 		case WIFI_EVENT_STAMODE_CONNECTED:
-            Serial.println("WiFi STA connected");
+            msSystem.slogln("WiFi STA connected");
 		break;
 		case WIFI_EVENT_STAMODE_AUTHMODE_CHANGE:
-            Serial.println("WiFi AUTH change");
+            msSystem.slogln("WiFi AUTH change");
 		break;
 		case WIFI_EVENT_STAMODE_DHCP_TIMEOUT:
-            Serial.println("WiFi DHCP Timeout");
+            msSystem.slogln("WiFi DHCP Timeout");
 		break;
 		case WIFI_EVENT_SOFTAPMODE_STACONNECTED:
-            Serial.println("WiFi SoftAP STA connected");
+            msSystem.slogln("WiFi SoftAP STA connected");
 		break;
 		case WIFI_EVENT_SOFTAPMODE_STADISCONNECTED:
-            Serial.println("WiFi SoftAP STA disconnected");
+            msSystem.slogln("WiFi SoftAP STA disconnected");
 		break;
 		case WIFI_EVENT_SOFTAPMODE_PROBEREQRECVED:
-            Serial.println("WiFi PROBE Request recv'd");
+            msSystem.slogln("WiFi PROBE Request recv'd");
 		break;
 		case WIFI_EVENT_MAX:
-            Serial.println("WiFi EVENT MAX");
+            msSystem.slogln("WiFi EVENT MAX");
 		break;
         default:
-            Serial.println("WiFi something else");
+            msSystem.slogln("WiFi something else");
         break;
     }
+}
+
+
+void setDebugCallbacks()
+{
+
+	// !J! deprecated
+#if 0
+    WiFi.onEvent(WiFiEvent); // deprecated
+#endif
+
+	WiFi.onStationModeConnected(WifiOnStationModeConnected);
+	WiFi.onStationModeDisconnected(WifiOnStationModeDisconnected);
+	WiFi.onStationModeAuthModeChanged(WifiOnStationModeAuthModeChanged);
+	WiFi.onStationModeGotIP(WifiOnStationModeGotIP);
+	//WiFi.onStationModeDHCPTimeout(WifiOnStationModeDHCPTimeout);	// ?? !J!
+	WiFi.onSoftAPModeStationConnected(WifiOnSoftAPModeStationConnected);
+	WiFi.onSoftAPModeStationDisconnected(WifiOnSoftAPModeStationDisconnected);
+
 }
 
 
@@ -56,7 +111,7 @@ bool TryConnect(struct APAuth &apInfo, int timeoutMs)
 {
 	msSystem.slog("wifi: trying to connect to AP: ");
 	msSystem.slogln(apInfo.ssid);
-    
+
 	WiFi.begin(apInfo.ssid, apInfo.password, 9);
 	msSystem.slog("wifi: using password: ");
 	msSystem.slogln(apInfo.password);
@@ -82,7 +137,7 @@ bool TryConnect(struct APAuth &apInfo, int timeoutMs)
 			|| WiFi.status() == WL_CONNECT_FAILED
 			|| millis() > startTime + timeoutMs) {
 			msSystem.slog("wifi: could not connect to:");
-			msSystem.slogln(apInfo.ssid);
+		msSystem.slogln(apInfo.ssid);
 			return false;		// :(
 		}
 
@@ -126,7 +181,7 @@ bool TrySoftAP(struct APAuth & apInfo)
 bool AutoConnect()
 {
 
-    WiFi.onEvent(WiFiEvent);
+	setDebugCallbacks();
 
 #ifdef SCAN_FIRST_MODE
 	// if (!forceAPMode)
@@ -136,85 +191,85 @@ bool AutoConnect()
 			if (TryConnect
 				(msGlobals.ggAPConfig.apInfo.auth, CONNECTION_TIMEOUT)) {
 				msGlobals.ggModeAP = false;
-				return true;
-			}
-		} else
-			msSystem.slogln("wifi: no preferred configuration found.");
+			return true;
+		}
+	} else
+	msSystem.slogln("wifi: no preferred configuration found.");
 
 
-		if (SPIFFS.exists(msSystem.Settings.apListConfigPath)) {
+	if (SPIFFS.exists(msSystem.Settings.apListConfigPath)) {
 
-			msSystem.slog("wifi: start scan -");
+		msSystem.slog("wifi: start scan -");
 			// WiFi.scanNetworks will return the number of networks found
-			int n = WiFi.scanNetworks();
-			msSystem.slogln("done");
-			if (n == 0) {
-				msSystem.slogln("wifi: no networks found");
-			} else {
-				msSystem.slogln("wifi: networks found: ");
-				msSystem.slog(String(n));
+		int n = WiFi.scanNetworks();
+		msSystem.slogln("done");
+		if (n == 0) {
+			msSystem.slogln("wifi: no networks found");
+		} else {
+			msSystem.slogln("wifi: networks found: ");
+			msSystem.slog(String(n));
 
-				for (int i = 0; i < n; ++i) {
+			for (int i = 0; i < n; ++i) {
 					// Print SSID and RSSI for each network found
-					msSystem.slog(String(i + 1));
-					msSystem.slog(": ");
-					msSystem.slog(WiFi.SSID(i));
-					msSystem.slog(" (");
-					msSystem.slog(String(WiFi.RSSI(i)));
-					msSystem.slog(")");
-					msSystem.
-						slog((WiFi.encryptionType(i) ==
-							  ENC_TYPE_NONE) ? " " : "*");
-					delay(20);
-				}
-			}
-
-			msSystem.slogln("");
-
-			msSystem.Settings.resetAPList();
-
-			while (msSystem.Settings.getNextAP(&msGlobals.ggAPConfig.apInfo.auth)) {
-				for (int i = 0; i < n; i++) {
-					if (strcmp
-						(WiFi.SSID(i).c_str(),
-						 msGlobals.ggAPConfig.apInfo.auth.ssid) == 0) {
-						if (TryConnect
-							(msGlobals.ggAPConfig.apInfo.auth,
-							 CONNECTION_TIMEOUT)) {
-							msGlobals.ggModeAP = false;
-							msGlobals.ggSoftAP.clear();
-
-							msSystem.feedbackAnimation(msGlobals.
-													   feedbackType::OK);
-
-							return true;
-						}
-					}
-				}
+				msSystem.slog(String(i + 1));
+				msSystem.slog(": ");
+				msSystem.slog(WiFi.SSID(i));
+				msSystem.slog(" (");
+				msSystem.slog(String(WiFi.RSSI(i)));
+				msSystem.slog(")");
+				msSystem.
+				slog((WiFi.encryptionType(i) ==
+					ENC_TYPE_NONE) ? " " : "*");
+				delay(20);
 			}
 		}
 
-		msSystem.slogln("wifi: none of the configured networks found.");
-		msSystem.feedbackAnimation(msGlobals.feedbackType::NOT_OK);
-		false;
+		msSystem.slogln("");
+
+		msSystem.Settings.resetAPList();
+
+		while (msSystem.Settings.getNextAP(&msGlobals.ggAPConfig.apInfo.auth)) {
+			for (int i = 0; i < n; i++) {
+				if (strcmp
+					(WiFi.SSID(i).c_str(),
+						msGlobals.ggAPConfig.apInfo.auth.ssid) == 0) {
+					if (TryConnect
+						(msGlobals.ggAPConfig.apInfo.auth,
+							CONNECTION_TIMEOUT)) {
+						msGlobals.ggModeAP = false;
+					msGlobals.ggSoftAP.clear();
+
+					msSystem.feedbackAnimation(msGlobals.
+						feedbackType::OK);
+
+					return true;
+				}
+			}
+		}
 	}
+}
+
+msSystem.slogln("wifi: none of the configured networks found.");
+msSystem.feedbackAnimation(msGlobals.feedbackType::NOT_OK);
+false;
+}
 #endif
 
-	msSystem.slogln("wifi: fallback to standalone access point.");
+msSystem.slogln("wifi: fallback to standalone access point.");
 	// WiFi.disconnect(false);
 
-	APAuthHelper softAPInfo;
+APAuthHelper softAPInfo;
 
-	msSystem.Settings.getAPConfig(&softAPInfo.auth);
-	if (TrySoftAP(softAPInfo.auth)) {
-		msGlobals.ggModeAP = true;
-		msGlobals.ggSoftAP = softAPInfo;
+msSystem.Settings.getAPConfig(&softAPInfo.auth);
+if (TrySoftAP(softAPInfo.auth)) {
+	msGlobals.ggModeAP = true;
+	msGlobals.ggSoftAP = softAPInfo;
 
-		return true;
-	}
+	return true;
+}
 
-	msSystem.slogln("wifi: ERROR: autoConnect failed!");
-	return false;
+msSystem.slogln("wifi: ERROR: autoConnect failed!");
+return false;
 }
 
 #endif

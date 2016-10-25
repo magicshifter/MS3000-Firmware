@@ -42,4 +42,5 @@ trsh/*
 
 # platformio stuff:
 MS3KOS/.pioenvs/*
+MS3KOS/.piolibdeps*
 *.pioenvs*

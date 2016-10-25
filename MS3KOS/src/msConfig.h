@@ -7,14 +7,21 @@
 
 #undef DEBUG_OUTPUT
 
-// MIDI enabled?
-// #define CONFIG_ENABLE_MIDI
+// MIDI and OSC enabled?
+#define CONFIG_ENABLE_MIDI
+#define CONFIG_ENABLE_OSC
 
+// serial i/o is unavailable if hardware MIDI is enabled
 #ifdef CONFIG_ENABLE_MIDI
+#define CONFIG_MIDI_RTP_MIDI
 #undef _DO_SERIAL_OUTPUT
 #else
 #define _DO_SERIAL_OUTPUT
 #endif
+
+// !J! debug 
+#warning "Serial enabled even though MIDI in use.."
+#define _DO_SERIAL_OUTPUT
 
 // Accelerometer enabled?
 #define CONFIG_ENABLE_ACCEL
@@ -45,7 +52,7 @@
 
 // v1 == breadboard pcb
 // 2 == 0.9 pcb :)
-#define MS3KOS_VERSION "1.2.0"
+#define MS3KOS_VERSION "1.3.0"
 
 #define MIN_TIME_CLICK 10000
 #define MIN_TIME_LONG_CLICK 1000 * 750

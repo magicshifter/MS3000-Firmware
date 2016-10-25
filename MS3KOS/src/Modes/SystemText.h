@@ -1,3 +1,7 @@
+// SystemText
+
+#define NUM_POWER_MODES 6
+
 	MSColor aRED = 		{ 0xff, 0x00, 0x00 };
 	MSColor aGREEN = 	{ 0x00, 0xff, 0x00 };
 	MSColor aBLUE = 	{ 0x00, 0x00, 0xff };
@@ -17,13 +21,13 @@ class SystemTextMode:public MagicShifterBaseMode {
 	int ptHiMode = 0;
 	bool needsTextUpdate = false;
 
-struct powerMode_t
-{
-	String label;
-	unsigned long powertime;
-} ;
+	struct powerMode_t
+	{
+		String label;
+		unsigned long powertime;
+	} ;
 
-#define NUM_POWER_MODES 6
+
 	powerMode_t predefinedPowerModes[NUM_POWER_MODES] = {
 		{"Infi",0},
 		{"5m", 5 * 60 * 1000} ,
@@ -263,7 +267,7 @@ struct powerMode_t
 		} else {	
 			// !J! : note - debug code to indicate values
 			// msSystem.slog("bV:"); msSystem.slogln(String(msSystem.batteryVoltage));
-			msSystem.msLEDs.fillLEDs(0, 0, 0);
+			msSystem.msLEDs.fillLEDs(0, 0, 0, msGlobals.ggBrightness);
 
 			if (isBatteryLow){ 
 				msSystem.msLEDs.setLED(0, 255, 0, 0, msGlobals.ggBrightness);

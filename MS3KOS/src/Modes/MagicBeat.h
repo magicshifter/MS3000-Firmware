@@ -50,7 +50,7 @@ public:
 		// 	int8_t xPosInt = xPos >> FIXED_SHIFT;			
 		// 	uint8_t xPosRemainder = (xPos & (1 << FIXED_SHIFT) - 1);
 
-		// 	msSystem.msLEDs.fillLEDs(0, 0, 0);
+		// msSystem.msLEDs.fillLEDs(0, 0, 0, msGlobals.ggBrightness);
 			
 		// 	msSystem.msLEDs.setLED(xPosInt + 1, (r * xPosRemainder) >> FIXED_SHIFT, (g * xPosRemainder) >> FIXED_SHIFT, (b * xPosRemainder) >> FIXED_SHIFT,
 		// 		msGlobals.ggBrightness);
@@ -79,7 +79,7 @@ public:
 				xPos += 7.5;
 			}
 
-			msSystem.msLEDs.fillLEDs(0, 0, 0);
+			msSystem.msLEDs.fillLEDs(0, 0, 0, msGlobals.ggBrightness);
 
 			if (renderMode == 0) {
 				for (int i = 0; i < xPos; i++)
