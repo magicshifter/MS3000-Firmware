@@ -1,3 +1,8 @@
 [submodule "Tools/esptool"]
 	path = Tools/esptool
 	url = https://github.com/themadinventor/esptool
+[submodule "Tools/esptool-ck"]
+        path = Tools/esptool-ck
+        url = https://github.com/igrr/esptool-ck.git
+
+
