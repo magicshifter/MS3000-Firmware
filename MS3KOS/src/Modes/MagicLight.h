@@ -96,9 +96,10 @@ class MagicLightMode : public MagicShifterBaseMode {
 			if (centerAction > 0) {
 				centerAction--;
 				pDelay += 1 + pDelay / 2;
-				if (pDelay > 250 && pDelay < 500) {
+				/*if (pDelay > 250 && pDelay < 500) {
 					pDelay = 1000;
-				} else if (pDelay >= 500) {
+				} else */
+				if (pDelay >= 5000) {
 					pDelay = 1;
 				}
 			}
