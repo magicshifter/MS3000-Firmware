@@ -131,8 +131,9 @@
 #endif
 #endif
 
+#define BYTES_PER_LED 4
 //#define MAX_LEDS 160
-#define RGB_BUFFER_SIZE (4*MAX_LEDS)
+#define RGB_BUFFER_SIZE (BYTES_PER_LED*MAX_LEDS)
 
 // double features as bootloader button
 #define PIN_BUTTON_A 12

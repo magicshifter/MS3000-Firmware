@@ -170,7 +170,7 @@ class BouncingBallMode {
 
 			if (allowFlash) {
 				if (smoothLanding) {
-					msSystem.msLEDs.setLED(idx, 0, 255 * scale, 0,
+					msSystem.msLEDs.setLED(idx, 0, 0, 255 * scale,
 										   msGlobals.ggBrightness);
 				} else {
 					msSystem.msLEDs.setLED(idx, 

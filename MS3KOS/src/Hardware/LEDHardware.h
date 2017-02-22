@@ -31,7 +31,6 @@ byte lookupBrightness[16] = {
 		B11001000, B11111111
 };
 
-// TODO : Flesh this out?
 class MagicShifterLEDs {
 
   private:
