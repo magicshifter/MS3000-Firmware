@@ -5,7 +5,7 @@
 # the readout has started then you can release it
 # baudrates: 115200 460800 921600
 
-firmwareName=MS3000_Firmware_1.2.0_candidate.bin
+firmwareName=MS3000_Firmware_1.3.0.bin
 
 ./esptool/esptool.py --port $1 --baud 921600 read_flash 0x00000 0x400000 $firmwareName 
 

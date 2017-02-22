@@ -62,17 +62,17 @@ bool isRTPConnected = false;
 // -----------------------------------------------------------------------------
 void OnRTPMIDI_Connect(uint32_t ssrc, char* name) {
   isRTPConnected = true;
-  Serial.print("Connected to session ");
+  Serial.print("rtpMIDI Connected to session ");
   Serial.println(name);
 }
 
 void OnRTPMIDI_Disconnect(uint32_t ssrc) {
   isRTPConnected = false;
-  Serial.println("Disconnected");
+  Serial.println("rtpMIDI Disconnected");
 }
 
 void OnRTPMIDI_NoteOn(byte channel, byte note, byte velocity) {
-  Serial.print("Incoming NoteOn from channel:");
+  Serial.print("rtpMIDI Incoming NoteOn from channel:");
   Serial.print(String(channel));
   Serial.print(" note:");
   Serial.print(String(note));
@@ -81,7 +81,7 @@ void OnRTPMIDI_NoteOn(byte channel, byte note, byte velocity) {
 }
 
 void OnRTPMIDI_NoteOff(byte channel, byte note, byte velocity) {
-  Serial.print("Incoming NoteOff from channel:");
+  Serial.print("rtpMIDI Incoming NoteOff from channel:");
   Serial.print(String(channel));
   Serial.print(" note:");
   Serial.print(String(note));
@@ -134,6 +134,17 @@ class MagicShifterSystem {
 				}
 			}
 
+
+
+		public:
+
+			const String apConfigPath = "settings/ap.bin";
+			const String apServerConfigPath = "settings/server1.bin";
+			const String apListConfigPath = "settings/aplist1.bin";
+			const String apSysLogConfigPath = "settings/syslog.bin";
+			const String preferredAPConfigPath = "settings/preferredap.bin";
+			const String uiSettingsConfigPath = "settings/ui.bin";
+
 			String getUniqueSystemName() 
 			{
 				uint8_t mac[WL_MAC_ADDR_LENGTH];
@@ -145,16 +156,6 @@ class MagicShifterSystem {
 
 				return UniqueSystemName;
 			}
-
-
-		public:
-
-			const String apConfigPath = "settings/ap.bin";
-			const String apServerConfigPath = "settings/server1.bin";
-			const String apListConfigPath = "settings/aplist1.bin";
-			const String apSysLogConfigPath = "settings/syslog.bin";
-			const String preferredAPConfigPath = "settings/preferredap.bin";
-			const String uiSettingsConfigPath = "settings/ui.bin";
 
 			bool getUIConfig(struct UIConfig *config) {
 				//msSystem.slog("config: sizeof ");

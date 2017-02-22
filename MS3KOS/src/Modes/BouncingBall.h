@@ -123,7 +123,11 @@ class BouncingBallMode {
 
 		bool stopLoop = false;
 		for (byte idx = start; !stopLoop; idx += delta) {
-			msSystem.msLEDs.setLED(idx, 255, 255, 255,
+			msSystem.msLEDs.setLED(idx, 
+										// default-bright white
+										// 255, 255, 255,
+										// safety orange
+										255, 121, 0,
 								   msGlobals.ggBrightness);
 			msSystem.msLEDs.updateLEDs();
 			delay(2);
@@ -169,8 +173,11 @@ class BouncingBallMode {
 					msSystem.msLEDs.setLED(idx, 0, 255 * scale, 0,
 										   msGlobals.ggBrightness);
 				} else {
-					msSystem.msLEDs.setLED(idx, 255 * scale, 255 * scale,
-										   255 * scale,
+					msSystem.msLEDs.setLED(idx, 
+										// safety orange
+										255 * scale, 121 * scale, 0,
+										// default bright white
+										// 255 * scale, 255 * scale, 255 * scale,
 										   msGlobals.ggBrightness);
 				}
 			} else {

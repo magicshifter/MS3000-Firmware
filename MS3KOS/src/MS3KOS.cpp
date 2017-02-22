@@ -109,6 +109,18 @@ void setup()
 #ifdef CONFIG_ENABLE_MIDI
 	// msGlobals.ggCurrentMode = 6;
 	msGlobals.ggModeList.push_back(&msMIDIArpeggiator);
+
+#ifdef CONFIG_MIDI_RTP_MIDI
+	 AppleMIDI.OnConnected(OnRTPMIDI_Connect);
+	 AppleMIDI.OnDisconnected(OnRTPMIDI_Disconnect);
+	 AppleMIDI.OnReceiveNoteOn(OnRTPMIDI_NoteOn);
+	 AppleMIDI.OnReceiveNoteOff(OnRTPMIDI_NoteOff);
+
+	Serial.print("UNIQUE NAME:");
+	Serial.println(msSystem.Settings.getUniqueSystemName().c_str());
+	AppleMIDI.begin(msSystem.Settings.getUniqueSystemName().c_str());
+#endif
+
 #endif
 
 	// Show the battery power level on startup

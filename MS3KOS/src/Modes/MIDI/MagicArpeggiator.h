@@ -384,10 +384,6 @@ private:
 
 	int microsSinceLast = 0;
 
-#ifdef CONFIG_MIDI_RTP_MIDI
-	bool	isRTPConnected;
-#endif
-
 public:
 
 	MIDIArpeggiator _arp;
@@ -463,9 +459,9 @@ public:
 	void envFrame()
 	{
 		static int8_t dbg;
-		adsr_envelope_tick(&anEnvelope);
 
-		envDump();
+		// adsr_envelope_tick(&anEnvelope);
+		// envDump();
 
 		dbg++;
 		if (dbg >= 10)
@@ -577,7 +573,11 @@ public:
 	// 
 	bool step()
 	{
+		// this is the per-fram midi byte, currently in process ..
 		uint8_t midi_inb;
+
+		// 
+		handleButtons();
 
 		// consume button events if necessary ..
 		if (msSystem.msButtons.msBtnPwrHit) {
@@ -607,9 +607,11 @@ public:
 		if (!((micros() - _arp.arp_frame_time) < _arp.arp_beat_duration))
 			_arp.arpFrame();
 
+		// prepare for our next frame
 		_arp.arp_frame_time = micros();
 
-		// envFrame();
+		// handle envelopes
+		envFrame();
 
 		msSystem.msLEDs.updateLEDs();
 

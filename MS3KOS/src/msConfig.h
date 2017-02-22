@@ -109,6 +109,13 @@
 #error "No HW_ID configured! abort!"
 #endif
 
+// !J! this enables quick spool hacks
+//#define CONFIG_CUSTOM_MAX_LEDS
+#ifdef CONFIG_CUSTOM_MAX_LEDS
+#undef MAX_LEDS
+#define MAX_LEDS 64
+#endif
+
 // #define MMA8452_ADDRESS 0x1C
 // #define MMA8452_ID 0x2A
 
