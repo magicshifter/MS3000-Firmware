@@ -173,11 +173,12 @@ class MagicShifterImageText:public MagicShifterImageAbstr {
   public:
 
 	void close() {
-	} void resetTexts() {
+	};
+
+	void resetTexts() {
 		txtCount = 0;
 		txtWidth = 0;
-	}
-
+	};
 
 	void plotTextString(char *text, MSBitmap & font, Coordinate_s pos) {
 		if (txtCount < MAX_SHAKE_TEXT) {
