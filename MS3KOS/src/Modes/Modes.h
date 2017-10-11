@@ -2,7 +2,7 @@
 #define _MODES_H
 
 
-#define NUM_MS_MODES 5
+#define NUM_MS_MODES 6
 
 // rudimentary mode for displaying an msImage with POV
 #include "UI/ShakeSync.h"
@@ -31,6 +31,7 @@ MIDIArpeggiatorMode msMIDIArpeggiator;
 #include "MagicLight.h"
 #include "MagicRemote.h"
 #include "MagicBeat.h"
+#include "MagicCountdown.h"
 
 #include "PowerEmergency.h"
 
@@ -44,5 +45,8 @@ MagicMagnetMode msMagicMagnet;
 MagicLightMode msMagicLight;
 MagicRemoteMode msMagicRemote;
 MagicBeatMode msMagicBeat;
+
+MagicCountdownMode msMagicCountdown;
+int MagicCountdownMode::countdownTicks = 0;
 
 #endif
