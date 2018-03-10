@@ -104,6 +104,7 @@ void setup()
 	msGlobals.ggModeList.push_back(&msSysText);
 	msGlobals.ggModeList.push_back(&msMagicRemote);
 	msGlobals.ggModeList.push_back(&msMagicBeat);
+	msGlobals.ggModeList.push_back(&msMagicCountdown);
 
 	// if MIDI has been configured, enable the additional MIDI mode(s)
 #ifdef CONFIG_ENABLE_MIDI

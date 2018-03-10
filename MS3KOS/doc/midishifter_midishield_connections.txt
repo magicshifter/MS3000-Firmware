@@ -1,0 +1,9 @@
+Please note: some soldering required ...
+
+Pins on MS3000 (L to R), with cable colors for guides:
+
+MS3000 1: GND->GND on MIDIShield (WHITE)
+MS3000 5: TX->RX on MIDIShield (GREEN)
+MS3000 6: RX->TX on MIDIShield (YELLOW)
+MS3000 3v3->5v[bridged]3v on MIDIShield (RED)
+MS3000 GND->GND MIDIShield (BLACK)
