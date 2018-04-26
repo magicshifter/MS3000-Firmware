@@ -657,6 +657,82 @@ def initMS3000():
 	sleep(delay)
 	issueUploadMS3000(ser, "../../MS3000-Assets/MS3000_defaultconfig/admin.html", "admin.html")
 
+	# MS3KOS2.0 !J! 
+	sleep(delay)
+	issueUploadMS3000(ser, "../../MS3000-Assets/MS3000_defaultconfig/admin.html", "admin.html")
+
+	# new-school web interfaces .. 
+	sleep(delay)
+	issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/index.html", "index.html")
+	sleep(delay)
+	issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/pixeleditor/index.html", "pixeleditor/index.html")
+	sleep(delay)
+	issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/script/pixeleditor.js", "system/script/pixeleditor.js")
+	sleep(delay)
+	issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/script/app.js", "system/script/app.js")
+	sleep(delay)
+	issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/1px.png", "system/img/1px.png")
+	sleep(delay)
+	issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/palette.svg", "system/img/palette.svg")
+	sleep(delay)
+	issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/pen.svg", "system/img/pen.svg")
+	sleep(delay)
+	issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/tool.svg", "system/img/tool.svg")
+	sleep(delay)
+	issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/transparent.jpg", "system/img/transparent.jpg")
+	sleep(delay)
+	issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/tool.cur", "system/img/tool.cur")
+	sleep(delay)
+	issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/pen.png", "system/img/pen.png")
+	sleep(delay)
+	issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/css/main.css", "system/css/main.css")
+
+	imgs = ["heart.magicBitmap", "smilie.magicBitmap", "star.magicBitmap", "oneup.magicBitmap", "mario.magicBitmap", "mario.magicBitmap", "blueGhost.magicBitmap", "redGhost.magicBitmap", "BubbleBobble.magicBitmap", "invader.magicBitmap", "giraffe.magicBitmap", "cursor.magicBitmap", "nyancat.magicBitmap"]
+
+	for img in imgs:
+		sleep(delay)
+		issueUploadMS3000(ser, "../../MS3000-Assets/magicBitmaps/" + img, img)
+
+        fonts = ["font10x16.magicFont", "font4x5.magicFont", "font6x8.magicFont", "font7x12.magicFont"]
+	for font in fonts:
+		sleep(delay)
+		issueUploadMS3000(ser, "../../MS3000-Assets/fonts/" + font, font)
+
+	end = time.time()
+	print "time elapsed: ", end - start
+
+
+def initMS3000newweb():
+	start = time.time()
+	delay = 1;
+
+	ser = openPort(5)
+	# new-school web interfaces .. 
+	sleep(delay)
+	issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/index.html", "index.html")
+	sleep(delay)
+	issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/pixeleditor/index.html", "pixeleditor/index.html")
+	sleep(delay)
+	issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/script/pixeleditor.js", "system/script/pixeleditor.js")
+	sleep(delay)
+	issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/script/app.js", "system/script/app.js")
+	sleep(delay)
+	issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/1px.png", "system/img/1px.png")
+	sleep(delay)
+	issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/palette.svg", "system/img/palette.svg")
+	sleep(delay)
+	issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/pen.svg", "system/img/pen.svg")
+	sleep(delay)
+	issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/tool.svg", "system/img/tool.svg")
+	sleep(delay)
+	issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/transparent.jpg", "system/img/transparent.jpg")
+	sleep(delay)
+	issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/tool.cur", "system/img/tool.cur")
+	sleep(delay)
+	issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/pen.png", "system/img/pen.png")
+	sleep(delay)
+	issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/css/main.css", "system/css/main.css")
+
 	imgs = ["heart.magicBitmap", "smilie.magicBitmap", "star.magicBitmap", "oneup.magicBitmap", "mario.magicBitmap", "mario.magicBitmap", "blueGhost.magicBitmap", "redGhost.magicBitmap", "BubbleBobble.magicBitmap", "invader.magicBitmap", "giraffe.magicBitmap", "cursor.magicBitmap", "nyancat.magicBitmap"]
 
 	for img in imgs:
@@ -742,6 +818,10 @@ if __name__ == '__main__':
 	if (len(sys.argv) >= 2 and sys.argv[1] == "init"):
 		device = sys.argv[2]
 		initMS3000()
+
+	if (len(sys.argv) >= 2 and sys.argv[1] == "initnewweb"):
+		device = sys.argv[2]
+		initMS3000newweb()
 		
 	if (len(sys.argv) >= 4 and sys.argv[1] == "up"):
 		if (len(sys.argv) == 5):
