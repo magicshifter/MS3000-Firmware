@@ -1,8 +1,8 @@
 SHELL := /bin/bash
 
-MS3000_PORT?=`pio serialports list --json-output | python -c 'exec("""\nimport json,sys\n\nobj=json.load(sys.stdin)\nfor y in obj:\n if "10C4:EA60" in y["hwid"].upper():\n  print y["port"]\n""")'`
+MS3000_PORT?=`pio serialports list --json-output | python -c 'exec("""\nimport json,sys\n\nobj=json.load(sys.stdin)\nfor y in obj:\n if "10C4:EA60" in y["hwid"].upper():\n  print (y["port"])\n""")'`
 MS3000_PORT?=/dev/ttyUSB0
-
+MS3000_PORT=/dev/tty.SLAB_USBtoUART
 all:	clean test
 
 pio-deps:
