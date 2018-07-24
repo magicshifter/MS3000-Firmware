@@ -223,6 +223,45 @@ void handleGETStatus(void)
 	msSystem.msESPServer.send(200, "text/plain", response);
 }
 
+
+/**
+ms3000.info
+ms3000.about
+ms3000.status
+ms3000.config.ap.info //our ssid and pwd
+ms3000.config.ap.current
+ms3000.config.ap.list
+ms3000.config.ap.preferred
+ms3000.config.ap.server.name
+ms3000.config.syslog // host, port ?
+ms3000.config.mode
+ms3000.mode.rainbow.speed
+ms3000.mode.brightlight.color
+ms3000.mode.sensi.sensitivity
+ms3000.mode.magicpov.image.name
+ms3000.mode.magicpov.image.rawRGB
+ms3000.mode.magicpov.image.brightness
+ms3000.mode.arpi.mode
+ms3000.mode.arpi.midi.channel.out
+ms3000.mode.arpi.midi.channel.in
+ms3000.mode.arpi.midi.channel.keys
+ms3000.mode.arpi.midi.channel.out
+ms3000.mode.lightning.submode
+ms3000.mode.lightning.mode.description
+ms3000.mode.lightning.color
+
+
+e.g.
+
+int arpi_mode = _storage.GetInt("ms3000.mode.arpi.submode")
+int lightning_submode = _storage.GetInt("ms3000.mode.lightning.submode")
+RGBType lightning_color_ = _storage.GetColor("ms3000.mode.lightning.color")
+
+_storage.PutInt("ms3000.mode.arpi.submode", 2);
+_storage.PutInt("ms3000.mode.lightning.submode", 5);
+
+**/
+
 bool parseAPInfoFromServerArgs(APAuth & apInfo)
 {
 	bool success = true;
