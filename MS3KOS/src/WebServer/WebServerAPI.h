@@ -1,6 +1,9 @@
 #ifndef _WEBSERVERAPI_H
 #define _WEBSERVERAPI_H
 
+#include <pb.h>
+#include <pb_decode.h>
+
 const char b64_alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" "abcdefghijklmnopqrstuvwxyz" "0123456789+/";
 
 /* 'Private' declarations */
@@ -425,6 +428,63 @@ void handleGETAPSettings(void)
 	msSystem.msESPServer.send(200, "text/plain", response);
 }
 
+
+
+
+
+void handlePOSTProtocolBufferBase64(void)
+{
+	msSystem.slogln("handlePOSTProtocolBufferBase64");
+
+	if (msSystem.msESPServer.args() == 0) {
+		msSystem.msESPServer.send(500, "text/plain", "argument missing!");
+	}
+	else
+	if (msSystem.msESPServer.args() >= 1) {
+
+		const char *protobufInput = msSystem.msESPServer.arg(0).c_str();
+		unsigned int protobufInputLen = (int) msSystem.msESPServer.arg(0).length();
+
+		size_t message_length;
+		bool status;
+		uint8_t buffer[256];
+
+		msSystem.slogln("protobufInputLen: ");
+		msSystem.slogln(String(protobufInputLen));
+
+		if (protobufInputLen > sizeof(buffer))
+			protobufInputLen = sizeof(buffer);
+
+		msSystem.slogln(String(protobufInputLen));
+
+		unsigned int dataLen = 0;
+		dataLen = base64_decode((char *) buffer, protobufInput, protobufInputLen);
+
+        /* Create a stream that reads from the buffer. */
+		pb_istream_t stream = pb_istream_from_buffer(buffer, message_length);
+
+        /* Now we are ready to decode the message. */
+		status = pb_decode(&stream, MS3KG_fields, &ms3kGlobalPBuf); // TODO: !J! ms3kGlobalPBuf??
+
+        /* Check for errors... */
+		if (!status)
+		{
+			printf("Decoding failed: %s\n", PB_GET_ERROR(&stream));
+		}
+
+        /* Print the data contained in the message. */
+		printf("Your lucky number was %d!\n", (int)ms3kGlobalPBuf.lucky_number);
+
+
+		msSystem.msESPServer.send(200, "text/plain", "OK");
+
+	} else {
+		msSystem.msESPServer.send(500, "text/plain", "unknown args!");
+	} 
+}
+
+
+
 void handlePOSTAPSettings(void)
 {
 	msSystem.slogln("handlePOSTAPSettings");
@@ -514,7 +574,7 @@ void handlePOSTPreferredAPSettings(void)
 		msSystem.Settings.getPreferredAP(&apInfo);
 
 		if (parseAPInfoFromServerArgs(apInfo)) {
-			msSystem.slogln("saving setAPConfig");
+			msSystem.slogln("saving setPreferredAP");
 			msSystem.Settings.setPreferredAP(&apInfo);
 			msSystem.msESPServer.send(200, "text/plain", "OK");
 		} else {
