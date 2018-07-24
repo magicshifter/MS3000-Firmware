@@ -6,3 +6,6 @@
         url = https://github.com/igrr/esptool-ck.git
 
 
+[submodule "Tools/nanopb"]
+	path = Tools/nanopb
+	url = https://github.com/nanopb/nanopb.git
