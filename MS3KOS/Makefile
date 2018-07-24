@@ -6,7 +6,8 @@ include ../Tools/nanopb/extra/nanopb.mk
 MS3000_PORT?=`pio serialports list --json-output | python -c 'exec("""\nimport json,sys\n\nobj=json.load(sys.stdin)\nfor y in obj:\n if "10C4:EA60" in y["hwid"].upper():\n  print (y["port"])\n""")'`
 MS3000_PORT?=/dev/ttyUSB0
 MS3000_PORT=/dev/tty.SLAB_USBtoUART
-all:	clean test
+
+all:	clean proto test
 
 CFLAGS += -I$(NANOPB_DIR)
 
@@ -29,7 +30,7 @@ setup:
 run:
 	platformio run --upload-port ${MS3000_PORT}
 
-test:   $(CSRC) proto
+test:
 	platformio run --target upload --upload-port ${MS3000_PORT}
 
 viaserial:
@@ -49,4 +50,4 @@ clean:
 	# !J! Todo: BUILD_PRODUCT_DIR
 	#rm -rf .pioenvs
 	pio run -t clean
-	rm src/MS3000.pb.c src/MS3000.pb.h
+	rm -rf src/MS3000.pb.c src/MS3000.pb.h
