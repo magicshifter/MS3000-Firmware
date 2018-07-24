@@ -473,7 +473,7 @@ void handlePOSTProtocolBufferBase64(void)
 		}
 
         /* Print the data contained in the message. */
-		printf("Your lucky number was %d!\n", (int)ms3kGlobalPBuf.lucky_number);
+		printf("the submode is %d!\n", (int)ms3kGlobalPBuf.modes.light.subMode);
 
 
 		msSystem.msESPServer.send(200, "text/plain", "OK");
