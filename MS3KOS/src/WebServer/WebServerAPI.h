@@ -461,6 +461,8 @@ void handleGETProtoBufferBase64(void)
 
 	msSystem.slogln("handleGETProtoBufferBase64");
 
+	l_safeStrncpy(msGlobals.ms3kPBUF.modes.current, "dead", sizeof(msGlobals.ms3kPBUF.modes.current));
+
 	pb_ostream_t stream = pb_ostream_from_buffer(pbufOutput, sizeof(pbufOutput));
 	encoderStatus = pb_encode(&stream, MS3KG_fields, &msGlobals.ms3kPBUF);
 
