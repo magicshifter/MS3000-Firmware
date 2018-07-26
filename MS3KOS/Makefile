@@ -15,6 +15,7 @@ CSRC += $(NANOPB_DIR)/pb_encode.c
 CSRC += $(NANOPB_DIR)/pb_decode.c
 CSRC += $(NANOPB_DIR)/pb_common.c
 
+
 pio-deps:
 	@echo "NOTE: installing platform dependencies with PlatformIO"
 	pio lib install 222 64 423 35 568 170 567 4271
@@ -22,7 +23,8 @@ pio-deps:
 proto:  ../../MS3000.proto 
 	echo "NANOPB_DIR = $(NANOPB_DIR)"
 	echo "CFLAGS = $(CFLAGS)"
-	$(PROTOC) $(PROTOC_OPTS) --nanopb_out=src/ --proto_path ../../ ../../MS3000.proto
+	$(PROTOC) $(PROTOC_OPTS) --nanopb_out=src/ --proto_path ../../ ../../MS3000.proto  -o../../MS3000.pb
+	python ../Tools/nanopb/generator/nanopb_generator.py ../../MS3000.pb
 
 setup:
 	platformio run
