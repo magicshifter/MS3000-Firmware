@@ -430,7 +430,36 @@ void handleGETAPSettings(void)
 
 
 
-#define PROTOBUF_LEN 512
+
+bool lDecodeName(pb_istream_t *stream, const pb_field_t *field, void **arg)
+{
+    uint8_t buffer[1024] = {0};
+    
+	msSystem.slogln("lDecodeName");
+	msSystem.slogln("lDecodeName x");
+
+    /* We could read block-by-block to avoid the large buffer... */
+    if (stream->bytes_left > sizeof(buffer) - 1)
+        return false;
+    	msSystem.slogln("lDecodeName xx");
+
+    if (!pb_read(stream, buffer, stream->bytes_left))
+        return false;
+    	msSystem.slogln("lDecodeName xxx");
+
+    /* Print the string, in format comparable with protoc --decode.
+     * Format comes from the arg defined in main().
+     */
+    		msSystem.slogln("lDecodeName xxxx");
+
+	printf("lDecodeName xxxxxx");
+	msSystem.slogln("lDecodeName  arg : %s",(char*)*arg);
+    printf((char*)*arg, buffer);
+
+	msSystem.slogln("lDecodeName xxxxxxx");
+
+    return true;
+}
 
 void handlePOSTProtocolBufferBase64(void)
 {
@@ -441,34 +470,51 @@ void handlePOSTProtocolBufferBase64(void)
 	}
 	else
 	if (msSystem.msESPServer.args() >= 1) {
-		char inputPBufString[PROTOBUF_LEN];
-		char  const *inputPBuf = msSystem.msESPServer.arg(0).c_str();
-		unsigned int inputPBufLen = (int) msSystem.msESPServer.arg(0).length();
+		// const char *encodedInputStr = msSystem.msESPServer.arg(0).c_str();
 
-		l_safeStrncpy(inputPBufString, msSystem.msESPServer.arg(0).c_str(), PROTOBUF_LEN);
-
-		unsigned int decodedDataLen = 0;
-		uint8_t decodeBuffer[PROTOBUF_LEN];
 		bool decodeStatus;
+		unsigned int decodedDataLen = 0;
 
-		printf("the inputPBuf is %s!\n", inputPBuf);
-		printf("the inputPBufString is %s!\n", inputPBufString);
-		printf("the inputPBuf (2) is %s!\n", msSystem.msESPServer.arg(0).c_str());
-		printf("the arg name is %s!\n",  msSystem.msESPServer.argName(0).c_str());
+#define PROTOBUF_LEN 384
 
-		if (inputPBufLen > sizeof(decodeBuffer))
-			inputPBufLen = sizeof(decodeBuffer);
+		char decoderInput[PROTOBUF_LEN];
+		uint8_t decoderOutput[PROTOBUF_LEN];
 
-		decodedDataLen = base64_decode((char *) decodeBuffer, inputPBufString, inputPBufLen);
+//void l_safeStrncpy(char *dest, const char *source, int n)
 
-        /* Create a stream that reads from the decodeBuffer. */
-		pb_istream_t stream = pb_istream_from_buffer(decodeBuffer, decodedDataLen);
+		l_safeStrncpy(decoderInput,  msSystem.msESPServer.arg(0).c_str(), PROTOBUF_LEN);
+
+
+		printf("handlePPBB64: arg name is %s!\n",  msSystem.msESPServer.argName(0).c_str());
+		// printf("handlePPBB64: encodedInputStr is %s!\n", encodedInputStr);
+		printf("handlePPBB64: encodedInputStr (2) is %s!\n", msSystem.msESPServer.arg(0).c_str());
+		printf("handlePPBB64: decoderInput is %s!\n", decoderInput);
+
+
+
+		unsigned int encodedInputStrLen = (int) msSystem.msESPServer.arg(0).length();
+		// encodedInputStrLen = strlen(decoderInput);
+		if (encodedInputStrLen >  sizeof(decoderOutput))
+			encodedInputStrLen = sizeof(decoderOutput);
+
+printf("handlePPBB64: xx\n");
+		decodedDataLen = base64_decode((char *)decoderOutput, decoderInput, encodedInputStrLen);
+
+        /* Create a stream that reads from the decoderOutput. */
+		pb_istream_t stream = pb_istream_from_buffer(decoderOutput, decodedDataLen);
+printf("handlePPBB64: xxx\n");
+
+
+		ms3kGlobalPBuf.modes.light.name.funcs.decode = lDecodeName;
+printf("handlePPBB64: xxxx\n");
 
         /* Now we are ready to decode the message. */
 		decodeStatus = pb_decode(&stream, MS3KG_fields, &ms3kGlobalPBuf); // TODO: !J! ms3kGlobalPBuf??
+printf("handlePPBB64: xxxxx\n");
 
-		printf("the inputPBufLen is %d!\n", inputPBufLen);
-		printf("the decodedDataLen is %d!\n", decodedDataLen);
+		// printf("handlePPBB64: encodedInputStrLen is %d!\n", encodedInputStrLen);
+		printf("handlePPBB64: decodedDataLen is %d!\n", decodedDataLen);
+		printf("handlePPBB64: decodeStatus is %d!\n", decodeStatus);
 
         /* Check for errors... */
 		if (!decodeStatus)
@@ -477,8 +523,8 @@ void handlePOSTProtocolBufferBase64(void)
 		}
 
         /* Print the data contained in the message. */
-		printf("the submode is %d!\n", (int)ms3kGlobalPBuf.modes.light.subMode);
-		// printf("the submode name is %s!\n", ms3kGlobalPBuf.modes.light.name);
+		printf("handlePPBB64: submode is %d!\n", (int)ms3kGlobalPBuf.modes.light.subMode);
+		// printf("handlePPBB64: submode name is %d!\n", strlen(ms3kGlobalPBuf.modes.light.name));
 
 		msSystem.msESPServer.send(200, "text/plain", "OK");
 
@@ -508,6 +554,11 @@ void handlePOSTAPSettings(void)
 	} else {
 		msSystem.msESPServer.send(500, "text/plain", "argument missing!");
 	}
+}
+
+void handleGETprotoBuffer(void)
+{
+
 }
 
 
