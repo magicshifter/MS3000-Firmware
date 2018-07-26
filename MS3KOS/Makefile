@@ -25,6 +25,7 @@ proto:  ../../MS3000.proto
 	echo "CFLAGS = $(CFLAGS)"
 	$(PROTOC) $(PROTOC_OPTS) --nanopb_out=src/ --proto_path ../../ ../../MS3000.proto  -o../../MS3000.pb
 	python ../Tools/nanopb/generator/nanopb_generator.py ../../MS3000.pb
+	cp ../../MS3000.pb.? src/
 
 setup:
 	platformio run

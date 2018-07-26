@@ -453,10 +453,14 @@ void handleGETProtoBufferBase64(void)
 {
 	// MS3KG lMS3KG = MS3KG_init_zero;
 
+char out[1337];
+printf("handleGETProtoBufferBase64: encode: %d\n",
+	 base64_encode(out, msGlobals.ms3kPBUF.modes.light.name, ));
+
 	String response = "{";
 	response += "\"arg\":";
 	response += "\"";
-	response += msGlobals.ms3kPBUF.modes.light.name;
+	response += out;
 	response += "\"";
 	response += "}";
 	msSystem.msESPServer.send(200, "text/plain", response);
