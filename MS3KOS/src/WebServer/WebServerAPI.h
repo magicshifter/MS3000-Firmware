@@ -3,6 +3,7 @@
 
 #include <pb.h>
 #include <pb_decode.h>
+#include <pb_encode.h>
 
 const char b64_alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" "abcdefghijklmnopqrstuvwxyz" "0123456789+/";
 
@@ -453,16 +454,28 @@ void handleGETProtoBufferBase64(void)
 {
 	// MS3KG lMS3KG = MS3KG_init_zero;
 
-char out[1337];
-printf("handleGETProtoBufferBase64: encode: %d\n",
-	 base64_encode(out, msGlobals.ms3kPBUF.modes.light.name, ));
+	int encoderStatus;
+	uint8_t pbufOutput[256];
+	char base64Output[1024];
+	int base64Status;
 
-	String response = "{";
-	response += "\"arg\":";
-	response += "\"";
-	response += out;
-	response += "\"";
-	response += "}";
+	msSystem.slogln("handleGETProtoBufferBase64");
+
+	pb_ostream_t stream = pb_ostream_from_buffer(pbufOutput, sizeof(pbufOutput));
+	encoderStatus = pb_encode(&stream, MS3KG_fields, &msGlobals.ms3kPBUF);
+
+	if (!encoderStatus)
+	{
+		printf("Encoding failed: %s\n", PB_GET_ERROR(&stream));
+	}
+
+	base64Status = base64_encode(base64Output, (char *)pbufOutput, stream.bytes_written);
+
+	String response = "";
+
+	response += (char *)base64Output;
+
+	msSystem.msESPServer.sendHeader("Access-Control-Allow-Origin", "*");
 	msSystem.msESPServer.send(200, "text/plain", response);
 
 }
@@ -526,7 +539,7 @@ printf("handlePPBB64: xxxx\n");
 		}
 
         /* Print the data contained in the message. */
-		msGlobals.ms3kPBUF.modes.light.name.funcs.decode = ms3kModeLightNameFunc;
+		// msGlobals.ms3kPBUF.modes.light.name.funcs.decode = ms3kModeLightNameFunc;
 printf("handlePPBB64: xxxxx\n");
 
 		printf("handlePPBB64: submode is %d!\n", (int)msGlobals.ms3kPBUF.modes.light.subMode);
