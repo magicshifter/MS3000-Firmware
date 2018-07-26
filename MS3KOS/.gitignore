@@ -2,3 +2,6 @@
 .clang_complete
 .gcc-flags.json
 .piolibdeps
+
+src/MS3000.pb.h
+src/MS3000.pb.c
