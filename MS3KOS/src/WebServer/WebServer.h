@@ -55,10 +55,10 @@ class MagicShifterWebServer {
 		msSystem.msESPServer.on("/settings/ap", HTTP_POST,
 								handlePOSTAPSettings);
 
-		msSystem.msESPServer.on("/protobuf", HTTP_POST,
-								handlePOSTProtocolBufferBase64);
-		msSystem.msESPServer.on("/protobuf", HTTP_GET,
-								handleGETprotoBuffer);
+
+		msSystem.msESPServer.on("/protobuf", HTTP_POST, handlePOSTProtocolBufferBase64);
+		msSystem.msESPServer.on("/protobuf", HTTP_GET, handleGETProtoBufferBase64);
+
 
 		msSystem.msESPServer.on("/settings/syslog", HTTP_GET,
 								handleGETSysLogHostSettings);

@@ -429,36 +429,38 @@ void handleGETAPSettings(void)
 }
 
 
+#define PROTOBUF_LEN 384
 
 
-bool lDecodeName(pb_istream_t *stream, const pb_field_t *field, void **arg)
+bool ms3kModeLightNameFunc(pb_istream_t *stream, const pb_field_t *field, void **arg)
 {
-    uint8_t buffer[1024] = {0};
+
+ uint8_t buf[PROTOBUF_LEN] = {0};
+    size_t len = stream->bytes_left;
+
+	printf("ms3kModeLightNameFunc: len: %d", len );
+
+    if (len > sizeof(buf) - 1 || !pb_read(stream, buf, len))
+        return false;
     
-	msSystem.slogln("lDecodeName");
-	msSystem.slogln("lDecodeName x");
-
-    /* We could read block-by-block to avoid the large buffer... */
-    if (stream->bytes_left > sizeof(buffer) - 1)
-        return false;
-    	msSystem.slogln("lDecodeName xx");
-
-    if (!pb_read(stream, buffer, stream->bytes_left))
-        return false;
-    	msSystem.slogln("lDecodeName xxx");
-
-    /* Print the string, in format comparable with protoc --decode.
-     * Format comes from the arg defined in main().
-     */
-    		msSystem.slogln("lDecodeName xxxx");
-
-	printf("lDecodeName xxxxxx");
-	msSystem.slogln("lDecodeName  arg : %s",(char*)*arg);
-    printf((char*)*arg, buffer);
-
-	msSystem.slogln("lDecodeName xxxxxxx");
-
+    printf("ms3kModeLightNameFunc: STRING: %s\n", (char*)buf);
     return true;
+}
+
+
+
+void handleGETProtoBufferBase64(void)
+{
+	// MS3KG lMS3KG = MS3KG_init_zero;
+
+	String response = "{";
+	response += "\"arg\":";
+	response += "\"";
+	response += msGlobals.ms3kPBUF.modes.light.name;
+	response += "\"";
+	response += "}";
+	msSystem.msESPServer.send(200, "text/plain", response);
+
 }
 
 void handlePOSTProtocolBufferBase64(void)
@@ -475,7 +477,6 @@ void handlePOSTProtocolBufferBase64(void)
 		bool decodeStatus;
 		unsigned int decodedDataLen = 0;
 
-#define PROTOBUF_LEN 384
 
 		char decoderInput[PROTOBUF_LEN];
 		uint8_t decoderOutput[PROTOBUF_LEN];
@@ -505,12 +506,10 @@ printf("handlePPBB64: xx\n");
 printf("handlePPBB64: xxx\n");
 
 
-		ms3kGlobalPBuf.modes.light.name.funcs.decode = lDecodeName;
-printf("handlePPBB64: xxxx\n");
 
         /* Now we are ready to decode the message. */
-		decodeStatus = pb_decode(&stream, MS3KG_fields, &ms3kGlobalPBuf); // TODO: !J! ms3kGlobalPBuf??
-printf("handlePPBB64: xxxxx\n");
+		decodeStatus = pb_decode(&stream, MS3KG_fields, &msGlobals.ms3kPBUF); // TODO: !J! msGlobals.ms3kPBUF??
+printf("handlePPBB64: xxxx\n");
 
 		// printf("handlePPBB64: encodedInputStrLen is %d!\n", encodedInputStrLen);
 		printf("handlePPBB64: decodedDataLen is %d!\n", decodedDataLen);
@@ -523,8 +522,12 @@ printf("handlePPBB64: xxxxx\n");
 		}
 
         /* Print the data contained in the message. */
-		printf("handlePPBB64: submode is %d!\n", (int)ms3kGlobalPBuf.modes.light.subMode);
-		// printf("handlePPBB64: submode name is %d!\n", strlen(ms3kGlobalPBuf.modes.light.name));
+		msGlobals.ms3kPBUF.modes.light.name.funcs.decode = ms3kModeLightNameFunc;
+printf("handlePPBB64: xxxxx\n");
+
+		printf("handlePPBB64: submode is %d!\n", (int)msGlobals.ms3kPBUF.modes.light.subMode);
+		// printf("handlePPBB64: submode name is %d!\n", strlen(msGlobals.ms3kPBUF.modes.light.name));
+		printf("handlePPBB64: submode name is %s!\n", msGlobals.ms3kPBUF.modes.light.name);
 
 		msSystem.msESPServer.send(200, "text/plain", "OK");
 
@@ -556,10 +559,6 @@ void handlePOSTAPSettings(void)
 	}
 }
 
-void handleGETprotoBuffer(void)
-{
-
-}
 
 
 void handleGETSysLogHostSettings(void)

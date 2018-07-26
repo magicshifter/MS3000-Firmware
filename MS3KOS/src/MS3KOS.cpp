@@ -42,8 +42,6 @@ extern "C" {
 #include "msGlobals.h"
 MagicShifterGlobals msGlobals;
 
-MS3KG ms3kGlobalPBuf = MS3KG_init_zero;
-
 // the system UI module
 #include "msSystem.h"
 MagicShifterSystem msSystem;

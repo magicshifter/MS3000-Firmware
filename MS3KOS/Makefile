@@ -19,7 +19,7 @@ pio-deps:
 	@echo "NOTE: installing platform dependencies with PlatformIO"
 	pio lib install 222 64 423 35 568 170 567 4271
 
-proto:  ../../MS3000.proto
+proto:  ../../MS3000.proto 
 	echo "NANOPB_DIR = $(NANOPB_DIR)"
 	echo "CFLAGS = $(CFLAGS)"
 	$(PROTOC) $(PROTOC_OPTS) --nanopb_out=src/ --proto_path ../../ ../../MS3000.proto
