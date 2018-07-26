@@ -1221,10 +1221,10 @@ class MagicShifterSystem {
 		slog("/");
 
 		for (int x = 0; x < len; x++) {
-			if (x % 4 == 0)
+			if (x % 8 == 0)
 				slogln("");
 			// slog(":");
-			Serial.print(buf[x], HEX);;
+			Serial.print(buf[x], HEX); Serial.print (" ");
 		}
 		slogln("<<EOF");
 	}

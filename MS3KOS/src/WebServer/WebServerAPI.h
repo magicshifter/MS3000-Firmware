@@ -457,7 +457,7 @@ void handleGETProtoBufferBase64(void)
 	int encoderStatus;
 	uint8_t pbufOutput[256];
 	char base64Output[1024];
-	int base64Status;
+	int base64length;
 
 	msSystem.slogln("handleGETProtoBufferBase64");
 
@@ -469,7 +469,13 @@ void handleGETProtoBufferBase64(void)
 		printf("Encoding failed: %s\n", PB_GET_ERROR(&stream));
 	}
 
-	base64Status = base64_encode(base64Output, (char *)pbufOutput, stream.bytes_written);
+	msSystem.hexDump(stream.bytes_written, pbufOutput, "bufOutput::");
+
+	base64length = base64_encode(base64Output, (char *)pbufOutput, stream.bytes_written);
+
+printf("base64length: %d\n", base64length);
+printf("encoderStatus: %d\n", encoderStatus);
+printf("stream.bytes_written: %d\n", stream.bytes_written);
 
 	String response = "";
 
