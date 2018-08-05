@@ -5,3 +5,7 @@
  * cd to this directory
  * `platformio run` ( compile/dry run )
  * `platformio run --target upload` (upload to MS, hold ButtonA while flashing)
+
+## Dependencies
+ * remember to read the Makefile
+ * `make pio-deps` can get you started...
