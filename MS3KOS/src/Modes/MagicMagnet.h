@@ -9,7 +9,7 @@ class MagicMagnetMode:public MagicShifterBaseMode {
 
   private:
 	int frame = 0;
-	int lMode = 0;
+	int lMode = 1;
 
 #ifdef CONFIG_ENABLE_OSC
 	// local OSC message
