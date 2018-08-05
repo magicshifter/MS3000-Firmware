@@ -81,6 +81,7 @@ class MagicLightMode : public MagicShifterBaseMode {
 
 		magicLightSubModeSelector();
 
+		// rainbow
 		if (lMode == 0) {
 			if (frame % pDelay == 0) {
 				msSystem.msLEDs.fillLEDs(0, 0, 0, msGlobals.ggBrightness);
@@ -107,6 +108,8 @@ class MagicLightMode : public MagicShifterBaseMode {
 				}
 			}
 		}
+
+		// normal
 		if (lMode == 1) {
 			int r=0,g=0,b=0;
 			int ii = colorIdx+1;
@@ -122,6 +125,8 @@ class MagicLightMode : public MagicShifterBaseMode {
 				colorIdx = (colorIdx + 1) % 7;
 			}
 		}
+
+		// scanner 
 		if (lMode >= 2) {
 			int start, end;
 			if (dir)

@@ -15,7 +15,7 @@
 BouncingBallMode msModeBouncingBall(600);
 
 class MagicShakeMode:public MagicShifterBaseMode {
-  private:
+private:
 	// The direction through the filelist which the user is scrolling (-ve/+ve)
 	int dirCursor = 0;
 
@@ -29,14 +29,18 @@ class MagicShakeMode:public MagicShifterBaseMode {
 	int numFiles = 0;
 	bool correctBrightness = false;
 
-  public:
+public:
 
-	 MagicShakeMode() {
-	 	modeName = "Image";
+	MagicShakeMode() {
+		modeName = "Image";
 	}
 	// Get a file from the list of onboard files, filtering only .magicBitmap files// fileIndex: the idx of the file in the list// maxFiles: returns the length of the list// return: filename when found, empty string when not found
 
-		String getFileNameAtIndex(int fileIndex, int &maxFiles) {
+	void emit () {
+		
+	}
+
+	String getFileNameAtIndex(int fileIndex, int &maxFiles) {
 		Dir POVDir;
 		msSystem.slog("getFileNameAtIndex:");
 		msSystem.slogln(String(fileIndex));
@@ -185,8 +189,8 @@ class MagicShakeMode:public MagicShifterBaseMode {
 			float fX = msGlobals.ggAccel[XAXIS];
 			float fY = msGlobals.ggAccel[YAXIS];
 			msModeBouncingBall.
-				applyForce((msGlobals.ggCurrentMicros -
-							msGlobals.ggLastMicros) / 1000.0, fX * 3);
+			applyForce((msGlobals.ggCurrentMicros -
+				msGlobals.ggLastMicros) / 1000.0, fX * 3);
 
 			msModeBouncingBall.simpleBouncingBall();
 

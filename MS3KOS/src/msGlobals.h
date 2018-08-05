@@ -4,6 +4,8 @@
 #include "msTypes.h"
 // #include "StackClass.h"
 
+#include "MS3000.pb.h"
+
 void l_safeStrncpy(char *dest, const char *source, int n)
 {
 	strncpy(dest, source, n);

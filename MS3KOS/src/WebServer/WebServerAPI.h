@@ -1,6 +1,9 @@
 #ifndef _WEBSERVERAPI_H
 #define _WEBSERVERAPI_H
 
+#include <pb.h>
+#include <pb_decode.h>
+
 const char b64_alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" "abcdefghijklmnopqrstuvwxyz" "0123456789+/";
 
 /* 'Private' declarations */
@@ -223,6 +226,45 @@ void handleGETStatus(void)
 	msSystem.msESPServer.send(200, "text/plain", response);
 }
 
+
+/**
+ms3000.info
+ms3000.about
+ms3000.status
+ms3000.config.ap.info //our ssid and pwd
+ms3000.config.ap.current
+ms3000.config.ap.list
+ms3000.config.ap.preferred
+ms3000.config.ap.server.name
+ms3000.config.syslog // host, port ?
+ms3000.config.mode
+ms3000.mode.rainbow.speed
+ms3000.mode.brightlight.color
+ms3000.mode.sensi.sensitivity
+ms3000.mode.magicpov.image.name
+ms3000.mode.magicpov.image.rawRGB
+ms3000.mode.magicpov.image.brightness
+ms3000.mode.arpi.mode
+ms3000.mode.arpi.midi.channel.out
+ms3000.mode.arpi.midi.channel.in
+ms3000.mode.arpi.midi.channel.keys
+ms3000.mode.arpi.midi.channel.out
+ms3000.mode.lightning.submode
+ms3000.mode.lightning.mode.description
+ms3000.mode.lightning.color
+
+
+e.g.
+
+int arpi_mode = _storage.GetInt("ms3000.mode.arpi.submode")
+int lightning_submode = _storage.GetInt("ms3000.mode.lightning.submode")
+RGBType lightning_color_ = _storage.GetColor("ms3000.mode.lightning.color")
+
+_storage.PutInt("ms3000.mode.arpi.submode", 2);
+_storage.PutInt("ms3000.mode.lightning.submode", 5);
+
+**/
+
 bool parseAPInfoFromServerArgs(APAuth & apInfo)
 {
 	bool success = true;
@@ -386,6 +428,67 @@ void handleGETAPSettings(void)
 	msSystem.msESPServer.send(200, "text/plain", response);
 }
 
+
+
+#define PROTOBUF_LEN 512
+
+void handlePOSTProtocolBufferBase64(void)
+{
+	msSystem.slogln("handlePOSTProtocolBufferBase64");
+
+	if (msSystem.msESPServer.args() == 0) {
+		msSystem.msESPServer.send(500, "text/plain", "argument missing!");
+	}
+	else
+	if (msSystem.msESPServer.args() >= 1) {
+		char inputPBufString[PROTOBUF_LEN];
+		char  const *inputPBuf = msSystem.msESPServer.arg(0).c_str();
+		unsigned int inputPBufLen = (int) msSystem.msESPServer.arg(0).length();
+
+		l_safeStrncpy(inputPBufString, msSystem.msESPServer.arg(0).c_str(), PROTOBUF_LEN);
+
+		unsigned int decodedDataLen = 0;
+		uint8_t decodeBuffer[PROTOBUF_LEN];
+		bool decodeStatus;
+
+		printf("the inputPBuf is %s!\n", inputPBuf);
+		printf("the inputPBufString is %s!\n", inputPBufString);
+		printf("the inputPBuf (2) is %s!\n", msSystem.msESPServer.arg(0).c_str());
+		printf("the arg name is %s!\n",  msSystem.msESPServer.argName(0).c_str());
+
+		if (inputPBufLen > sizeof(decodeBuffer))
+			inputPBufLen = sizeof(decodeBuffer);
+
+		decodedDataLen = base64_decode((char *) decodeBuffer, inputPBufString, inputPBufLen);
+
+        /* Create a stream that reads from the decodeBuffer. */
+		pb_istream_t stream = pb_istream_from_buffer(decodeBuffer, decodedDataLen);
+
+        /* Now we are ready to decode the message. */
+		decodeStatus = pb_decode(&stream, MS3KG_fields, &ms3kGlobalPBuf); // TODO: !J! ms3kGlobalPBuf??
+
+		printf("the inputPBufLen is %d!\n", inputPBufLen);
+		printf("the decodedDataLen is %d!\n", decodedDataLen);
+
+        /* Check for errors... */
+		if (!decodeStatus)
+		{
+			printf("Decoding failed: %s\n", PB_GET_ERROR(&stream));
+		}
+
+        /* Print the data contained in the message. */
+		printf("the submode is %d!\n", (int)ms3kGlobalPBuf.modes.light.subMode);
+		// printf("the submode name is %s!\n", ms3kGlobalPBuf.modes.light.name);
+
+		msSystem.msESPServer.send(200, "text/plain", "OK");
+
+	} else {
+		msSystem.msESPServer.send(500, "text/plain", "unknown args!");
+	} 
+}
+
+
+
 void handlePOSTAPSettings(void)
 {
 	msSystem.slogln("handlePOSTAPSettings");
@@ -475,7 +578,7 @@ void handlePOSTPreferredAPSettings(void)
 		msSystem.Settings.getPreferredAP(&apInfo);
 
 		if (parseAPInfoFromServerArgs(apInfo)) {
-			msSystem.slogln("saving setAPConfig");
+			msSystem.slogln("saving setPreferredAP");
 			msSystem.Settings.setPreferredAP(&apInfo);
 			msSystem.msESPServer.send(200, "text/plain", "OK");
 		} else {
