@@ -461,6 +461,7 @@ void handleGETProtoBufferBase64(void)
 
 	msSystem.slogln("handleGETProtoBufferBase64");
 
+	msGlobals.ms3kPBUF.modes.light.color.R = 0x3F;
 	l_safeStrncpy(msGlobals.ms3kPBUF.modes.current, "dead", sizeof(msGlobals.ms3kPBUF.modes.current));
 
 	pb_ostream_t stream = pb_ostream_from_buffer(pbufOutput, sizeof(pbufOutput));
