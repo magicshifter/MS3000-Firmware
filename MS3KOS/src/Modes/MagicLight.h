@@ -9,7 +9,7 @@ class MagicLightMode : public MagicShifterBaseMode {
 
   private:
 	int frame = 0;
-	int lMode = 0;
+	int subMode = 0;
 	int xx = 0;
 	int pDelay = 230;
 
@@ -30,8 +30,8 @@ class MagicLightMode : public MagicShifterBaseMode {
 
 	// depending on button-presses, let the user select
 	// sub-mode options
-    bool magicLightSubModeSelector() {
-		int oldlMode = lMode;
+    bool magicsubModeSelector() {
+		int oldsubMode = subMode;
 		if (firstRun)
 			firstRun = false;
 		else
@@ -43,21 +43,21 @@ class MagicLightMode : public MagicShifterBaseMode {
 		}
 
 		if (msSystem.msButtons.msBtnAHit) {
-			lMode--;
+			subMode--;
 			msSystem.msButtons.msBtnAHit = false;
 		}
 		if (msSystem.msButtons.msBtnBHit) {
-			lMode++;
+			subMode++;
 			msSystem.msButtons.msBtnBHit = false;
 		}
-		if (lMode < 0)
-			lMode = 3;
-		if (lMode > 3)
-			lMode = 0;
+		if (subMode < 0)
+			subMode = 3;
+		if (subMode > 3)
+			subMode = 0;
 
-		if (lMode != oldlMode) {
-			msSystem.slog("lMode: ");
-			msSystem.slogln(String(lMode));
+		if (subMode != oldsubMode) {
+			msSystem.slog("subMode: ");
+			msSystem.slogln(String(subMode));
 			msSystem.msLEDs.fillLEDs(255, 255, 255, msGlobals.ggBrightness);
 			msSystem.msLEDs.updateLEDs();
 			delay(10);
@@ -79,10 +79,10 @@ class MagicLightMode : public MagicShifterBaseMode {
 		frame++;
 		firstRun = true;
 
-		magicLightSubModeSelector();
+		magicsubModeSelector();
 
 		// rainbow
-		if (lMode == 0) {
+		if (subMode == 0) {
 			if (frame % pDelay == 0) {
 				msSystem.msLEDs.fillLEDs(0, 0, 0, msGlobals.ggBrightness);
 				msSystem.msLEDs.setLED((xx + 0 * 3) & 0xF, 255, 0, 0, msGlobals.ggBrightness);
@@ -110,7 +110,7 @@ class MagicLightMode : public MagicShifterBaseMode {
 		}
 
 		// normal
-		if (lMode == 1) {
+		if (subMode == 1) {
 			int r=0,g=0,b=0;
 			int ii = colorIdx+1;
 			if (ii & 1) r = 255;
@@ -127,7 +127,7 @@ class MagicLightMode : public MagicShifterBaseMode {
 		}
 
 		// scanner 
-		if (lMode >= 2) {
+		if (subMode >= 2) {
 			int start, end;
 			if (dir)
 			{
@@ -143,13 +143,13 @@ class MagicLightMode : public MagicShifterBaseMode {
 			if (centerAction > 0) {
 				centerAction--;
 	
-				if (lMode == 2)
+				if (subMode == 2)
 				{
 					for (int index = 0; index < 3; index++) {
 						startToEndChannel(start, end, d, lookup[lookupindex][index], 255);
 					}
 				}
-				else if (lMode == 3)
+				else if (subMode == 3)
 				{
 					startToEndZigZag(start, end, 1, 255, 255, 255);
 				}
@@ -176,7 +176,7 @@ class MagicLightMode : public MagicShifterBaseMode {
 
 		i = start;
 		do {
-			if (magicLightSubModeSelector()) {
+			if (magicsubModeSelector()) {
 				return;
 			}
 
@@ -211,7 +211,7 @@ class MagicLightMode : public MagicShifterBaseMode {
 		{
 			i = currentStart;
 			do {
-				if (magicLightSubModeSelector()) {
+				if (magicsubModeSelector()) {
 					return;
 				}
 
