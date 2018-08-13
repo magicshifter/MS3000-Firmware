@@ -529,6 +529,13 @@ class MagicShifterSystem {
 		slogln(String(header.animationDelay));
 	}
 
+
+	void syncGlobalPBuf () {
+		l_safeStrncpy(msGlobals.protocolBuffer.modes.current, "dead", sizeof(msGlobals.protocolBuffer.modes.current));
+slog("set modes.current to :" );
+slogln(msGlobals.protocolBuffer.modes.current);
+	}
+
 	void slogSysInfo() {
 		slogln("System config:");
 		slog("Vcc: ");
