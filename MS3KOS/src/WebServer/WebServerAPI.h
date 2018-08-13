@@ -461,6 +461,7 @@ void handleGETProtoBufferBase64(void)
 
 	msSystem.slogln("handleGETProtoBufferBase64");
 
+
 	pb_ostream_t stream = pb_ostream_from_buffer(pbufOutput, sizeof(pbufOutput));
 	encoderStatus = pb_encode(&stream, MS3KG_fields, &msGlobals.protocolBuffer);
 
@@ -476,6 +477,7 @@ void handleGETProtoBufferBase64(void)
 printf("base64length: %d\n", base64length);
 printf("encoderStatus: %d\n", encoderStatus);
 printf("stream.bytes_written: %d\n", stream.bytes_written);
+printf("base64Output is %s\n", base64Output);
 
 	String response = "";
 
@@ -504,35 +506,27 @@ void handlePOSTProtocolBufferBase64(void)
 		char decoderInput[PROTOBUF_LEN];
 		uint8_t decoderOutput[PROTOBUF_LEN];
 
-//void l_safeStrncpy(char *dest, const char *source, int n)
 
 		l_safeStrncpy(decoderInput,  msSystem.msESPServer.arg(0).c_str(), PROTOBUF_LEN);
 
 
 		printf("handlePPBB64: arg name is %s!\n",  msSystem.msESPServer.argName(0).c_str());
 		// printf("handlePPBB64: encodedInputStr is %s!\n", encodedInputStr);
-		printf("handlePPBB64: encodedInputStr (2) is %s!\n", msSystem.msESPServer.arg(0).c_str());
-		printf("handlePPBB64: decoderInput is %s!\n", decoderInput);
-
-
+		printf("handlePPBB64: encodedInputStr (2) is %s\n", msSystem.msESPServer.arg(0).c_str());
+		printf("handlePPBB64: decoderInput is %s\n", decoderInput);
 
 		unsigned int encodedInputStrLen = (int) msSystem.msESPServer.arg(0).length();
 		// encodedInputStrLen = strlen(decoderInput);
 		if (encodedInputStrLen >  sizeof(decoderOutput))
 			encodedInputStrLen = sizeof(decoderOutput);
 
-printf("handlePPBB64: xx\n");
 		decodedDataLen = base64_decode((char *)decoderOutput, decoderInput, encodedInputStrLen);
 
         /* Create a stream that reads from the decoderOutput. */
 		pb_istream_t stream = pb_istream_from_buffer(decoderOutput, decodedDataLen);
-printf("handlePPBB64: xxx\n");
-
-
 
         /* Now we are ready to decode the message. */
 		decodeStatus = pb_decode(&stream, MS3KG_fields, &msGlobals.protocolBuffer); // TODO: !J! msGlobals.protocolBuffer??
-printf("handlePPBB64: xxxx\n");
 
 		// printf("handlePPBB64: encodedInputStrLen is %d!\n", encodedInputStrLen);
 		printf("handlePPBB64: decodedDataLen is %d!\n", decodedDataLen);
@@ -546,7 +540,6 @@ printf("handlePPBB64: xxxx\n");
 
         /* Print the data contained in the message. */
 		// msGlobals.protocolBuffer.modes.light.name.funcs.decode = ms3kModeLightNameFunc;
-printf("handlePPBB64: xxxxx\n");
 
 		printf("handlePPBB64: submode is %d!\n", (int)msGlobals.protocolBuffer.modes.light.subMode);
 		// printf("handlePPBB64: submode name is %d!\n", strlen(msGlobals.protocolBuffer.modes.light.name));
