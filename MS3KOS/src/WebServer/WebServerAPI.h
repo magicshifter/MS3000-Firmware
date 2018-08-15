@@ -461,6 +461,8 @@ void handleGETProtoBufferBase64(void)
 
 	msSystem.slogln("handleGETProtoBufferBase64");
 
+	msGlobals.protocolBuffer.modes.currentMode = (MS3KG_Modes_ModeTypes)msGlobals.ggCurrentMode;
+
 
 	pb_ostream_t stream = pb_ostream_from_buffer(pbufOutput, sizeof(pbufOutput));
 	encoderStatus = pb_encode(&stream, MS3KG_fields, &msGlobals.protocolBuffer);
@@ -537,6 +539,8 @@ void handlePOSTProtocolBufferBase64(void)
 		{
 			printf("Decoding failed: %s\n", PB_GET_ERROR(&stream));
 		}
+
+		msGlobals.ggCurrentMode = (MS3KG_Modes_ModeTypes)msGlobals.protocolBuffer.modes.currentMode;
 
         /* Print the data contained in the message. */
 		// msGlobals.protocolBuffer.modes.light.name.funcs.decode = ms3kModeLightNameFunc;

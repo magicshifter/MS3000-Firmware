@@ -3,6 +3,7 @@
 //
 
 #include "WebServerAPI.h"
+#include "ModesInterface.h"
 #include "WebServerAutoConnect.h"
 #include "WebServerFiles.h"
 
@@ -56,8 +57,16 @@ class MagicShifterWebServer {
 								handlePOSTAPSettings);
 
 
+
+
 		msSystem.msESPServer.on("/protobuf", HTTP_POST, handlePOSTProtocolBufferBase64);
 		msSystem.msESPServer.on("/protobuf", HTTP_GET, handleGETProtoBufferBase64);
+
+		msSystem.msESPServer.on("/interfaces/modes", HTTP_GET, handleGETInterfacesModes);
+
+
+
+
 
 
 		msSystem.msESPServer.on("/settings/syslog", HTTP_GET,
