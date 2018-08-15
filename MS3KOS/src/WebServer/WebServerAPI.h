@@ -543,13 +543,13 @@ void handlePOSTProtocolBufferBase64(void)
 
 		printf("handlePPBB64: submode is %d!\n", (int)msGlobals.protocolBuffer.modes.light.subMode);
 		// printf("handlePPBB64: submode name is %d!\n", strlen(msGlobals.protocolBuffer.modes.light.name));
-		printf("handlePPBB64: networkName is %s!\n", msGlobals.protocolBuffer.networkName);
+		//printf("handlePPBB64: networkName is %s!\n", msGlobals.protocolBuffer.networkName);
 		printf("handlePPBB64: beatMode is %d!\n", msGlobals.protocolBuffer.modes.beat.beatMode);
 		printf("handlePPBB64: sensitivity is %d!\n", msGlobals.protocolBuffer.modes.beat.sensitivity);
 		printf("handlePPBB64: R is %d!\n", msGlobals.protocolBuffer.modes.light.color.R);
 		printf("handlePPBB64: G is %d!\n", msGlobals.protocolBuffer.modes.light.color.G);
 		printf("handlePPBB64: B is %d!\n", msGlobals.protocolBuffer.modes.light.color.B);
-		printf("handlePPBB64: networkName is %s!\n", msGlobals.protocolBuffer.networkName);
+		//printf("handlePPBB64: networkName is %s!\n", msGlobals.protocolBuffer.networkName);
 
 		msSystem.msESPServer.send(200, "text/plain", "OK");
 

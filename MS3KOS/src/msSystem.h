@@ -531,9 +531,9 @@ class MagicShifterSystem {
 
 
 	void syncGlobalPBuf () {
-		l_safeStrncpy(msGlobals.protocolBuffer.modes.current, "dead", sizeof(msGlobals.protocolBuffer.modes.current));
-slog("set modes.current to :" );
-slogln(msGlobals.protocolBuffer.modes.current);
+		//l_safeStrncpy(msGlobals.protocolBuffer.modes.current, "dead", sizeof(msGlobals.protocolBuffer.modes.current));
+//slog("set modes.current to :" );
+//slogln(msGlobals.protocolBuffer.modes.current);
 	}
 
 	void slogSysInfo() {
