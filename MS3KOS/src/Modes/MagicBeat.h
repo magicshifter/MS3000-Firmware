@@ -67,8 +67,14 @@ public:
 
 			xPos *= 1024 >> sensitivity;
 
-renderMode = msGlobals.protocolBuffer.modes.beat.beatMode;
-sensitivity = msGlobals.protocolBuffer.modes.beat.sensitivity;
+		renderMode = msGlobals.protocolBuffer.modes.beat.beatMode;
+		sensitivity = msGlobals.protocolBuffer.modes.beat.sensitivity;
+
+		r = msGlobals.protocolBuffer.modes.beat.color.R;
+        g = msGlobals.protocolBuffer.modes.beat.color.G;
+        b = msGlobals.protocolBuffer.modes.beat.color.B;
+
+
 		printf("magicBeat: beatMode is %d!\n", msGlobals.protocolBuffer.modes.beat.beatMode);
 		printf("magicBeat: sensitivity is %d!\n", msGlobals.protocolBuffer.modes.beat.sensitivity);
 

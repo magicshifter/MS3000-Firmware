@@ -540,7 +540,8 @@ void handlePOSTProtocolBufferBase64(void)
 			printf("Decoding failed: %s\n", PB_GET_ERROR(&stream));
 		}
 
-		msGlobals.ggCurrentMode = (MS3KG_Modes_ModeTypes)msGlobals.protocolBuffer.modes.currentMode;
+		//msGlobals.ggCurrentMode = msGlobals.protocolBuffer.modes.currentMode;
+		msSystem.setMode(msGlobals.protocolBuffer.modes.currentMode);
 
         /* Print the data contained in the message. */
 		// msGlobals.protocolBuffer.modes.light.name.funcs.decode = ms3kModeLightNameFunc;
