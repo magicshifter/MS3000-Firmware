@@ -62,6 +62,9 @@ class MagicShifterWebServer {
 		msSystem.msESPServer.on("/protobuf", HTTP_POST, handlePOSTProtocolBufferBase64);
 		msSystem.msESPServer.on("/protobuf", HTTP_GET, handleGETProtoBufferBase64);
 
+        msSystem.msESPServer.on("/json/files", HTTP_GET, handleFileListJson);
+
+
 		msSystem.msESPServer.on("/interfaces/modes", HTTP_GET, handleGETInterfacesModes);
 
 

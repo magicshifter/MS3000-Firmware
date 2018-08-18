@@ -274,6 +274,8 @@ class MagicShifterImage:public MagicShifterImageAbstr {
 	int getWidth() {
 		return width;
 	}
+
+	// TODO: add cycling through frames herer
 	void getFrameData(int frameIdx, byte * frameDest) {
 		PlotBitmapColumn(&_bitmap, 0, frameIdx, 0, frameDest);
 	};
