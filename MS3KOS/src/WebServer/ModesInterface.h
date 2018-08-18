@@ -25,7 +25,7 @@ void handleFileListJson()
     Dir dir = SPIFFS.openDir((char *) path.c_str());
     path = String();
 
-    String output = "{path:'" + path + "', files:[";
+    String output = "{\"path\":\"" + path + "\", \"files\":[";
 
     bool first = 1;
     while (true) {
@@ -42,9 +42,10 @@ void handleFileListJson()
         Serial.println(f.size());
         int size = f.size();
         f.close();
-        output += "{name:'"+ name + "',size:" + size + "}";
+        output += "{\"name\":\""+ name + "\",\"size\":" + size + "}";
     }
 
     output += "]}";
+    msSystem.msESPServer.sendHeader("Access-Control-Allow-Origin", "*");
     msSystem.msESPServer.send(200, "text/json", output);
 }
