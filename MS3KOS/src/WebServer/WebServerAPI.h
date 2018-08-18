@@ -494,6 +494,8 @@ void handlePOSTProtocolBufferBase64(void)
 {
 	msSystem.slogln("handlePOSTProtocolBufferBase64");
 
+    msSystem.msESPServer.sendHeader("Access-Control-Allow-Origin", "*");
+
 	if (msSystem.msESPServer.args() == 0) {
 		msSystem.msESPServer.send(500, "text/plain", "argument missing!");
 	}
