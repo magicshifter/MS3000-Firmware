@@ -36,6 +36,7 @@ static String getContentType(String filename)
 
 static bool streamFile(String path)
 {
+	msSystem.msESPServer.sendHeader("Access-Control-Allow-Origin", "*");
 
 	if (path.endsWith("/")) {
 		path += "index.htm";
