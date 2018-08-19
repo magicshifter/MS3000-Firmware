@@ -386,6 +386,10 @@ void handleFileUpload()
 
 		msSystem.slogln("Upload: END, Size: ");
 		msSystem.slogln(String(upload.totalSize));
+
+
+		msSystem.msESPServer.sendHeader("Access-Control-Allow-Origin", "*");
+		//msSystem.msESPServer.send(200, "text/json", "\"success\"");
 	}
 }
 
