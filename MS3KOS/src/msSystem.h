@@ -659,7 +659,8 @@ class MagicShifterSystem {
 	// sets the current shifter Mode .. 
 	void setMode(int newMode)
 	{
-		if (newMode < msGlobals.ggModeList.size()) {
+		if (newMode < msGlobals.ggModeList.size() && 
+			(newMode != msGlobals.ggCurrentMode)) {
 			
 			msGlobals.ggModeList[msGlobals.ggCurrentMode]->stop();
 			msGlobals.ggCurrentMode = newMode;
