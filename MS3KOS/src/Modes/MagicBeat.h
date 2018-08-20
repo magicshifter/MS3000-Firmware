@@ -7,6 +7,7 @@ private:
 
 	MS3000GlobalPBuffer_Modes_Beat *_beat = &msGlobals.pbuf.modes.beat;
 
+
 	const MS3000GlobalPBuffer_Modes_Beat_BeatMode beatModeSIDE = MS3000GlobalPBuffer_Modes_Beat_BeatMode_SIDE;
 	const MS3000GlobalPBuffer_Modes_Beat_BeatMode beatModeCENTER = MS3000GlobalPBuffer_Modes_Beat_BeatMode_CENTER;
 
@@ -14,12 +15,20 @@ public:
 	MagicBeatMode() {
 		modeName = "Beat";
 		_beat = &msGlobals.pbuf.modes.beat;
+
 		_beat->color.B = 255;
+		
 		_beat->sensitivity = 1;
 		_beat->beatMode = beatModeCENTER;
+
+		msGlobals.pbuf.has_modes = 1;
+		msGlobals.pbuf.modes.has_beat = 1;
+		_beat->has_color = 1;
 	}
 
 	virtual void start() {
+
+
 	}
 
 	virtual void stop(void) {
@@ -37,18 +46,18 @@ public:
 
 		xPos *= 1024 >> _beat->sensitivity;
 
-		printf( " beatMode: %d" \
-				" sensitivity: %d" \
-				" colorIndex: %d" \ 
-				" R: %d " \
-				" G: %d " \
-				" B: %d \n",
-					_beat->beatMode,
-					_beat->sensitivity,
-					colorIndex,
-					_beat->color.R,
-					_beat->color.G,
-					_beat->color.B);
+		// printf( " beatMode: %d" \
+		// 		" sensitivity: %d" \
+		// 		" colorIndex: %d" \ 
+		// 		" R: %d " \
+		// 		" G: %d " \
+		// 		" B: %d \n",
+		// 			_beat->beatMode,
+		// 			_beat->sensitivity,
+		// 			colorIndex,
+		// 			_beat->color.R,
+		// 			_beat->color.G,
+		// 			_beat->color.B);
 
 
 		if (_beat->beatMode == beatModeSIDE) {
