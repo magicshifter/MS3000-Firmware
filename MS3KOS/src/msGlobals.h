@@ -64,7 +64,7 @@ class MagicShifterGlobals {
 		NOT_OK = 3
 	};
 
-	MS3KG protocolBuffer = MS3KG_init_default;
+	MS3000GlobalPBuffer pbuf = MS3000GlobalPBuffer_init_default;
 
 };
 
