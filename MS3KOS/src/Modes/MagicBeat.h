@@ -13,12 +13,13 @@ private:
 public:
 	MagicBeatMode() {
 		modeName = "Beat";
+		_beat = &msGlobals.pbuf.modes.beat;
+		_beat->color.B = 255;
+		_beat->sensitivity = 1;
+		_beat->beatMode = beatModeCENTER;
 	}
 
 	virtual void start() {
-		// _beat = &msGlobals.pbuf.modes.beat;
-		// _beat->sensitivity = 3;
-		// _beat->beatMode = beatModeCENTER;
 	}
 
 	virtual void stop(void) {
@@ -29,8 +30,6 @@ public:
 
 	virtual bool step(void) {
 		float xPos;
-
-		_beat = &msGlobals.pbuf.modes.beat;
 
 		avgZ = avgZ * (1 - avgF) + avgF * msGlobals.ggAccel[axis];
 
