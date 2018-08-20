@@ -5,18 +5,10 @@ private:
 	float avgZ = 0;
 	int colorIndex = 1;
 
-	
-	int32 *sensitivity = &msGlobals.pbuf.modes.beat.sensitivity;
-	
-	int *R = &msGlobals.pbuf.modes.beat.color.R;
-	int *G = &msGlobals.pbuf.modes.beat.color.G;
-	int *B = &msGlobals.pbuf.modes.beat.color.B;
-
-	MS3000GlobalPBuffer_Modes_Beat_BeatMode *beatMode = &msGlobals.pbuf.modes.beat.beatMode;
+	MS3000GlobalPBuffer_Modes_Beat _beat;
 
 	const MS3000GlobalPBuffer_Modes_Beat_BeatMode beatModeSIDE = MS3000GlobalPBuffer_Modes_Beat_BeatMode_SIDE;
 	const MS3000GlobalPBuffer_Modes_Beat_BeatMode beatModeCENTER = MS3000GlobalPBuffer_Modes_Beat_BeatMode_CENTER;
-
 
 public:
 	MagicBeatMode() {
@@ -24,8 +16,9 @@ public:
 	}
 
 	virtual void start() {
-		*sensitivity = 3;
-		*beatMode = beatModeCENTER;
+
+		_beat.sensitivity = 3;
+		_beat.beatMode = beatModeCENTER;
 	}
 
 	virtual void stop(void) {
@@ -37,22 +30,33 @@ public:
 	void slog_sensitivity()
 	{
 		msSystem.slog("sensitivity:");
-		msSystem.slogln(String(*sensitivity));
+		msSystem.slogln(String(_beat.sensitivity));
 	}
 
 	virtual bool step(void) {
 		float xPos;
 
+		_beat = msGlobals.pbuf.modes.beat;
+
 		avgZ = avgZ * (1 - avgF) + avgF * msGlobals.ggAccel[axis];
 
 		xPos = (msGlobals.ggAccel[axis] - avgZ);
 
-		xPos *= 1024 >> *sensitivity;
+		xPos *= 1024 >> _beat.sensitivity;
 
-		printf("magicBeat: beatMode is %d!\n", *beatMode);
-		printf("magicBeat: sensitivity is %d!\n", *sensitivity);
+		printf("magicBeat: beatMode: %d" \
+				" sensitivity: %d" \ 
+				" R: %d " \
+				" G: %d " \
+				" B: %d \n",
+					_beat.beatMode,
+					_beat.sensitivity,
+					_beat.color.R,
+					_beat.color.G,
+					_beat.color.B);
 
-		if (*beatMode == beatModeSIDE) {
+
+		if (_beat.beatMode == beatModeSIDE) {
 			if (xPos < 0)
 				xPos = -xPos;
 
@@ -60,32 +64,40 @@ public:
 			if (xPos > MAX_LEDS)
 				xPos = MAX_LEDS;
 		}
-		else if (*beatMode == beatModeCENTER) {
+		else if (_beat.beatMode == beatModeCENTER) {
 			xPos += 7.5;
 		}
 
 		msSystem.msLEDs.fillLEDs(0, 0, 0, msGlobals.ggBrightness);
 
-
-		if (*beatMode == beatModeSIDE) {
+		if (_beat.beatMode == beatModeSIDE) {
 			for (int i = 0; i < xPos; i++)
-				msSystem.msLEDs.setLED((MAX_LEDS-1) - i, *R, *G, *B, msGlobals.ggBrightness);
+				msSystem.msLEDs.setLED((MAX_LEDS-1) - i, 
+					_beat.color.R, 
+					_beat.color.G, 
+					_beat.color.B, 
+					msGlobals.ggBrightness);
 		}
-		else if (*beatMode == beatModeCENTER) {
+		else if (_beat.beatMode == beatModeCENTER) {
 			int xPosInt = (int)(xPos);
 			float xPosRem = 1 - (xPos - xPosInt);			
 			
-				// first go one way 
 			if (xPosInt >= 0 && xPosInt < MAX_LEDS) {
-				msSystem.msLEDs.setLED(xPosInt, (int)(*R * xPosRem), (int)(*G * xPosRem), (int)(*B * xPosRem), msGlobals.ggBrightness);
+				msSystem.msLEDs.setLED(xPosInt, 
+					(int)(_beat.color.R * xPosRem), 
+					(int)(_beat.color.G * xPosRem), 
+					(int)(_beat.color.B * xPosRem), 
+					msGlobals.ggBrightness);
 			}
 
-				// render the other direction
 			xPosInt++;
 			xPosRem = 1 - xPosRem;
 			if (xPosInt >= 0 && xPosInt < MAX_LEDS) {
 				msSystem.msLEDs.setLED(xPosInt, 
-					(int)(*R * xPosRem), (int)(*G * xPosRem), (int)(*B * xPosRem), msGlobals.ggBrightness);
+					(int)(_beat.color.R * xPosRem), 
+					(int)(_beat.color.G * xPosRem), 
+					(int)(_beat.color.B * xPosRem), 
+					msGlobals.ggBrightness);
 			}
 		}
 
@@ -93,12 +105,12 @@ public:
 		msSystem.msLEDs.updateLEDs();
 		
 		if ((msSystem.msButtons.msBtnALongHit) || (msSystem.msButtons.msBtnBLongHit)) {
-			if (*beatMode == beatModeCENTER) {
-				*beatMode = beatModeSIDE;
+			if (_beat.beatMode == beatModeCENTER) {
+				_beat.beatMode = beatModeSIDE;
 			}
 			else
-				if (*beatMode == beatModeSIDE) {
-					*beatMode = beatModeCENTER;
+				if (_beat.beatMode == beatModeSIDE) {
+					_beat.beatMode = beatModeCENTER;
 				}
 
 				msSystem.msButtons.msBtnALongHit = false;
@@ -108,14 +120,14 @@ public:
 
 			if (msSystem.msButtons.msBtnAHit)
 			{
-				*sensitivity = (*sensitivity + 1) % 6;
+				_beat.sensitivity = (_beat.sensitivity + 1) % 6;
 				msSystem.msButtons.msBtnAHit = false;
 				slog_sensitivity();
 			}
 
 			if (msSystem.msButtons.msBtnBHit)
 			{
-				*sensitivity = (*sensitivity + 5) % 6;
+				_beat.sensitivity = (_beat.sensitivity + 5) % 6;
 				msSystem.msButtons.msBtnBHit = false;
 				slog_sensitivity();
 			}
@@ -123,9 +135,9 @@ public:
 			if (msSystem.msButtons.msBtnPwrHit) {
 				colorIndex++;
 				if (colorIndex > 7) colorIndex = 1;
-				msGlobals.pbuf.modes.beat.color.R = (colorIndex & 1) ? 255 : 0;
-				msGlobals.pbuf.modes.beat.color.G = (colorIndex & 2) ? 255 : 0;
-				msGlobals.pbuf.modes.beat.color.B = (colorIndex & 4) ? 255 : 0;
+				_beat.color.R = (colorIndex & 1) ? 255 : 0;
+				_beat.color.G = (colorIndex & 2) ? 255 : 0;
+				_beat.color.B = (colorIndex & 4) ? 255 : 0;
 				msSystem.msButtons.msBtnPwrHit = false;
 			}
 
