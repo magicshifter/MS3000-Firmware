@@ -452,8 +452,6 @@ bool ms3kModeLightNameFunc(pb_istream_t *stream, const pb_field_t *field, void *
 
 void handleGETProtoBufferBase64(void)
 {
-	// MS3KG lMS3KG = MS3000GlobalPBuffer_init_zero;
-
 	int encoderStatus;
 	uint8_t pbufOutput[256];
 	char base64Output[1024];
