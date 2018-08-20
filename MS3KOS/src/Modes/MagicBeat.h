@@ -22,8 +22,11 @@ public:
 		_beat->beatMode = beatModeCENTER;
 
 		msGlobals.pbuf.has_modes = 1;
+        msGlobals.pbuf.modes.has_currentMode = 1;   
 		msGlobals.pbuf.modes.has_beat = 1;
 		_beat->has_color = 1;
+        _beat->has_beatMode = 1;
+        _beat->has_sensitivity = 1;
 	}
 
 	virtual void start() {
