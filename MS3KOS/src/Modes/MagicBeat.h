@@ -5,11 +5,11 @@ private:
 	int frame = 0;
 	float avgZ = 0;
 	int colIdx = 1;
-	int sensitivity = 3;
-	int renderMode = 1;
+	int32 *sensitivity;
+	// int renderMode = 1;
 
 	// Color of our beat
-	uint8_t r, g, b;
+	// uint8_t r, g, b;
 
 public:
 	MagicBeatMode() {
@@ -17,8 +17,10 @@ public:
 	}
 
 	virtual void start() {
-		r = g = 0;
-		b = 255;
+		// msGlobals.protocolBuffer.modes.beat.beatMode = MS3KG_Modes_Beat_BeatMode_SIDE;
+		msGlobals.protocolBuffer.modes.beat.sensitivity = 3;
+		sensitivity = &msGlobals.protocolBuffer.modes.beat.sensitivity;
+		msGlobals.protocolBuffer.modes.beat.color.R = 255;
 	}
 
 	virtual void stop(void) {
@@ -30,7 +32,7 @@ public:
 	void slog_sensitivity()
 	{
 		msSystem.slog("sensitivity:");
-		msSystem.slogln(String(sensitivity));
+		msSystem.slogln(String(*sensitivity));
 	}
 
 	virtual bool step(void) {
@@ -40,7 +42,7 @@ public:
 
 		frame++;
 
-		// if (renderMode == 0) {
+		// if (msGlobals.protocolBuffer.modes.beat.beatMode == 0) {
 		// 	xPos = 7 * (1 << FIXED_SHIFT) + (1 << (FIXED_SHIFT - 1)) + (((msGlobals.ggAccelCount[2] - avgZ) * 40) >> sensitivity);
 		// 	if (xPos < 0)
 		// 		xPos = 0;
@@ -62,24 +64,16 @@ public:
 
 		// 	msSystem.msLEDs.updateLEDs();
 
-		//} else { // renderMode = 1
-			xPos = (msGlobals.ggAccel[axis] - avgZ);
+		//} else { // msGlobals.protocolBuffer.modes.beat.beatMode = 1
+		xPos = (msGlobals.ggAccel[axis] - avgZ);
 
-			xPos *= 1024 >> sensitivity;
-
-		renderMode = msGlobals.protocolBuffer.modes.beat.beatMode;
-		sensitivity = msGlobals.protocolBuffer.modes.beat.sensitivity;
-
-		r = msGlobals.protocolBuffer.modes.beat.color.R;
-        g = msGlobals.protocolBuffer.modes.beat.color.G;
-        b = msGlobals.protocolBuffer.modes.beat.color.B;
-
+		xPos *= 1024 >> msGlobals.protocolBuffer.modes.beat.sensitivity;
 
 		printf("magicBeat: beatMode is %d!\n", msGlobals.protocolBuffer.modes.beat.beatMode);
 		printf("magicBeat: sensitivity is %d!\n", msGlobals.protocolBuffer.modes.beat.sensitivity);
 
 
-			if (renderMode == 0) {
+			if (msGlobals.protocolBuffer.modes.beat.beatMode == MS3KG_Modes_Beat_BeatMode_SIDE) {
 				if (xPos < 0)
 					xPos = -xPos;
 
@@ -87,65 +81,71 @@ public:
 				if (xPos > MAX_LEDS)
 					xPos = MAX_LEDS;
 			}
-			else {
+			else if (msGlobals.protocolBuffer.modes.beat.beatMode == MS3KG_Modes_Beat_BeatMode_CENTER) {
 				xPos += 7.5;
 			}
 
 			msSystem.msLEDs.fillLEDs(0, 0, 0, msGlobals.ggBrightness);
 
-			if (renderMode == 0) {
+			if (msGlobals.protocolBuffer.modes.beat.beatMode == MS3KG_Modes_Beat_BeatMode_SIDE) {
 				for (int i = 0; i < xPos; i++)
-				msSystem.msLEDs.setLED((MAX_LEDS-1) - i, r, g, b, msGlobals.ggBrightness);
+				msSystem.msLEDs.setLED((MAX_LEDS-1) - i, 
+					msGlobals.protocolBuffer.modes.beat.color.R, 
+					msGlobals.protocolBuffer.modes.beat.color.G, 
+					msGlobals.protocolBuffer.modes.beat.color.B, 
+					msGlobals.ggBrightness);
 			}
-			else {
+			else if (msGlobals.protocolBuffer.modes.beat.beatMode == MS3KG_Modes_Beat_BeatMode_CENTER) {
 				int xPosInt = (int)(xPos);
 				float xPosRem = 1 - (xPos - xPosInt);			
 			
+				// first go one way 
 				if (xPosInt >= 0 && xPosInt < MAX_LEDS) {
 					msSystem.msLEDs.setLED(xPosInt, 
-						(int)(r * xPosRem), 
-						(int)(g * xPosRem),
-						(int)(b * xPosRem),
+						(int)(msGlobals.protocolBuffer.modes.beat.color.R * xPosRem), 
+						(int)(msGlobals.protocolBuffer.modes.beat.color.G * xPosRem),
+						(int)(msGlobals.protocolBuffer.modes.beat.color.B * xPosRem),
 						msGlobals.ggBrightness);
 				}
 
+				// render the other direction
 				xPosInt++;
 				xPosRem = 1 - xPosRem;
 				if (xPosInt >= 0 && xPosInt < MAX_LEDS) {
 					msSystem.msLEDs.setLED(xPosInt, 
-							(int)(r * xPosRem), 
-							(int)(g * xPosRem),
-							(int)(b * xPosRem),
+							(int)(msGlobals.protocolBuffer.modes.beat.color.R * xPosRem), 
+							(int)(msGlobals.protocolBuffer.modes.beat.color.G * xPosRem),
+							(int)(msGlobals.protocolBuffer.modes.beat.color.B * xPosRem),
 							msGlobals.ggBrightness);
 				}
 			}
 			
 			msSystem.msLEDs.updateLEDs();
-		//}
+		
+		if ((msSystem.msButtons.msBtnALongHit) || (msSystem.msButtons.msBtnBLongHit)) {
+ 			if (msGlobals.protocolBuffer.modes.beat.beatMode == MS3KG_Modes_Beat_BeatMode_CENTER) {
+				msGlobals.protocolBuffer.modes.beat.beatMode = MS3KG_Modes_Beat_BeatMode_SIDE;
+			}
+			else
+			if (msGlobals.protocolBuffer.modes.beat.beatMode == MS3KG_Modes_Beat_BeatMode_SIDE) {
+				msGlobals.protocolBuffer.modes.beat.beatMode = MS3KG_Modes_Beat_BeatMode_CENTER;
+			}
 
-		// 
-		if (msSystem.msButtons.msBtnALongHit) {
-			renderMode++;
-			if (renderMode > 1) renderMode = 0;
 			msSystem.msButtons.msBtnALongHit = false;
-
-		}
-		if (msSystem.msButtons.msBtnBLongHit) {
-			renderMode--;
-			if (renderMode < 0) renderMode = 1;
 			msSystem.msButtons.msBtnBLongHit = false;
 		}
 
+
 		if (msSystem.msButtons.msBtnAHit)
 		{
-			sensitivity = (sensitivity + 1) % 6;
+			*sensitivity = (*sensitivity + 1) % 6;
 			msSystem.msButtons.msBtnAHit = false;
 			slog_sensitivity();
 		}
 
 		if (msSystem.msButtons.msBtnBHit)
 		{
-			sensitivity = (sensitivity + 5) % 6;
+			*sensitivity = (*sensitivity + 5) % 6;
 			msSystem.msButtons.msBtnBHit = false;
 			slog_sensitivity();
 		}
@@ -153,9 +153,9 @@ public:
 		if (msSystem.msButtons.msBtnPwrHit) {
 			colIdx++;
 			if (colIdx > 7) colIdx = 1;
-			r = (colIdx & 1) ? 255 : 0;
-			g = (colIdx & 2) ? 255 : 0;
-			b = (colIdx & 4) ? 255 : 0;
+			msGlobals.protocolBuffer.modes.beat.color.R = (colIdx & 1) ? 255 : 0;
+			msGlobals.protocolBuffer.modes.beat.color.G = (colIdx & 2) ? 255 : 0;
+			msGlobals.protocolBuffer.modes.beat.color.B = (colIdx & 4) ? 255 : 0;
 			msSystem.msButtons.msBtnPwrHit = false;
 		}
 
