@@ -38,10 +38,7 @@ void handleFileListJson()
         first = 0;
 
         String name = dir.fileName();
-        File f = dir.openFile("r");
-        Serial.println(f.size());
-        int size = f.size();
-        f.close();
+        int size = dir.fileSize();
         output += "{\"name\":\""+ name + "\",\"size\":" + size + "}";
     }
 
