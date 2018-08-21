@@ -22,7 +22,9 @@ class MagicLightMode : public MagicShifterBaseMode {
 
 	int colorIdx = 6;
 
-  public:
+	MS3KG_App_Light *_light = &msGlobals.pbuf.applications.light;
+
+public:
 
 	MagicLightMode() { 
 		 	modeName = "Light";

@@ -113,38 +113,14 @@ private:
 
 #define NUM_ARP_PATTERNS 8
 	const ArpPatternT arp_patterns[NUM_ARP_PATTERNS][4] = {	// arp_patterns 4/4
-		{{0, BEAT1, EIGHTH},
-		 {2, BEAT2, EIGHTH},
-		 {0, BEAT3, EIGHTH},
-		 {2, BEAT4, EIGHTH}},		//
-		{{0, BEAT1, EIGHTH},
-		 {0, BEAT2, EIGHTH},
-		 {2, BEAT3, EIGHTH},
-		 {2, BEAT4, EIGHTH}},		//
-		{{0, BEAT1, EIGHTH},
-		 {0, BEAT2, EIGHTH},
-		 {2, BEAT3, EIGHTH},
-		 {4, BEAT4, EIGHTH}},		//
-		{{0, BEAT1, EIGHTH},
-		 {2, BEAT2, EIGHTH},
-		 {4, BEAT3, EIGHTH},
-		 {6, BEAT4, EIGHTH}},		//
-		{{0, BEAT1, EIGHTH},
-		 {12, BEAT2, EIGHTH},
-		 {0, BEAT3, EIGHTH},
-		 {12, BEAT4, EIGHTH}},		//
-		{{0, BEAT1, EIGHTH},
-		 {0, BEAT2, EIGHTH},
-		 {12, BEAT3, EIGHTH},
-		 {12, BEAT4, EIGHTH}},		//
-		{{0, BEAT1, EIGHTH},
-		 {0, BEAT2, EIGHTH},
-		 {4, BEAT3, EIGHTH},
-		 {12, BEAT4, EIGHTH}},		//
-		{{0, BEAT1, EIGHTH},
-		 {2, BEAT1 + 8, EIGHTH},
-		 {4, BEAT2, QUARTER},
-		 {6, BEAT4, EIGHTH}},		//
+		{{0, BEAT1, EIGHTH}, {2, BEAT2, EIGHTH}, {0, BEAT3, EIGHTH}, {2, BEAT4, EIGHTH}},		//
+		{{0, BEAT1, EIGHTH}, {0, BEAT2, EIGHTH}, {2, BEAT3, EIGHTH}, {2, BEAT4, EIGHTH}},		//
+		{{0, BEAT1, EIGHTH}, {0, BEAT2, EIGHTH}, {2, BEAT3, EIGHTH}, {4, BEAT4, EIGHTH}},		//
+		{{0, BEAT1, EIGHTH}, {2, BEAT2, EIGHTH}, {4, BEAT3, EIGHTH}, {6, BEAT4, EIGHTH}},		//
+		{{0, BEAT1, EIGHTH}, {12, BEAT2, EIGHTH}, {0, BEAT3, EIGHTH}, {12, BEAT4, EIGHTH}},		//
+		{{0, BEAT1, EIGHTH}, {0, BEAT2, EIGHTH}, {12, BEAT3, EIGHTH}, {12, BEAT4, EIGHTH}},		//
+		{{0, BEAT1, EIGHTH}, {0, BEAT2, EIGHTH}, {4, BEAT3, EIGHTH}, {12, BEAT4, EIGHTH}},		//
+		{{0, BEAT1, EIGHTH}, {2, BEAT1 + 8, EIGHTH}, {4, BEAT2, QUARTER}, {6, BEAT4, EIGHTH}},		//
 	};
 
 

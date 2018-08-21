@@ -5,27 +5,23 @@ private:
 	float avgZ = 0;
 	int colorIndex = 1;
 
-	MS3000GlobalPBuffer_Modes_Beat *_beat = &msGlobals.pbuf.modes.beat;
-
-
-	const MS3000GlobalPBuffer_Modes_Beat_BeatMode beatModeSIDE = MS3000GlobalPBuffer_Modes_Beat_BeatMode_SIDE;
-	const MS3000GlobalPBuffer_Modes_Beat_BeatMode beatModeCENTER = MS3000GlobalPBuffer_Modes_Beat_BeatMode_CENTER;
+	MS3KG_App_Beat *_beat = &msGlobals.pbuf.applications.beat;
 
 public:
 	MagicBeatMode() {
 		modeName = "Beat";
-		_beat = &msGlobals.pbuf.modes.beat;
+		_beat = &msGlobals.pbuf.applications.beat;
 
 		_beat->color.B = 255;
 		
 		_beat->sensitivity = 1;
-		_beat->beatMode = beatModeCENTER;
+		_beat->mode = MS3KG_App_Beat_BeatSubMode_CENTER;
 
-		msGlobals.pbuf.has_modes = 1;
-        msGlobals.pbuf.modes.has_currentMode = 1;   
-		msGlobals.pbuf.modes.has_beat = 1;
+		msGlobals.pbuf.has_applications = 1;
+        msGlobals.pbuf.applications.has_current = 1;   
+		msGlobals.pbuf.applications.has_beat = 1;
 		_beat->has_color = 1;
-        _beat->has_beatMode = 1;
+        _beat->has_mode = 1;
         _beat->has_sensitivity = 1;
 	}
 
@@ -49,13 +45,13 @@ public:
 
 		xPos *= 1024 >> _beat->sensitivity;
 
-		// printf( " beatMode: %d" \
+		// printf( " subMode: %d" \
 		// 		" sensitivity: %d" \
 		// 		" colorIndex: %d" \ 
 		// 		" R: %d " \
 		// 		" G: %d " \
 		// 		" B: %d \n",
-		// 			_beat->beatMode,
+		// 			_beat->mode,
 		// 			_beat->sensitivity,
 		// 			colorIndex,
 		// 			_beat->color.R,
@@ -63,7 +59,7 @@ public:
 		// 			_beat->color.B);
 
 
-		if (_beat->beatMode == beatModeSIDE) {
+		if (_beat->mode == MS3KG_App_Beat_BeatSubMode_SIDE) {
 			if (xPos < 0)
 				xPos = -xPos;
 
@@ -71,13 +67,13 @@ public:
 			if (xPos > MAX_LEDS)
 				xPos = MAX_LEDS;
 		}
-		else if (_beat->beatMode == beatModeCENTER) {
+		else if (_beat->mode == MS3KG_App_Beat_BeatSubMode_CENTER) {
 			xPos += 7.5; //(MAX_LEDS - 1) / 2.0f;
 		}
 
 		msSystem.msLEDs.fillLEDs(0, 0, 0, msGlobals.ggBrightness);
 
-		if (_beat->beatMode == beatModeSIDE) {
+		if (_beat->mode == MS3KG_App_Beat_BeatSubMode_SIDE) {
 			for (int i = 0; i < xPos; i++)
 				msSystem.msLEDs.setLED((MAX_LEDS-1) - i, 
 					_beat->color.R, 
@@ -85,7 +81,7 @@ public:
 					_beat->color.B, 
 					msGlobals.ggBrightness);
 		}
-		else if (_beat->beatMode == beatModeCENTER) {
+		else if (_beat->mode == MS3KG_App_Beat_BeatSubMode_CENTER) {
 			int xPosInt = (int)(xPos);
 			float xPosRem = 1 - (xPos - xPosInt);			
 			
@@ -116,11 +112,11 @@ public:
 			msSystem.msButtons.msBtnALongHit = false;
 			msSystem.msButtons.msBtnBLongHit = false;
 
-			if (_beat->beatMode == beatModeCENTER) {
-				_beat->beatMode = beatModeSIDE;
+			if (_beat->mode == MS3KG_App_Beat_BeatSubMode_CENTER) {
+				_beat->mode = MS3KG_App_Beat_BeatSubMode_SIDE;
 			}
 			else {
-				_beat->beatMode = beatModeCENTER;
+				_beat->mode = MS3KG_App_Beat_BeatSubMode_CENTER;
 			}
 
 		}

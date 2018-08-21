@@ -459,11 +459,11 @@ void handleGETProtoBufferBase64(void)
 
 	msSystem.slogln("handleGETProtoBufferBase64");
 
-	msGlobals.pbuf.modes.currentMode = (MS3000GlobalPBuffer_Modes_ModeTypes)msGlobals.ggCurrentMode;
+	msGlobals.pbuf.applications.current = (MS3KG_App_T)msGlobals.ggCurrentMode;
 
 
 	pb_ostream_t stream = pb_ostream_from_buffer(pbufOutput, sizeof(pbufOutput));
-	encoderStatus = pb_encode(&stream, MS3000GlobalPBuffer_fields, &msGlobals.pbuf);
+	encoderStatus = pb_encode(&stream, MS3KG_fields, &msGlobals.pbuf);
 
 	if (!encoderStatus)
 	{
@@ -528,7 +528,7 @@ void handlePOSTpbufBase64(void)
 		pb_istream_t stream = pb_istream_from_buffer(decoderOutput, decodedDataLen);
 
         /* Now we are ready to decode the message. */
-		decodeStatus = pb_decode(&stream, MS3000GlobalPBuffer_fields, &msGlobals.pbuf); // TODO: !J! msGlobals.pbuf??
+		decodeStatus = pb_decode(&stream, MS3KG_fields, &msGlobals.pbuf); // TODO: !J! msGlobals.pbuf??
 
 		// printf("handlePPBB64: encodedInputStrLen is %d!\n", encodedInputStrLen);
 		printf("handlePPBB64: decodedDataLen is %d!\n", decodedDataLen);
@@ -540,20 +540,20 @@ void handlePOSTpbufBase64(void)
 			printf("Decoding failed: %s\n", PB_GET_ERROR(&stream));
 		}
 
-		//msGlobals.ggCurrentMode = msGlobals.pbuf.modes.currentMode;
-		msSystem.setMode(msGlobals.pbuf.modes.currentMode);
+		//msGlobals.ggCurrentMode = msGlobals.pbuf.applications.current;
+		msSystem.setMode(msGlobals.pbuf.applications.current);
 
         /* Print the data contained in the message. */
-		// msGlobals.pbuf.modes.light.name.funcs.decode = ms3kModeLightNameFunc;
+		// msGlobals.pbuf.applications.light.name.funcs.decode = ms3kModeLightNameFunc;
 
-		printf("handlePPBB64: submode is %d!\n", (int)msGlobals.pbuf.modes.light.subMode);
-		// printf("handlePPBB64: submode name is %d!\n", strlen(msGlobals.pbuf.modes.light.name));
+		printf("handlePPBB64: submode is %d!\n", (int)msGlobals.pbuf.applications.light.mode);
+		// printf("handlePPBB64: submode name is %d!\n", strlen(msGlobals.pbuf.applications.light.name));
 		//printf("handlePPBB64: networkName is %s!\n", msGlobals.pbuf.networkName);
-		printf("handlePPBB64: beatMode is %d!\n", msGlobals.pbuf.modes.beat.beatMode);
-		printf("handlePPBB64: sensitivity is %d!\n", msGlobals.pbuf.modes.beat.sensitivity);
-		printf("handlePPBB64: R is %d!\n", msGlobals.pbuf.modes.light.color.R);
-		printf("handlePPBB64: G is %d!\n", msGlobals.pbuf.modes.light.color.G);
-		printf("handlePPBB64: B is %d!\n", msGlobals.pbuf.modes.light.color.B);
+		printf("handlePPBB64: subMode is %d!\n", msGlobals.pbuf.applications.beat.mode);
+		printf("handlePPBB64: sensitivity is %d!\n", msGlobals.pbuf.applications.beat.sensitivity);
+		printf("handlePPBB64: R is %d!\n", msGlobals.pbuf.applications.light.color.R);
+		printf("handlePPBB64: G is %d!\n", msGlobals.pbuf.applications.light.color.G);
+		printf("handlePPBB64: B is %d!\n", msGlobals.pbuf.applications.light.color.B);
 		//printf("handlePPBB64: networkName is %s!\n", msGlobals.pbuf.networkName);
 
 		msSystem.msESPServer.send(200, "text/plain", "OK");
