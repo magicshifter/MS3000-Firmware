@@ -7,15 +7,16 @@
 	MSColor aBLUE = 	{ 0x00, 0x00, 0xff };
 	MSColor aWHITE = 	{ 0xff, 0xff, 0xff };
 
-
 class SystemTextMode:public MagicShifterBaseMode {
 
   private:
+
+	MS3KG_App_System &_system = msGlobals.pbuf.applications.system;
+
   	MagicPOVMode lPOVMode;
 	MagicShifterImageText msMagicShakeText;
 
 	bool correctBrightness = false;
-	int sysCursor = 0;
 	bool shouldBlackenBackground = true;
 	int ptLoMode = 0;	// index
 	int ptHiMode = 0;
@@ -114,17 +115,6 @@ class SystemTextMode:public MagicShifterBaseMode {
 		lPOVMode.setImage(NULL);
 	}
 
-	enum {
-		STR_VERSION = 0,
-		STR_WIFI = 1,
-		STR_SSID = 2,
-		STR_IP = 3,
-		STR_SOFTIP = 4,
-		STR_POWER_LO  = 5, 
-		STR_POWER_HI  = 6,
-		STR_POWER_VALUE = 7,
-		STR_CALIBRATION = 8
-	};
 
 #define NUM_SYS_TEXTS 9
 
@@ -133,6 +123,7 @@ class SystemTextMode:public MagicShifterBaseMode {
 		
 		bool isConnectedToAP = (WiFi.status() == WL_CONNECTED);
 		bool isBatteryLow = msSystem.lowBatteryMillis != 0;
+		int new_mode = _system.mode;
 
 		// cycle through the texts ..
 		if (msSystem.msButtons.msBtnALongHit) {
@@ -142,32 +133,38 @@ class SystemTextMode:public MagicShifterBaseMode {
 
 		if (msSystem.msButtons.msBtnBLongHit) {
 			msSystem.msButtons.msBtnBLongHit = false;
-			if (sysCursor == STR_CALIBRATION)
+			if (new_mode == MS3KG_App_System_Mode_CALIBRATION)
 				msSystem.powerCalibrate();
 		}
 
 		if (msSystem.msButtons.msBtnAHit) {
 			msSystem.msButtons.msBtnAHit = false;	// !J! todo: button callbacks
-			sysCursor++;
-			if (sysCursor >= NUM_SYS_TEXTS)
-				sysCursor = 0;
+			
+			new_mode++;
+
+			if (new_mode >= _MS3KG_App_System_Mode_MAX)
+				new_mode = _MS3KG_App_System_Mode_MIN;
+
 			msSystem.slog("cursor:");
-			msSystem.slogln(String(sysCursor));
+			msSystem.slogln(String(new_mode));
 			needsTextUpdate = true;
 		}
 		if (msSystem.msButtons.msBtnBHit) {
 			msSystem.msButtons.msBtnBHit = false;	// !J! todo: button callbacks
-			sysCursor--;
-			if (sysCursor < 0)
-				sysCursor = NUM_SYS_TEXTS - 1;
+			
+			new_mode--;
+			
+			if (new_mode < _MS3KG_App_System_Mode_MIN)
+				new_mode = _MS3KG_App_System_Mode_MAX;
+
 			msSystem.slog("cursor:");
-			msSystem.slogln(String(sysCursor));
+			msSystem.slogln(String(new_mode));
 			needsTextUpdate = true;
 		}
 		if (msSystem.msButtons.msBtnPwrHit) {
 			msSystem.slogln("btpwr");
 			msSystem.msButtons.msBtnPwrHit = false;
-			if (sysCursor == STR_WIFI) { // WIFI
+			if (new_mode == MS3KG_App_System_Mode_WIFI) { // WIFI
 				msSystem.slogln("wifi cursor!");
 				if (msGlobals.ggEnableWIFI)  {
 					WiFi.disconnect(true);
@@ -180,7 +177,7 @@ class SystemTextMode:public MagicShifterBaseMode {
 					AutoConnect();
 				}
 			}
-			if (sysCursor == STR_POWER_LO) {
+			if (new_mode == MS3KG_App_System_Mode_POWER_LO) {
 				// power-timeout modes
 				ptLoMode++;
 				if(ptLoMode >= NUM_POWER_MODES)
@@ -189,7 +186,7 @@ class SystemTextMode:public MagicShifterBaseMode {
 				msGlobals.ggUIConfig.timeoutLowPower = predefinedPowerModes[ptLoMode].powertime;
 				msSystem.Settings.setUIConfig(&msGlobals.ggUIConfig);
 			}
-			if (sysCursor == STR_POWER_HI) {
+			if (new_mode == MS3KG_App_System_Mode_POWER_HI) {
 				// power-timeout modes
 				ptHiMode++;
 				if(ptHiMode >= NUM_POWER_MODES)
@@ -206,17 +203,17 @@ class SystemTextMode:public MagicShifterBaseMode {
 
 		if (needsTextUpdate) {
 
-			if (sysCursor == STR_VERSION) {
+			if (new_mode == MS3KG_App_System_Mode_VERSION) {
 				setText((char *)String("VERSION").c_str(),
 						(char *)MS3KOS_VERSION, aWHITE);
 			}
-			if (sysCursor == STR_IP) {
+			if (new_mode == MS3KG_App_System_Mode_IP) {
 				setText((char *) String("IP").c_str(),
 						(char *) WiFi.localIP().toString().c_str(), aWHITE);
-			} else if (sysCursor == STR_SOFTIP) {
+			} else if (new_mode == MS3KG_App_System_Mode_SOFTIP) {
 				setText((char *) String("SOFTIP").c_str(),
 						(char *) WiFi.softAPIP().toString().c_str(), aWHITE);
-			} else if (sysCursor == STR_SSID) {
+			} else if (new_mode == MS3KG_App_System_Mode_SSID) {
 				if (isConnectedToAP) {
 					setText((char *) String("SSID").c_str(),
 							(char *) WiFi.SSID().c_str(), aWHITE);
@@ -225,19 +222,19 @@ class SystemTextMode:public MagicShifterBaseMode {
 					setText((char *) String("SSID").c_str(),
 							(char *)msGlobals.ggSoftAP.auth.ssid , aWHITE);
 				}
-			} else if (sysCursor == STR_POWER_LO) {
+			} else if (new_mode == MS3KG_App_System_Mode_POWER_LO) {
 				setText((char *) String("P-LO").c_str(),
 						(char *)predefinedPowerModes[ptLoMode].label.c_str(), aWHITE);
-			} else if (sysCursor == STR_POWER_HI) {
+			} else if (new_mode == MS3KG_App_System_Mode_POWER_HI) {
 				setText((char *) String("P-HI").c_str(),
 						(char *)predefinedPowerModes[ptHiMode].label.c_str(), aWHITE);
-			} else if (sysCursor == STR_POWER_VALUE) {
+			} else if (new_mode == MS3KG_App_System_Mode_POWER_VALUE) {
 				setText((char *) String("VOLT").c_str(),
 						(char *)String(msSystem.batteryVoltage).c_str(), isBatteryLow ? aRED : aGREEN);
-			} else if (sysCursor == STR_CALIBRATION) {
+			} else if (new_mode == MS3KG_App_System_Mode_CALIBRATION) {
 				setText((char *) String("CALIB").c_str(),
 						(char *)String(msGlobals.batVoltCalibration).c_str(), isBatteryLow ? aRED : aGREEN);
-			} else if (sysCursor == STR_WIFI) {
+			} else if (new_mode == MS3KG_App_System_Mode_WIFI) {
 				if  (!msGlobals.ggEnableWIFI)
 					setText((char *) String("WIFI").c_str(), (char *) String("OFF").c_str(), aRED);
 				else

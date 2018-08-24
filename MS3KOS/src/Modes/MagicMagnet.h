@@ -9,19 +9,20 @@ class MagicMagnetMode:public MagicShifterBaseMode {
 
   private:
 	int frame = 0;
-	int lMode = 0;
+
+	MS3KG_App_Magnet &_magnet = msGlobals.pbuf.applications.magnet;
+;
 
 #ifdef CONFIG_ENABLE_OSC
 	// local OSC message
 	OSCMessage lOSCMessage = OSCMessage("/magicshifter3000/magnetometer/LED/");
 #endif
 
-	const int MAX_MODES = 3;
-
   public:
 
   	MagicMagnetMode() { 
 		 	modeName = "Compass";
+
 	}
 
 	void start() {
@@ -34,22 +35,26 @@ class MagicMagnetMode:public MagicShifterBaseMode {
 	bool step() {
 		static int autoCalResetCounter = 0;
 
+		int new_magnet_mode = _magnet.mode;
+
 		frame++;
 
 		if (msSystem.msButtons.msBtnAHit) {
-			lMode--;
+			new_magnet_mode--;
 			msSystem.msButtons.msBtnAHit = false;
 		}
 		if (msSystem.msButtons.msBtnBHit) {
-			lMode++;
+			new_magnet_mode++;
 			msSystem.msButtons.msBtnBHit = false;
 		}
 
-		if (lMode < 0)
-			lMode = MAX_MODES;
+		if (new_magnet_mode < _MS3KG_App_Magnet_Mode_MIN)
+			new_magnet_mode = _MS3KG_App_Magnet_Mode_MAX;
 		
-		if (lMode > MAX_MODES)
-			lMode = 0;
+		if (new_magnet_mode > _MS3KG_App_Magnet_Mode_MAX)
+			new_magnet_mode = _MS3KG_App_Magnet_Mode_MIN;
+
+
 
 		msSystem.msSensor.readMagnetometerData(msGlobals.ggMagnet);
 
@@ -84,7 +89,7 @@ msSystem.slogln(String(degrees));
 		int ledNorth = map(abs(degNorth), 0, 180, 0, 15);
 		int ledSouth = map(abs(degSouth), 0, 180, 0, 15);
 
-		if (lMode <= 1) {
+		if (new_magnet_mode <= 1) {
 			for (int lC = 0; lC < lednr; lC++)
 				msSystem.msLEDs.setLED(lC, 0, 255, 0, msGlobals.ggBrightness);	// !J! hack
 
@@ -92,18 +97,34 @@ msSystem.slogln(String(degrees));
 				msSystem.msLEDs.setLED(lC, 255, 0, 0, msGlobals.ggBrightness);	// !J! hack
 		}
 
-		if ((lMode == 0) || (lMode == 2))
+		if ((new_magnet_mode == MS3KG_App_Magnet_Mode_BARS) || 
+			(new_magnet_mode == MS3KG_App_Magnet_Mode_DOTS))
 			msSystem.msLEDs.setLED(lednr, 0, 255, 0,
 								   msGlobals.ggBrightness);
 
-		if (lMode == 1)
+		if (new_magnet_mode == MS3KG_App_Magnet_Mode_BARS_DOT)
 			msSystem.msLEDs.setLED(lednr, 0, 0, 255,
 								   msGlobals.ggBrightness);
 
-		if (lMode == 3) {		
+		if (new_magnet_mode == MS3KG_App_Magnet_Mode_OTHER) {		
 			msSystem.msLEDs.setLED(ledSouth, 0, 255, 0, msGlobals.ggBrightness);
 			msSystem.msLEDs.setLED(ledNorth, 255, 0, 0, msGlobals.ggBrightness);
 		}
+
+
+			_magnet.mode = (MS3KG_App_Magnet_Mode)new_magnet_mode;
+			// switch(new_magnet_mode) 
+			// {
+			// 	case 0: _magnet.mode = MS3KG_App_Magnet_Mode_BARS; 
+			// 	break;
+			// 	case 1: _magnet.mode = MS3KG_App_Magnet_Mode_BARS_DOT;
+			// 	break;
+			// 	case 2:  _magnet.mode = MS3KG_App_Magnet_Mode_DOTS;
+			// 	break;
+			// 	case 3:  _magnet.mode = MS3KG_App_Magnet_Mode_OTHER;
+			// 	break;
+			// }
+
 
 		msSystem.msLEDs.updateLEDs();
 
@@ -113,6 +134,8 @@ msSystem.slogln(String(degrees));
 #endif
 
 		delay(25);
+
+		return true;
 
 	}
 

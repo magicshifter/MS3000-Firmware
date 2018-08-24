@@ -9,31 +9,35 @@ class MagicLightMode : public MagicShifterBaseMode {
 
   private:
 	int frame = 0;
-	int lightSubMode = 0;
 	int xx = 0;
 	int pDelay = 230;
 
 	bool dir = false;
+
 	int d = 10;
 	uint8_t lookup[6][3] = { {0, 1, 2}, {1, 0, 2}, {2, 0, 1}, {0, 2, 1}, {1, 2, 0}, {2, 1, 0} };
 	uint8_t lookupindex = 0;
 	bool firstRun = false;
 	int centerAction = 0;
 
-	int colorIdx = 6;
 
-	MS3KG_App_Light *_light = &msGlobals.pbuf.applications.light;
+	MS3KG_App_Light &_light = msGlobals.pbuf.applications.light;
 
 public:
 
 	MagicLightMode() { 
-		 	modeName = "Light";
+		_light.colorIndex = 6;
+
+	 	modeName = "Light";
 	}
 
 	// depending on button-presses, let the user select
 	// sub-mode options
     bool magicsubModeSelector() {
-		int oldlightSubMode = lightSubMode;
+
+		int old_light_mode = _light.mode;
+		int new_light_mode = old_light_mode;
+
 		if (firstRun)
 			firstRun = false;
 		else
@@ -45,21 +49,42 @@ public:
 		}
 
 		if (msSystem.msButtons.msBtnAHit) {
-			lightSubMode--;
+			
+			new_light_mode--;
+
 			msSystem.msButtons.msBtnAHit = false;
 		}
 		if (msSystem.msButtons.msBtnBHit) {
-			lightSubMode++;
+			
+			new_light_mode++;
+
 			msSystem.msButtons.msBtnBHit = false;
 		}
-		if (lightSubMode < 0)
-			lightSubMode = 3;
-		if (lightSubMode > 3)
-			lightSubMode = 0;
+		if (new_light_mode < _MS3KG_App_Light_Mode_MIN)
+			new_light_mode = _MS3KG_App_Light_Mode_MAX;
 
-		if (lightSubMode != oldlightSubMode) {
-			msSystem.slog("lightSubMode: ");
-			msSystem.slogln(String(lightSubMode));
+		if (new_light_mode > _MS3KG_App_Light_Mode_MAX)
+			new_light_mode = _MS3KG_App_Light_Mode_MIN;
+
+		if (new_light_mode != old_light_mode) {
+
+			_light.mode = (MS3KG_App_Light_Mode)new_light_mode;
+
+
+			// switch(new_light_mode) 
+			// {
+			// 	case 0: _light.mode = MS3KG_App_Light_Mode_RAINBOW; 
+			// 	break;
+			// 	case 1: _light.mode = MS3KG_App_Light_Mode_NORMAL;
+			// 	break;
+			// 	case 2:  _light.mode = MS3KG_App_Light_Mode_SCANNER_RGB ;
+			// 	break;
+			// 	case 3:  _light.mode = MS3KG_App_Light_Mode_SCANNER_BW;
+			// 	break;
+			// }
+
+			msSystem.slog("_light.mode: ");
+			msSystem.slogln(String(_light.mode));
 			msSystem.msLEDs.fillLEDs(255, 255, 255, msGlobals.ggBrightness);
 			msSystem.msLEDs.updateLEDs();
 			delay(10);
@@ -84,7 +109,7 @@ public:
 		magicsubModeSelector();
 
 		// rainbow
-		if (lightSubMode == 0) {
+		if (_light.mode == 0) {
 			if (frame % pDelay == 0) {
 				msSystem.msLEDs.fillLEDs(0, 0, 0, msGlobals.ggBrightness);
 				msSystem.msLEDs.setLED((xx + 0 * 3) & 0xF, 255, 0, 0, msGlobals.ggBrightness);
@@ -112,9 +137,9 @@ public:
 		}
 
 		// normal
-		if (lightSubMode == 1) {
+		if (_light.mode == 1) {
 			int r=0,g=0,b=0;
-			int ii = colorIdx+1;
+			int ii = _light.colorIndex+1;
 			if (ii & 1) r = 255;
 			if (ii & 2) g = 255;
 			if (ii & 4) b = 255;
@@ -124,12 +149,12 @@ public:
 
 			if (centerAction > 0) {
 				centerAction--;
-				colorIdx = (colorIdx + 1) % 7;
+				_light.colorIndex = (_light.colorIndex + 1) % 7;
 			}
 		}
 
 		// scanner 
-		if (lightSubMode >= 2) {
+		if (_light.mode >= 2) {
 			int start, end;
 			if (dir)
 			{
@@ -145,13 +170,13 @@ public:
 			if (centerAction > 0) {
 				centerAction--;
 	
-				if (lightSubMode == 2)
+				if (_light.mode == 2)
 				{
 					for (int index = 0; index < 3; index++) {
 						startToEndChannel(start, end, d, lookup[lookupindex][index], 255);
 					}
 				}
-				else if (lightSubMode == 3)
+				else if (_light.mode == 3)
 				{
 					startToEndZigZag(start, end, 1, 255, 255, 255);
 				}
