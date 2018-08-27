@@ -112,14 +112,15 @@ void setup()
 	msGlobals.ggModeList.push_back(&msMIDIArpeggiator);
 
 #ifdef CONFIG_MIDI_RTP_MIDI
-	 AppleMIDI.OnConnected(OnRTPMIDI_Connect);
-	 AppleMIDI.OnDisconnected(OnRTPMIDI_Disconnect);
-	 AppleMIDI.OnReceiveNoteOn(OnRTPMIDI_NoteOn);
-	 AppleMIDI.OnReceiveNoteOff(OnRTPMIDI_NoteOff);
 
-	Serial.print("UNIQUE NAME:");
-	Serial.println(msSystem.Settings.getUniqueSystemName().c_str());
+	setupRTPDebugHandlers();
+
+	Serial.println("MIDI(rtp): started");
 	AppleMIDI.begin(msSystem.Settings.getUniqueSystemName().c_str());
+
+	Serial.print("MIDI(rtp) IDENTITY:");
+	Serial.println(AppleMIDI.getSessionName());
+
 #endif
 
 #endif

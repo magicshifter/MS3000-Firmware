@@ -38,58 +38,13 @@
 // schemes
 #include "msSettingsManager.h"
 
+#include "msMIDIBase.h"
+
 // forward-declared here because it is a client of msSystem ..
 void CommandInterfacePoll();
 
 class MagicShifterSystem;
 extern MagicShifterSystem msSystem;
-
-// MIDI features can be configured in or out of
-// the project according to Serial needs, and can be
-// enabled for WiFi.
-// e.g. debugging
-//
-#ifdef CONFIG_ENABLE_MIDI
-#include "AppleMidi.h"
-// RTPMIDI is usable over WiFi
-#endif
-
-#ifdef CONFIG_MIDI_RTP_MIDI
-APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_Defs.h
-bool isRTPConnected = false;
-
-// RTP MIDI event handlers:
-// -----------------------------------------------------------------------------
-void OnRTPMIDI_Connect(uint32_t ssrc, char* name) {
-  isRTPConnected = true;
-  Serial.print("rtpMIDI Connected to session ");
-  Serial.println(name);
-}
-
-void OnRTPMIDI_Disconnect(uint32_t ssrc) {
-  isRTPConnected = false;
-  Serial.println("rtpMIDI Disconnected");
-}
-
-void OnRTPMIDI_NoteOn(byte channel, byte note, byte velocity) {
-  Serial.print("rtpMIDI Incoming NoteOn from channel:");
-  Serial.print(String(channel));
-  Serial.print(" note:");
-  Serial.print(String(note));
-  Serial.print(" velocity:");
-  Serial.println(String(velocity));
-}
-
-void OnRTPMIDI_NoteOff(byte channel, byte note, byte velocity) {
-  Serial.print("rtpMIDI Incoming NoteOff from channel:");
-  Serial.print(String(channel));
-  Serial.print(" note:");
-  Serial.print(String(note));
-  Serial.print(" velocity:");
-  Serial.println(String(velocity));
-}
-#endif // CONFIG_MIDI_RTP_MIDI
-
 
 // TODO: all init and all sensors and leds in here :)
 // (accelerometer wuld also be a class but the MAgicShifter object has one ;)
@@ -97,72 +52,72 @@ class MagicShifterSystem {
 
 	class SettingsManager {
 
-		private:
+	private:
 			// used in resetAPList & getNextAP
-			int apListIndex = -1;
-			File smAPListFile;
+		int apListIndex = -1;
+		File smAPListFile;
 
-		private:
+	private:
 
-			bool loadData(String path, void *config, int len) {
-				if (SPIFFS.exists((char *) path.c_str())) {
-					File file = SPIFFS.open((char *) path.c_str(), "r");
-					file.read((uint8_t *) config, len);
-					file.close();
+		bool loadData(String path, void *config, int len) {
+			if (SPIFFS.exists((char *) path.c_str())) {
+				File file = SPIFFS.open((char *) path.c_str(), "r");
+				file.read((uint8_t *) config, len);
+				file.close();
 
-					return true;
-				} else {
-					msSystem.slog("webserver: loadData: can not open config file ");
-					msSystem.slogln((char *) path.c_str());
-				}
+				return true;
+			} else {
+				msSystem.slog("webserver: loadData: can not open config file ");
+				msSystem.slogln((char *) path.c_str());
+			}
+
+			return false;
+		}
+
+		bool saveData(String path, void *config, int len) {
+			File file = SPIFFS.open((char *) path.c_str(), "w");
+			if (file) {
+				file.write((uint8_t *) config, len);
+				file.close();
+
+				return true;
+			} else {
+				msSystem.slog("webserver: can not open config file ");
+				msSystem.slogln((char *) path.c_str());
 
 				return false;
 			}
-
-			bool saveData(String path, void *config, int len) {
-				File file = SPIFFS.open((char *) path.c_str(), "w");
-				if (file) {
-					file.write((uint8_t *) config, len);
-					file.close();
-
-					return true;
-				} else {
-					msSystem.slog("webserver: can not open config file ");
-					msSystem.slogln((char *) path.c_str());
-
-					return false;
-				}
-			}
+		}
 
 
 
-		public:
+	public:
 
-			const String apConfigPath = "settings/ap.bin";
-			const String apServerConfigPath = "settings/server1.bin";
-			const String apListConfigPath = "settings/aplist1.bin";
-			const String apSysLogConfigPath = "settings/syslog.bin";
-			const String preferredAPConfigPath = "settings/preferredap.bin";
-			const String uiSettingsConfigPath = "settings/ui.bin";
+		const String apConfigPath = "settings/ap.bin";
+		const String apServerConfigPath = "settings/server1.bin";
+		const String apListConfigPath = "settings/aplist1.bin";
+		const String apSysLogConfigPath = "settings/syslog.bin";
+		const String preferredAPConfigPath = "settings/preferredap.bin";
+		const String uiSettingsConfigPath = "settings/ui.bin";
 
-			String getUniqueSystemName() 
-			{
-				uint8_t mac[WL_MAC_ADDR_LENGTH];
-				WiFi.softAPmacAddress(mac);
-				String macID = String(mac[WL_MAC_ADDR_LENGTH - 2], HEX) + String(mac[WL_MAC_ADDR_LENGTH - 1], HEX);
+		String getUniqueSystemName() 
+		{
+			uint8_t mac[WL_MAC_ADDR_LENGTH];
+			WiFi.softAPmacAddress(mac);
+			String macID = String(mac[WL_MAC_ADDR_LENGTH - 2], HEX) + String(mac[WL_MAC_ADDR_LENGTH - 1], HEX);
 
-				macID.toUpperCase();
-				String UniqueSystemName = String(AP_NAME_OVERRIDE) + String("-") + macID;
+			macID.toUpperCase();
+			String UniqueSystemName = String(AP_NAME_OVERRIDE) + String("-") + macID;
 
-				return UniqueSystemName;
-			}
+			return UniqueSystemName;
+		}
 
-			bool getUIConfig(struct UIConfig *config) {
+		bool getUIConfig(struct UIConfig *config) {
 				//msSystem.slog("config: sizeof ");
 				//msSystem.slogln(String(sizeof(*config)));
-				bool result = loadData(uiSettingsConfigPath, config, sizeof(*config));
-				if (!result) {
-					config->timeoutHighPower = 0;
+			bool result = loadData(uiSettingsConfigPath, config, sizeof(*config));
+			if (!result) {
+				config->timeoutHighPower = 0;
 					config->timeoutLowPower =  10 * 60 * 1000; // 10 minutes
 					config->defaultBrightness = 2;
 				}
@@ -453,10 +408,10 @@ class MagicShifterSystem {
 
 #define WL_MAC_ADDR_LENGTH 6
 
-  private:
+private:
 
-  public:
-  	SettingsManager Settings;
+public:
+	SettingsManager Settings;
 	MagicShifterSysLog msSysLog;
 	// todo: protect
 	MagicShifterAccelerometer msSensor;
@@ -477,7 +432,7 @@ class MagicShifterSystem {
 	int lowBatteryMillis;
 	float  batteryVoltage = 0.0;
 
-  public:
+public:
 	// todo:switch slog from OFF, to BANNED (MIDI), to UDP .. etc.
 
 	void slog(String msg) {
@@ -557,7 +512,7 @@ class MagicShifterSystem {
 		slogln(String(ESP.getFlashChipSize()));
 		if (ESP.getFlashChipSize() != ESP.getFlashChipRealSize())
 		{
-		  slogln(String("WARNING: configured flash size does not match real flash size!"));
+			slogln(String("WARNING: configured flash size does not match real flash size!"));
 		}
 		slog("flash speed: ");
 		slogln(String(ESP.getFlashChipSpeed()));
@@ -617,7 +572,7 @@ class MagicShifterSystem {
 	void saveCalibration(int calib_value)
 	{
 		File calibFile;
-	
+
 		calibFile = SPIFFS.open(CALIBRATION_FILENAME, "w");
 
 		if (calibFile) {
@@ -663,61 +618,61 @@ class MagicShifterSystem {
 			(newMode != msGlobals.ggCurrentMode)) {
 			
 			msGlobals.ggModeList[msGlobals.ggCurrentMode]->stop();
-			msGlobals.ggCurrentMode = newMode;
-			msGlobals.ggModeList[newMode]->start();
+		msGlobals.ggCurrentMode = newMode;
+		msGlobals.ggModeList[newMode]->start();
 
-		}
+	}
+}
+
+void feedbackAnimation(int mode) {
+	int r, g, b = 0x00;
+
+	if (mode == msGlobals.feedbackType::OK) {
+		r = 0x00;
+		g = 0xff;
+		b = 0x00;
+	} else if (mode == msGlobals.feedbackType::NOT_OK) {
+		r = 0xff;
+		g = 0x00;
+		b = 0x00;
+	} else {
+		r = 0xff;
+		g = 0xff;
+		b = 0xff;
 	}
 
-	void feedbackAnimation(int mode) {
-		int r, g, b = 0x00;
-
-		if (mode == msGlobals.feedbackType::OK) {
-			r = 0x00;
-			g = 0xff;
-			b = 0x00;
-		} else if (mode == msGlobals.feedbackType::NOT_OK) {
-			r = 0xff;
-			g = 0x00;
-			b = 0x00;
-		} else {
-			r = 0xff;
-			g = 0xff;
-			b = 0xff;
-		}
-
-		for (int i = 0; i <= 3; i++) {
-			msLEDs.fillLEDs(r, g, b, msGlobals.ggBrightness);
-			msLEDs.updateLEDs();
-			delay(35);
-			msLEDs.fastClear();
-			delay(35);
-		}
-
-		msLEDs.setLED(msGlobals.ggCurrentMode, 128, 128, 128, msGlobals.ggBrightness);
+	for (int i = 0; i <= 3; i++) {
+		msLEDs.fillLEDs(r, g, b, msGlobals.ggBrightness);
+		msLEDs.updateLEDs();
 		delay(35);
 		msLEDs.fastClear();
-
+		delay(35);
 	}
+
+	msLEDs.setLED(msGlobals.ggCurrentMode, 128, 128, 128, msGlobals.ggBrightness);
+	delay(35);
+	msLEDs.fastClear();
+
+}
 
 	// for fail-modes ..
-	void infinite_swipe() {
-		while (1) {
+void infinite_swipe() {
+	while (1) {
 			// swipe colors
-			for (byte idx = 0; idx < MAX_LEDS; idx++) {
-				msLEDs.setLED(idx, (idx & 1) ? 255 : 0,
-							  (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0,
-							  msGlobals.ggBrightness);
-				msLEDs.updateLEDs();
-				delay(30);
-			}
-			for (byte idx = 0; idx < MAX_LEDS; idx++) {
-				msLEDs.setLED(idx, 0, 0, 0, 1);
-				msLEDs.updateLEDs();
-				delay(30);
-			}
+		for (byte idx = 0; idx < MAX_LEDS; idx++) {
+			msLEDs.setLED(idx, (idx & 1) ? 255 : 0,
+				(idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0,
+				msGlobals.ggBrightness);
+			msLEDs.updateLEDs();
+			delay(30);
+		}
+		for (byte idx = 0; idx < MAX_LEDS; idx++) {
+			msLEDs.setLED(idx, 0, 0, 0, 1);
+			msLEDs.updateLEDs();
+			delay(30);
 		}
 	}
+}
 
 #define BUTTON_LED_A (MAX_LEDS - 1)
 #define BUTTON_LED_PWR (MAX_LEDS / 2)
@@ -725,162 +680,162 @@ class MagicShifterSystem {
 #define BUTTON_DISPLAY_PERIOD 1
 
 
-	void displayButtons() {
-		if (msButtons.msBtnPwrDoubleHit) {
-			msLEDs.fillLEDs(0, 200, 0, msGlobals.ggBrightness);
-			msLEDs.updateLEDs();
-			delay(BUTTON_DISPLAY_PERIOD);
-		}
-
-		if (msButtons.msBtnPwrLongHit) {
-			msLEDs.setLED(BUTTON_LED_PWR, 0, 0, 20, 20);
-			msLEDs.setLED(BUTTON_LED_PWR + 1, 0, 0, 20, 20);
-			msLEDs.updateLEDs();
-			delay(BUTTON_DISPLAY_PERIOD);
-		}
-		if (msButtons.msBtnPwrHit) {
-			msLEDs.setLED(BUTTON_LED_PWR, 20, 20, 0, 15);
-			msLEDs.setLED(BUTTON_LED_PWR - 1, 20, 20, 0, 15);
-			msLEDs.updateLEDs();
-			delay(BUTTON_DISPLAY_PERIOD);
-		}
-		if (msButtons.msBtnALongHit) {
-			msLEDs.setLED(BUTTON_LED_A, 20, 0, 20, 20);
-			msLEDs.updateLEDs();
-			delay(BUTTON_DISPLAY_PERIOD);
-		}
-		if (msButtons.msBtnAHit) {
-			msLEDs.setLED(BUTTON_LED_A, 20, 20, 0, 20);
-			msLEDs.updateLEDs();
-			delay(BUTTON_DISPLAY_PERIOD);
-		}
-		if (msButtons.msBtnBLongHit) {
-			msLEDs.setLED(BUTTON_LED_B, 20, 0, 20, 20);
-			msLEDs.updateLEDs();
-			delay(BUTTON_DISPLAY_PERIOD);
-		}
-		if (msButtons.msBtnBHit) {
-			msLEDs.setLED(BUTTON_LED_B, 20, 20, 0, 20);
-			msLEDs.updateLEDs();
-			delay(BUTTON_DISPLAY_PERIOD);
-		}
+void displayButtons() {
+	if (msButtons.msBtnPwrDoubleHit) {
+		msLEDs.fillLEDs(0, 200, 0, msGlobals.ggBrightness);
+		msLEDs.updateLEDs();
+		delay(BUTTON_DISPLAY_PERIOD);
 	}
+
+	if (msButtons.msBtnPwrLongHit) {
+		msLEDs.setLED(BUTTON_LED_PWR, 0, 0, 20, 20);
+		msLEDs.setLED(BUTTON_LED_PWR + 1, 0, 0, 20, 20);
+		msLEDs.updateLEDs();
+		delay(BUTTON_DISPLAY_PERIOD);
+	}
+	if (msButtons.msBtnPwrHit) {
+		msLEDs.setLED(BUTTON_LED_PWR, 20, 20, 0, 15);
+		msLEDs.setLED(BUTTON_LED_PWR - 1, 20, 20, 0, 15);
+		msLEDs.updateLEDs();
+		delay(BUTTON_DISPLAY_PERIOD);
+	}
+	if (msButtons.msBtnALongHit) {
+		msLEDs.setLED(BUTTON_LED_A, 20, 0, 20, 20);
+		msLEDs.updateLEDs();
+		delay(BUTTON_DISPLAY_PERIOD);
+	}
+	if (msButtons.msBtnAHit) {
+		msLEDs.setLED(BUTTON_LED_A, 20, 20, 0, 20);
+		msLEDs.updateLEDs();
+		delay(BUTTON_DISPLAY_PERIOD);
+	}
+	if (msButtons.msBtnBLongHit) {
+		msLEDs.setLED(BUTTON_LED_B, 20, 0, 20, 20);
+		msLEDs.updateLEDs();
+		delay(BUTTON_DISPLAY_PERIOD);
+	}
+	if (msButtons.msBtnBHit) {
+		msLEDs.setLED(BUTTON_LED_B, 20, 20, 0, 20);
+		msLEDs.updateLEDs();
+		delay(BUTTON_DISPLAY_PERIOD);
+	}
+}
 
 #define BRIGHTNESS_CONTROL_TIME (850 * 1000)
 
-	uint8_t BrightnessLevels[16] = { 1, 2, 3, 4,
-		5, 6, 7, 8,
-		10, 12, 14, 16,
-		18, 22, 26, 31
-	};
+uint8_t BrightnessLevels[16] = { 1, 2, 3, 4,
+	5, 6, 7, 8,
+	10, 12, 14, 16,
+	18, 22, 26, 31
+};
 
 #define BRIGHTNESS_UI_LEVEL 0xFF
 
 // -- brightness handling:
-	void brightnessControlStep() {
-		int newIdx = msGlobals.ggBrightness;
-		float avgV = 0;
-		int newV = 0, lastV = -1;
-		uint16_t blink = 0;
-		int skip = 100;
+void brightnessControlStep() {
+	int newIdx = msGlobals.ggBrightness;
+	float avgV = 0;
+	int newV = 0, lastV = -1;
+	uint16_t blink = 0;
+	int skip = 100;
 
 		// state: on
-		if ((msButtons.powerButtonPressed()) &&
-			(msButtons.msBtnPwrPressTime > BRIGHTNESS_CONTROL_TIME)) {
+	if ((msButtons.powerButtonPressed()) &&
+		(msButtons.msBtnPwrPressTime > BRIGHTNESS_CONTROL_TIME)) {
 
-			slogln("brightnessControlStep EVENT");
+		slogln("brightnessControlStep EVENT");
 
-			while (skip) {
-				delay(1);
+	while (skip) {
+		delay(1);
 
-				getADValue();
-				msButtons.step();
-				msSensor.step();
+		getADValue();
+		msButtons.step();
+		msSensor.step();
 
-				if (msButtons.powerButtonPressed())
-					skip = 100;
-				else {
-					if (skip > 0)
-						skip--;
-				}
+		if (msButtons.powerButtonPressed())
+			skip = 100;
+		else {
+			if (skip > 0)
+				skip--;
+		}
 
 				// AccelPoll();
 
 				// calculate average curve
-				float fFactor = 0.96;
-				avgV =
-					(fFactor * avgV) + msGlobals.ggAccel[XAXIS] * (1 -
-																   fFactor);
-				float lLEDRange = ((MAX_LEDS - 1.0) / 2.0);
+		float fFactor = 0.96;
+		avgV =
+		(fFactor * avgV) + msGlobals.ggAccel[XAXIS] * (1 -
+			fFactor);
+		float lLEDRange = ((MAX_LEDS - 1.0) / 2.0);
 				// calculate LED index
-				newIdx =
-					(int) ((lLEDRange * 1.4) + (lLEDRange * avgV) * 1.8);
+		newIdx =
+		(int) ((lLEDRange * 1.4) + (lLEDRange * avgV) * 1.8);
 
-				if (msGlobals.ggFault > 0)
-					newIdx = -2;
+		if (msGlobals.ggFault > 0)
+			newIdx = -2;
 
-				if (newIdx < -1) {
-					newV = 0;
-				} else {
-					blink = 0;
-					if (newIdx < 0)
-						newIdx = 0;
-					if (newIdx >= 15)
-						newIdx = 15;
-					newV = BrightnessLevels[newIdx];
-				}
+		if (newIdx < -1) {
+			newV = 0;
+		} else {
+			blink = 0;
+			if (newIdx < 0)
+				newIdx = 0;
+			if (newIdx >= 15)
+				newIdx = 15;
+			newV = BrightnessLevels[newIdx];
+		}
 
-				if (newV == 0) {
-					msLEDs.fillLEDs(0, 0, 0, 0);
-					blink++;
-					uint16_t bb = blink & 0x1FF;
-					if (bb > 255)
-						bb = 511 - bb;
+		if (newV == 0) {
+			msLEDs.fillLEDs(0, 0, 0, 0);
+			blink++;
+			uint16_t bb = blink & 0x1FF;
+			if (bb > 255)
+				bb = 511 - bb;
 					//bb = (v*bb)/255;
 
-					msLEDs.setLED(4, bb / 8, bb / 8, bb / 8, msGlobals.ggBrightness);
-					msLEDs.setLED(5, bb / 4, bb / 4, bb / 4, msGlobals.ggBrightness);
-					msLEDs.setLED(6, bb / 2, bb / 2, bb / 2, msGlobals.ggBrightness);
-					msLEDs.setLED(7, bb, bb, bb, msGlobals.ggBrightness);
-					msLEDs.setLED(8, bb, bb, bb, msGlobals.ggBrightness);
-					msLEDs.setLED(9, bb / 2, bb / 2, bb / 2, msGlobals.ggBrightness);
-					msLEDs.setLED(10, bb / 4, bb / 4, bb / 4, msGlobals.ggBrightness);
-					msLEDs.setLED(11, bb / 8, bb / 8, bb / 8, msGlobals.ggBrightness);
+			msLEDs.setLED(4, bb / 8, bb / 8, bb / 8, msGlobals.ggBrightness);
+			msLEDs.setLED(5, bb / 4, bb / 4, bb / 4, msGlobals.ggBrightness);
+			msLEDs.setLED(6, bb / 2, bb / 2, bb / 2, msGlobals.ggBrightness);
+			msLEDs.setLED(7, bb, bb, bb, msGlobals.ggBrightness);
+			msLEDs.setLED(8, bb, bb, bb, msGlobals.ggBrightness);
+			msLEDs.setLED(9, bb / 2, bb / 2, bb / 2, msGlobals.ggBrightness);
+			msLEDs.setLED(10, bb / 4, bb / 4, bb / 4, msGlobals.ggBrightness);
+			msLEDs.setLED(11, bb / 8, bb / 8, bb / 8, msGlobals.ggBrightness);
 
-					msLEDs.updateLEDs();
-					delayMicroseconds(200);
-				} else if (lastV != newV) {
-					for (uint8_t i = 0; i <= 15; i++) {
+			msLEDs.updateLEDs();
+			delayMicroseconds(200);
+		} else if (lastV != newV) {
+			for (uint8_t i = 0; i <= 15; i++) {
 
-						uint8_t lBr = BrightnessLevels[i];
+				uint8_t lBr = BrightnessLevels[i];
 
-						uint8_t dB = lBr;
+				uint8_t dB = lBr;
 
 						//if (dB <= 16) dB = 16;
-						if (newV >= lBr)
-							msLEDs.setLED(15 - i, BRIGHTNESS_UI_LEVEL,
-										  BRIGHTNESS_UI_LEVEL,
-										  BRIGHTNESS_UI_LEVEL, dB);
-						else
-							msLEDs.setLED(15 - i, 0, 0, 0);
-					}
-					msLEDs.updateLEDs();
-					delayMicroseconds(200);
-				}
-				lastV = newV;
+				if (newV >= lBr)
+					msLEDs.setLED(15 - i, BRIGHTNESS_UI_LEVEL,
+						BRIGHTNESS_UI_LEVEL,
+						BRIGHTNESS_UI_LEVEL, dB);
+				else
+					msLEDs.setLED(15 - i, 0, 0, 0);
 			}
-
-			if (newV == 0)
-				powerDown();
-
-			msGlobals.ggBrightness = newV;
-
-			WaitClearButtons();
-
-			msLEDs.fillLEDs(0, 0, 0, 0);
 			msLEDs.updateLEDs();
+			delayMicroseconds(200);
 		}
+		lastV = newV;
 	}
+
+	if (newV == 0)
+		powerDown();
+
+	msGlobals.ggBrightness = newV;
+
+	WaitClearButtons();
+
+	msLEDs.fillLEDs(0, 0, 0, 0);
+	msLEDs.updateLEDs();
+}
+}
 
 
 // -- battery status methods:
@@ -889,52 +844,52 @@ class MagicShifterSystem {
 #define LIPO_DISPLAY_ORANGE_LIMIT_V        3.9
 #define LIPO_DISPLAY_UPPER_LIMIT_V         4.5
 
-	void WaitClearButtons() {
-		while (msButtons.powerButtonPressed()) {
-			delay(1);
-		}
+void WaitClearButtons() {
+	while (msButtons.powerButtonPressed()) {
+		delay(1);
 	}
+}
 
-	void showBatteryStatus(bool shouldFadeIn) {
+void showBatteryStatus(bool shouldFadeIn) {
 		//v = MAXMV;
 
-		int d = 500;
-		int gs = 10;
-		float batLevel = 0.0f;
+	int d = 500;
+	int gs = 10;
+	float batLevel = 0.0f;
 
-		if (!shouldFadeIn)
-			d = d * -1;
+	if (!shouldFadeIn)
+		d = d * -1;
 
-		WaitClearButtons();
-		delay(50);
-		batLevel = getBatteryVoltage();
+	WaitClearButtons();
+	delay(50);
+	batLevel = getBatteryVoltage();
 
-		msLEDs.fillLEDs(0, 0, 0, 0);
+	msLEDs.fillLEDs(0, 0, 0, 0);
 
-		for (int i = 0; i >= 0 && i <= 15; i++) {
-			float iV =
-				LIPO_DISPLAY_LOWER_LIMIT_V + (LIPO_DISPLAY_UPPER_LIMIT_V -
-											  LIPO_DISPLAY_LOWER_LIMIT_V) *
-				(i / 16.0);
+	for (int i = 0; i >= 0 && i <= 15; i++) {
+		float iV =
+		LIPO_DISPLAY_LOWER_LIMIT_V + (LIPO_DISPLAY_UPPER_LIMIT_V -
+			LIPO_DISPLAY_LOWER_LIMIT_V) *
+		(i / 16.0);
 
-			if (batLevel > iV) {
-				int red, green;
-				if (iV > LIPO_DISPLAY_RED_LIMIT_V) {
-					green =
-						255 * (iV -
-							   LIPO_DISPLAY_RED_LIMIT_V) /
-						(LIPO_DISPLAY_UPPER_LIMIT_V -
-						 LIPO_DISPLAY_RED_LIMIT_V);
+		if (batLevel > iV) {
+			int red, green;
+			if (iV > LIPO_DISPLAY_RED_LIMIT_V) {
+				green =
+				255 * (iV -
+					LIPO_DISPLAY_RED_LIMIT_V) /
+				(LIPO_DISPLAY_UPPER_LIMIT_V -
+					LIPO_DISPLAY_RED_LIMIT_V);
+			} else
+			green = 0;
+
+			if (iV < LIPO_DISPLAY_ORANGE_LIMIT_V) {
+				red =
+				255 * (LIPO_DISPLAY_ORANGE_LIMIT_V -
+					iV) / (LIPO_DISPLAY_ORANGE_LIMIT_V -
+					LIPO_DISPLAY_LOWER_LIMIT_V);
 				} else
-					green = 0;
-
-				if (iV < LIPO_DISPLAY_ORANGE_LIMIT_V) {
-					red =
-						255 * (LIPO_DISPLAY_ORANGE_LIMIT_V -
-							   iV) / (LIPO_DISPLAY_ORANGE_LIMIT_V -
-									  LIPO_DISPLAY_LOWER_LIMIT_V);
-				} else
-					red = 0;
+				red = 0;
 				msLEDs.setLED(15 - i, red, green, 0, gs);
 
 				//msLEDs.setLED(i, 0, iV > LIPO_DISPLAY_RED_LIMIT_V  ? 150 : 0, iV < LIPO_DISPLAY_ORANGE_LIMIT_V ? 150 : 0, gs);
@@ -972,44 +927,44 @@ class MagicShifterSystem {
 	}
 
 // NOTE: this is being left in for future testing of SPIFFS .. 
-  void TEST_SPIFFS_bug()
-  {
+	void TEST_SPIFFS_bug()
+	{
 
-    const char* debugPath = "XXXXX";
-    uint8_t testVals[] = {1,23, 3, 7};
-    uint8_t readBuffer[] = {0,0,0,0};
+		const char* debugPath = "XXXXX";
+		uint8_t testVals[] = {1,23, 3, 7};
+		uint8_t readBuffer[] = {0,0,0,0};
     //File file = SPIFFS.open((char *)debugPath.c_str(), "w");
-    
-    slogln("openin for w: ");
-    slogln(String(debugPath));
-    
-    File file = SPIFFS.open(debugPath, "w");
 
-    slogln("opended for w: ");
-    slogln(String((bool)file));
+		slogln("openin for w: ");
+		slogln(String(debugPath));
 
-    slogln("writin: ");
-    slogln(String(testVals[1]));
+		File file = SPIFFS.open(debugPath, "w");
 
-    file.write((uint8_t *)testVals, sizeof testVals);
-    file.close();
+		slogln("opended for w: ");
+		slogln(String((bool)file));
 
-    slogln("openin for r: ");
-    slogln(String(debugPath));
-    
-    File fileR = SPIFFS.open(debugPath, "r");
+		slogln("writin: ");
+		slogln(String(testVals[1]));
 
-    slogln("opended for r: ");
-    slogln(String((bool)fileR));
+		file.write((uint8_t *)testVals, sizeof testVals);
+		file.close();
 
-    slogln("readin: ");
+		slogln("openin for r: ");
+		slogln(String(debugPath));
 
-    fileR.read((uint8_t *)readBuffer, sizeof readBuffer);
-    fileR.close();
+		File fileR = SPIFFS.open(debugPath, "r");
 
-    slogln("readback: ");
-    slogln(String(readBuffer[1]));
-  };
+		slogln("opended for r: ");
+		slogln(String((bool)fileR));
+
+		slogln("readin: ");
+
+		fileR.read((uint8_t *)readBuffer, sizeof readBuffer);
+		fileR.close();
+
+		slogln("readback: ");
+		slogln(String(readBuffer[1]));
+	};
 
 
 	// gets the basic stuff set up
@@ -1074,13 +1029,13 @@ class MagicShifterSystem {
 
 		// global font objects
 		MagicShifterImage::LoadBitmapBuffer("font4x5.magicFont",
-											&msGlobals.ggtBitmap4x5);
+			&msGlobals.ggtBitmap4x5);
 		MagicShifterImage::LoadBitmapBuffer("font6x8.magicFont",
-											&msGlobals.ggtBitmap6x8);
+			&msGlobals.ggtBitmap6x8);
 		MagicShifterImage::LoadBitmapBuffer("font7x12.magicFont",
-											&msGlobals.ggtBitmap7x12);
+			&msGlobals.ggtBitmap7x12);
 		MagicShifterImage::LoadBitmapBuffer("font10x16.magicFont",
-											&msGlobals.ggtBitmap10x16);
+			&msGlobals.ggtBitmap10x16);
 
 
 

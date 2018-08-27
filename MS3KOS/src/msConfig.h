@@ -14,14 +14,8 @@
 // serial i/o is unavailable if hardware MIDI is enabled
 #ifdef CONFIG_ENABLE_MIDI
 #define CONFIG_MIDI_RTP_MIDI
-#undef _DO_SERIAL_OUTPUT
-#else
-#define _DO_SERIAL_OUTPUT
+// #undef _DO_SERIAL_OUTPUT
 #endif
-
-// !J! debug 
-#warning "Serial enabled even though MIDI in use.."
-#define _DO_SERIAL_OUTPUT
 
 // Accelerometer enabled?
 #define CONFIG_ENABLE_ACCEL
