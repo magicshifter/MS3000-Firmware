@@ -21,123 +21,121 @@ APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_De
 // Debug RTP MIDI event handlers:
 // -----------------------------------------------------------------------------
 void OnRTPMIDI_Connected(uint32_t ssrc, char* name) {
-	Serial.print("MIDI(rtp): Connected to session ");
-	Serial.println(name);
+	msSystem.slog("MIDI(rtp): Connected to session ");
+	msSystem.slogln(name);
 }
 
 void OnRTPMIDI_Disconnected(uint32_t ssrc) {
-	Serial.println("MIDI(rtp): Disconnected from session");
-	Serial.print("ssrc:");
-	Serial.println(ssrc);
+	msSystem.slogln("MIDI(rtp): Disconnected from session");
 }
 
 void OnRTPMIDI_ReceiveNoteOn(byte channel, byte note, byte velocity) {
-	Serial.print("MIDI(rtp): channel:");
-	Serial.print(String(channel));
-	Serial.print(" noteOn:");
-	Serial.print(String(note));
-	Serial.print(" vel.:");
-	Serial.println(String(velocity));
+	msSystem.slog("MIDI(rtp): channel:");
+	msSystem.slog(String(channel));
+	msSystem.slog(" noteOn:");
+	msSystem.slog(String(note));
+	msSystem.slog(" vel.:");
+	msSystem.slogln(String(velocity));
 }
 
 void OnRTPMIDI_ReceiveNoteOff(byte channel, byte note, byte velocity) {
-	Serial.print("MIDI(rtp): channel:");
-	Serial.print(String(channel));
-	Serial.print(" noteOff:");
-	Serial.print(String(note));
-	Serial.print(" vel.:");
-	Serial.println(String(velocity));
+	msSystem.slog("MIDI(rtp): channel:");
+	msSystem.slog(String(channel));
+	msSystem.slog(" noteOff:");
+	msSystem.slog(String(note));
+	msSystem.slog(" vel.:");
+	msSystem.slogln(String(velocity));
 }
 
 void OnRTPMIDI_ReceiveAfterTouchPoly(byte channel, byte note, byte velocity) {
-	Serial.print("MIDI(rtp): channel:");
-	Serial.print(String(channel));
-	Serial.print(" atouch poly note:");
-	Serial.print(String(note));
-	Serial.print(" vel.:");
-	Serial.println(String(velocity));
+	msSystem.slog("MIDI(rtp): channel:");
+	msSystem.slog(String(channel));
+	msSystem.slog(" atouch poly note:");
+	msSystem.slog(String(note));
+	msSystem.slog(" vel.:");
+	msSystem.slogln(String(velocity));
 };
 
 void OnRTPMIDI_ReceiveControlChange(byte channel, byte cc1, byte cc2) {
-	Serial.print("MIDI(rtp): channel:");
-	Serial.print(String(channel));
-	Serial.print(" cc1:");
-	Serial.print(String(cc1));
-	Serial.print(" cc2:");
-	Serial.println(String(cc2));
+	msSystem.slog("MIDI(rtp): channel:");
+	msSystem.slog(String(channel));
+	msSystem.slog(" cc1:");
+	msSystem.slog(String(cc1));
+	msSystem.slog(" cc2:");
+	msSystem.slogln(String(cc2));
 };
 
 void OnRTPMIDI_ReceiveProgramChange(byte channel, byte program) {
-	Serial.print("MIDI(rtp): channel:");
-	Serial.print(String(channel));
-	Serial.print(" change program:");
-	Serial.println(String(program));
+	msSystem.slog("MIDI(rtp): channel:");
+	msSystem.slog(String(channel));
+	msSystem.slog(" change program:");
+	msSystem.slogln(String(program));
 };
 
 void OnRTPMIDI_ReceiveAfterTouchChannel(byte channel, byte atouch) {
-	Serial.print("MIDI(rtp): channel:");
-	Serial.print(String(channel));
-	Serial.print(" atouch:");
-	Serial.println(String(atouch));
+	msSystem.slog("MIDI(rtp): channel:");
+	msSystem.slog(String(channel));
+	msSystem.slog(" atouch:");
+	msSystem.slogln(String(atouch));
 };
 
 void OnRTPMIDI_ReceivePitchBend(byte channel, int bend) {
-	Serial.print("MIDI(rtp): channel:");
-	Serial.print(String(channel));
-	Serial.print(" bend:");
-	Serial.println(String(bend));
+	msSystem.slog("MIDI(rtp): channel:");
+	msSystem.slog(String(channel));
+	msSystem.slog(" bend:");
+	msSystem.slogln(String(bend));
 };
 
 void OnRTPMIDI_ReceiveSysEx(const byte *data, uint16_t size) { 
-	Serial.print("MIDI(rtp): sysex size:");
-	Serial.println(String(size));
+	msSystem.slog("MIDI(rtp): sysex size:");
+	msSystem.slogln(String(size));
 };
 
 void OnRTPMIDI_ReceiveTimeCodeQuarterFrame(byte data) {
-	Serial.print(" TCQF data:");
-	Serial.println(String(data));
+	msSystem.slog(" TCQF data:");
+	msSystem.slogln(String(data));
 };
 
 void OnRTPMIDI_ReceiveSongPosition(unsigned short beats) {
-	Serial.print(" SPP beats:");
-	Serial.println(String(beats));
+	msSystem.slog(" SPP beats:");
+	msSystem.slogln(String(beats));
 };
 
 void OnRTPMIDI_ReceiveSongSelect(byte songnumber) {
-	Serial.print("MIDI(rtp): SONG number:");
-	Serial.println(String(songnumber));
+	msSystem.slog("MIDI(rtp): SONG number:");
+	msSystem.slogln(String(songnumber));
 };
 
 void OnRTPMIDI_ReceiveTuneRequest() {
-	Serial.println("MIDI(rtp): Tune Request");
+	msSystem.slogln("MIDI(rtp): Tune Request");
 };
 
 void OnRTPMIDI_ReceiveClock() {
-	Serial.println("MIDI(rtp): Clock");
+	msSystem.slogln("MIDI(rtp): Clock");
 };
 
 void OnRTPMIDI_ReceiveStart() {
-	Serial.println("MIDI(rtp): START");
+	msSystem.slogln("MIDI(rtp): START");
 
 };
 
 void OnRTPMIDI_ReceiveContinue() {
-	Serial.println("MIDI(rtp): CONTINUE");
+	msSystem.slogln("MIDI(rtp): CONTINUE");
 
 };
 
 void OnRTPMIDI_ReceiveStop() {
-	Serial.println("MIDI(rtp): STOP");
+	msSystem.slogln("MIDI(rtp): STOP");
 
 };
 
 void OnRTPMIDI_ReceiveActiveSensing() {
-	Serial.println("MIDI(rtp): ACTIVE SENSE");
+	msSystem.slogln("MIDI(rtp): ACTIVE SENSE");
 
 };
 
 void OnRTPMIDI_ReceiveReset() {
-	Serial.println("MIDI(rtp): RESET");
+	msSystem.slogln("MIDI(rtp): RESET");
 
 };
 

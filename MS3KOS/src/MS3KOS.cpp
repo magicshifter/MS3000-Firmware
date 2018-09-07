@@ -53,6 +53,7 @@ MagicShifterWebServer msWebServer;
 // Onboard GUI modes, per configuration
 #include "Modes/Modes.h"
 
+#include "msMIDIBase.h"
 
 // Detect system-faults for factory testing and otherwise
 // A low-level system fault can either be:
@@ -115,11 +116,11 @@ void setup()
 
 	setupRTPDebugHandlers();
 
-	Serial.println("MIDI(rtp): started");
-	AppleMIDI.begin(msSystem.Settings.getUniqueSystemName().c_str());
+	msSystem.slogln("MIDI(rtp): started");
+	AppleMIDI.begin(msSystem.Settings.getAPNameOrUnique());
 
-	Serial.print("MIDI(rtp) IDENTITY:");
-	Serial.println(AppleMIDI.getSessionName());
+	msSystem.slog("MIDI(rtp) IDENTITY:");
+	msSystem.slogln(AppleMIDI.getSessionName());
 
 #endif
 

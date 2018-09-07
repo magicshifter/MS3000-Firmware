@@ -38,7 +38,6 @@
 // schemes
 #include "msSettingsManager.h"
 
-#include "msMIDIBase.h"
 
 // forward-declared here because it is a client of msSystem ..
 void CommandInterfacePoll();
@@ -56,8 +55,6 @@ class MagicShifterSystem {
 			// used in resetAPList & getNextAP
 		int apListIndex = -1;
 		File smAPListFile;
-
-	private:
 
 		bool loadData(String path, void *config, int len) {
 			if (SPIFFS.exists((char *) path.c_str())) {
@@ -128,6 +125,20 @@ class MagicShifterSystem {
 				return saveData(uiSettingsConfigPath, config, sizeof(*config));
 			}
 
+			char *getAPNameOrUnique() {
+				APAuth apInfo;
+				bool gotAPConfig = msSystem.Settings.getAPConfig(&apInfo);
+				bool gotmDNSConfig = false;
+
+				if (gotAPConfig) {
+					return apInfo.ssid;
+				}
+				else {
+					return (char *)msSystem.Settings.getUniqueSystemName().c_str();
+				}
+
+			}
+
 			bool getServerConfig(struct ServerConfig *config) {
 
 				String path = apServerConfigPath;
@@ -187,6 +198,8 @@ class MagicShifterSystem {
 					File file = SPIFFS.open((char *) path.c_str(), "r");
 					file.read((uint8_t *) config, sizeof(*config));
 					file.close();
+					msSystem.slogln("webserver: AP name is:");
+					msSystem.slogln(config->ssid);
 
 					return true;
 
@@ -408,8 +421,6 @@ class MagicShifterSystem {
 
 #define WL_MAC_ADDR_LENGTH 6
 
-private:
-
 public:
 	SettingsManager Settings;
 	MagicShifterSysLog msSysLog;
@@ -431,9 +442,6 @@ public:
 
 	int lowBatteryMillis;
 	float  batteryVoltage = 0.0;
-
-public:
-	// todo:switch slog from OFF, to BANNED (MIDI), to UDP .. etc.
 
 	void slog(String msg) {
 		msSysLog.sendSysLogMsg(msg);
@@ -616,13 +624,14 @@ public:
 	{
 		if (newMode < msGlobals.ggModeList.size() && 
 			(newMode != msGlobals.ggCurrentMode)) {
-			
+			slogln("XXXX setMODE SHALL switch (and start)");
 			msGlobals.ggModeList[msGlobals.ggCurrentMode]->stop();
-		msGlobals.ggCurrentMode = newMode;
-		msGlobals.ggModeList[newMode]->start();
-
+			msGlobals.ggCurrentMode = newMode;
+			msGlobals.ggModeList[newMode]->start();
+		}
+		else 
+			slogln("XXXX setMODE didn't switch (and start)");
 	}
-}
 
 void feedbackAnimation(int mode) {
 	int r, g, b = 0x00;
@@ -976,12 +985,13 @@ void showBatteryStatus(bool shouldFadeIn) {
 
 		EEPROM.begin(512);
 
-// #ifdef CONFIG_ENABLE_MIDI
-// #warning "MIDI has been enabled - Serial I/O at 31250 - serial logging disabled (use wlan)"
-		// Serial.begin(31250);
-// #else
+#ifdef CONFIG_ENABLE_SERIAL_MIDI
+#warning "SERIAL MIDI has been enabled - Serial I/O at 31250 - serial logging disabled (use wlan)"
+		Serial.begin(31250);
+#else
+#warning "SERIAL MIDI is disabled - syslog will use serial logging"
 		Serial.begin(921600);
-// #endif
+#endif
 
 		slogln(String("\r\nMagicShifter 3000 OS V" + String(MS3KOS_VERSION)));
 
@@ -1137,7 +1147,7 @@ void showBatteryStatus(bool shouldFadeIn) {
 			}
 		}
 
-#ifndef CONFIG_ENABLE_MIDI
+#ifndef CONFIG_ENABLE_SERIAL_MIDI
 		// poll the serial interface for test/flash commands, etc.
 		CommandInterfacePoll();
 #endif

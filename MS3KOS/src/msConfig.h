@@ -9,12 +9,16 @@
 
 // MIDI and OSC enabled?
 #define CONFIG_ENABLE_MIDI
-#define CONFIG_ENABLE_OSC
+// #define CONFIG_ENABLE_OSC
 
 // serial i/o is unavailable if hardware MIDI is enabled
+
 #ifdef CONFIG_ENABLE_MIDI
 #define CONFIG_MIDI_RTP_MIDI
+#define CONFIG_ENABLE_SERIAL_MIDI
 // #undef _DO_SERIAL_OUTPUT
+#else
+#define _DO_SERIAL_OUTPUT
 #endif
 
 // Accelerometer enabled?

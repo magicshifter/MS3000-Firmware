@@ -13,7 +13,7 @@ class MagicShifterSysLog {
   private:
 	unsigned int localPort = 2390;
 	WiFiUDP sysLogUDP;
-	IPAddress syslogServer;
+	IPAddress syslogServerIP;
 
   public:
 
@@ -42,26 +42,42 @@ class MagicShifterSysLog {
 			}
 		}
 #else
+#ifndef CONFIG_ENABLE_SERIAL_MIDI
 		Serial.println("syslog: JoinAP disabled:");
 #endif
+#endif
 
+#ifndef CONFIG_ENABLE_SERIAL_MIDI
 		if (msGlobals.ggDebugSerial) {
 			Serial.println("syslog: serial enable");
 			Serial.println("syslog: WiFi connected");
 			Serial.print("syslog: local address: ");
 			Serial.println(WiFi.localIP());
 			Serial.print("syslog: host address: ");
-			Serial.println(syslogServer);
+			Serial.println(syslogServerIP);
 		}
+#endif
+
 	};
 
 	// 
 	void setup(char *syslogHostIPStr) {
 
-		syslogServer = syslogServer.fromString(syslogHostIPStr);
+		bool validIPConfig = syslogServerIP.fromString(syslogHostIPStr);
 
-		Serial.print("syslog: configured host is:");
-		Serial.println(syslogServer);
+#ifndef CONFIG_ENABLE_SERIAL_MIDI
+		Serial.print("syslog: host address as string: ");
+		Serial.println(syslogHostIPStr);
+
+		Serial.print("syslog: configured host is: ");
+		Serial.println(syslogServerIP);
+
+		if (validIPConfig) {
+			Serial.print("syslog: IP Config appears to be valid");
+		} else {
+			Serial.print("syslog: IP Config appears to be INVALID");
+		}
+#endif
 
 		delay(20);
 		connect_wifi();
@@ -70,6 +86,9 @@ class MagicShifterSysLog {
 		delay(500);
 		if (WiFi.status() == WL_CONNECTED) {
 			sendSysLogMsg("MagicShifter3000 reporting for duty!");
+		}
+		else
+		{
 		}
 	}
 
@@ -83,7 +102,7 @@ class MagicShifterSysLog {
 
 	void sendSysLogMsg(String aMsg) {
 		// String newMsg = " 009.local <45>MAGICSHIFTER:" + aMsg;	// !J! todo: fix level/service?
-		String newMsg = "" + aMsg;	// !J! todo: fix level/service?
+		String newMsg = "MS3K:" + aMsg;	// !J! todo: fix level/service?
 
 		unsigned int msg_length = newMsg.length();
 		byte *p = (byte *) malloc(msg_length);
@@ -94,7 +113,7 @@ class MagicShifterSysLog {
 		Serial.println(newMsg);
 #endif
 
-		sysLogUDP.beginPacket(syslogServer, 514);
+		sysLogUDP.beginPacket(syslogServerIP, 10514);
 		sysLogUDP.write(p, msg_length);
 		sysLogUDP.endPacket();
 

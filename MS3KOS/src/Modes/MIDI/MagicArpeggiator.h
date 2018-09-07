@@ -14,17 +14,21 @@
 
 // Status Indicator LED's - for the Arpeggiator, etc.
 #define LED_BUTTON_EVENT 0
+#define LED_MIDI1_EVENT 3
+#define LED_MIDI2_EVENT 4
 #define LED_NOTE_EVENT (8)
+#define LED_CONTROL_CHANGE (10)
 #define LED_ARP_COUNTER (13)
 #define LED_MEASURE_COUNTER (14)
 #define LED_BEAT_COUNTER (15)
-#define LED_CONTROL_CHANGE (10)
 
 // Arpeggiator constants -----------------------------------------------------------------
 #define BUFFER_SIZE (64)
 #define BUFFER_MASK (0x3F)
 #define ARP_DURATION_FOR_BPM(v) (600000/v/2)
 #define LOWEST_ARP_TEMPO (20)
+
+#define MIDI_ARP_FEEDBACK 1
 
 // Current View per MIDI input
 typedef struct {
@@ -41,7 +45,7 @@ MIDIViewT curr_midiview;
 // returns the # of bytes sent
 static uint16_t MIDI_Put(uint8_t * data, uint16_t length)
 {
-	return (Serial1.write(data, length));
+	return (Serial.write(data, length));
 }
 
 // Receive a MIDI message if its available
@@ -50,13 +54,15 @@ static uint16_t MIDI_Get(uint8_t * data, uint16_t length)
 {
 	int8_t count;
 	count = 0;
-	
-	while ( (Serial1.available()) && 
+
+	while ( (Serial.available()) && 
 		    ((length > 0) && 
-		     (data[count] = Serial1.read()) != -1) ) {
+		     (data[count] = Serial.read()) != -1) ) {
+		
 		count++;
 		length--;
 	}
+
 	return count;
 }
 
@@ -129,8 +135,8 @@ public:
 	uint8_t arp_frame = 0;			// internal beat, which is 1/16th of the actual beat (see arp_bpm)
 	
 	uint8_t arp_bpm = LOWEST_ARP_TEMPO;
-	uint32_t arp_beat_duration = 0;
-	uint32_t arp_frame_time = 0;
+	unsigned long arp_beat_duration = 0;
+	unsigned long last_arp_frame_time = 0;
 
 
 	void arpUIupdate()
@@ -171,6 +177,8 @@ public:
 	{
 
 		uint8_t event_idx = 0;
+
+// msSystem.slogln("MIDI: arpFrame!");
 
 		// end of arp measure, go to the beginning
 		if (arp_frame == 64) {
@@ -329,9 +337,6 @@ private:
 	uint16_t midi_frame = 0;		// current MIDI Processing frame
 
 
-	// Envelopes - used for the LED's
-	adsr_envelope anEnvelope;
-
 	// !J! TODO : There should be a MagicShifter API for this
 	// TODO: private state
 	// state for button timing
@@ -366,82 +371,6 @@ public:
 
 	MIDIArpeggiatorMode() {
 		modeName = "Arpi";
-	}
-
-	void envDump()
-	{
-		int c;
-
-		msSystem.slog("Current Dump:");
-
-		msSystem.slog(" T: ");
-		msSystem.slog(anEnvelope.timer, DEC);
-
-		msSystem.slog(" L: ");
-		msSystem.slog(anEnvelope.level, DEC);
-
-		msSystem.slog(" C: ");
-		msSystem.slog((unsigned int) anEnvelope.current, HEX);
-
-		msSystem.slog(" IDLE: ");
-		msSystem.slogln(anEnvelope.is_idle, DEC);
-
-		msSystem.slogln("Envelope Dump:");
-
-		for (c = 0; c <= ENV_RELEASE; c++) {
-			msSystem.slog("Stage:");
-			msSystem.slog((unsigned int) &anEnvelope.stages[c], HEX);
-			msSystem.slog(" ");
-			msSystem.slog(c, DEC);
-			msSystem.slog(" L:");
-			msSystem.slog(anEnvelope.stages[c].level, DEC);
-			msSystem.slog(" / D:");
-			msSystem.slog(anEnvelope.stages[c].duration, DEC);
-			msSystem.slog(" @ C:");
-			msSystem.slogln(anEnvelope.stages[c].coeff, DEC);
-
-		}
-	}
-
-	// Initialize the envelopes
-	void envInit()
-	{
-		adsr_envelope_init(&anEnvelope);
-		anEnvelope.stages[ENV_START].level = 1;
-		anEnvelope.stages[ENV_START].duration = 1;
-		anEnvelope.stages[ENV_START].coeff = 1;
-
-		anEnvelope.stages[ENV_ATTACK].level = 10;
-		anEnvelope.stages[ENV_ATTACK].duration = 2;
-		anEnvelope.stages[ENV_ATTACK].coeff = -1;
-
-		anEnvelope.stages[ENV_DECAY].level = 20;
-		anEnvelope.stages[ENV_DECAY].duration = 3;
-		anEnvelope.stages[ENV_DECAY].coeff = -1;
-
-		anEnvelope.stages[ENV_SUSTAIN].level = 30;
-		anEnvelope.stages[ENV_SUSTAIN].duration = 4;
-		anEnvelope.stages[ENV_SUSTAIN].coeff = -1;
-
-		anEnvelope.stages[ENV_RELEASE].level = 40;
-		anEnvelope.stages[ENV_RELEASE].duration = 5;
-		anEnvelope.stages[ENV_RELEASE].coeff = -1;
-
-		anEnvelope.current = &anEnvelope.stages[ENV_START];	// active
-
-	}
-
-	// calculate the envelopes
-	void envFrame()
-	{
-		static int8_t dbg;
-
-		// adsr_envelope_tick(&anEnvelope);
-		// envDump();
-
-		dbg++;
-		if (dbg >= 10)
-			exit;
 	}
 
 	void handleButtons()
@@ -526,6 +455,8 @@ public:
 	void start()
 	{
 
+		msSystem.slog("MIDIArpeggiator STARTED!");
+
 		// Initial view
 		curr_midiview.midi_channel = 0;
 
@@ -534,11 +465,12 @@ public:
 
 		// prime the Arp
 		_arp.arp_beat_duration = ARP_DURATION_FOR_BPM(_arp.arp_bpm);
-		_arp.arp_frame_time = micros();
-		_arp.arpFrame();
+		_arp.last_arp_frame_time = micros();
 
-		// prime the envelopes
-		envInit();
+		msSystem.slogln("MIDIArpeggiator START last_arp_frame_time:" + 
+			String(_arp.last_arp_frame_time));
+
+		_arp.arpFrame();
 
 		_arp.arpSoundOff();
 
@@ -567,27 +499,42 @@ public:
 		}
 
 		// pull midi_inbox, parse it with miby
-		if (Serial1.available()) {
-			// we Get exactly 1 byte of MIDI data at a time, and feed it to miby
+		if (Serial.available()) {
+
+msSystem.slog("MIDI: avail");
+
 			MIDI_Get(&midi_inb, 1);
+
+// !J! DEBUG:
+			msSystem.msLEDs.setLED(LED_NOTE_EVENT, 100, 100, 100, msGlobals.ggBrightness);
 
 			miby_parse(&miby, midi_inb);
 		} else {
+			msSystem.msLEDs.setLED(LED_NOTE_EVENT, 0, 0, 0, msGlobals.ggBrightness);
+
 			// !J! TODO: Soft-thru, etc. 
 			// MIDI_Put(&midi_buf[0], 4);
 		}
 
 		midi_frame++;
 
+// msSystem.slog("MIDI: frame:");
+// msSystem.slogln(String(midi_frame));
+
 		// minimize latency introduced by the Arp frame
-		if (!((micros() - _arp.arp_frame_time) < _arp.arp_beat_duration))
+		unsigned long nowT = micros();
+
+// msSystem.slogln("MIDI: arp nowT:" + String(nowT) + " arp frame time:" + String(_arp.last_arp_frame_time) + " arp beat duration:" + String(_arp.arp_beat_duration) + " RES: " + String ((!((nowT - _arp.last_arp_frame_time) < _arp.arp_beat_duration))));
+
+		if (!((nowT - _arp.last_arp_frame_time) < _arp.arp_beat_duration)) {
+// msSystem.slogln("MIDI: ARPFRAME: nowT - last_arp_frame_time < arp_beat_duration:" + String((nowT - _arp.last_arp_frame_time)));
 			_arp.arpFrame();
-
 		// prepare for our next frame
-		_arp.arp_frame_time = micros();
+			_arp.last_arp_frame_time = nowT;
+		} else {
+// msSystem.slogln("MIDI: nowT - last_arp_frame_time:" + String((nowT - _arp.last_arp_frame_time)));
+		}
 
-		// handle envelopes
-		envFrame();
 
 		msSystem.msLEDs.updateLEDs();
 
