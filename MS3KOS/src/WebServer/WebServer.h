@@ -25,11 +25,33 @@ class MagicShifterWebServer {
 			msSystem.slogln("webserver: wifi connection failed, retrying...");
 			delay(100);
 		}
+
+
+msSystem.slog("webserver: getAPNameOrUnique:");
+msSystem.slog( msSystem.Settings.getAPNameOrUnique() );
+
+
 #ifdef USE_MDNS
-		if (msSystem.msDNS.begin("magicshifter", WiFi.localIP())) {
-			msSystem.slogln("MDNS responder started");
+		// if (msSystem.msDNS.begin("magicshifter", WiFi.localIP())) {
+		APAuth apInfo;
+		bool gotAPConfig = msSystem.Settings.getAPConfig(&apInfo);
+		bool gotmDNSConfig = false;
+
+		if (gotAPConfig) {
+			msSystem.slogln("mDNS - using apInfo.ssid");
+			gotmDNSConfig = msSystem.msDNS.begin(apInfo.ssid, WiFi.localIP());		
 		}
+		else {
+			msSystem.slogln("mDNS - using uniqueSystemName");
+			gotmDNSConfig = msSystem.msDNS.begin(msSystem.Settings.getUniqueSystemName().c_str(), WiFi.localIP());
+		}
+
+		if (! gotmDNSConfig) {
+			msSystem.slogln("mDNS - name not set.");
+		}
+
 #endif
+
 		msSystem.msESPServer.on("/restart",[]() {
 								msSystem.msESPServer.send(200,
 														  "text/plain",
