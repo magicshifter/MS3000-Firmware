@@ -107,6 +107,9 @@ void setup()
 	msGlobals.ggModeList.push_back(&msMagicBeat);
 	msGlobals.ggModeList.push_back(&msMagicCountdown);
 
+	WiFi.hostname(msSystem.Settings.getAPNameOrUnique().c_str());
+	msSystem.slogln("wifi: hostname is:" + WiFi.hostname());
+
 	// if MIDI has been configured, enable the additional MIDI mode(s)
 #ifdef CONFIG_ENABLE_MIDI
 
