@@ -200,27 +200,28 @@ bool AutoConnect()
 			if (TryConnect
 				(msGlobals.ggAPConfig.apInfo.auth, CONNECTION_TIMEOUT)) {
 				msGlobals.ggModeAP = false;
-			return true;
-		}
-	} else
-	msSystem.slogln("wifi: no preferred configuration found.");
+				return true;
+			}
+		} else
+
+		msSystem.slogln("wifi: no preferred configuration found.");
 
 
-	if (SPIFFS.exists(msSystem.Settings.apListConfigPath)) {
+		if (SPIFFS.exists(msSystem.Settings.apListConfigPath)) {
 
-		msSystem.slogln("wifi: start scan -");
+			msSystem.slogln("wifi: start scan -");
 			// WiFi.scanNetworks will return the number of networks found
-		int n = WiFi.scanNetworks();
-		msSystem.slogln("wifi: scan done");
+			int n = WiFi.scanNetworks();
+			msSystem.slogln("wifi: scan done");
 
-		if (n == 0) {
-			msSystem.slogln("wifi: no networks found");
-		} else {
-			msSystem.slogln("wifi: networks found: " + String(n));
+			if (n == 0) {
+				msSystem.slogln("wifi: no networks found");
+			} else {
+				msSystem.slogln("wifi: networks found: " + String(n));
 
-			for (int i = 0; i < n; ++i) {
+				for (int i = 0; i < n; ++i) {
 					// Print SSID and RSSI for each network found
-				msSystem.slog(String("  ") + 
+					msSystem.slog(String("  ") + 
 							  String(i + 1) + 
 							  String(": ") + 
 							  WiFi.SSID(i) +
@@ -230,56 +231,56 @@ bool AutoConnect()
 							   + 
 							  String((WiFi.encryptionType(i) ==
 								         ENC_TYPE_NONE) ? "[open]" : "[encrypted]"));
-				delay(20);
+					delay(20);
+				}
 			}
-		}
 
-		msSystem.slogln("");
+			msSystem.slogln("");
 
-		msSystem.Settings.resetAPList();
+			msSystem.Settings.resetAPList();
 
-		while (msSystem.Settings.getNextAP(&msGlobals.ggAPConfig.apInfo.auth)) {
-			for (int i = 0; i < n; i++) {
-				if (strcmp
-					(WiFi.SSID(i).c_str(),
-						msGlobals.ggAPConfig.apInfo.auth.ssid) == 0) {
-					if (TryConnect
-						(msGlobals.ggAPConfig.apInfo.auth,
-							CONNECTION_TIMEOUT)) {
-						msGlobals.ggModeAP = false;
-					msGlobals.ggSoftAP.clear();
-
-					msSystem.feedbackAnimation(msGlobals.
-						feedbackType::OK);
-
-					return true;
+			while (msSystem.Settings.getNextAP(&msGlobals.ggAPConfig.apInfo.auth)) {
+				for (int i = 0; i < n; i++) {
+					if (strcmp
+						(WiFi.SSID(i).c_str(),
+							msGlobals.ggAPConfig.apInfo.auth.ssid) == 0) {
+						
+						if (TryConnect(msGlobals.ggAPConfig.apInfo.auth, CONNECTION_TIMEOUT)) {
+							
+							msGlobals.ggModeAP = false;
+							msGlobals.ggSoftAP.clear();
+							msSystem.feedbackAnimation(msGlobals.feedbackType::OK);
+							
+							return true;
+						}
+					}
 				}
 			}
 		}
-	}
-}
 
-msSystem.slogln("wifi: none of the configured networks found.");
-msSystem.feedbackAnimation(msGlobals.feedbackType::NOT_OK);
-return false;
-}
+		msSystem.slogln("wifi: none of the configured networks found.");
+		msSystem.feedbackAnimation(msGlobals.feedbackType::NOT_OK);
+
+		return false;
+	}
 #endif
 
-msSystem.slogln("wifi: fallback to standalone access point.");
+	msSystem.slogln("wifi: fallback to standalone access point.");
 	// WiFi.disconnect(false);
 
-APAuthHelper softAPInfo;
+	APAuthHelper softAPInfo;
 
-msSystem.Settings.getAPConfig(&softAPInfo.auth);
-if (TrySoftAP(softAPInfo.auth)) {
-	msGlobals.ggModeAP = true;
-	msGlobals.ggSoftAP = softAPInfo;
+	msSystem.Settings.getAPConfig(&softAPInfo.auth);
+	if (TrySoftAP(softAPInfo.auth)) {
+		msGlobals.ggModeAP = true;
+		msGlobals.ggSoftAP = softAPInfo;
 
-	return true;
+		return true;
+	}
+
+	msSystem.slogln("wifi: ERROR: autoConnect failed!");
+
+	return false;
+	
 }
-
-msSystem.slogln("wifi: ERROR: autoConnect failed!");
-return false;
-}
-
 #endif
