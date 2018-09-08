@@ -206,7 +206,6 @@ bool AutoConnect()
 
 		msSystem.slogln("wifi: no preferred configuration found.");
 
-
 		if (SPIFFS.exists(msSystem.Settings.apListConfigPath)) {
 
 			msSystem.slogln("wifi: start scan -");

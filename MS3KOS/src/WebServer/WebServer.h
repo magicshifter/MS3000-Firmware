@@ -32,6 +32,7 @@ class MagicShifterWebServer {
 		bool gotAPConfig = msSystem.Settings.getAPConfig(&apInfo);
 		bool gotmDNSConfig = false;
 
+
 		if (gotAPConfig) {
 			msSystem.slogln("mDNS - using apInfo.ssid");
 			gotmDNSConfig = msSystem.msDNS.begin(apInfo.ssid, WiFi.localIP());		
@@ -42,7 +43,7 @@ class MagicShifterWebServer {
 		}
 
 		if (! gotmDNSConfig) {
-			msSystem.slogln("mDNS - name not set.");
+			msSystem.slogln("mDNS failed to configure - name not set.");
 		}
 
 #endif
