@@ -70,19 +70,6 @@ public:
 
 			_light.mode = (MS3KG_App_Light_Mode)new_light_mode;
 
-
-			// switch(new_light_mode) 
-			// {
-			// 	case 0: _light.mode = MS3KG_App_Light_Mode_RAINBOW; 
-			// 	break;
-			// 	case 1: _light.mode = MS3KG_App_Light_Mode_NORMAL;
-			// 	break;
-			// 	case 2:  _light.mode = MS3KG_App_Light_Mode_SCANNER_RGB ;
-			// 	break;
-			// 	case 3:  _light.mode = MS3KG_App_Light_Mode_SCANNER_BW;
-			// 	break;
-			// }
-
 			msSystem.slog("_light.mode: ");
 			msSystem.slogln(String(_light.mode));
 			msSystem.msLEDs.fillLEDs(255, 255, 255, msGlobals.ggBrightness);
