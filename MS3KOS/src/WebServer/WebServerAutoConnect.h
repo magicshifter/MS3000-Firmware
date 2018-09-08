@@ -107,7 +107,7 @@ void setDebugCallbacks()
 }
 
 
-bool TryConnect(struct APAuth &apInfo, int timeoutMs)
+bool TryConnect(struct APAuth &apInfo, uint32_t timeoutMs)
 {
 	msSystem.slog("wifi: trying to connect to AP: ");
 	msSystem.slogln(apInfo.ssid);
@@ -118,7 +118,7 @@ bool TryConnect(struct APAuth &apInfo, int timeoutMs)
 
 	// Wait for connection
 	int frame = 0;
-	long startTime = millis();
+	uint32_t startTime = millis();
 
 	while (WiFi.status() != WL_CONNECTED) {
 		for (int i = 0; i < MAX_LEDS; i++) {
@@ -251,7 +251,7 @@ bool AutoConnect()
 
 msSystem.slogln("wifi: none of the configured networks found.");
 msSystem.feedbackAnimation(msGlobals.feedbackType::NOT_OK);
-false;
+return false;
 }
 #endif
 

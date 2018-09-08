@@ -114,7 +114,6 @@ class POVShakeSync {
 	// returns true if POV shake is actve
 	bool update(float g) {
 		// msGlobals.ggCurrentMicros = micros();
-		ShakePoint currentPoint;
 
 		// frame handling
 		if (isActive && isFrameIndexActive) {

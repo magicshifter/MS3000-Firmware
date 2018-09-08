@@ -109,7 +109,11 @@ void setup()
 
 	// if MIDI has been configured, enable the additional MIDI mode(s)
 #ifdef CONFIG_ENABLE_MIDI
-	// msGlobals.ggCurrentMode = 6;
+
+#ifdef CONFIG_ENABLE_MIDI_SERIAL
+	msGlobals.ggCurrentMode = 7;
+#endif
+
 	msGlobals.ggModeList.push_back(&msMIDIArpeggiator);
 
 #ifdef CONFIG_MIDI_RTP_MIDI

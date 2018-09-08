@@ -49,19 +49,20 @@ public:
 
 		xPos *= 1024 >> _beat.sensitivity;
 
-		// printf( " subMode: %d" \
-		// 		" sensitivity: %d" \
-		// 		" colorIndex: %d" \ 
-		// 		" R: %d " \
-		// 		" G: %d " \
-		// 		" B: %d \n",
-		// 			_beat.mode,
-		// 			_beat.sensitivity,
-		// 			colorIndex,
-		// 			_beat.color.R,
-		// 			_beat.color.G,
-		// 			_beat.color.B);
-
+#if 0 
+		printf( " subMode: %d" \
+				" sensitivity: %d" \
+				" colorIndex: %d" \
+				" R: %d " \
+				" G: %d " \
+				" B: %d \n",
+					_beat.mode,
+					_beat.sensitivity,
+					colorIndex,
+					_beat.color.R,
+					_beat.color.G,
+					_beat.color.B);
+#endif
 
 		if (_beat.mode == MS3KG_App_Beat_Mode_SIDE) {
 			if (xPos < 0)

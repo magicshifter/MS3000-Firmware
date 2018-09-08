@@ -60,7 +60,7 @@ class MagicShifterLEDs {
 
 	void loadBufferShort(byte * buffer) {
 		for (int i = 0; i < RGB_BUFFER_SIZE; i++) {
-			if (i & 4 == 0)
+			if ((i & 4) == 0)
 				RGB_COLORS[i] = buffer[i];
 			else {
 				RGB_COLORS[i] = lookupBrightness[(buffer[i]) & 0xF] >> 3;
@@ -77,7 +77,7 @@ class MagicShifterLEDs {
 
 	void loadBufferLong(byte * buffer) {
 		for (int i = 0; i < RGB_BUFFER_SIZE; i++) {
-			if (i & 4 == 0)
+			if ((i & 4) == 0)
 				RGB_COLORS[i] = buffer[i];
 			else {
 				RGB_COLORS[i] = lookupBrightness[buffer[i] >> 4] >> 3;

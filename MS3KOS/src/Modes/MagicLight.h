@@ -190,6 +190,8 @@ public:
 				msSystem.msLEDs.updateLEDs();
 			}
 		}
+
+		return true;
 	}
 
 	void update() {

@@ -42,12 +42,12 @@ class MagicShifterSysLog {
 			}
 		}
 #else
-#ifndef CONFIG_ENABLE_SERIAL_MIDI
+#ifndef CONFIG_ENABLE_MIDI_SERIAL
 		Serial.println("syslog: JoinAP disabled:");
 #endif
 #endif
 
-#ifndef CONFIG_ENABLE_SERIAL_MIDI
+#ifndef CONFIG_ENABLE_MIDI_SERIAL
 		if (msGlobals.ggDebugSerial) {
 			Serial.println("syslog: serial enable");
 			Serial.println("syslog: WiFi connected");
@@ -65,7 +65,7 @@ class MagicShifterSysLog {
 
 		bool validIPConfig = syslogServerIP.fromString(syslogHostIPStr);
 
-#ifndef CONFIG_ENABLE_SERIAL_MIDI
+#ifndef CONFIG_ENABLE_MIDI_SERIAL
 		Serial.print("syslog: host address as string: ");
 		Serial.println(syslogHostIPStr);
 

@@ -25,7 +25,7 @@ class MagicShifterBaseMode {
 	virtual void stop(void) {};
 
 	// step through a frame of the mode 
-	virtual bool step() {};
+	virtual bool step() { return false; };
 
 	// emit the current UI of the mode 
 	//virtual bool emit() {};

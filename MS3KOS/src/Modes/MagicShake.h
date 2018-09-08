@@ -187,7 +187,7 @@ public:
 		} else {
 
 			float fX = msGlobals.ggAccel[XAXIS];
-			float fY = msGlobals.ggAccel[YAXIS];
+			// float fY = msGlobals.ggAccel[YAXIS];
 			msModeBouncingBall.
 			applyForce((msGlobals.ggCurrentMicros -
 				msGlobals.ggLastMicros) / 1000.0, fX * 3);

@@ -882,7 +882,7 @@ void handleLedSet()
 		unsigned int dataLen = 0;
 		dataLen = base64_decode((char *) ledData, input, inputLen);
 
-		for (int i = 0; i < dataLen; i += 5) {
+		for (size_t i = 0; i < dataLen; i += 5) {
 			byte idx = ledData[i];
 			msSystem.slogln("idx: ");
 			msSystem.slogln(String((int) idx));

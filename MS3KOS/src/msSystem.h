@@ -126,9 +126,8 @@ class MagicShifterSystem {
 			}
 
 			char *getAPNameOrUnique() {
-				APAuth apInfo;
+				static APAuth apInfo;
 				bool gotAPConfig = msSystem.Settings.getAPConfig(&apInfo);
-				bool gotmDNSConfig = false;
 
 				if (gotAPConfig) {
 					return apInfo.ssid;
@@ -440,7 +439,7 @@ public:
 
 	int modeMenuActivated = false;
 
-	int lowBatteryMillis;
+	uint32_t lowBatteryMillis;
 	float  batteryVoltage = 0.0;
 
 	void slog(String msg) {
@@ -620,7 +619,7 @@ public:
 	}
 
 	// sets the current shifter Mode .. 
-	void setMode(int newMode)
+	void setMode(uint32_t newMode)
 	{
 		if (newMode < msGlobals.ggModeList.size() && 
 			(newMode != msGlobals.ggCurrentMode)) {
@@ -985,7 +984,7 @@ void showBatteryStatus(bool shouldFadeIn) {
 
 		EEPROM.begin(512);
 
-#ifdef CONFIG_ENABLE_SERIAL_MIDI
+#ifdef CONFIG_ENABLE_MIDI_SERIAL
 #warning "SERIAL MIDI has been enabled - Serial I/O at 31250 - serial logging disabled (use wlan)"
 		Serial.begin(31250);
 #else
@@ -1147,7 +1146,7 @@ void showBatteryStatus(bool shouldFadeIn) {
 			}
 		}
 
-#ifndef CONFIG_ENABLE_SERIAL_MIDI
+#ifndef CONFIG_ENABLE_MIDI_SERIAL
 		// poll the serial interface for test/flash commands, etc.
 		CommandInterfacePoll();
 #endif

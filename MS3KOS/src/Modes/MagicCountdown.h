@@ -46,6 +46,8 @@ public:
 		msSystem.msLEDs.loadBuffer(msGlobals.ggRGBLEDBuf);
 		msSystem.msLEDs.updateLEDs();
 		delay(10);
+
+		return true;
 	}
 };
 
