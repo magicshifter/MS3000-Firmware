@@ -145,10 +145,10 @@ class SystemTextMode:public MagicShifterBaseMode {
 			if (new_mode >= _MS3KG_App_System_Mode_MAX)
 				new_mode = _MS3KG_App_System_Mode_MIN;
 
-			msSystem.slog("cursor:");
-			msSystem.slogln(String(new_mode));
+
 			needsTextUpdate = true;
 		}
+
 		if (msSystem.msButtons.msBtnBHit) {
 			msSystem.msButtons.msBtnBHit = false;	// !J! todo: button callbacks
 			
@@ -157,10 +157,9 @@ class SystemTextMode:public MagicShifterBaseMode {
 			if (new_mode < _MS3KG_App_System_Mode_MIN)
 				new_mode = _MS3KG_App_System_Mode_MAX;
 
-			msSystem.slog("cursor:");
-			msSystem.slogln(String(new_mode));
 			needsTextUpdate = true;
 		}
+
 		if (msSystem.msButtons.msBtnPwrHit) {
 			msSystem.slogln("btpwr");
 			msSystem.msButtons.msBtnPwrHit = false;
@@ -199,7 +198,6 @@ class SystemTextMode:public MagicShifterBaseMode {
 
 			needsTextUpdate = true;
 		}
-
 
 		if (needsTextUpdate) {
 
@@ -258,6 +256,10 @@ class SystemTextMode:public MagicShifterBaseMode {
 				lPOVMode.setImage(&msMagicShakeText);
 			}
 		}
+
+
+		if (_system.mode != new_mode)
+			_system.mode = (MS3KG_App_System_Mode)new_mode;
 
 		if (lPOVMode.step()) {
 			return true;
