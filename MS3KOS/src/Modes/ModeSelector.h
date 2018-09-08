@@ -40,7 +40,7 @@ class ModeSelectorMode:public MagicShifterBaseMode {
 		lPOVMode.setImage(NULL);
 	}
 
-	void setIndex(size_t idx) {
+	void setIndex(uint32_t idx) {
 		if (idx < 0) {
 			idx = msGlobals.ggModeList.size() - 1;
 		}
