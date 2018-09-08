@@ -42,8 +42,6 @@ public:
 
 	String getFileNameAtIndex(int fileIndex, int &maxFiles) {
 		Dir POVDir;
-		msSystem.slog("getFileNameAtIndex:");
-		msSystem.slogln(String(fileIndex));
 		POVDir = SPIFFS.openDir("");
 
 		int cnt = 0;
@@ -101,8 +99,7 @@ public:
 
 	// load a magic Shake file for display
 	void loadShakeFile(const char *filename) {
-		msSystem.slog("loadShakeFile:");
-		msSystem.slogln(filename);
+		msSystem.slogln(String(modeName) + " load File:" + String(filename));
 
 		lLocalImage.close();
 		lLocalImage.LoadFile(filename);

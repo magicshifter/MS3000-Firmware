@@ -21,8 +21,8 @@ pio-deps:
 	pio lib install 222 64 423 35 568 170 567 4271
 
 proto:  ../../MS3000.proto 
-	echo "NANOPB_DIR = $(NANOPB_DIR)"
-	echo "CFLAGS = $(CFLAGS)"
+	@echo "NANOPB_DIR = $(NANOPB_DIR)"
+	@echo "CFLAGS = $(CFLAGS)"
 	$(PROTOC) $(PROTOC_OPTS) --proto_path ../../ ../../MS3000.proto  -o../../MS3000.pb --nanopb_out=-v:.
 	python ../Tools/nanopb/generator/nanopb_generator.py ../../MS3000.pb
 	#$(PROTOC) $(PROTOC_OPTS) --nanopb_out=src/ --proto_path ../../ ../../MS3000.proto  -o../../MS3000.pb 

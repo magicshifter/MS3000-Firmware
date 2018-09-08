@@ -12,10 +12,16 @@
 
 #define CONFIG_ENABLE_MIDI
 // serial i/o is unavailable if hardware MIDI is enabled
+
 #ifdef CONFIG_ENABLE_MIDI
 #define CONFIG_MIDI_RTP_MIDI
-//#define CONFIG_ENABLE_MIDI_SERIAL
-// #undef _DO_SERIAL_OUTPUT
+// #define CONFIG_ENABLE_MIDI_SERIAL
+#endif
+
+// if MIDI-serial is configured, we will send messages to syslog only (if configured)
+#ifdef CONFIG_ENABLE_MIDI_SERIAL
+#warning "SERIAL OUTPUT is DISABLED : MIDI Serial is configured"
+#undef _DO_SERIAL_OUTPUT
 #else
 #define _DO_SERIAL_OUTPUT
 #endif

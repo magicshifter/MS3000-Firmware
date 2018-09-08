@@ -26,11 +26,6 @@ class MagicShifterWebServer {
 			delay(100);
 		}
 
-
-msSystem.slog("webserver: getAPNameOrUnique:");
-msSystem.slog( msSystem.Settings.getAPNameOrUnique() );
-
-
 #ifdef USE_MDNS
 		// if (msSystem.msDNS.begin("magicshifter", WiFi.localIP())) {
 		APAuth apInfo;
