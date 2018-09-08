@@ -3,10 +3,8 @@
 
 void printIPInfo()
 {
-	msSystem.slogln("wifi: IP address: ");
-	msSystem.slogln(String(WiFi.localIP().toString()));
-	msSystem.slogln("wifi: soft AP IP: ");
-	msSystem.slogln(String(WiFi.softAPIP().toString()));
+	msSystem.slogln("wifi: IP address: " + WiFi.localIP().toString());
+	msSystem.slogln("wifi: soft AP IP: " + WiFi.softAPIP().toString());
 
 	// WiFi.printDiag(Serial);
 }
@@ -53,9 +51,7 @@ void WiFiEvent(WiFiEvent_t event) {
 
     switch(event) {
         case WIFI_EVENT_STAMODE_GOT_IP:
-            msSystem.slogln("WiFi connected");
-            msSystem.slogln("IP address: ");
-            msSystem.slogln(WiFi.localIP().toString());
+            msSystem.slogln("WiFi connected - IP address: " + WiFi.localIP().toString());
             break;
         case WIFI_EVENT_STAMODE_DISCONNECTED:
             msSystem.slogln("WiFi lost connection");
@@ -109,12 +105,10 @@ void setDebugCallbacks()
 
 bool TryConnect(struct APAuth &apInfo, uint32_t timeoutMs)
 {
-	msSystem.slog("wifi: trying to connect to AP: ");
-	msSystem.slogln(apInfo.ssid);
+	msSystem.slog("wifi: trying to connect to AP: " + String(apInfo.ssid));
 
 	WiFi.begin(apInfo.ssid, apInfo.password, 9);
-	msSystem.slog("wifi: using password: ");
-	msSystem.slogln(apInfo.password);
+	msSystem.slog("wifi: using password: " + String(apInfo.password));
 
 	// Wait for connection
 	int frame = 0;
@@ -136,16 +130,14 @@ bool TryConnect(struct APAuth &apInfo, uint32_t timeoutMs)
 		if (WiFi.status() == WL_NO_SSID_AVAIL
 			|| WiFi.status() == WL_CONNECT_FAILED
 			|| millis() > startTime + timeoutMs) {
-			msSystem.slog("wifi: could not connect to:");
-		msSystem.slogln(apInfo.ssid);
+			msSystem.slog("wifi: could not connect to:" + String(apInfo.ssid));
 			return false;		// :(
 		}
 
 		delay(100);
 	}
 
-	msSystem.slogln("wifi: connected to: ");
-	msSystem.slogln(apInfo.ssid);
+	msSystem.slogln("wifi: connected to: " + String(apInfo.ssid));
 
 	printIPInfo();
 
@@ -156,10 +148,8 @@ bool TryConnect(struct APAuth &apInfo, uint32_t timeoutMs)
 
 bool TrySoftAP(struct APAuth & apInfo)
 {
-	msSystem.slogln("wifi: configuring access point: ");
-	msSystem.slogln(apInfo.ssid);
-	msSystem.slogln("wifi: password: ");
-	msSystem.slogln(apInfo.password);
+	msSystem.slogln("wifi: configuring access point: "+ String(apInfo.ssid));
+	msSystem.slogln("wifi: password: " + String(apInfo.password));
 
 	WiFi.mode(WIFI_AP_STA);
 
@@ -170,8 +160,7 @@ bool TrySoftAP(struct APAuth & apInfo)
 		WiFi.softAP(apInfo.ssid, apInfo.password);
 	}
 
-	msSystem.slogln("wifi: accesspoints: ");
-	msSystem.slogln(apInfo.ssid);
+	msSystem.slogln("wifi: accesspoints: " + String(apInfo.ssid));
 
 	printIPInfo();
 
@@ -199,27 +188,28 @@ bool AutoConnect()
 
 	if (SPIFFS.exists(msSystem.Settings.apListConfigPath)) {
 
-		msSystem.slog("wifi: start scan -");
+		msSystem.slogln("wifi: start scan -");
 			// WiFi.scanNetworks will return the number of networks found
 		int n = WiFi.scanNetworks();
-		msSystem.slogln("done");
+		msSystem.slogln("wifi: scan done");
+
 		if (n == 0) {
 			msSystem.slogln("wifi: no networks found");
 		} else {
-			msSystem.slogln("wifi: networks found: ");
-			msSystem.slog(String(n));
+			msSystem.slogln("wifi: networks found: " + String(n));
 
 			for (int i = 0; i < n; ++i) {
 					// Print SSID and RSSI for each network found
-				msSystem.slog(String(i + 1));
-				msSystem.slog(": ");
-				msSystem.slog(WiFi.SSID(i));
-				msSystem.slog(" (");
-				msSystem.slog(String(WiFi.RSSI(i)));
-				msSystem.slog(")");
-				msSystem.
-				slog((WiFi.encryptionType(i) ==
-					ENC_TYPE_NONE) ? " " : "*");
+				msSystem.slog(String("  ") + 
+							  String(i + 1) + 
+							  String(": ") + 
+							  WiFi.SSID(i) +
+							  String(" (") + 
+							  WiFi.RSSI(i) + 
+							  String(") ")
+							   + 
+							  String((WiFi.encryptionType(i) ==
+								         ENC_TYPE_NONE) ? "[open]" : "[encrypted]"));
 				delay(20);
 			}
 		}

@@ -66,16 +66,14 @@ class MagicShifterSysLog {
 		bool validIPConfig = syslogServerIP.fromString(syslogHostIPStr);
 
 #ifndef CONFIG_ENABLE_MIDI_SERIAL
-		Serial.print("syslog: host address as string: ");
-		Serial.println(syslogHostIPStr);
-
-		Serial.print("syslog: configured host is: ");
-		Serial.println(syslogServerIP);
+		Serial.println("syslog: Serial Console Messages ENABLED");
+		Serial.println("syslog: host address as string: " + String(syslogHostIPStr));
+		Serial.println("syslog: configured host is: " + String(syslogServerIP));
 
 		if (validIPConfig) {
-			Serial.print("syslog: IP Config appears to be valid");
+			Serial.println("syslog: IP Config appears to be valid");
 		} else {
-			Serial.print("syslog: IP Config appears to be INVALID");
+			Serial.println("syslog: IP Config appears to be INVALID");
 		}
 #endif
 

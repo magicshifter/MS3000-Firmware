@@ -34,10 +34,6 @@
 // of the main runloop
 #include "msButtonTimers.h"
 
-// Settings are managed with different storage/longevity/rendering 
-// schemes
-#include "msSettingsManager.h"
-
 
 // forward-declared here because it is a client of msSystem ..
 void CommandInterfacePoll();
@@ -118,297 +114,297 @@ class MagicShifterSystem {
 					config->timeoutLowPower =  10 * 60 * 1000; // 10 minutes
 					config->defaultBrightness = 2;
 				}
-				return result;
+			return result;
+		}
+
+		bool setUIConfig(struct UIConfig *config) {
+			return saveData(uiSettingsConfigPath, config, sizeof(*config));
+		}
+
+		char *getAPNameOrUnique() {
+			static APAuth apInfo;
+			bool gotAPConfig = msSystem.Settings.getAPConfig(&apInfo);
+
+			if (gotAPConfig) {
+				return apInfo.ssid;
+			}
+			else {
+				return (char *)msSystem.Settings.getUniqueSystemName().c_str();
 			}
 
-			bool setUIConfig(struct UIConfig *config) {
-				return saveData(uiSettingsConfigPath, config, sizeof(*config));
+		}
+
+		bool getServerConfig(struct ServerConfig *config) {
+
+			String path = apServerConfigPath;
+			if (SPIFFS.exists((char *) path.c_str())) {
+				File file = SPIFFS.open((char *) path.c_str(), "r");
+				file.read((uint8_t *) config, sizeof(*config));
+				file.close();
+				return true;
+			} else {
+				msSystem.slog("webserver: no server config file? ");
+				msSystem.slogln((char *) path.c_str());
 			}
 
-			char *getAPNameOrUnique() {
-				static APAuth apInfo;
-				bool gotAPConfig = msSystem.Settings.getAPConfig(&apInfo);
+			return false;
+		}
 
-				if (gotAPConfig) {
-					return apInfo.ssid;
-				}
-				else {
-					return (char *)msSystem.Settings.getUniqueSystemName().c_str();
-				}
+		void setServerConfig(struct ServerConfig *config) {
 
+			String path = apServerConfigPath;
+			File file = SPIFFS.open((char *) path.c_str(), "w");
+			file.write((uint8_t *) config, sizeof(*config));
+
+			file.close();
+
+		}
+
+		bool getSyslogConfig(struct ServerConfig *config) {
+
+			String path = apSysLogConfigPath;
+			if (SPIFFS.exists((char *) path.c_str())) {
+				File file = SPIFFS.open((char *) path.c_str(), "r");
+				file.read((uint8_t *) config, sizeof(*config));
+				file.close();
+				return true;
+			} else {
+				msSystem.slog("webserver: no syslog config file? ");
+				msSystem.slogln((char *) path.c_str());
 			}
 
-			bool getServerConfig(struct ServerConfig *config) {
+			return false;
+		}
 
-				String path = apServerConfigPath;
-				if (SPIFFS.exists((char *) path.c_str())) {
-					File file = SPIFFS.open((char *) path.c_str(), "r");
-					file.read((uint8_t *) config, sizeof(*config));
-					file.close();
-					return true;
-				} else {
-					msSystem.slog("webserver: no server config file? ");
-					msSystem.slogln((char *) path.c_str());
-				}
+		void setSyslogConfig(struct ServerConfig *config) {
 
-				return false;
-			}
+			String path = apSysLogConfigPath;
+			File file = SPIFFS.open((char *) path.c_str(), "w");
+			file.write((uint8_t *) config, sizeof(*config));
 
-			void setServerConfig(struct ServerConfig *config) {
+			file.close();
 
-				String path = apServerConfigPath;
-				File file = SPIFFS.open((char *) path.c_str(), "w");
-				file.write((uint8_t *) config, sizeof(*config));
+		}
 
+		bool getAPConfig(struct APAuth *config) {
+
+			String path = apConfigPath;
+			if (SPIFFS.exists((char *) path.c_str())) {
+				File file = SPIFFS.open((char *) path.c_str(), "r");
+				file.read((uint8_t *) config, sizeof(*config));
 				file.close();
 
+				msSystem.slogln("webserver: AP name is: " + String(config->ssid));
+
+				return true;
+
+			} else {
+				msSystem.slogln("webserver: AP config missing: " + path);
 			}
 
-			bool getSyslogConfig(struct ServerConfig *config) {
+			// don't have a config file, so we return a default
+			l_safeStrncpy(config->ssid, getUniqueSystemName().c_str(),
+				sizeof(config->ssid));
+			l_safeStrncpy(config->password, "", sizeof(config->password));
 
-				String path = apSysLogConfigPath;
-				if (SPIFFS.exists((char *) path.c_str())) {
-					File file = SPIFFS.open((char *) path.c_str(), "r");
-					file.read((uint8_t *) config, sizeof(*config));
-					file.close();
-					return true;
-				} else {
-					msSystem.slog("webserver: no syslog config file? ");
-					msSystem.slogln((char *) path.c_str());
-				}
+			return false;
+		}
 
-				return false;
-			}
+		void setAPConfig(struct APAuth *config) {
 
-			void setSyslogConfig(struct ServerConfig *config) {
+			String path = apConfigPath;
+			File file = SPIFFS.open((char *) path.c_str(), "w");
+			file.write((uint8_t *) config, sizeof(*config));
+			file.close();
 
-				String path = apSysLogConfigPath;
-				File file = SPIFFS.open((char *) path.c_str(), "w");
-				file.write((uint8_t *) config, sizeof(*config));
+			msSystem.slogln("webserver: saved:");
+			msSystem.slogln(config->ssid);
 
+		}
+
+		bool getPreferredAP(struct APAuth *config) {
+
+			String path = preferredAPConfigPath;
+			if (SPIFFS.exists((char *) path.c_str())) {
+				File file = SPIFFS.open((char *) path.c_str(), "r");
+				file.read((uint8_t *) config, sizeof(*config));
 				file.close();
-
+				return true;
 			}
+			l_safeStrncpy(config->ssid, "", sizeof(config->ssid));
+			l_safeStrncpy(config->password, "", sizeof(config->password));
+			return false;
 
-			bool getAPConfig(struct APAuth *config) {
+		}
 
-				String path = apConfigPath;
-				if (SPIFFS.exists((char *) path.c_str())) {
-					File file = SPIFFS.open((char *) path.c_str(), "r");
-					file.read((uint8_t *) config, sizeof(*config));
-					file.close();
-					msSystem.slogln("webserver: AP name is:");
-					msSystem.slogln(config->ssid);
+		void setPreferredAP(struct APAuth *config) {
 
-					return true;
+			String path = preferredAPConfigPath;
+			File file = SPIFFS.open((char *) path.c_str(), "w");
+			file.write((uint8_t *) config, sizeof(*config));
+			file.close();
 
-				} else {
-					msSystem.slogln("webserver: AP config missing:");
-					msSystem.slogln((char *) path.c_str());
-				}
+		}
 
-				// don't have a config file, so we return a default
-				l_safeStrncpy(config->ssid, getUniqueSystemName().c_str(),
-					sizeof(config->ssid));
-				l_safeStrncpy(config->password, "", sizeof(config->password));
+		//
+		// delete an AP Auth structure from the list
+		// if its not our ssid, add it to the list,
+		// otherwise ignore it 
+		// and save the list again
+		//
+		void deleteAP(char *ssid) {
+			String path = apListConfigPath;
 
-				return false;
+			typedef std::map<String, String> AuthItems;
+			typedef std::map<String, String>::iterator AuthItems_it;
+			AuthItems authItems;
+
+			File inFile;
+			APAuth inAPAuth;
+
+			// open the existing AP settings file if we can, and construct the map
+			if (SPIFFS.exists((char *)path.c_str()))  {
+				inFile = SPIFFS.open((char *) path.c_str(), "r");
 			}
+			if (inFile) {
+				msSystem.slog("webserver: opened AP config file:");
+				msSystem.slogln(path);
 
-			void setAPConfig(struct APAuth *config) {
-
-				String path = apConfigPath;
-				File file = SPIFFS.open((char *) path.c_str(), "w");
-				file.write((uint8_t *) config, sizeof(*config));
-				file.close();
-
-				msSystem.slogln("webserver: saved:");
-				msSystem.slogln(config->ssid);
-
-			}
-
-			bool getPreferredAP(struct APAuth *config) {
-
-				String path = preferredAPConfigPath;
-				if (SPIFFS.exists((char *) path.c_str())) {
-					File file = SPIFFS.open((char *) path.c_str(), "r");
-					file.read((uint8_t *) config, sizeof(*config));
-					file.close();
-					return true;
-				}
-				l_safeStrncpy(config->ssid, "", sizeof(config->ssid));
-				l_safeStrncpy(config->password, "", sizeof(config->password));
-				return false;
-
-			}
-
-			void setPreferredAP(struct APAuth *config) {
-
-				String path = preferredAPConfigPath;
-				File file = SPIFFS.open((char *) path.c_str(), "w");
-				file.write((uint8_t *) config, sizeof(*config));
-				file.close();
-
-			}
-
-			//
-			// delete an AP Auth structure from the list
-			// if its not our ssid, add it to the list,
-			// otherwise ignore it 
-			// and save the list again
-			//
-			void deleteAP(char *ssid) {
-				String path = apListConfigPath;
-
-				typedef std::map<String, String> AuthItems;
-				typedef std::map<String, String>::iterator AuthItems_it;
-				AuthItems authItems;
-
-				File inFile;
-				APAuth inAPAuth;
-
-				// open the existing AP settings file if we can, and construct the map
-				if (SPIFFS.exists((char *)path.c_str()))  {
-					inFile = SPIFFS.open((char *) path.c_str(), "r");
-				}
-				if (inFile) {
-					msSystem.slog("webserver: opened AP config file:");
-					msSystem.slogln(path);
-
-					// create a list of AP entries already in the file
-					while (inFile.read((uint8_t *) &inAPAuth, sizeof (APAuth)) == sizeof(APAuth)) {
-						// exclude the one we want to delete
-						if (strncmp(inAPAuth.ssid, ssid, MAX_AP_LEN) == 0)
-							continue;
-						else
-							authItems[inAPAuth.ssid] = inAPAuth.password;
-					}
-
-					inFile.close();
-
-				} else {
-					msSystem.slog("webserver: couldn't open AP inFile:");
-					msSystem.slogln(path);
-				}
-
-				// dump the map back to the file
-				File outFile = SPIFFS.open((char *) path.c_str(), "w+");
-				if (outFile) {
-					AuthItems_it it;
-					for(it = authItems.begin(); it != authItems.end(); it++)
-					{
-						APAuth t_Auth;
-						l_safeStrncpy(t_Auth.ssid, it->first.c_str(), MAX_AP_LEN);
-						l_safeStrncpy(t_Auth.password, it->second.c_str(), MAX_AP_LEN);
-						outFile.write((uint8_t *)&t_Auth, sizeof(APAuth));
-					}
-
-					outFile.close();
-					msSystem.slog("webserver: saved AP configuration");
-					msSystem.slogln(path);
-				} else {
-					msSystem.slog("webserver: couldn't save AP outFile:");
-					msSystem.slogln(path);
-				}
-
-			}
-
-			//
-			// add an AP Auth structure to the list
-			// if its there already, update the password
-			// if its not there, add it to the list
-			//
-			void addAP(struct APAuth *apInfo) {
-				String path = apListConfigPath;
-
-				typedef std::map<String, String> AuthItems;
-				typedef std::map<String, String>::iterator AuthItems_it;
-				AuthItems authItems;
-
-				File inFile;
-				APAuth inAPAuth;
-
-				// open the existing AP settings file if we can, and construct the map
-				if (SPIFFS.exists((char *)path.c_str()))  {
-					inFile = SPIFFS.open((char *) path.c_str(), "r");
-				}
-				if (inFile) {
-					msSystem.slog("webserver: opened AP config file:");
-					msSystem.slogln(path);
-
-					// create a list of AP entries already in the file
-					while (inFile.read((uint8_t *) &inAPAuth, sizeof (APAuth)) == sizeof(APAuth)) {
+				// create a list of AP entries already in the file
+				while (inFile.read((uint8_t *) &inAPAuth, sizeof (APAuth)) == sizeof(APAuth)) {
+					// exclude the one we want to delete
+					if (strncmp(inAPAuth.ssid, ssid, MAX_AP_LEN) == 0)
+						continue;
+					else
 						authItems[inAPAuth.ssid] = inAPAuth.password;
-					}
-
-					inFile.close();
-
-				} else {
-					msSystem.slog("webserver: couldn't open AP inFile:");
-					msSystem.slogln(path);
 				}
 
-				// check if there is an entry in the map for the incoming apInfo
-				// (map could also be empty)
-				auto existingAP = authItems.find(apInfo->ssid);
+				inFile.close();
 
-				if (existingAP != authItems.end()) {
-			    	// we found it, so set the new password
-					existingAP->second = apInfo->password;
-			    } else { 	// .. otherwise, add one and set the password
-			    	authItems[apInfo->ssid] = apInfo->password;
-			    }
-
-				// dump the map back to the file
-			    File outFile = SPIFFS.open((char *) path.c_str(), "w+");
-			    if (outFile) {
-			    	AuthItems_it it;
-			    	for(it = authItems.begin(); it != authItems.end(); it++)
-			    	{
-			    		APAuth t_Auth;
-			    		l_safeStrncpy(t_Auth.ssid, it->first.c_str(), MAX_AP_LEN);
-			    		l_safeStrncpy(t_Auth.password, it->second.c_str(), MAX_AP_LEN);
-			    		outFile.write((uint8_t *)&t_Auth, sizeof(APAuth));
-			    	}
-
-			    	outFile.close();
-			    	msSystem.slog("webserver: saved AP configuration");
-			    	msSystem.slogln(path);
-			    } else {
-			    	msSystem.slog("webserver: couldn't save AP outFile:");
-			    	msSystem.slogln(path);
-			    }
-
+			} else {
+				msSystem.slog("webserver: couldn't open AP inFile:");
+				msSystem.slogln(path);
 			}
 
-			void resetAPList() {
-				apListIndex = -1;
-				smAPListFile.close();
-
-			}
-
-			bool getNextAP(struct APAuth *apInfo) {
-				if (apListIndex < 0) {
-					String path = apListConfigPath;
-					if (SPIFFS.exists((char *) path.c_str())) {
-						smAPListFile = SPIFFS.open((char *) path.c_str(), "r");
-						apListIndex = 0;
-					}
+			// dump the map back to the file
+			File outFile = SPIFFS.open((char *) path.c_str(), "w+");
+			if (outFile) {
+				AuthItems_it it;
+				for(it = authItems.begin(); it != authItems.end(); it++)
+				{
+					APAuth t_Auth;
+					l_safeStrncpy(t_Auth.ssid, it->first.c_str(), MAX_AP_LEN);
+					l_safeStrncpy(t_Auth.password, it->second.c_str(), MAX_AP_LEN);
+					outFile.write((uint8_t *)&t_Auth, sizeof(APAuth));
 				}
 
-				if (apListIndex >= 0) {
-					const int requiredBytes = sizeof(*apInfo);
-					do {
-						if (smAPListFile.read((uint8_t *) apInfo, requiredBytes) ==
-							requiredBytes) {
-							apListIndex++;
-						if (!msSystem.msEEPROMs.
-							memcmpByte((byte *) apInfo, 0, requiredBytes))
-							return true;
+				outFile.close();
+				msSystem.slog("webserver: saved AP configuration");
+				msSystem.slogln(path);
+			} else {
+				msSystem.slog("webserver: couldn't save AP outFile:");
+				msSystem.slogln(path);
+			}
+
+		}
+
+		//
+		// add an AP Auth structure to the list
+		// if its there already, update the password
+		// if its not there, add it to the list
+		//
+		void addAP(struct APAuth *apInfo) {
+			String path = apListConfigPath;
+
+			typedef std::map<String, String> AuthItems;
+			typedef std::map<String, String>::iterator AuthItems_it;
+			AuthItems authItems;
+
+			File inFile;
+			APAuth inAPAuth;
+
+			// open the existing AP settings file if we can, and construct the map
+			if (SPIFFS.exists((char *)path.c_str()))  {
+				inFile = SPIFFS.open((char *) path.c_str(), "r");
+			}
+			if (inFile) {
+				msSystem.slog("webserver: opened AP config file:");
+				msSystem.slogln(path);
+
+				// create a list of AP entries already in the file
+				while (inFile.read((uint8_t *) &inAPAuth, sizeof (APAuth)) == sizeof(APAuth)) {
+					authItems[inAPAuth.ssid] = inAPAuth.password;
+				}
+
+				inFile.close();
+
+			} else {
+				msSystem.slog("webserver: couldn't open AP inFile:");
+				msSystem.slogln(path);
+			}
+
+			// check if there is an entry in the map for the incoming apInfo
+			// (map could also be empty)
+			auto existingAP = authItems.find(apInfo->ssid);
+
+			if (existingAP != authItems.end()) {
+		    	// we found it, so set the new password
+				existingAP->second = apInfo->password;
+		    } else { 	// .. otherwise, add one and set the password
+		    	authItems[apInfo->ssid] = apInfo->password;
+		    }
+
+			// dump the map back to the file
+		    File outFile = SPIFFS.open((char *) path.c_str(), "w+");
+		    if (outFile) {
+		    	AuthItems_it it;
+		    	for(it = authItems.begin(); it != authItems.end(); it++)
+		    	{
+		    		APAuth t_Auth;
+		    		l_safeStrncpy(t_Auth.ssid, it->first.c_str(), MAX_AP_LEN);
+		    		l_safeStrncpy(t_Auth.password, it->second.c_str(), MAX_AP_LEN);
+		    		outFile.write((uint8_t *)&t_Auth, sizeof(APAuth));
+		    	}
+
+		    	outFile.close();
+		    	msSystem.slog("webserver: saved AP configuration");
+		    	msSystem.slogln(path);
+		    } else {
+		    	msSystem.slog("webserver: couldn't save AP outFile:");
+		    	msSystem.slogln(path);
+		    }
+
+		}
+
+		void resetAPList() {
+			apListIndex = -1;
+			smAPListFile.close();
+
+		}
+
+		bool getNextAP(struct APAuth *apInfo) {
+			if (apListIndex < 0) {
+				String path = apListConfigPath;
+				if (SPIFFS.exists((char *) path.c_str())) {
+					smAPListFile = SPIFFS.open((char *) path.c_str(), "r");
+					apListIndex = 0;
+				}
+			}
+
+			if (apListIndex >= 0) {
+				const int requiredBytes = sizeof(*apInfo);
+				do {
+					if (smAPListFile.read((uint8_t *) apInfo, requiredBytes) ==
+						requiredBytes) {
+						apListIndex++;
+					if (!msSystem.msEEPROMs.
+						memcmpByte((byte *) apInfo, 0, requiredBytes))
+						return true;
 					} else {
 						return false;
 					}
 				} while (true);
+
 			} else {
 				return false;
 			}
@@ -473,91 +469,57 @@ public:
 
 	void dumpActiveHeader(const MSBitmapHeader & header) {
 		slogln("Header dump:");
-		slog("fileSize:");
-		slogln(String(header.fileSize));
-		slog("pixelFormat:");
-		slogln(String(header.pixelFormat));
-		slog("maxFrame:");
-		slogln(String(header.maxFrame));
-		slog("frameWidth:");
-		slogln(String(header.frameWidth));
-		slog("frameHeight:");
-		slogln(String(header.frameHeight));
-		slog("subType:");
-		slogln(String(header.subType));
-		slog("firstChar:");
-		slogln(String(header.firstChar));
-		slog("animationDelay:");
-		slogln(String(header.animationDelay));
+		slogln("fileSize:" + String(header.fileSize));
+		slogln("pixelFormat:" + String(header.pixelFormat));
+		slogln("maxFrame:" + String(header.maxFrame));
+		slogln("frameWidth:" + String(header.frameWidth));
+		slogln("frameHeight:" + String(header.frameHeight));
+		slogln("subType:" + String(header.subType));
+		slogln("firstChar:" + String(header.firstChar));
+		slogln("animationDelay:" + String(header.animationDelay));
 	}
 
 	void slogSysInfo() {
 		slogln("System config:");
-		slog("Vcc: ");
-		slogln(String(ESP.getVcc()));
-		slog("Free heap: ");
-		slogln(String(ESP.getFreeHeap()));
-		slog("Chip ID: ");
-		slogln(String(ESP.getChipId()));
-		slog("SDK version: ");
-		slogln(String(ESP.getSdkVersion()));
-		slog("Boot version: ");
-		slogln(String(ESP.getBootVersion()));
-		slog("Boot mode: ");
-		slogln(String(ESP.getBootMode()));
-		slog("CPU freq.: ");
-		slogln(String(ESP.getCpuFreqMHz()));
-		slog("Flash chip ID: ");
-		slogln(String(ESP.getFlashChipId(), HEX));
+		slogln("Vcc: " + String(ESP.getVcc()));
+		slogln("Free heap: " + String(ESP.getFreeHeap()));
+		slogln("Chip ID: " + String(ESP.getChipId()));
+		slogln("SDK version: " + String(ESP.getSdkVersion()));
+		slogln("Boot version: " + String(ESP.getBootVersion()));
+		slogln("Boot mode: " + String(ESP.getBootMode()));
+		slogln("CPU freq.: " + String(ESP.getCpuFreqMHz()));
+		slogln("Flash chip ID: " + String(ESP.getFlashChipId(), HEX));
 		// // gets the actual chip size based on the flash id
-		slog("Flash real size: ");
-		slogln(String(ESP.getFlashChipRealSize()));
-		slog("Flash real size (method b): ");
-		slogln(String(ESP.getFlashChipSizeByChipId()));
+		slogln("Flash real size: " + String(ESP.getFlashChipRealSize()));
+		slogln("Flash real size (method b): " + String(ESP.getFlashChipSizeByChipId()));
 		// // gets the size of the flash as set by the compiler
-		slog("flash configured size: ");
-		slogln(String(ESP.getFlashChipSize()));
+		slogln("flash configured size: " + String(ESP.getFlashChipSize()));
 		if (ESP.getFlashChipSize() != ESP.getFlashChipRealSize())
 		{
 			slogln(String("WARNING: configured flash size does not match real flash size!"));
 		}
-		slog("flash speed: ");
-		slogln(String(ESP.getFlashChipSpeed()));
-		slog("flash mode: ");
-		slogln(String(ESP.getFlashChipMode()));
-		slog("Sketch size: ");
-		slogln(String(ESP.getSketchSize()));
-		slog("Free sketch space: ");
-		slogln(String(ESP.getFreeSketchSpace()));
+		slogln("flash speed: " + String(ESP.getFlashChipSpeed()));
+		slogln("flash mode: " + String(ESP.getFlashChipMode()));
+		slogln("Sketch size: " + String(ESP.getSketchSize()));
+		slogln("Free sketch space: " + String(ESP.getFreeSketchSpace()));
 
-		slog("uploadfile: ");
-		slogln(msGlobals.ggUploadFileName);
+		slogln("uploadfile: " + String(msGlobals.ggUploadFileName));
 
 		FSInfo linfo;
 		SPIFFS.info(linfo);
 
-		slog("linfo.blockSize =");
-		slogln(String(linfo.blockSize));
-		slog("linfo.pageSize =");
-		slogln(String(linfo.pageSize));
-		slog("linfo.maxOpenFiles =");
-		slogln(String(linfo.maxOpenFiles));
-		slog("linfo.maxPathLength =");
-		slogln(String(linfo.maxPathLength));
-		slog("linfo.totalBytes =");
-		slogln(String(linfo.totalBytes));
-		slog("linfo.usedBytes = ");
-		slogln(String(linfo.usedBytes));
+		slogln("linfo.blockSize =" + String(linfo.blockSize));
+		slogln("linfo.pageSize =" + String(linfo.pageSize));
+		slogln("linfo.maxOpenFiles =" + String(linfo.maxOpenFiles));
+		slogln("linfo.maxPathLength =" + String(linfo.maxPathLength));
+		slogln("linfo.totalBytes =" + String(linfo.totalBytes));
+		slogln("linfo.usedBytes = " + String(linfo.usedBytes));
 
-		slog("Reset info: ");
-		slogln(String(ESP.getResetInfo()));
+		slogln("Reset info: " + String(ESP.getResetInfo()));
 
-		slog("timeoutHighPower: ");
-		slogln(String(msGlobals.ggUIConfig.timeoutHighPower));
-		slog("timeoutLowPower: ");
-		slogln(String(msGlobals.ggUIConfig.timeoutLowPower));
-		slog("defaultBrightness: ");
-		slogln(String(msGlobals.ggUIConfig.defaultBrightness));
+		slogln("timeoutHighPower: " + String(msGlobals.ggUIConfig.timeoutHighPower));
+		slogln("timeoutLowPower: " + String(msGlobals.ggUIConfig.timeoutLowPower));
+		slogln("defaultBrightness: " + String(msGlobals.ggUIConfig.defaultBrightness));
 	};
 
 
@@ -632,55 +594,55 @@ public:
 			slogln("XXXX setMODE didn't switch (and start)");
 	}
 
-void feedbackAnimation(int mode) {
-	int r, g, b = 0x00;
+	void feedbackAnimation(int mode) {
+		int r, g, b = 0x00;
 
-	if (mode == msGlobals.feedbackType::OK) {
-		r = 0x00;
-		g = 0xff;
-		b = 0x00;
-	} else if (mode == msGlobals.feedbackType::NOT_OK) {
-		r = 0xff;
-		g = 0x00;
-		b = 0x00;
-	} else {
-		r = 0xff;
-		g = 0xff;
-		b = 0xff;
-	}
+		if (mode == msGlobals.feedbackType::OK) {
+			r = 0x00;
+			g = 0xff;
+			b = 0x00;
+		} else if (mode == msGlobals.feedbackType::NOT_OK) {
+			r = 0xff;
+			g = 0x00;
+			b = 0x00;
+		} else {
+			r = 0xff;
+			g = 0xff;
+			b = 0xff;
+		}
 
-	for (int i = 0; i <= 3; i++) {
-		msLEDs.fillLEDs(r, g, b, msGlobals.ggBrightness);
-		msLEDs.updateLEDs();
+		for (int i = 0; i <= 3; i++) {
+			msLEDs.fillLEDs(r, g, b, msGlobals.ggBrightness);
+			msLEDs.updateLEDs();
+			delay(35);
+			msLEDs.fastClear();
+			delay(35);
+		}
+
+		msLEDs.setLED(msGlobals.ggCurrentMode, 128, 128, 128, msGlobals.ggBrightness);
 		delay(35);
 		msLEDs.fastClear();
-		delay(35);
+
 	}
 
-	msLEDs.setLED(msGlobals.ggCurrentMode, 128, 128, 128, msGlobals.ggBrightness);
-	delay(35);
-	msLEDs.fastClear();
-
-}
-
-	// for fail-modes ..
-void infinite_swipe() {
-	while (1) {
-			// swipe colors
-		for (byte idx = 0; idx < MAX_LEDS; idx++) {
-			msLEDs.setLED(idx, (idx & 1) ? 255 : 0,
-				(idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0,
-				msGlobals.ggBrightness);
-			msLEDs.updateLEDs();
-			delay(30);
-		}
-		for (byte idx = 0; idx < MAX_LEDS; idx++) {
-			msLEDs.setLED(idx, 0, 0, 0, 1);
-			msLEDs.updateLEDs();
-			delay(30);
+		// for fail-modes ..
+	void infinite_swipe() {
+		while (1) {
+				// swipe colors
+			for (byte idx = 0; idx < MAX_LEDS; idx++) {
+				msLEDs.setLED(idx, (idx & 1) ? 255 : 0,
+					(idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0,
+					msGlobals.ggBrightness);
+				msLEDs.updateLEDs();
+				delay(30);
+			}
+			for (byte idx = 0; idx < MAX_LEDS; idx++) {
+				msLEDs.setLED(idx, 0, 0, 0, 1);
+				msLEDs.updateLEDs();
+				delay(30);
+			}
 		}
 	}
-}
 
 #define BUTTON_LED_A (MAX_LEDS - 1)
 #define BUTTON_LED_PWR (MAX_LEDS / 2)

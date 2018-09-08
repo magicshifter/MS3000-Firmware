@@ -123,8 +123,7 @@ void setup()
 	msSystem.slogln("MIDI(rtp): started");
 	AppleMIDI.begin(msSystem.Settings.getAPNameOrUnique());
 
-	msSystem.slog("MIDI(rtp) IDENTITY:");
-	msSystem.slogln(AppleMIDI.getSessionName());
+	msSystem.slog("MIDI(rtp) IDENTITY:" + String(AppleMIDI.getSessionName()) );
 
 #endif
 
