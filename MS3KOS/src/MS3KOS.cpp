@@ -120,10 +120,11 @@ void setup()
 
 	setupRTPDebugHandlers();
 
-	msSystem.slogln("MIDI(rtp): started");
-	AppleMIDI.begin(msSystem.Settings.getAPNameOrUnique());
+	// msSystem.slogln("MIDI(rtp): start session: " + String(msSystem.Settings.getAPNameOrUnique()));
+	
+	AppleMIDI.begin(msSystem.Settings.getAPNameOrUnique().c_str());
 
-	msSystem.slog("MIDI(rtp) IDENTITY:" + String(AppleMIDI.getSessionName()) );
+	msSystem.slog("MIDI(rtp) session started, identity: " + String(AppleMIDI.getSessionName()) );
 
 #endif
 

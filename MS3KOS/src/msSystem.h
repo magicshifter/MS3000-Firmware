@@ -51,6 +51,7 @@ class MagicShifterSystem {
 			// used in resetAPList & getNextAP
 		int apListIndex = -1;
 		File smAPListFile;
+		APAuth apInfo;
 
 		bool loadData(String path, void *config, int len) {
 			if (SPIFFS.exists((char *) path.c_str())) {
@@ -121,16 +122,18 @@ class MagicShifterSystem {
 			return saveData(uiSettingsConfigPath, config, sizeof(*config));
 		}
 
-		char *getAPNameOrUnique() {
-			static APAuth apInfo;
+		String getAPNameOrUnique() {
+			String retName;
 			bool gotAPConfig = msSystem.Settings.getAPConfig(&apInfo);
 
 			if (gotAPConfig) {
-				return apInfo.ssid;
+				retName = String(apInfo.ssid);
 			}
 			else {
-				return (char *)msSystem.Settings.getUniqueSystemName().c_str();
+				retName = msSystem.Settings.getUniqueSystemName();
 			}
+
+			return retName;
 
 		}
 
@@ -189,6 +192,7 @@ class MagicShifterSystem {
 		bool getAPConfig(struct APAuth *config) {
 
 			String path = apConfigPath;
+
 			if (SPIFFS.exists((char *) path.c_str())) {
 				File file = SPIFFS.open((char *) path.c_str(), "r");
 				file.read((uint8_t *) config, sizeof(*config));
@@ -206,6 +210,8 @@ class MagicShifterSystem {
 			l_safeStrncpy(config->ssid, getUniqueSystemName().c_str(),
 				sizeof(config->ssid));
 			l_safeStrncpy(config->password, "", sizeof(config->password));
+
+msSystem.slogln("webserver: not configured, using unique name: " + String(config->ssid));
 
 			return false;
 		}

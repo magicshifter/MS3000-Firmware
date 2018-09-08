@@ -261,7 +261,7 @@ bool AutoConnect()
 		msSystem.slogln("wifi: none of the configured networks found.");
 		msSystem.feedbackAnimation(msGlobals.feedbackType::NOT_OK);
 
-		return false;
+		// return false;
 	}
 #endif
 
