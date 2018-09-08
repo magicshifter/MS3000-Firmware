@@ -90,7 +90,6 @@ private:
 
 	// Arpeggiator configuration state
 	uint8_t current_pattern = 1;	// this will trigger loading for the first time.
-	uint8_t new_pattern = 6;
 	uint8_t current_note = 0;
 	uint8_t new_note = 0;
 	uint8_t current_velocity = 64;
@@ -131,6 +130,8 @@ private:
 
 
 public:
+	uint8_t new_pattern = 4;
+
 	uint8_t arp_play_state = 0;
 	uint8_t arp_frame = 0;			// internal beat, which is 1/16th of the actual beat (see arp_bpm)
 	
@@ -230,6 +231,7 @@ public:
 
 		// go through all arp_events and play when event beat matches arp_frame
 		while (event_idx < 8) {
+// msSystem.slogln("arp event:" + String(event_idx));			
 			if (arp_events[event_idx].beat == arp_frame) {
 				arpPlayNote(arp_events[event_idx].note,
 							arp_events[event_idx].on_off);
@@ -251,6 +253,10 @@ public:
 					curr_midiview.midi_channel);
 		arpPushMIDI(noteNumber);
 		arpPushMIDI(current_velocity);
+
+msSystem.slogln("ARP: Note: " + String(noteNumber) + 
+				" vel: " + String(current_velocity) + 
+				" ON/OFF: " + String((on_off ? MIDI_NOTE_ON : MIDI_NOTE_OFF) + curr_midiview.midi_channel) );
 
 		arpSendMIDI();
 	}
@@ -477,6 +483,32 @@ public:
 
 	}
 
+	void incPattern() {
+		msSystem.msLEDs.setLED(_arp.new_pattern, 0, 0, 0, msGlobals.ggBrightness); 
+
+		_arp.new_pattern ++;
+		if (_arp.new_pattern > NUM_ARP_PATTERNS)
+			_arp.new_pattern = NUM_ARP_PATTERNS;
+
+		msSystem.msLEDs.setLED(_arp.new_pattern, 0, 100, 100, msGlobals.ggBrightness); 
+
+		_arp.arpProgramChange(curr_midiview.midi_channel, _arp.new_pattern);
+	}
+
+	void decPattern() {
+		msSystem.msLEDs.setLED(_arp.new_pattern, 0, 0, 0, msGlobals.ggBrightness); 
+
+		_arp.new_pattern --;
+		if (_arp.new_pattern < 0)
+			_arp.new_pattern = 0;
+
+		msSystem.msLEDs.setLED(_arp.new_pattern, 0, 100, 100, msGlobals.ggBrightness); 
+
+		_arp.arpProgramChange(curr_midiview.midi_channel, _arp.new_pattern);
+
+	}
+
+
 	// main MIDI frame processor
 	// 
 	bool step()
@@ -490,28 +522,21 @@ public:
 		// consume button events if necessary ..
 		if (msSystem.msButtons.msBtnPwrHit) {
 		}
+
 		if (msSystem.msButtons.msBtnAHit) {
-			msSystem.msLEDs.setLED(LED_BUTTON_EVENT, 0, 100, 0, msGlobals.ggBrightness); 
+			decPattern();
 		}
 		if (msSystem.msButtons.msBtnBHit) {
-			// Debug - set an LED so we know we made it ..
-			msSystem.msLEDs.setLED(LED_BUTTON_EVENT, 100, 0, 0, msGlobals.ggBrightness);
+			incPattern();
 		}
 
 		// pull midi_inbox, parse it with miby
 		if (Serial.available()) {
-
-msSystem.slog("MIDI: avail");
-
 			MIDI_Get(&midi_inb, 1);
-
-// !J! DEBUG:
-			msSystem.msLEDs.setLED(LED_NOTE_EVENT, 100, 100, 100, msGlobals.ggBrightness);
-
+			// msSystem.msLEDs.setLED(LED_NOTE_EVENT, 100, 100, 100, msGlobals.ggBrightness);
 			miby_parse(&miby, midi_inb);
 		} else {
-			msSystem.msLEDs.setLED(LED_NOTE_EVENT, 0, 0, 0, msGlobals.ggBrightness);
-
+			// msSystem.msLEDs.setLED(LED_NOTE_EVENT, 0, 0, 0, msGlobals.ggBrightness);
 			// !J! TODO: Soft-thru, etc. 
 			// MIDI_Put(&midi_buf[0], 4);
 		}
