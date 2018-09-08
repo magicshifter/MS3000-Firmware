@@ -40,7 +40,6 @@ void MIDI_Control_Change(miby_this_t a_miby)
 	// }
 }
 
-#warning "NOTE ON"
 void MIDI_Note_On(miby_this_t a_miby)
 {
 	msMIDIArpeggiator._arp.arpNoteOn(curr_midiview.midi_channel, MIBY_ARG0(a_miby),
