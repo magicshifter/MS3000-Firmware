@@ -591,13 +591,10 @@ public:
 	{
 		if (newMode < msGlobals.ggModeList.size() && 
 			(newMode != msGlobals.ggCurrentMode)) {
-			slogln("XXXX setMODE SHALL switch (and start)");
 			msGlobals.ggModeList[msGlobals.ggCurrentMode]->stop();
 			msGlobals.ggCurrentMode = newMode;
 			msGlobals.ggModeList[newMode]->start();
 		}
-		else 
-			slogln("XXXX setMODE didn't switch (and start)");
 	}
 
 	void feedbackAnimation(int mode) {
