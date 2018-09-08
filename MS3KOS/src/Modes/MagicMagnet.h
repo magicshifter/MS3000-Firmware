@@ -8,7 +8,6 @@
 class MagicMagnetMode:public MagicShifterBaseMode {
 
   private:
-	int frame = 0;
 
 	MS3KG_App_Magnet &_magnet = msGlobals.pbuf.applications.magnet;
 ;
@@ -37,7 +36,6 @@ class MagicMagnetMode:public MagicShifterBaseMode {
 
 		int new_magnet_mode = _magnet.mode;
 
-		frame++;
 
 		if (msSystem.msButtons.msBtnAHit) {
 			new_magnet_mode--;
@@ -48,24 +46,25 @@ class MagicMagnetMode:public MagicShifterBaseMode {
 			msSystem.msButtons.msBtnBHit = false;
 		}
 
+
 		if (new_magnet_mode < _MS3KG_App_Magnet_Mode_MIN)
 			new_magnet_mode = _MS3KG_App_Magnet_Mode_MAX;
 		
 		if (new_magnet_mode > _MS3KG_App_Magnet_Mode_MAX)
 			new_magnet_mode = _MS3KG_App_Magnet_Mode_MIN;
 
-
-
 		msSystem.msSensor.readMagnetometerData(msGlobals.ggMagnet);
 
+
 		if ((msSystem.msSensor.readRegister(0x5E) & 0x02)) {
-msSystem.slogln("magnetometer:go!");
 			autoCalResetCounter++;
 			if (autoCalResetCounter > 10) {
-msSystem.slogln("magnetometer:reset");
 				// M_CTRL_REG2: Hybrid auto increment, Magnetic measurement min/max detection function reset
+
 				msSystem.msSensor.writeRegister(0x5C, 0x24);
 				autoCalResetCounter = 0;
+
+
 			}
 		} else {
 			autoCalResetCounter = 0;
@@ -76,11 +75,11 @@ msSystem.slogln("magnetometer:reset");
 				 (msGlobals.ggMagnet[YAXIS],
 				  -msGlobals.ggMagnet[XAXIS]) * 180 / M_PI);
 
+		msSystem.slog(modeName + " degrees: " + String(degrees));
+
 		msSystem.msLEDs.fillLEDs(0, 0, 0, msGlobals.ggBrightness);
 		int lednr = map(abs(degrees), 0, 180, 0, 15);
 
-msSystem.slog("magnetometer:degrees:");
-msSystem.slogln(String(degrees));
 
 		int degNorth = -degrees;
 		int degSouth = 180 - degrees;
@@ -89,13 +88,15 @@ msSystem.slogln(String(degrees));
 		int ledNorth = map(abs(degNorth), 0, 180, 0, 15);
 		int ledSouth = map(abs(degSouth), 0, 180, 0, 15);
 
-		if (new_magnet_mode <= 1) {
+
+		if (new_magnet_mode <= MS3KG_App_Magnet_Mode_BARS_DOT) {
 			for (int lC = 0; lC < lednr; lC++)
 				msSystem.msLEDs.setLED(lC, 0, 255, 0, msGlobals.ggBrightness);	// !J! hack
 
 			for (int lC = lednr + 1; lC < MAX_LEDS; lC++)
 				msSystem.msLEDs.setLED(lC, 255, 0, 0, msGlobals.ggBrightness);	// !J! hack
 		}
+
 
 		if ((new_magnet_mode == MS3KG_App_Magnet_Mode_BARS) || 
 			(new_magnet_mode == MS3KG_App_Magnet_Mode_DOTS))
@@ -112,19 +113,7 @@ msSystem.slogln(String(degrees));
 		}
 
 
-			_magnet.mode = (MS3KG_App_Magnet_Mode)new_magnet_mode;
-			// switch(new_magnet_mode) 
-			// {
-			// 	case 0: _magnet.mode = MS3KG_App_Magnet_Mode_BARS; 
-			// 	break;
-			// 	case 1: _magnet.mode = MS3KG_App_Magnet_Mode_BARS_DOT;
-			// 	break;
-			// 	case 2:  _magnet.mode = MS3KG_App_Magnet_Mode_DOTS;
-			// 	break;
-			// 	case 3:  _magnet.mode = MS3KG_App_Magnet_Mode_OTHER;
-			// 	break;
-			// }
-
+		_magnet.mode = (MS3KG_App_Magnet_Mode)new_magnet_mode;
 
 		msSystem.msLEDs.updateLEDs();
 
@@ -133,16 +122,11 @@ msSystem.slogln(String(degrees));
 		lOSCMessage.add(lednr);
 #endif
 
-		delay(25);
+		delay(30);
 
 		return true;
 
 	}
-
-	void update() {
-	};
-	void reset() {
-	};
 
 };
 
