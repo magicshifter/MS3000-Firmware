@@ -9,9 +9,7 @@ class MagicMagnetMode:public MagicShifterBaseMode {
 
   private:
 
-	MS3KG_App_Magnet &_magnet = msGlobals.pbuf.applications.magnet;
-	int magnet_submode = _magnet.mode;
-
+	int magnet_submode =  msGlobals.pbuf.applications.magnet.mode;
 
 #ifdef CONFIG_ENABLE_OSC
 	// local OSC message
@@ -35,7 +33,7 @@ class MagicMagnetMode:public MagicShifterBaseMode {
 	bool step() {
 		static int autoCalResetCounter = 0;
 
-		magnet_submode = _magnet.mode;
+		magnet_submode =  msGlobals.pbuf.applications.magnet.mode;
 
 		// msSystem.slog(modeName + " x: ");
 
@@ -123,7 +121,10 @@ class MagicMagnetMode:public MagicShifterBaseMode {
 
 		// msSystem.slog(modeName + " h: " + String(magnet_submode));
 
-		_magnet.mode = (MS3KG_App_Magnet_Mode)magnet_submode;
+#if 1
+// !J! crashes magnet mode:
+		 msGlobals.pbuf.applications.magnet.mode = (MS3KG_App_Magnet_Mode)magnet_submode;
+#endif
 
 		msSystem.msLEDs.updateLEDs();
 
