@@ -18,8 +18,10 @@
 #include "MIDI/MibyConfig.h"
 #include "MIDI/midi_defs.h"
 #include "MIDI/envelope.h"
-#include "MIDI/MagicArpeggiator.h"
+#include "MIDI/MIDIArpeggiator.h"
 MIDIArpeggiatorMode msMIDIArpeggiator;
+#include "MIDI/MIDISequence8.h"
+MIDISequence8Mode msMIDISequencer8;
 #include "MIDI/RawMIDIHandlers.h"
 #endif // CONFIG_ENABLE_MIDI
 

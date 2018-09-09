@@ -11,7 +11,7 @@ class ModeSelectorMode:public MagicShifterBaseMode {
 	MagicPOVMode lPOVMode;
 	MagicShifterImageText msMagicShakeText;
 	
-	int _currentMode = 0;
+	uint32_t _currentMode = 0;
 
   public:
 
@@ -41,6 +41,9 @@ class ModeSelectorMode:public MagicShifterBaseMode {
 	}
 
 	void setIndex(uint32_t idx) {
+
+		msSystem.slogln(" idx: " + String(idx));
+
 		if (idx < 0) {
 			idx = msGlobals.ggModeList.size() - 1;
 		}

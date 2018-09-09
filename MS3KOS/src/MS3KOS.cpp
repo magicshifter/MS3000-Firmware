@@ -118,13 +118,12 @@ void setup()
 #endif
 
 	msGlobals.ggModeList.push_back(&msMIDIArpeggiator);
+	msGlobals.ggModeList.push_back(&msMIDISequencer8);
 
 #ifdef CONFIG_MIDI_RTP_MIDI
 
 	setupRTPDebugHandlers();
 
-	// msSystem.slogln("MIDI(rtp): start session: " + String(msSystem.Settings.getAPNameOrUnique()));
-	
 	AppleMIDI.begin(msSystem.Settings.getAPNameOrUnique().c_str());
 
 	msSystem.slog("MIDI(rtp) session started, identity: " + String(AppleMIDI.getSessionName()) );
