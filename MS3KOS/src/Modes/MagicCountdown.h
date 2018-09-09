@@ -41,8 +41,7 @@ public:
 	bool step(void) {
 		int lp = countdownTicks % COUNTDOWN_UPDATE_PERIOD;
 		msGlobals.ggRGBLEDBuf[lp] = 0;
-		Serial.print(" lp:");
-		Serial.print(lp);
+		Serial.print(" lp:" + String(lp));
 		msSystem.msLEDs.loadBuffer(msGlobals.ggRGBLEDBuf);
 		msSystem.msLEDs.updateLEDs();
 		delay(10);

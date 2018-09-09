@@ -42,12 +42,12 @@ class MagicShifterSysLog {
 			}
 		}
 #else
-#ifndef CONFIG_ENABLE_MIDI_SERIAL
+#ifndef CONFIG_MIDI_SERIAL_ENABLE
 		Serial.println("syslog: JoinAP disabled:");
 #endif
 #endif
 
-#ifndef CONFIG_ENABLE_MIDI_SERIAL
+#ifndef CONFIG_MIDI_SERIAL_ENABLE
 		if (msGlobals.ggDebugSerial) {
 			Serial.println("syslog: serial enable");
 			Serial.println("syslog: WiFi: " + 
@@ -66,7 +66,7 @@ class MagicShifterSysLog {
 
 		bool validIPConfig = syslogServerIP.fromString(syslogServerIPStr);
 
-#ifndef CONFIG_ENABLE_MIDI_SERIAL
+#ifndef CONFIG_MIDI_SERIAL_ENABLE
 		Serial.println("syslog: Serial Console Messages ENABLED");
 		Serial.println("syslog: user-configured host: " + String(syslogServerIPStr));
 		Serial.println("syslog: configured host is IP: " + syslogServerIP.toString());
@@ -89,7 +89,7 @@ class MagicShifterSysLog {
 		if (WiFi.status() == WL_CONNECTED) {
 			sendSysLogMsg("MagicShifter3000 reporting for duty!");
 		} else {
-#ifndef CONFIG_ENABLE_MIDI_SERIAL
+#ifndef CONFIG_MIDI_SERIAL_ENABLE
 		Serial.println("syslog: cannot send messages - no network");
 #endif
 		}

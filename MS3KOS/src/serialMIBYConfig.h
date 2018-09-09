@@ -19,38 +19,37 @@
 #undef MIBY_HND_CTRL_CHG
 #endif
 extern void MIDI_Control_Change(miby_this_t);
-#define MIBY_HND_CTRL_CHG	MIDI_Control_Change
+#define MIBY_HND_CTRL_CHG  SERIAL_MIDI_Control_Change
 
 #ifdef MIBY_HND_NOTE_ON
 #undef MIBY_HND_NOTE_ON
 #endif
 extern void MIDI_Note_On(miby_this_t);
-#define MIBY_HND_NOTE_ON	MIDI_Note_On
+#define MIBY_HND_NOTE_ON  SERIAL_MIDI_Note_On
 
 #ifdef MIBY_HND_NOTE_OFF
 #undef MIBY_HND_NOTE_OFF
 #endif
 extern void MIDI_Note_Off(miby_this_t);
-#define MIBY_HND_NOTE_OFF	MIDI_Note_Off
+#define MIBY_HND_NOTE_OFF  SERIAL_MIDI_Note_Off
 
 #ifdef MIBY_HND_RT_START
 #undef MIBY_HND_RT_START
 #endif
 extern void MIDI_Start(miby_this_t);
-#define MIBY_HND_RT_START	MIDI_Start
+#define MIBY_HND_RT_START  SERIAL_MIDI_Start
 
 #ifdef MIBY_HND_RT_STOP
 #undef MIBY_HND_RT_STOP
 #endif
 extern void MIDI_Stop(miby_this_t);
-#define MIBY_HND_RT_STOP	MIDI_Stop
+#define MIBY_HND_RT_STOP  SERIAL_MIDI_Stop
 
 #ifdef MIBY_HND_PROG_CHG
 #undef MIBY_HND_PROG_CHG
 #endif
 extern void MIDI_Program_Change(miby_this_t);
-#define MIBY_HND_PROG_CHG	MIDI_Program_Change
-
+#define MIBY_HND_PROG_CHG  SERIAL_MIDI_Program_Change
 
 #if 0
 extern void test_rt_timing_clock(miby_this_t);

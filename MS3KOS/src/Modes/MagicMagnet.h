@@ -121,10 +121,7 @@ class MagicMagnetMode:public MagicShifterBaseMode {
 
 		// msSystem.slog(modeName + " h: " + String(magnet_submode));
 
-#if 1
-// !J! crashes magnet mode:
-		 msGlobals.pbuf.applications.magnet.mode = (MS3KG_App_Magnet_Mode)magnet_submode;
-#endif
+ 		msGlobals.pbuf.applications.magnet.mode = (MS3KG_App_Magnet_Mode)magnet_submode;
 
 		msSystem.msLEDs.updateLEDs();
 

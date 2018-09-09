@@ -949,7 +949,7 @@ void showBatteryStatus(bool shouldFadeIn) {
 
 		EEPROM.begin(512);
 
-#ifdef CONFIG_ENABLE_MIDI_SERIAL
+#ifdef CONFIG_MIDI_SERIAL_ENABLE
 #warning "SERIAL MIDI has been enabled - Serial I/O at 31250 - serial logging disabled (use wlan)"
 		Serial.begin(31250);
 #else
@@ -1111,7 +1111,7 @@ void showBatteryStatus(bool shouldFadeIn) {
 			}
 		}
 
-#ifndef CONFIG_ENABLE_MIDI_SERIAL
+#ifndef CONFIG_MIDI_SERIAL_ENABLE
 		// poll the serial interface for test/flash commands, etc.
 		CommandInterfacePoll();
 #endif

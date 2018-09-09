@@ -14,15 +14,11 @@
 
 // MIDI modes and features can be configured, i.e. MIDIShifter project
 #ifdef CONFIG_ENABLE_MIDI
-#include "miby.h"
-#include "MIDI/MibyConfig.h"
-#include "MIDI/midi_defs.h"
 #include "MIDI/envelope.h"
 #include "MIDI/MIDIArpeggiator.h"
 MIDIArpeggiatorMode msMIDIArpeggiator;
 #include "MIDI/MIDISequence8.h"
 MIDISequence8Mode msMIDISequencer8;
-#include "MIDI/RawMIDIHandlers.h"
 #endif // CONFIG_ENABLE_MIDI
 
 #include "MagicPOV.h"

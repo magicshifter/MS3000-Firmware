@@ -12,6 +12,7 @@
  *
  */
 
+
 // Status Indicator LED's - for the Arpeggiator, etc.
 #define LED_BUTTON_EVENT 0
 #define LED_MIDI1_EVENT 3
@@ -29,42 +30,6 @@
 #define LOWEST_ARP_TEMPO (20)
 
 #define MIDI_ARP_FEEDBACK 1
-
-// Current View per MIDI input
-typedef struct {
-	uint8_t midi_channel;		// MIDI channel of View
-	uint16_t time_base;			// Base Time for sequencer-Put
-	void *v_arg;				// user data
-} MIDIViewT;
-
-MIDIViewT curr_midiview;
-
-
-// -- MIDI I/O
-// Send a MIDI message
-// returns the # of bytes sent
-static uint16_t MIDI_Put(uint8_t * data, uint16_t length)
-{
-	return (Serial.write(data, length));
-}
-
-// Receive a MIDI message if its available
-// returns the # of bytes received in the message (count should be length)
-static uint16_t MIDI_Get(uint8_t * data, uint16_t length)
-{
-	int8_t count;
-	count = 0;
-
-	while ( (Serial.available()) && 
-		    ((length > 0) && 
-		     (data[count] = Serial.read()) != -1) ) {
-		
-		count++;
-		length--;
-	}
-
-	return count;
-}
 
 // A Basic Arpeggiator class for use by the MIDI Module:
 // inspired by RobG @ 43oh
@@ -291,9 +256,11 @@ msSystem.slogln("ARP: Note: " + String(noteNumber) +
 	// those messages
 	void arpSendMIDI()
 	{
+#ifdef CONFIG_MIDI_SERIAL_ENABLE
 		while (arp_fifo_in_index != arp_fifo_out_index) {	// send whatever is in the buffer
-			MIDI_Put(&arp_fifo[++arp_fifo_out_index & BUFFER_MASK], 1);
+			SERIAL_MIDI_Put(&arp_fifo[++arp_fifo_out_index & BUFFER_MASK], 1);
 		}
+#endif
 	}
 
 	// reeive a Program change to change Arp Pattern
@@ -335,7 +302,6 @@ class MIDIArpeggiatorMode : public MagicShifterBaseMode {
 
 private:
 	// miby parser is used
-	miby_t miby;
 
 	// MIDI housekeeping
 	uint8_t midi_mode = 0;			// Mode of this module (future-use)
@@ -466,8 +432,6 @@ public:
 		// Initial view
 		curr_midiview.midi_channel = 0;
 
-		// The MIDI byte parser, provided by the miby module ..
-		miby_init(&miby, NULL);
 
 		// prime the Arp
 		_arp.arp_beat_duration = ARP_DURATION_FOR_BPM(_arp.arp_bpm);
@@ -513,10 +477,7 @@ public:
 	// 
 	bool step()
 	{
-		// this is the per-fram midi byte, currently in process ..
-		uint8_t midi_inb;
 
-		// 
 		handleButtons();
 
 		// consume button events if necessary ..
@@ -530,36 +491,17 @@ public:
 			incPattern();
 		}
 
-		// pull midi_inbox, parse it with miby
-		if (Serial.available()) {
-			MIDI_Get(&midi_inb, 1);
-			// msSystem.msLEDs.setLED(LED_NOTE_EVENT, 100, 100, 100, msGlobals.ggBrightness);
-			miby_parse(&miby, midi_inb);
-		} else {
-			// msSystem.msLEDs.setLED(LED_NOTE_EVENT, 0, 0, 0, msGlobals.ggBrightness);
-			// !J! TODO: Soft-thru, etc. 
-			// MIDI_Put(&midi_buf[0], 4);
-		}
-
 		midi_frame++;
-
-// msSystem.slog("MIDI: frame:");
-// msSystem.slogln(String(midi_frame));
 
 		// minimize latency introduced by the Arp frame
 		unsigned long nowT = micros();
 
-// msSystem.slogln("MIDI: arp nowT:" + String(nowT) + " arp frame time:" + String(_arp.last_arp_frame_time) + " arp beat duration:" + String(_arp.arp_beat_duration) + " RES: " + String ((!((nowT - _arp.last_arp_frame_time) < _arp.arp_beat_duration))));
-
 		if (!((nowT - _arp.last_arp_frame_time) < _arp.arp_beat_duration)) {
-// msSystem.slogln("MIDI: ARPFRAME: nowT - last_arp_frame_time < arp_beat_duration:" + String((nowT - _arp.last_arp_frame_time)));
 			_arp.arpFrame();
-		// prepare for our next frame
 			_arp.last_arp_frame_time = nowT;
 		} else {
-// msSystem.slogln("MIDI: nowT - last_arp_frame_time:" + String((nowT - _arp.last_arp_frame_time)));
+			// msSystem.slogln("MIDI: nowT - last_arp_frame_time:" + String((nowT - _arp.last_arp_frame_time)));
 		}
-
 
 		msSystem.msLEDs.updateLEDs();
 
@@ -577,5 +519,74 @@ public:
 		}
 	}
 
+	void MIDI_Start()
+	{
+		msSystem.slogln(modeName + " MIDI Start");
+		_arp.arpStart();
+	}
+
+	void MIDI_Stop()
+	{
+		msSystem.slogln(modeName + " MIDI Stop");
+		_arp.arpStop();
+	}
+
+	void MIDI_Program_Change(byte channel, byte program)
+	{
+		msSystem.slogln(modeName + " MIDI PC - channel: " + 
+									String(channel) + 
+									" program: " + 
+									String(program));
+
+		_arp.arpProgramChange(channel, program);
+	}
+
+	void MIDI_Control_Change(byte channel, byte cc1, byte cc2)
+	{
+		msSystem.slogln(modeName + " MIDI CC - channel: " + 
+									String(channel) + 
+									" cc1: " + 
+									String(cc1) +
+									" cc2: " + 
+									String(cc2));
+
+		msSystem.msLEDs.setLED(LED_CONTROL_CHANGE, 0, 100, 100);
+		if (channel == 1) {
+			_arp.arp_bpm = LOWEST_ARP_TEMPO + (cc1);
+			_arp.arp_beat_duration = ARP_DURATION_FOR_BPM(_arp.arp_bpm);
+		}
+	}
+
+	void MIDI_Note_On(byte channel, byte note, byte velocity)
+	{
+		msSystem.slogln(modeName + " MIDI Note On - channel: " + 
+									String(channel) + 
+									" note: " + 
+									String(note) +
+									" vel: " + 
+									String(velocity));
+
+		_arp.arpNoteOn(channel, note, velocity);
+		msSystem.msLEDs.setLED(LED_NOTE_EVENT, 0, 0, 100);
+	}
+
+	void MIDI_Note_Off(byte status, byte note, byte velocity)
+	{
+		msSystem.slogln(modeName + " MIDI Note Off - status: " + 
+									String(status) + 
+									" note: " + 
+									String(note) +
+									" vel: " + 
+									String(velocity));
+
+		uint8_t note_msg[3];
+		note_msg[0] = status;
+		note_msg[1] = note;
+		note_msg[2] = velocity;
+
+		SERIAL_MIDI_Put(note_msg, 3);
+
+		msSystem.msLEDs.setLED(LED_NOTE_EVENT, 0, 0, 0);
+	}
 
 };

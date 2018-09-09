@@ -42,6 +42,20 @@ extern "C" {
 #include "msGlobals.h"
 MagicShifterGlobals msGlobals;
 
+#ifdef CONFIG_ENABLE_MIDI
+#include "Modes/MIDI/midi_defs.h"
+
+#ifdef CONFIG_MIDI_SERIAL_ENABLE
+#include "miby.h"
+#include "serialMIDI.h"
+#endif
+
+#ifdef CONFIG_MIDI_RTP_ENABLE
+#include "rtpMIDI.h"
+#endif
+
+#endif
+
 // the system UI module
 #include "msSystem.h"
 MagicShifterSystem msSystem;
@@ -53,7 +67,6 @@ MagicShifterWebServer msWebServer;
 // Onboard GUI modes, per configuration
 #include "Modes/Modes.h"
 
-#include "msMIDIBase.h"
 
 // Detect system-faults for factory testing and otherwise
 // A low-level system fault can either be:
@@ -113,21 +126,19 @@ void setup()
 	// if MIDI has been configured, enable the additional MIDI mode(s)
 #ifdef CONFIG_ENABLE_MIDI
 
-#ifdef CONFIG_ENABLE_MIDI_SERIAL
-	msGlobals.ggCurrentMode = 7;
-#endif
-
 	msGlobals.ggModeList.push_back(&msMIDIArpeggiator);
 	msGlobals.ggModeList.push_back(&msMIDISequencer8);
 
-#ifdef CONFIG_MIDI_RTP_MIDI
+#ifdef CONFIG_MIDI_SERIAL_ENABLE
+	// The MIDI byte parser, provided by the miby module ..
+	miby_init(&miby_serial, NULL);
+	msGlobals.ggCurrentMode = 7;
+#endif
 
+#ifdef CONFIG_MIDI_RTP_ENABLE
 	setupRTPDebugHandlers();
-
 	AppleMIDI.begin(msSystem.Settings.getAPNameOrUnique().c_str());
-
 	msSystem.slog("MIDI(rtp) session started, identity: " + String(AppleMIDI.getSessionName()) );
-
 #endif
 
 #endif
@@ -160,8 +171,12 @@ void loop()
 	msSystem.step();
 
 	// if rtpMIDI is configured, run it..
-#ifdef CONFIG_MIDI_RTP_MIDI
+#ifdef CONFIG_MIDI_RTP_ENABLE
 		AppleMIDI.run();
+#endif
+
+#ifdef CONFIG_MIDI_SERIAL_ENABLE
+		SERIAL_MIDI_loop();
 #endif
 
 	// if SystemUI events trigger it (UI), display the mode-selector menu:
