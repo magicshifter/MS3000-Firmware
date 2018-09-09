@@ -52,8 +52,7 @@ static bool streamFile(String path)
 		file.close();
 		return true;
 	} else {
-		msSystem.slogln("streamFile fail:");
-		msSystem.slogln(path.c_str());
+		msSystem.slogln("streamFile fail:" + path);
 	}
 
 	return false;
@@ -68,10 +67,8 @@ void handleNotFound()
 	l_safeStrncpy(fName, msSystem.msESPServer.uri().c_str(),
 				  MAX_FILENAME_LENGTH);
 
-	msSystem.slog("URI to retrieve: ");
-	msSystem.slogln(msSystem.msESPServer.uri());
-	msSystem.slog("fName to retrieve: ");
-	msSystem.slogln(String(fName + 1));
+	msSystem.slog("URI to retrieve: " + msSystem.msESPServer.uri());
+	msSystem.slog("fName to retrieve: " + String(fName + 1));
 
 	String gzFName = String(fName + 1) + ".gz";
 
@@ -118,8 +115,7 @@ void handleReadFile()
 	msSystem.msLEDs.fillLEDs(0, 0, 1, 0x1F);
 	msSystem.msLEDs.updateLEDs();
 
-	msSystem.slogln("Free heap: ");
-	msSystem.slogln(String(ESP.getFreeHeap()));
+	msSystem.slogln("Free heap: " + String(ESP.getFreeHeap()));
 
 	String message = "ReadFile:\n";
 
@@ -142,14 +138,12 @@ void handleReadFile()
 
 		if (file) {
 			int fileLen = file.available();
-			msSystem.slogln("file available: ");
-			msSystem.slogln(String(fileLen));
+			msSystem.slogln("file available: " + String(fileLen));
 
 			if (fileLen > 0) {
 				if (fileLen > 100)
 					fileLen = 100;
-				msSystem.slogln("reading: ");
-				msSystem.slogln(String(file.read(buffer, fileLen)));
+				msSystem.slogln("reading: " + String(file.read(buffer, fileLen)));
 
 				msSystem.slogln("buffer: ");
 
@@ -325,8 +319,7 @@ void handleFileUpload()
 
 	if (upload.status == UPLOAD_FILE_START) {
 		l_safeStrncpy(msGlobals.ggUploadFileName, (char *) upload.filename.c_str(), MAX_FILENAME_LENGTH);	//.c_str();
-		msSystem.slogln("upload started: ");
-		msSystem.slogln(msGlobals.ggUploadFileName);
+		msSystem.slogln("upload started: " + String(msGlobals.ggUploadFileName));
 
 		msSystem.slog("upload open.. ");
 
@@ -340,14 +333,12 @@ void handleFileUpload()
 			msGlobals.ggUploadFile.close();
 
 
-		msSystem.slog("ggUploadFile opened:");
-		msSystem.slogln(msGlobals.ggUploadFileName);
+		msSystem.slog("ggUploadFile opened:" + String(msGlobals.ggUploadFileName));
 
 		// // !J! hak try 3 times:
 		int cnt = 3;
 		while (--cnt >= 0) {
-			msSystem.slog("try:");
-			msSystem.slogln(String(cnt));
+			msSystem.slog("try:" + String(cnt));
 
 			msGlobals.ggUploadFile =
 				SPIFFS.open(msGlobals.ggUploadFileName, "w");
@@ -375,8 +366,7 @@ void handleFileUpload()
 				msSystem.slogln("ERROR: could not write!");
 			}
 		}
-		msSystem.slog("Upload: WRITE, Bytes: ");
-		msSystem.slogln(String(upload.currentSize));
+		msSystem.slog("Upload: WRITE, Bytes: " + String(upload.currentSize));
 	} else if (upload.status == UPLOAD_FILE_END) {
 		msGlobals.ggShouldAutoLoad = 1;
 
@@ -385,8 +375,7 @@ void handleFileUpload()
 
 		msGlobals.ggUploadFile.close();
 
-		msSystem.slogln("Upload: END, Size: ");
-		msSystem.slogln(String(upload.totalSize));
+		msSystem.slogln("Upload: END, Size: " + String(upload.totalSize));
 
 
 		msSystem.msESPServer.sendHeader("Access-Control-Allow-Origin", "*");

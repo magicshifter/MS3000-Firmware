@@ -6,7 +6,7 @@
 #include <IPAddress.h>
 
 // #define this to get syslog before normal AP autoconnect
-#define SYSLOG_AUTO_CONNECT
+#undef SYSLOG_AUTO_CONNECT
 
 class MagicShifterSysLog {
 
@@ -50,7 +50,8 @@ class MagicShifterSysLog {
 #ifndef CONFIG_ENABLE_MIDI_SERIAL
 		if (msGlobals.ggDebugSerial) {
 			Serial.println("syslog: serial enable");
-			Serial.println("syslog: WiFi connected");
+			Serial.println("syslog: WiFi: " + 
+				String((WiFi.status() == WL_CONNECTED) ? "connected" : "not connected" ));
 			Serial.print("syslog: local address: ");
 			Serial.println(WiFi.localIP());
 			Serial.print("syslog: host address: ");
@@ -61,14 +62,14 @@ class MagicShifterSysLog {
 	};
 
 	// 
-	void setup(char *syslogHostIPStr) {
+	void setup(char *syslogServerIPStr) {
 
-		bool validIPConfig = syslogServerIP.fromString(syslogHostIPStr);
+		bool validIPConfig = syslogServerIP.fromString(syslogServerIPStr);
 
 #ifndef CONFIG_ENABLE_MIDI_SERIAL
 		Serial.println("syslog: Serial Console Messages ENABLED");
-		Serial.println("syslog: host address as string: " + String(syslogHostIPStr));
-		Serial.println("syslog: configured host is: " + syslogServerIP.toString());
+		Serial.println("syslog: user-configured host: " + String(syslogServerIPStr));
+		Serial.println("syslog: configured host is IP: " + syslogServerIP.toString());
 
 		if (validIPConfig) {
 			Serial.println("syslog: IP Config appears to be valid");
@@ -78,24 +79,21 @@ class MagicShifterSysLog {
 #endif
 
 		delay(20);
+
 		connect_wifi();
 
 		sysLogUDP.begin(localPort);
-		delay(500);
+
+		delay(125);
+
 		if (WiFi.status() == WL_CONNECTED) {
 			sendSysLogMsg("MagicShifter3000 reporting for duty!");
-		}
-		else
-		{
-		}
-	}
-
-	// poll serial and route it to syslog server
-	void pollSerial() {
-		if (WiFi.status() == WL_CONNECTED) {
 		} else {
-			connect_wifi();
+#ifndef CONFIG_ENABLE_MIDI_SERIAL
+		Serial.println("syslog: cannot send messages - no network");
+#endif
 		}
+
 	}
 
 	void sendSysLogMsg(String aMsg) {

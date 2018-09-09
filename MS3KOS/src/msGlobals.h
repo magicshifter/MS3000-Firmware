@@ -4,6 +4,7 @@
 #include "msTypes.h"
 // #include "StackClass.h"
 
+// protocol buffers: used to share data with the web-app.
 #include "MS3000.pb.h"
 
 void l_safeStrncpy(char *dest, const char *source, int n)

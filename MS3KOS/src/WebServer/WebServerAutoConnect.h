@@ -193,15 +193,16 @@ bool AutoConnect()
 	setDebugCallbacks();
 
 #ifdef SCAN_FIRST_MODE
-	// if (!forceAPMode)
 	{
 		if (msSystem.Settings.getPreferredAP(&msGlobals.ggAPConfig.apInfo.auth)) {
 			msSystem.slogln("wifi: using stored configuration.");
+			
 			if (TryConnect
 				(msGlobals.ggAPConfig.apInfo.auth, CONNECTION_TIMEOUT)) {
 				msGlobals.ggModeAP = false;
 				return true;
 			}
+
 		} else
 
 		msSystem.slogln("wifi: no preferred configuration found.");
@@ -210,15 +211,17 @@ bool AutoConnect()
 
 			msSystem.slogln("wifi: start scan -");
 			// WiFi.scanNetworks will return the number of networks found
-			int n = WiFi.scanNetworks();
+			
+			int numNets = WiFi.scanNetworks();
+
 			msSystem.slogln("wifi: scan done");
 
-			if (n == 0) {
+			if (numNets == 0) {
 				msSystem.slogln("wifi: no networks found");
 			} else {
-				msSystem.slogln("wifi: networks found: " + String(n));
+				msSystem.slogln("wifi: networks found: " + String(numNets));
 
-				for (int i = 0; i < n; ++i) {
+				for (int i = 0; i < numNets; ++i) {
 					// Print SSID and RSSI for each network found
 					msSystem.slog(String("  ") + 
 							  String(i + 1) + 
@@ -226,20 +229,19 @@ bool AutoConnect()
 							  WiFi.SSID(i) +
 							  String(" (") + 
 							  WiFi.RSSI(i) + 
-							  String(") ")
-							   + 
+							  String(") ") +
 							  String((WiFi.encryptionType(i) ==
 								         ENC_TYPE_NONE) ? "[open]" : "[encrypted]"));
 					delay(20);
 				}
 			}
 
-			msSystem.slogln("");
+			msSystem.slogln("wifi: attempting connect");
 
 			msSystem.Settings.resetAPList();
 
 			while (msSystem.Settings.getNextAP(&msGlobals.ggAPConfig.apInfo.auth)) {
-				for (int i = 0; i < n; i++) {
+				for (int i = 0; i < numNets; i++) {
 					if (strcmp
 						(WiFi.SSID(i).c_str(),
 							msGlobals.ggAPConfig.apInfo.auth.ssid) == 0) {
