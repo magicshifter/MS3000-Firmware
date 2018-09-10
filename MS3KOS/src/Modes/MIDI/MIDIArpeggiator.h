@@ -12,6 +12,7 @@
  *
  */
 
+#include "serialMIDI.h"
 
 // Status Indicator LED's - for the Arpeggiator, etc.
 #define LED_BUTTON_EVENT 0
@@ -256,7 +257,7 @@ msSystem.slogln("ARP: Note: " + String(noteNumber) +
 	// those messages
 	void arpSendMIDI()
 	{
-#ifdef CONFIG_MIDI_SERIAL_ENABLE
+#ifdef CONFIG_ENABLE_MIDI_SERIAL
 		while (arp_fifo_in_index != arp_fifo_out_index) {	// send whatever is in the buffer
 			SERIAL_MIDI_Put(&arp_fifo[++arp_fifo_out_index & BUFFER_MASK], 1);
 		}
@@ -444,6 +445,8 @@ public:
 
 		_arp.arpSoundOff();
 
+		_arp.arpStop();
+
 
 	}
 
@@ -584,7 +587,9 @@ public:
 		note_msg[1] = note;
 		note_msg[2] = velocity;
 
-		SERIAL_MIDI_Put(note_msg, 3);
+#ifdef CONFIG_ENABLE_MIDI_SERIAL
+		SERIAL_MIDI_Put(&note_msg[0], (uint16_t)3);
+#endif
 
 		msSystem.msLEDs.setLED(LED_NOTE_EVENT, 0, 0, 0);
 	}

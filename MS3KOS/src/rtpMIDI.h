@@ -1,6 +1,6 @@
 
 
-#ifdef CONFIG_MIDI_RTP_ENABLE
+#ifdef CONFIG_ENABLE_MIDI_RTP
 
 #include <WiFiUdp.h>
 
@@ -16,8 +16,7 @@ APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_De
 // Debug RTP MIDI event handlers:
 // -----------------------------------------------------------------------------
 void _RTP_MIDI_Connected(uint32_t ssrc, char* name) {
-	msSystem.slog("MIDI(rtp): Connected to session ");
-	msSystem.slogln(name);
+	msSystem.slog("MIDI(rtp): Connected to session " + String(name));
 }
 
 void _RTP_MIDI_Disconnected(uint32_t ssrc) {
@@ -25,80 +24,58 @@ void _RTP_MIDI_Disconnected(uint32_t ssrc) {
 }
 
 void _RTP_MIDI_Note_On(byte channel, byte note, byte velocity) {
-	msSystem.slog("MIDI(rtp): channel:");
-	msSystem.slog(String(channel));
-	msSystem.slog(" noteOn:");
-	msSystem.slog(String(note));
-	msSystem.slog(" vel.:");
-	msSystem.slogln(String(velocity));
+	msSystem.slog("MIDI(rtp): Note channel:" + String(channel) +
+						  		  " noteOn:" + String(note) + 
+								    " vel.:" + String(velocity));
 }
 
 void _RTP_MIDI_Note_Off(byte channel, byte note, byte velocity) {
-	msSystem.slog("MIDI(rtp): channel:");
-	msSystem.slog(String(channel));
-	msSystem.slog(" noteOff:");
-	msSystem.slog(String(note));
-	msSystem.slog(" vel.:");
-	msSystem.slogln(String(velocity));
+	msSystem.slog("MIDI(rtp): Note channel:" + String(channel) + 
+							     " noteOff:" + String(note) + 
+			  			   	        " vel.:" + String(velocity));
 }
 
 void _RTP_MIDI_ReceiveAfterTouchPoly(byte channel, byte note, byte velocity) {
-	msSystem.slog("MIDI(rtp): channel:");
-	msSystem.slog(String(channel));
-	msSystem.slog(" atouch poly note:");
-	msSystem.slog(String(note));
-	msSystem.slog(" vel.:");
-	msSystem.slogln(String(velocity));
+	msSystem.slog("MIDI(rtp): channel:" + String(channel) +
+				   " atouch poly note:" + String(note) +
+							   " vel.:" + String(velocity));
 };
 
 void _RTP_MIDI_ReceiveControlChange(byte channel, byte cc1, byte cc2) {
-	msSystem.slog("MIDI(rtp): channel:");
-	msSystem.slog(String(channel));
-	msSystem.slog(" cc1:");
-	msSystem.slog(String(cc1));
-	msSystem.slog(" cc2:");
-	msSystem.slogln(String(cc2));
+	msSystem.slog("MIDI(rtp): channel:" + String(channel) +
+								" cc1:" + String(cc1) +
+								" cc2:" + String(cc2));
 };
 
 void _RTP_MIDI_ReceiveProgramChange(byte channel, byte program) {
-	msSystem.slog("MIDI(rtp): channel:");
-	msSystem.slog(String(channel));
-	msSystem.slog(" change program:");
-	msSystem.slogln(String(program));
+	msSystem.slog("MIDI(rtp): channel:" + String(channel) +
+					 " change program:" + String(program));
 };
 
 void _RTP_MIDI_ReceiveAfterTouchChannel(byte channel, byte atouch) {
-	msSystem.slog("MIDI(rtp): channel:");
-	msSystem.slog(String(channel));
-	msSystem.slog(" atouch:");
-	msSystem.slogln(String(atouch));
+	msSystem.slog("MIDI(rtp): channel:" + String(channel) +
+							 " atouch:" + String(atouch));
 };
 
 void _RTP_MIDI_ReceivePitchBend(byte channel, int bend) {
-	msSystem.slog("MIDI(rtp): channel:");
-	msSystem.slog(String(channel));
-	msSystem.slog(" bend:");
-	msSystem.slogln(String(bend));
+	msSystem.slog("MIDI(rtp): channel:" + String(channel) + 
+				               " bend:" + String(bend));
 };
 
 void _RTP_MIDI_ReceiveSysEx(const byte *data, uint16_t size) { 
-	msSystem.slog("MIDI(rtp): sysex size:");
-	msSystem.slogln(String(size));
+	msSystem.slog("MIDI(rtp): sysex size:" + String(size));
 };
 
 void _RTP_MIDI_ReceiveTimeCodeQuarterFrame(byte data) {
-	msSystem.slog(" TCQF data:");
-	msSystem.slogln(String(data));
+	msSystem.slog(" TCQF data:" + String(data));
 };
 
 void _RTP_MIDI_ReceiveSongPosition(unsigned short beats) {
-	msSystem.slog(" SPP beats:");
-	msSystem.slogln(String(beats));
+	msSystem.slog(" SPP beats:" + String(beats));
 };
 
 void _RTP_MIDI_ReceiveSongSelect(byte songnumber) {
-	msSystem.slog("MIDI(rtp): SONG number:");
-	msSystem.slogln(String(songnumber));
+	msSystem.slog("MIDI(rtp): SONG number:" + String(songnumber));
 };
 
 void _RTP_MIDI_ReceiveTuneRequest() {
@@ -134,6 +111,7 @@ void _RTP_MIDI_ReceiveReset() {
 
 };
 
+// !J! TODO: additional rtpMIDI handlers:
 // void OnInvitation(void* sender, AppleMIDI_Invitation&) {};
 // void OnEndSession(void* sender, AppleMIDI_EndSession&) {};
 // void OnReceiverFeedback(void* sender, AppleMIDI_ReceiverFeedback&) {};
@@ -172,4 +150,4 @@ void setupRTPDebugHandlers() {
 }
 
 
-#endif // CONFIG_MIDI_RTP_ENABLE
+#endif // CONFIG_ENABLE_MIDI_RTP

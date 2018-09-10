@@ -45,12 +45,13 @@ MagicShifterGlobals msGlobals;
 #ifdef CONFIG_ENABLE_MIDI
 #include "Modes/MIDI/midi_defs.h"
 
-#ifdef CONFIG_MIDI_SERIAL_ENABLE
+#ifdef CONFIG_ENABLE_MIDI_SERIAL
+#define MIBY_USER_CONFIG "serial_miby_config.h"
 #include "miby.h"
 #include "serialMIDI.h"
 #endif
 
-#ifdef CONFIG_MIDI_RTP_ENABLE
+#ifdef CONFIG_ENABLE_MIDI_RTP
 #include "rtpMIDI.h"
 #endif
 
@@ -129,13 +130,16 @@ void setup()
 	msGlobals.ggModeList.push_back(&msMIDIArpeggiator);
 	msGlobals.ggModeList.push_back(&msMIDISequencer8);
 
-#ifdef CONFIG_MIDI_SERIAL_ENABLE
+#ifdef CONFIG_ENABLE_MIDI_SERIAL
 	// The MIDI byte parser, provided by the miby module ..
-	miby_init(&miby_serial, NULL);
-	msGlobals.ggCurrentMode = 7;
+
+	SERIAL_MIDI_init();
+	
+	msGlobals.ggCurrentMode = 8;
+
 #endif
 
-#ifdef CONFIG_MIDI_RTP_ENABLE
+#ifdef CONFIG_ENABLE_MIDI_RTP
 	setupRTPDebugHandlers();
 	AppleMIDI.begin(msSystem.Settings.getAPNameOrUnique().c_str());
 	msSystem.slog("MIDI(rtp) session started, identity: " + String(AppleMIDI.getSessionName()) );
@@ -171,11 +175,11 @@ void loop()
 	msSystem.step();
 
 	// if rtpMIDI is configured, run it..
-#ifdef CONFIG_MIDI_RTP_ENABLE
+#ifdef CONFIG_ENABLE_MIDI_RTP
 		AppleMIDI.run();
 #endif
 
-#ifdef CONFIG_MIDI_SERIAL_ENABLE
+#ifdef CONFIG_ENABLE_MIDI_SERIAL
 		SERIAL_MIDI_loop();
 #endif
 
