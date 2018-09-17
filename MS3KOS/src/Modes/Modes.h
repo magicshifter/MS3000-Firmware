@@ -18,7 +18,7 @@
 #include "MIDI/MIDIArpeggiator.h"
 MIDIArpeggiatorMode msMIDIArpeggiator;
 #include "MIDI/MIDISequence8.h"
-MIDISequence8Mode msMIDISequencer8;
+MIDISequence8Mode msMIDISequencer;
 #endif // CONFIG_ENABLE_MIDI
 
 #include "MagicPOV.h"

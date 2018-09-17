@@ -125,14 +125,16 @@ void setup()
 
 	// if MIDI has been configured, enable the additional MIDI mode(s)
 #ifdef CONFIG_ENABLE_MIDI
+	
+	// !J! for debugging, MIDI goes first
+	msGlobals.ggCurrentMode = 8; // 7 = arpi, 8 = sequi
 
 	msGlobals.ggModeList.push_back(&msMIDIArpeggiator);
-	msGlobals.ggModeList.push_back(&msMIDISequencer8);
+	msGlobals.ggModeList.push_back(&msMIDISequencer);
 
 #ifdef CONFIG_MIDI_SERIAL_ENABLE
 	// The MIDI byte parser, provided by the miby module ..
 	miby_init(&miby_serial, NULL);
-	msGlobals.ggCurrentMode = 7;
 #endif
 
 #ifdef CONFIG_MIDI_RTP_ENABLE
