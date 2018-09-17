@@ -15,6 +15,8 @@ CSRC += $(NANOPB_DIR)/pb_encode.c
 CSRC += $(NANOPB_DIR)/pb_decode.c
 CSRC += $(NANOPB_DIR)/pb_common.c
 
+PROTOC_OPTS += -I../Tools/nanopb/generator/proto
+
 
 pio-deps:
 	@echo "NOTE: installing platform dependencies with PlatformIO"
