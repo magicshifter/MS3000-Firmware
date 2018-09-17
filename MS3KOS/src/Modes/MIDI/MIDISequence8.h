@@ -10,11 +10,11 @@ public:
 	}
 
 	void start() {
-
-		msSystem.slogln("sequi steps: " + String( (void *) msGlobals.pbuf.applications.sequi.sequence.steps[0] ));
-
-        for (size_t step=0;step<8;step++)
-            msSystem.slogln(modeName + " step " + String(step) + " note: " + String());
+        for (size_t sequ_i=0;sequ_i<8;sequ_i++) {
+            msSystem.slogln(modeName + " sequence step: " + String( sequ_i ));
+			msSystem.slogln(modeName + "          note: " + String( msGlobals.pbuf.applications.sequi.sequence.steps[sequ_i].step ));
+			msSystem.slogln(modeName + "        octave: " + String( msGlobals.pbuf.applications.sequi.sequence.steps[sequ_i].octave.v ));
+        }
 	}
 
 	void stop(void) {
