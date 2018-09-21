@@ -34,6 +34,14 @@
 // of the main runloop
 #include "msButtonTimers.h"
 
+// Current View per MIDI input
+typedef struct {
+	uint8_t midi_channel;		// MIDI channel of View
+	uint16_t time_base;			// Base Time for sequencer-Put
+	void *v_arg;				// user data
+} MIDIViewT;
+
+MIDIViewT curr_midiview;
 
 // forward-declared here because it is a client of msSystem ..
 void CommandInterfacePoll();
@@ -949,7 +957,7 @@ void showBatteryStatus(bool shouldFadeIn) {
 
 		EEPROM.begin(512);
 
-#ifdef CONFIG_MIDI_SERIAL_ENABLE
+#ifdef CONFIG_ENABLE_MIDI_SERIAL
 #warning "SERIAL MIDI has been enabled - Serial I/O at 31250 - serial logging disabled (use wlan)"
 		Serial.begin(31250);
 #else
@@ -1111,7 +1119,7 @@ void showBatteryStatus(bool shouldFadeIn) {
 			}
 		}
 
-#ifndef CONFIG_MIDI_SERIAL_ENABLE
+#ifndef CONFIG_ENABLE_MIDI_SERIAL
 		// poll the serial interface for test/flash commands, etc.
 		CommandInterfacePoll();
 #endif

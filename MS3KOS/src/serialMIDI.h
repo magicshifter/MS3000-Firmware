@@ -5,10 +5,12 @@
 // e.g. debugging
 //
 
-#ifdef CONFIG_MIDI_SERIAL_ENABLE
+#ifndef _SERIALMIDI_H_
+#define  _SERIALMIDI_H_
+
+#ifdef CONFIG_ENABLE_MIDI_SERIAL
 
 #include "msSystem.h"
-
 #include "serialMIBYConfig.h"
 
 miby_t miby_serial;
@@ -40,65 +42,19 @@ static uint16_t SERIAL_MIDI_Get(uint8_t * data, uint16_t length)
 	return count;
 };
 
-static void SERIAL_MIDI_loop()
-{
-		// this is the per-frame midi byte
-	if (Serial.available()) {
-		SERIAL_MIDI_Get(&midi_in_byte, 1);
-		// msSystem.msLEDs.setLED(LED_NOTE_EVENT, 100, 100, 100, msGlobals.ggBrightness);
-		miby_parse(&miby_serial, midi_in_byte);
-	} else {
-		// msSystem.msLEDs.setLED(LED_NOTE_EVENT, 0, 0, 0, msGlobals.ggBrightness);
-	}
 
-}
+extern uint16_t SERIAL_MIDI_Put(uint8_t * data, uint16_t length);
+extern uint16_t SERIAL_MIDI_Get(uint8_t * data, uint16_t length);
+extern void SERIAL_MIDI_init();
+extern void SERIAL_MIDI_loop();
 
-
-// handlers
-void SERIAL_MIDI_Start(miby_this_t a_miby)
-{
-	msSystem.slogln("serialMIDI: Start");
-	msGlobals.ggModeList[msGlobals.ggCurrentMode]->MIDI_Start();
-}
-
-void SERIAL_MIDI_Stop(miby_this_t a_miby)
-{
-	msSystem.slogln("serialMIDI: Stop");
-	msGlobals.ggModeList[msGlobals.ggCurrentMode]->MIDI_Stop();
-}
-
-void SERIAL_MIDI_Program_Change(miby_this_t a_miby)
-{
-	msSystem.slogln("serialMIDI: ProgramChange");
-	msGlobals.ggModeList[msGlobals.ggCurrentMode]->MIDI_Program_Change(
-							MIBY_CHAN(a_miby), MIBY_ARG0(a_miby));
-}
-
-void SERIAL_MIDI_Control_Change(miby_this_t a_miby)
-{
-	msSystem.slogln("serialMIDI: ControlChange");
-	msGlobals.ggModeList[msGlobals.ggCurrentMode]->MIDI_Control_Change(
-		MIBY_CHAN(a_miby), 
-		MIBY_ARG0(a_miby),
-		MIBY_ARG1(a_miby));
-}
-
-void SERIAL_MIDI_Note_On(miby_this_t a_miby)
-{
-	msSystem.slogln("serialMIDI: NoteOn");
-	msGlobals.ggModeList[msGlobals.ggCurrentMode]->MIDI_Note_On(
-		MIBY_CHAN(a_miby),
-		MIBY_ARG0(a_miby),
-		MIBY_ARG1(a_miby));
-}
-
-void SERIAL_MIDI_Note_Off(miby_this_t a_miby)
-{
-	msSystem.slogln("serialMIDI: NoteOff");
-	msGlobals.ggModeList[msGlobals.ggCurrentMode]->MIDI_Note_Off(
-		MIBY_STATUSBYTE(a_miby),
-		MIBY_ARG0(a_miby),
-		MIBY_ARG1(a_miby));
-}
+extern void SERIAL_MIDI_Start(miby_this_t a_miby);
+extern void SERIAL_MIDI_Stop(miby_this_t a_miby);
+extern void SERIAL_MIDI_Program_Change(miby_this_t a_miby);
+extern void SERIAL_MIDI_Control_Change(miby_this_t a_miby);
+extern void SERIAL_MIDI_Note_On(miby_this_t a_miby);
+extern  void SERIAL_MIDI_Note_Off(miby_this_t a_miby);
 
 #endif
+
+#endif // _SERIALMIDI_H_
