@@ -15,7 +15,7 @@
 
 #ifdef CONFIG_ENABLE_MIDI
 #define CONFIG_MIDI_RTP_ENABLE
-#define CONFIG_MIDI_SERIAL_ENABLE
+// #define CONFIG_MIDI_SERIAL_ENABLE
 #endif
 
 // if MIDI-serial is configured, we will send messages to syslog only (if configured)

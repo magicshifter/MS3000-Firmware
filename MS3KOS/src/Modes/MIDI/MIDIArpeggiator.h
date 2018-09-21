@@ -31,12 +31,21 @@
 
 #define MIDI_ARP_FEEDBACK 1
 
+// Current View per MIDI input
+typedef struct {
+	uint8_t midi_channel;		// MIDI channel of View
+	uint16_t time_base;			// Base Time for sequencer-Put
+	void *v_arg;				// user data
+} MIDIViewT;
+
+
 // A Basic Arpeggiator class for use by the MIDI Module:
 // inspired by RobG @ 43oh
 class MIDIArpeggiator {
 
 private:
 	// Arpeggiator structures:
+
 
 	// ring buffer for queued events
 	uint8_t arp_fifo[BUFFER_SIZE];
@@ -95,6 +104,9 @@ private:
 
 
 public:
+
+	MIDIViewT curr_midiview;
+
 	uint8_t new_pattern = 4;
 
 	uint8_t arp_play_state = 0;
@@ -303,6 +315,7 @@ class MIDIArpeggiatorMode : public MagicShifterBaseMode {
 private:
 	// miby parser is used
 
+
 	// MIDI housekeeping
 	uint8_t midi_mode = 0;			// Mode of this module (future-use)
 	uint8_t sync_count;				// sync counter
@@ -430,7 +443,7 @@ public:
 		msSystem.slog("MIDIArpeggiator STARTED!");
 
 		// Initial view
-		curr_midiview.midi_channel = 0;
+		_arp.curr_midiview.midi_channel = 0;
 
 
 		// prime the Arp
@@ -456,7 +469,7 @@ public:
 
 		msSystem.msLEDs.setLED(_arp.new_pattern, 0, 100, 100, msGlobals.ggBrightness); 
 
-		_arp.arpProgramChange(curr_midiview.midi_channel, _arp.new_pattern);
+		_arp.arpProgramChange(_arp.curr_midiview.midi_channel, _arp.new_pattern);
 	}
 
 	void decPattern() {
@@ -468,7 +481,7 @@ public:
 
 		msSystem.msLEDs.setLED(_arp.new_pattern, 0, 100, 100, msGlobals.ggBrightness); 
 
-		_arp.arpProgramChange(curr_midiview.midi_channel, _arp.new_pattern);
+		_arp.arpProgramChange(_arp.curr_midiview.midi_channel, _arp.new_pattern);
 
 	}
 
@@ -584,8 +597,10 @@ public:
 		note_msg[1] = note;
 		note_msg[2] = velocity;
 
+#ifdef CONFIG_MIDI_SERIAL_ENABLE
 		SERIAL_MIDI_Put(note_msg, 3);
-
+#endif
+		
 		msSystem.msLEDs.setLED(LED_NOTE_EVENT, 0, 0, 0);
 	}
 
