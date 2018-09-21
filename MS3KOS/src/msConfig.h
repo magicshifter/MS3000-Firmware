@@ -10,7 +10,7 @@
 // MIDI and OSC enabled?
 // #define CONFIG_ENABLE_OSC
 
-#define CONFIG_ENABLE_MIDI
+//#define CONFIG_ENABLE_MIDI
 // serial i/o is unavailable if hardware MIDI is enabled
 
 #ifdef CONFIG_ENABLE_MIDI
