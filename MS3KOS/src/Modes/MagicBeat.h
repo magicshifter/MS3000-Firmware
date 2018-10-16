@@ -5,7 +5,7 @@ private:
 	float avgZ;
 	int colorIndex;
 
-	MS3KG_App_Beat &_beat = msGlobals.pbuf.applications.beat;
+	MS3KG_App_Beat &_beat = msGlobals.pbuf.apps.beat;
 
 
 public:
@@ -14,11 +14,11 @@ public:
 
 		colorIndex = 1;
 
-		msGlobals.pbuf.has_applications = 1;
-        msGlobals.pbuf.applications.has_current = 1;   
-		msGlobals.pbuf.applications.has_beat = 1;
+		msGlobals.pbuf.has_apps = 1;
+        msGlobals.pbuf.apps.has_current = 1;   
+		msGlobals.pbuf.apps.has_beat = 1;
 
-		// _beat = &msGlobals.pbuf.applications.beat;
+		// _beat = &msGlobals.pbuf.apps.beat;
 	
 		_beat.color.B = 255;
 		_beat.sensitivity = 1;

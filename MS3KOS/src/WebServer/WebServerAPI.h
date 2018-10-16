@@ -459,7 +459,7 @@ void handleGETProtoBufferBase64(void)
 
 	msSystem.slogln("handleGETProtoBufferBase64");
 
-	msGlobals.pbuf.applications.current = (MS3KG_App_T)msGlobals.ggCurrentMode;
+	msGlobals.pbuf.apps.current = (MS3KG_App_T)msGlobals.ggCurrentMode;
 
 
 	pb_ostream_t stream = pb_ostream_from_buffer(pbufOutput, sizeof(pbufOutput));
@@ -540,20 +540,20 @@ void handlePOSTpbufBase64(void)
 			printf("Decoding failed: %s\n", PB_GET_ERROR(&stream));
 		}
 
-		//msGlobals.ggCurrentMode = msGlobals.pbuf.applications.current;
-		msSystem.setMode(msGlobals.pbuf.applications.current);
+		//msGlobals.ggCurrentMode = msGlobals.pbuf.apps.current;
+		msSystem.setMode(msGlobals.pbuf.apps.current);
 
         /* Print the data contained in the message. */
-		// msGlobals.pbuf.applications.light.name.funcs.decode = ms3kModeLightNameFunc;
+		// msGlobals.pbuf.apps.light.name.funcs.decode = ms3kModeLightNameFunc;
 
-		printf("handlePPBB64: submode is %d!\n", (int)msGlobals.pbuf.applications.light.mode);
-		// printf("handlePPBB64: submode name is %d!\n", strlen(msGlobals.pbuf.applications.light.name));
+		printf("handlePPBB64: submode is %d!\n", (int)msGlobals.pbuf.apps.light.mode);
+		// printf("handlePPBB64: submode name is %d!\n", strlen(msGlobals.pbuf.apps.light.name));
 		//printf("handlePPBB64: networkName is %s!\n", msGlobals.pbuf.networkName);
-		printf("handlePPBB64: subMode is %d!\n", msGlobals.pbuf.applications.beat.mode);
-		printf("handlePPBB64: sensitivity is %d!\n", msGlobals.pbuf.applications.beat.sensitivity);
-		printf("handlePPBB64: R is %d!\n", msGlobals.pbuf.applications.light.color.R);
-		printf("handlePPBB64: G is %d!\n", msGlobals.pbuf.applications.light.color.G);
-		printf("handlePPBB64: B is %d!\n", msGlobals.pbuf.applications.light.color.B);
+		printf("handlePPBB64: subMode is %d!\n", msGlobals.pbuf.apps.beat.mode);
+		printf("handlePPBB64: sensitivity is %d!\n", msGlobals.pbuf.apps.beat.sensitivity);
+		printf("handlePPBB64: R is %d!\n", msGlobals.pbuf.apps.light.color.R);
+		printf("handlePPBB64: G is %d!\n", msGlobals.pbuf.apps.light.color.G);
+		printf("handlePPBB64: B is %d!\n", msGlobals.pbuf.apps.light.color.B);
 		//printf("handlePPBB64: networkName is %s!\n", msGlobals.pbuf.networkName);
 
 		msSystem.msESPServer.send(200, "text/plain", "OK");

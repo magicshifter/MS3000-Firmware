@@ -11,7 +11,7 @@ class SystemTextMode:public MagicShifterBaseMode {
 
   private:
 
-	MS3KG_App_System &_system = msGlobals.pbuf.applications.system;
+	MS3KG_App_System &_system = msGlobals.pbuf.apps.system;
 
   	MagicPOVMode lPOVMode;
 	MagicShifterImageText msMagicShakeText;

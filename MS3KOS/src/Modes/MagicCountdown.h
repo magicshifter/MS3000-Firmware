@@ -4,7 +4,7 @@
 class MagicCountdownMode : public MagicShifterBaseMode {
 private:
 	static int countdownTicks;
-	MS3KG_App_Countdown &_countdown = msGlobals.pbuf.applications.countdown;
+	MS3KG_App_Countdown &_countdown = msGlobals.pbuf.apps.countdown;
 
 
 public:

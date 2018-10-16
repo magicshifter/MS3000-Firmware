@@ -4,7 +4,7 @@ class MIDISequence8Mode : public MagicShifterBaseMode {
 private:
 	static int sync_count;
 
-	MS3KG_App_Sequi &_sequi = msGlobals.pbuf.applications.sequi;
+	MS3KG_App_Sequi &_sequi = msGlobals.pbuf.apps.sequi;
 
 public:
 	MIDISequence8Mode() {
@@ -14,9 +14,9 @@ public:
 	void dump_sequence() {
 		for (size_t sequ_i=0;sequ_i<8;sequ_i++) {
 			msSystem.slogln(modeName + " sequence step: " + String( sequ_i ));
-			msSystem.slogln(modeName + "          note: " + String( msGlobals.pbuf.applications.sequi.sequence.steps[sequ_i].interval.v ));
-			msSystem.slogln(modeName + "        octave: " + String( msGlobals.pbuf.applications.sequi.sequence.steps[sequ_i].octave.o ));
-			msSystem.slogln(modeName + "          mode: " + String( msGlobals.pbuf.applications.sequi.sequence.steps[sequ_i].mode ));
+			msSystem.slogln(modeName + "          note: " + String( msGlobals.pbuf.apps.sequi.sequence.steps[sequ_i].interval.v ));
+			msSystem.slogln(modeName + "        octave: " + String( msGlobals.pbuf.apps.sequi.sequence.steps[sequ_i].octave.o ));
+			msSystem.slogln(modeName + "          mode: " + String( msGlobals.pbuf.apps.sequi.sequence.steps[sequ_i].mode ));
 		}
 
 	}
@@ -31,7 +31,7 @@ public:
 
 	bool step(void) {
 
-		if (msGlobals.pbuf.applications.sequi.has_sequence) {
+		if (msGlobals.pbuf.apps.sequi.has_sequence) {
 			msSystem.slogln(modeName + "has_sequence!");
 			dump_sequence();
 

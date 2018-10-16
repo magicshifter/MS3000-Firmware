@@ -148,12 +148,17 @@ class BouncingBallMode {
 	const float minFastPeriod = 0.00005;
 	const float flashDifficulty = 1;
 
+	uint8_t colors[6][3] = { {255, 0, 0}, {0, 255, 160}, {255, 121, 2}, {0, 2, 1}, {1, 2, 0}, {2, 1, 0} };
+
 	// do a simple bouncing ball .. 
-	void simpleBouncingBall() {
+	void simpleBouncingBall(int colorIndex) {
 		for (byte idx = 0; idx < MAX_LEDS; idx++) {
 			float scale = getLedBright(idx, MAX_LEDS);
-
 			scale *= 0.5;
+			int _cindex = colorIndex;
+
+			if (_cindex > 5) 
+				_cindex = 5;
 
 			/*if (allowFlash && smoothLanding)
 			   {
@@ -173,12 +178,14 @@ class BouncingBallMode {
 					msSystem.msLEDs.setLED(idx, 0, 0, 255 * scale,
 										   msGlobals.ggBrightness);
 				} else {
+
 					msSystem.msLEDs.setLED(idx, 
-										// safety orange
-										255 * scale, 121 * scale, 0,
-										// default bright white
-										// 255 * scale, 255 * scale, 255 * scale,
-										   msGlobals.ggBrightness);
+											// default bright white
+											// 255 * scale, 255 * scale, 255 * scale,
+											colors[0][0], colors[0][1], colors[0][2],
+
+
+											msGlobals.ggBrightness);
 				}
 			} else {
 				msSystem.msLEDs.setLED(idx, 255 * scale, 0, 128 * scale,

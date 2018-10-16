@@ -18,12 +18,15 @@ class MagicShakeMode:public MagicShifterBaseMode {
 private:
 	// The direction through the filelist which the user is scrolling (-ve/+ve)
 	int dirCursor = 0;
+	int colorCursor = 0;
 
 	// the last frame of the Shake
 	MagicShifterImageText msMagicShakeText;
 
 	MagicPOVMode lPOVMode;
 	MagicShifterImage lLocalImage;
+
+	MS3KG_App_Shake &_shake = msGlobals.pbuf.apps.shake;
 
 	// the number of files discovered onboard during the scan for POV images..
 	int numFiles = 0;
@@ -149,7 +152,9 @@ public:
 	}
 
 	bool step() {
+		#define MAX_BALL_COLORS 16
 		int newCursor = dirCursor;
+		int colorcursor = colorCursor;
 
 		if (msSystem.msButtons.msBtnALongHit == true) {
 			msSystem.msButtons.msBtnALongHit = false;
@@ -165,6 +170,14 @@ public:
 			msSystem.msButtons.msBtnBHit = false;
 			newCursor--;
 		}
+
+		if (msSystem.msButtons.msBtnPwrHit == true) {
+			msSystem.msButtons.msBtnPwrHit = false;
+			colorcursor--;
+		}
+
+		if (colorcursor < 0)
+			colorcursor = MAX_BALL_COLORS;
 
 		if (newCursor != dirCursor) {
 			if (newCursor >= numFiles)
@@ -189,7 +202,7 @@ public:
 			applyForce((msGlobals.ggCurrentMicros -
 				msGlobals.ggLastMicros) / 1000.0, fX * 3);
 
-			msModeBouncingBall.simpleBouncingBall();
+			msModeBouncingBall.simpleBouncingBall(_shake.colorIndex);
 
 			return false;
 		}
