@@ -14,13 +14,11 @@
 
 // MIDI modes and features can be configured, i.e. MIDIShifter project
 #ifdef CONFIG_ENABLE_MIDI
-#include "miby.h"
-#include "MIDI/MibyConfig.h"
-#include "MIDI/midi_defs.h"
 #include "MIDI/envelope.h"
-#include "MIDI/MagicArpeggiator.h"
+#include "MIDI/MIDIArpeggiator.h"
 MIDIArpeggiatorMode msMIDIArpeggiator;
-#include "MIDI/RawMIDIHandlers.h"
+#include "MIDI/MIDISequence8.h"
+MIDISequence8Mode msMIDISequencer;
 #endif // CONFIG_ENABLE_MIDI
 
 #include "MagicPOV.h"
@@ -32,6 +30,7 @@ MIDIArpeggiatorMode msMIDIArpeggiator;
 #include "MagicRemote.h"
 #include "MagicBeat.h"
 #include "MagicCountdown.h"
+#include "MagicUpdate.h"
 
 #include "PowerEmergency.h"
 
@@ -45,6 +44,7 @@ MagicMagnetMode msMagicMagnet;
 MagicLightMode msMagicLight;
 MagicRemoteMode msMagicRemote;
 MagicBeatMode msMagicBeat;
+MagicUpdateMode msMagicUpdate;
 
 MagicCountdownMode msMagicCountdown;
 int MagicCountdownMode::countdownTicks = 0;

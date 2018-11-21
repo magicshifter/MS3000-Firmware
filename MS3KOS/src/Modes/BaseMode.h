@@ -25,10 +25,33 @@ class MagicShifterBaseMode {
 	virtual void stop(void) {};
 
 	// step through a frame of the mode 
-	virtual bool step() {};
+	virtual bool step() { return false; };
 
 	// emit the current UI of the mode 
 	//virtual bool emit() {};
+
+	// MIDI virtual methods
+
+	virtual void MIDI_Reset() {};
+	virtual void MIDI_Start() {};
+	virtual void MIDI_Stop() {};
+	virtual void MIDI_Continue() {};
+	virtual void MIDI_ActiveSensing() {};
+	virtual void MIDI_Program_Change(byte channel, byte program) {};
+	virtual void MIDI_Control_Change(byte channel, byte cc1, byte cc2) {};
+	virtual void MIDI_Note_On(byte channel, byte note, byte velocity) {};
+	virtual void MIDI_Note_Off(byte channel, byte note, byte velocity) {};
+	virtual void MIDI_Aftertouch_Poly(byte channel, byte note, byte velocity) {};
+	virtual void MIDI_Aftertouch_Channel(byte channel, byte program) {};
+	virtual void MIDI_PitchBend(byte channel, byte bend) {};
+	virtual void MIDI_SYSEX(const byte *data, uint16_t size) {};
+	virtual void MIDI_TimeCodeQuarterFrame(byte data) {};
+	virtual void MIDI_SongPosition(unsigned short beats) {};
+	virtual void MIDI_SongSelect(byte songnumber) {};
+	virtual void MIDI_TuneRequest() {};
+	virtual void MIDI_Clock() {};
+
+	// !J! TODO: Other MIDI fn''s..
 
 };
 

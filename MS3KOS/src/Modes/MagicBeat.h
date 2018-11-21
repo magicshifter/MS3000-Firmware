@@ -2,23 +2,36 @@ class MagicBeatMode : public MagicShifterBaseMode {
 
 private:
 
-	int frame = 0;
-	float avgZ = 0;
-	int colIdx = 1;
-	int sensitivity = 3;
-	int renderMode = 1;
+	float avgZ;
+	int colorIndex;
 
-	// Color of our beat
-	uint8_t r, g, b;
+	MS3KG_App_Beat &_beat = msGlobals.pbuf.apps.beat;
+
 
 public:
 	MagicBeatMode() {
 		modeName = "Beat";
+
+		colorIndex = 1;
+
+		msGlobals.pbuf.has_apps = 1;
+        msGlobals.pbuf.apps.has_current = 1;   
+		msGlobals.pbuf.apps.has_beat = 1;
+
+		// _beat = &msGlobals.pbuf.apps.beat;
+	
+		_beat.color.B = 255;
+		_beat.sensitivity = 1;
+		_beat.mode = MS3KG_App_Beat_Mode_CENTER;
+
+		_beat.has_color = 1;
+        _beat.has_mode = 1;
+        _beat.has_sensitivity = 1;
 	}
 
 	virtual void start() {
-		r = g = 0;
-		b = 255;
+
+
 	}
 
 	virtual void stop(void) {
@@ -27,127 +40,113 @@ public:
 	const int axis = 2;
 	const float avgF = 1./32.0;
 
-	void slog_sensitivity()
-	{
-		msSystem.slog("sensitivity:");
-		msSystem.slogln(String(sensitivity));
-	}
-
 	virtual bool step(void) {
 		float xPos;
 
 		avgZ = avgZ * (1 - avgF) + avgF * msGlobals.ggAccel[axis];
 
-		frame++;
+		xPos = (msGlobals.ggAccel[axis] - avgZ);
 
-		// if (renderMode == 0) {
-		// 	xPos = 7 * (1 << FIXED_SHIFT) + (1 << (FIXED_SHIFT - 1)) + (((msGlobals.ggAccelCount[2] - avgZ) * 40) >> sensitivity);
-		// 	if (xPos < 0)
-		// 		xPos = 0;
-		// 	if (xPos > 15 * (1 << FIXED_SHIFT))
-		// 		xPos = 15 * (1 << FIXED_SHIFT);
+		xPos *= 1024 >> _beat.sensitivity;
 
-		// 	int8_t xPosInt = xPos >> FIXED_SHIFT;			
-		// 	uint8_t xPosRemainder = (xPos & (1 << FIXED_SHIFT) - 1);
+#if 0 
+		printf( " subMode: %d" \
+				" sensitivity: %d" \
+				" colorIndex: %d" \
+				" R: %d " \
+				" G: %d " \
+				" B: %d \n",
+					_beat.mode,
+					_beat.sensitivity,
+					colorIndex,
+					_beat.color.R,
+					_beat.color.G,
+					_beat.color.B);
+#endif
 
-		// msSystem.msLEDs.fillLEDs(0, 0, 0, msGlobals.ggBrightness);
+		if (_beat.mode == MS3KG_App_Beat_Mode_SIDE) {
+			if (xPos < 0)
+				xPos = -xPos;
+
+			xPos -= 5;
+			if (xPos > MAX_LEDS)
+				xPos = MAX_LEDS;
+		}
+		else if (_beat.mode == MS3KG_App_Beat_Mode_CENTER) {
+			xPos += 7.5; //(MAX_LEDS - 1) / 2.0f;
+		}
+
+		msSystem.msLEDs.fillLEDs(0, 0, 0, msGlobals.ggBrightness);
+
+		if (_beat.mode == MS3KG_App_Beat_Mode_SIDE) {
+			for (int i = 0; i < xPos; i++)
+				msSystem.msLEDs.setLED((MAX_LEDS-1) - i, 
+					_beat.color.R, 
+					_beat.color.G, 
+					_beat.color.B, 
+					msGlobals.ggBrightness);
+		}
+		else if (_beat.mode == MS3KG_App_Beat_Mode_CENTER) {
+			int xPosInt = (int)(xPos);
+			float xPosRem = 1 - (xPos - xPosInt);			
 			
-		// 	msSystem.msLEDs.setLED(xPosInt + 1, (r * xPosRemainder) >> FIXED_SHIFT, (g * xPosRemainder) >> FIXED_SHIFT, (b * xPosRemainder) >> FIXED_SHIFT,
-		// 		msGlobals.ggBrightness);
-
-		// 	xPosRemainder = ((1 << FIXED_SHIFT) - 1) - xPosRemainder;			
-
-		// 	msSystem.msLEDs.setLED(xPosInt, (r * xPosRemainder) >> FIXED_SHIFT, (g * xPosRemainder) >> FIXED_SHIFT, (b * xPosRemainder) >> FIXED_SHIFT,
-		// 		msGlobals.ggBrightness);
-
-		// 	msSystem.msLEDs.updateLEDs();
-
-		//} else { // renderMode = 1
-			xPos = (msGlobals.ggAccel[axis] - avgZ);
-
-			xPos *= 1024 >> sensitivity;
-
-			if (renderMode == 0) {
-				if (xPos < 0)
-					xPos = -xPos;
-
-				xPos -= 5;
-				if (xPos > MAX_LEDS)
-					xPos = MAX_LEDS;
-			}
-			else {
-				xPos += 7.5;
+			if (xPosInt >= 0 && xPosInt < MAX_LEDS) {
+				msSystem.msLEDs.setLED(xPosInt, 
+					(int)(_beat.color.R * xPosRem), 
+					(int)(_beat.color.G * xPosRem), 
+					(int)(_beat.color.B * xPosRem), 
+					msGlobals.ggBrightness);
 			}
 
-			msSystem.msLEDs.fillLEDs(0, 0, 0, msGlobals.ggBrightness);
-
-			if (renderMode == 0) {
-				for (int i = 0; i < xPos; i++)
-				msSystem.msLEDs.setLED((MAX_LEDS-1) - i, r, g, b, msGlobals.ggBrightness);
+			xPosInt++;
+			xPosRem = 1 - xPosRem;
+			if (xPosInt >= 0 && xPosInt < MAX_LEDS) {
+				msSystem.msLEDs.setLED(xPosInt, 
+					(int)(_beat.color.R * xPosRem), 
+					(int)(_beat.color.G * xPosRem), 
+					(int)(_beat.color.B * xPosRem), 
+					msGlobals.ggBrightness);
 			}
-			else {
-				int xPosInt = (int)(xPos);
-				float xPosRem = 1 - (xPos - xPosInt);			
-			
-				if (xPosInt >= 0 && xPosInt < MAX_LEDS) {
-					msSystem.msLEDs.setLED(xPosInt, 
-						(int)(r * xPosRem), 
-						(int)(g * xPosRem),
-						(int)(b * xPosRem),
-						msGlobals.ggBrightness);
-				}
+		}
 
-				xPosInt++;
-				xPosRem = 1 - xPosRem;
-				if (xPosInt >= 0 && xPosInt < MAX_LEDS) {
-					msSystem.msLEDs.setLED(xPosInt, 
-							(int)(r * xPosRem), 
-							(int)(g * xPosRem),
-							(int)(b * xPosRem),
-							msGlobals.ggBrightness);
-				}
-			}
-			
-			msSystem.msLEDs.updateLEDs();
-		//}
+		msSystem.msLEDs.updateLEDs();
+		
+		if ((msSystem.msButtons.msBtnALongHit) || 
+			(msSystem.msButtons.msBtnBLongHit)) {
 
-		// 
-		if (msSystem.msButtons.msBtnALongHit) {
-			renderMode++;
-			if (renderMode > 1) renderMode = 0;
 			msSystem.msButtons.msBtnALongHit = false;
-
-		}
-		if (msSystem.msButtons.msBtnBLongHit) {
-			renderMode--;
-			if (renderMode < 0) renderMode = 1;
 			msSystem.msButtons.msBtnBLongHit = false;
+
+			if (_beat.mode == MS3KG_App_Beat_Mode_CENTER) {
+				_beat.mode = MS3KG_App_Beat_Mode_SIDE;
+			}
+			else {
+				_beat.mode = MS3KG_App_Beat_Mode_CENTER;
+			}
+
 		}
 
-		if (msSystem.msButtons.msBtnAHit)
-		{
-			sensitivity = (sensitivity + 1) % 6;
+		if (msSystem.msButtons.msBtnAHit) {
+			_beat.sensitivity = (_beat.sensitivity + 1) % 6;
 			msSystem.msButtons.msBtnAHit = false;
-			slog_sensitivity();
 		}
 
-		if (msSystem.msButtons.msBtnBHit)
-		{
-			sensitivity = (sensitivity + 5) % 6;
+		if (msSystem.msButtons.msBtnBHit) {
+			_beat.sensitivity = (_beat.sensitivity + 5) % 6;
 			msSystem.msButtons.msBtnBHit = false;
-			slog_sensitivity();
 		}
 
 		if (msSystem.msButtons.msBtnPwrHit) {
-			colIdx++;
-			if (colIdx > 7) colIdx = 1;
-			r = (colIdx & 1) ? 255 : 0;
-			g = (colIdx & 2) ? 255 : 0;
-			b = (colIdx & 4) ? 255 : 0;
+			colorIndex++;
+			if (colorIndex > 7) colorIndex = 1;
+			_beat.color.R = (colorIndex & 1) ? 255 : 0;
+			_beat.color.G = (colorIndex & 2) ? 255 : 0;
+			_beat.color.B = (colorIndex & 4) ? 255 : 0;
 			msSystem.msButtons.msBtnPwrHit = false;
 		}
 
+		return true;
+	}
 
 
-	} 
 };

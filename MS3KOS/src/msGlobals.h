@@ -4,6 +4,7 @@
 #include "msTypes.h"
 // #include "StackClass.h"
 
+// protocol buffers: used to share data with the web-app.
 #include "MS3000.pb.h"
 
 void l_safeStrncpy(char *dest, const char *source, int n)
@@ -21,7 +22,7 @@ class MagicShifterGlobals {
 	int ggAccelCount[3];		// Stores the 12-bit signed value
 	long ggAccelTime;
 	unsigned long ggLFrameTime;
-	long ggCurrentMode = DEFAULT_FACTORY_MODE;	// POV mode
+	uint32_t ggCurrentMode = DEFAULT_FACTORY_MODE;	// POV mode
 	int ggBtn1State = 0;
 	long ggCurrentMicros = 0;
 	unsigned long ggCurrentMillis = 0;
@@ -63,6 +64,8 @@ class MagicShifterGlobals {
 		OK = 2,
 		NOT_OK = 3
 	};
+
+	MS3KG pbuf = MS3KG_init_default;
 
 };
 

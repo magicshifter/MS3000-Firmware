@@ -48,8 +48,6 @@ void CommandInterfacePoll()
 		}
 		usbBuffer[cmdBufferIdx++] = '\0';
 
-		bool executed = false;
-
 		if (!strcmp((const char *) usbBuffer, "MAGIC_FORMAT")) {
 			SPIFFS.format();
 			Serial.println("Formated FS!!!");
@@ -85,7 +83,6 @@ void CommandInterfacePoll()
 			Serial.print("Ping Status now: ");
 			Serial.println(pingStatus);
 		} else if (!strcmp((const char *) usbBuffer, "MAGIC_UPLOAD")) {
-			byte sector;
 			uint32_t dataSize;
 
 			// sector
@@ -94,7 +91,7 @@ void CommandInterfacePoll()
 			dataSize = SerialReadLong();
 
 			char fnA[256 - 8];
-			for (int i = 0; i < sizeof(fnA); i++) {
+			for (size_t i = 0; i < sizeof(fnA); i++) {
 				fnA[i] = SerialReadByte();
 			}
 			//String filenameStr = String(fnA);

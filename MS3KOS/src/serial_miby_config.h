@@ -5,12 +5,14 @@
 #ifndef MIBYCONFIG_H
 #define MIBYCONFIG_H
 
+// #include "serialMIDI.h"
 
 // miby configuration macro's are set up by miby.h first
 // here we un-def the ones we're going to override in
 // order to avoid #warning overload
 
 #ifdef MIBY_SYSEX_BUF_LEN
+#warning "BUF ALREADY DEFINED"
 #undef MIBY_SYSEX_BUF_LEN
 #endif
 #define MIBY_SYSEX_BUF_LEN	( 32 )
@@ -18,37 +20,37 @@
 #ifdef MIBY_HND_CTRL_CHG
 #undef MIBY_HND_CTRL_CHG
 #endif
-extern void MIDI_Control_Change(miby_this_t);
+extern void SERIAL_MIDI_Control_Change(miby_this_t);
 #define MIBY_HND_CTRL_CHG  SERIAL_MIDI_Control_Change
 
 #ifdef MIBY_HND_NOTE_ON
 #undef MIBY_HND_NOTE_ON
 #endif
-extern void MIDI_Note_On(miby_this_t);
+extern void SERIAL_MIDI_Note_On(miby_this_t);
 #define MIBY_HND_NOTE_ON  SERIAL_MIDI_Note_On
 
 #ifdef MIBY_HND_NOTE_OFF
 #undef MIBY_HND_NOTE_OFF
 #endif
-extern void MIDI_Note_Off(miby_this_t);
+extern void SERIAL_MIDI_Note_Off(miby_this_t);
 #define MIBY_HND_NOTE_OFF  SERIAL_MIDI_Note_Off
 
 #ifdef MIBY_HND_RT_START
 #undef MIBY_HND_RT_START
 #endif
-extern void MIDI_Start(miby_this_t);
+extern void SERIAL_MIDI_Start(miby_this_t);
 #define MIBY_HND_RT_START  SERIAL_MIDI_Start
 
 #ifdef MIBY_HND_RT_STOP
 #undef MIBY_HND_RT_STOP
 #endif
-extern void MIDI_Stop(miby_this_t);
+extern void SERIAL_MIDI_Stop(miby_this_t);
 #define MIBY_HND_RT_STOP  SERIAL_MIDI_Stop
 
 #ifdef MIBY_HND_PROG_CHG
 #undef MIBY_HND_PROG_CHG
 #endif
-extern void MIDI_Program_Change(miby_this_t);
+extern void SERIAL_MIDI_Program_Change(miby_this_t);
 #define MIBY_HND_PROG_CHG  SERIAL_MIDI_Program_Change
 
 #if 0

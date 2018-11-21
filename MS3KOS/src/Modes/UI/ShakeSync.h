@@ -62,7 +62,7 @@ class POVShakeSync {
 	} ShakePoint;
 
 	const float hysteresis = 0.4;
-	const float sensitivity = 0.4;
+	const float sensitivity = 5.0;
 
 	// last time it took to go from acceleration minimum to maximum/ from max to min
 	int min2maxDelta, max2minDelta;
@@ -114,7 +114,6 @@ class POVShakeSync {
 	// returns true if POV shake is actve
 	bool update(float g) {
 		// msGlobals.ggCurrentMicros = micros();
-		ShakePoint currentPoint;
 
 		// frame handling
 		if (isActive && isFrameIndexActive) {
@@ -126,7 +125,8 @@ class POVShakeSync {
 		} else {
 			// TODO: make values configurable
 			if (lastMin.micros > msGlobals.ggCurrentMicros + 500 * 1000
-				|| lastMin.g + 1. > lastMax.g)
+				|| lastMin.g + sensitivity > lastMax.g)  // 1.0?
+
 				isActive = false;
 			else
 				isActive = true;

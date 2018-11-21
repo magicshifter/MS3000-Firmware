@@ -6,14 +6,14 @@
 #include <IPAddress.h>
 
 // #define this to get syslog before normal AP autoconnect
-#define SYSLOG_AUTO_CONNECT
+#undef SYSLOG_AUTO_CONNECT
 
 class MagicShifterSysLog {
 
   private:
 	unsigned int localPort = 2390;
 	WiFiUDP sysLogUDP;
-	IPAddress syslogServer;
+	IPAddress syslogServerIP;
 
   public:
 
@@ -42,48 +42,62 @@ class MagicShifterSysLog {
 			}
 		}
 #else
+#ifndef CONFIG_ENABLE_MIDI_SERIAL
 		Serial.println("syslog: JoinAP disabled:");
 #endif
+#endif
 
+#ifndef CONFIG_ENABLE_MIDI_SERIAL
 		if (msGlobals.ggDebugSerial) {
 			Serial.println("syslog: serial enable");
-			Serial.println("syslog: WiFi connected");
+			Serial.println("syslog: WiFi: " + 
+				String((WiFi.status() == WL_CONNECTED) ? "connected" : "not connected" ));
 			Serial.print("syslog: local address: ");
 			Serial.println(WiFi.localIP());
 			Serial.print("syslog: host address: ");
-			Serial.println(syslogServer);
+			Serial.println(syslogServerIP);
 		}
+#endif
+
 	};
 
 	// 
-	void setup(char *syslogHostIPStr) {
+	void setup(char *syslogServerIPStr) {
 
-		syslogServer = syslogServer.fromString(syslogHostIPStr);
+#ifndef CONFIG_ENABLE_MIDI_SERIAL
+		bool validIPConfig = syslogServerIP.fromString(syslogServerIPStr);
+		Serial.println("syslog: Serial Console Messages ENABLED");
+		Serial.println("syslog: user-configured host: " + String(syslogServerIPStr));
+		Serial.println("syslog: configured host is IP: " + syslogServerIP.toString());
 
-		Serial.print("syslog: configured host is:");
-		Serial.println(syslogServer);
+		if (validIPConfig) {
+			Serial.println("syslog: IP Config appears to be valid");
+		} else {
+			Serial.println("syslog: IP Config appears to be INVALID");
+		}
+#endif
 
 		delay(20);
+
 		connect_wifi();
 
 		sysLogUDP.begin(localPort);
-		delay(500);
+
+		delay(125);
+
 		if (WiFi.status() == WL_CONNECTED) {
 			sendSysLogMsg("MagicShifter3000 reporting for duty!");
-		}
-	}
-
-	// poll serial and route it to syslog server
-	void pollSerial() {
-		if (WiFi.status() == WL_CONNECTED) {
 		} else {
-			connect_wifi();
+#ifndef CONFIG_ENABLE_MIDI_SERIAL
+		Serial.println("syslog: cannot send messages - no network");
+#endif
 		}
+
 	}
 
 	void sendSysLogMsg(String aMsg) {
 		// String newMsg = " 009.local <45>MAGICSHIFTER:" + aMsg;	// !J! todo: fix level/service?
-		String newMsg = "" + aMsg;	// !J! todo: fix level/service?
+		String newMsg = "MS3K:" + aMsg;	// !J! todo: fix level/service?
 
 		unsigned int msg_length = newMsg.length();
 		byte *p = (byte *) malloc(msg_length);
@@ -94,7 +108,7 @@ class MagicShifterSysLog {
 		Serial.println(newMsg);
 #endif
 
-		sysLogUDP.beginPacket(syslogServer, 514);
+		sysLogUDP.beginPacket(syslogServerIP, 10514);
 		sysLogUDP.write(p, msg_length);
 		sysLogUDP.endPacket();
 

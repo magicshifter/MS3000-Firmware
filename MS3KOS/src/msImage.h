@@ -22,7 +22,7 @@ void PlotBitmapColumn1Bit(const MSBitmap * bitmap, uint16_t absColumn,
 	uint32_t offset = MAGIC_BITMAP_PIXEL_OFFSET + (bitPos >> 3);
 	// ReadBytes(offset, bitBuffer, 3); // this could be more efficient
 
-	uint8_t ledOffs = ledIdx;
+	// uint8_t ledOffs = ledIdx;
 
 // log("1Bit:offset:"); logln(String(offset));
 // log("1Bit:absColumn:"); logln(String(absColumn));
@@ -224,9 +224,6 @@ class MagicShifterImageText:public MagicShifterImageAbstr {
 		return txtWidth;
 	};
 
-	int getHeight() {
-		// return txtHeight;
-	};
 
 	void getFrameData(int frameIdx, byte * frameDest) {
 		for (int i = 0; i < MAX_LEDS * 4; i += 4) {
@@ -274,6 +271,8 @@ class MagicShifterImage:public MagicShifterImageAbstr {
 	int getWidth() {
 		return width;
 	}
+
+	// TODO: add cycling through frames herer
 	void getFrameData(int frameIdx, byte * frameDest) {
 		PlotBitmapColumn(&_bitmap, 0, frameIdx, 0, frameDest);
 	};
@@ -293,15 +292,13 @@ class MagicShifterImage:public MagicShifterImageAbstr {
 	}
 
 	static bool LoadBitmapFile(const char *filename, MSBitmap * bitmap) {
-		int bmResult;
 
 		bitmap->bmFile = SPIFFS.open(filename, "r");
 
 		if (!bitmap->bmFile)
 			return false;
 
-		bmResult =
-			bitmap->bmFile.read((uint8_t *) (&(bitmap->header)),
+		bitmap->bmFile.read((uint8_t *) (&(bitmap->header)),
 								sizeof(MSBitmapHeader));
 		// bitmap->header.fileSize = MAGIC_BITMAP_PIXEL_OFFSET; // !J! ?
 
@@ -313,7 +310,6 @@ class MagicShifterImage:public MagicShifterImageAbstr {
 	};
 
 	static bool LoadBitmapBuffer(const char *filename, MSBitmap * bitmap) {
-		int bmResult;
 		int bmSize;
 
 		if (LoadBitmapFile(filename, bitmap)) {
@@ -323,7 +319,7 @@ class MagicShifterImage:public MagicShifterImageAbstr {
 
 			if (bitmap->bmBuffer) {
 				bitmap->bmFile.seek(0, SeekSet);;
-				bmResult = bitmap->bmFile.read(bitmap->bmBuffer, bmSize);
+				bitmap->bmFile.read(bitmap->bmBuffer, bmSize);
 			}
 
 			bitmap->bmFile.close();

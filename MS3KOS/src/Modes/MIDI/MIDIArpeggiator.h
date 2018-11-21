@@ -12,19 +12,25 @@
  *
  */
 
+#include "serialMIDI.h"
+
 // Status Indicator LED's - for the Arpeggiator, etc.
 #define LED_BUTTON_EVENT 0
+#define LED_MIDI1_EVENT 3
+#define LED_MIDI2_EVENT 4
 #define LED_NOTE_EVENT (8)
+#define LED_CONTROL_CHANGE (10)
 #define LED_ARP_COUNTER (13)
 #define LED_MEASURE_COUNTER (14)
 #define LED_BEAT_COUNTER (15)
-#define LED_CONTROL_CHANGE (10)
 
 // Arpeggiator constants -----------------------------------------------------------------
 #define BUFFER_SIZE (64)
 #define BUFFER_MASK (0x3F)
 #define ARP_DURATION_FOR_BPM(v) (600000/v/2)
 #define LOWEST_ARP_TEMPO (20)
+
+#define MIDI_ARP_FEEDBACK 1
 
 // Current View per MIDI input
 typedef struct {
@@ -33,32 +39,6 @@ typedef struct {
 	void *v_arg;				// user data
 } MIDIViewT;
 
-MIDIViewT curr_midiview;
-
-
-// -- MIDI I/O
-// Send a MIDI message
-// returns the # of bytes sent
-static uint16_t MIDI_Put(uint8_t * data, uint16_t length)
-{
-	return (Serial1.write(data, length));
-}
-
-// Receive a MIDI message if its available
-// returns the # of bytes received in the message (count should be length)
-static uint16_t MIDI_Get(uint8_t * data, uint16_t length)
-{
-	int8_t count;
-	count = 0;
-	
-	while ( (Serial1.available()) && 
-		    ((length > 0) && 
-		     (data[count] = Serial1.read()) != -1) ) {
-		count++;
-		length--;
-	}
-	return count;
-}
 
 // A Basic Arpeggiator class for use by the MIDI Module:
 // inspired by RobG @ 43oh
@@ -66,6 +46,7 @@ class MIDIArpeggiator {
 
 private:
 	// Arpeggiator structures:
+
 
 	// ring buffer for queued events
 	uint8_t arp_fifo[BUFFER_SIZE];
@@ -84,7 +65,6 @@ private:
 
 	// Arpeggiator configuration state
 	uint8_t current_pattern = 1;	// this will trigger loading for the first time.
-	uint8_t new_pattern = 6;
 	uint8_t current_note = 0;
 	uint8_t new_note = 0;
 	uint8_t current_velocity = 64;
@@ -113,48 +93,29 @@ private:
 
 #define NUM_ARP_PATTERNS 8
 	const ArpPatternT arp_patterns[NUM_ARP_PATTERNS][4] = {	// arp_patterns 4/4
-		{{0, BEAT1, EIGHTH},
-		 {2, BEAT2, EIGHTH},
-		 {0, BEAT3, EIGHTH},
-		 {2, BEAT4, EIGHTH}},		//
-		{{0, BEAT1, EIGHTH},
-		 {0, BEAT2, EIGHTH},
-		 {2, BEAT3, EIGHTH},
-		 {2, BEAT4, EIGHTH}},		//
-		{{0, BEAT1, EIGHTH},
-		 {0, BEAT2, EIGHTH},
-		 {2, BEAT3, EIGHTH},
-		 {4, BEAT4, EIGHTH}},		//
-		{{0, BEAT1, EIGHTH},
-		 {2, BEAT2, EIGHTH},
-		 {4, BEAT3, EIGHTH},
-		 {6, BEAT4, EIGHTH}},		//
-		{{0, BEAT1, EIGHTH},
-		 {12, BEAT2, EIGHTH},
-		 {0, BEAT3, EIGHTH},
-		 {12, BEAT4, EIGHTH}},		//
-		{{0, BEAT1, EIGHTH},
-		 {0, BEAT2, EIGHTH},
-		 {12, BEAT3, EIGHTH},
-		 {12, BEAT4, EIGHTH}},		//
-		{{0, BEAT1, EIGHTH},
-		 {0, BEAT2, EIGHTH},
-		 {4, BEAT3, EIGHTH},
-		 {12, BEAT4, EIGHTH}},		//
-		{{0, BEAT1, EIGHTH},
-		 {2, BEAT1 + 8, EIGHTH},
-		 {4, BEAT2, QUARTER},
-		 {6, BEAT4, EIGHTH}},		//
+		{{0, BEAT1, EIGHTH}, {2, BEAT2, EIGHTH}, {0, BEAT3, EIGHTH}, {2, BEAT4, EIGHTH}},		//
+		{{0, BEAT1, EIGHTH}, {0, BEAT2, EIGHTH}, {2, BEAT3, EIGHTH}, {2, BEAT4, EIGHTH}},		//
+		{{0, BEAT1, EIGHTH}, {0, BEAT2, EIGHTH}, {2, BEAT3, EIGHTH}, {4, BEAT4, EIGHTH}},		//
+		{{0, BEAT1, EIGHTH}, {2, BEAT2, EIGHTH}, {4, BEAT3, EIGHTH}, {6, BEAT4, EIGHTH}},		//
+		{{0, BEAT1, EIGHTH}, {12, BEAT2, EIGHTH}, {0, BEAT3, EIGHTH}, {12, BEAT4, EIGHTH}},		//
+		{{0, BEAT1, EIGHTH}, {0, BEAT2, EIGHTH}, {12, BEAT3, EIGHTH}, {12, BEAT4, EIGHTH}},		//
+		{{0, BEAT1, EIGHTH}, {0, BEAT2, EIGHTH}, {4, BEAT3, EIGHTH}, {12, BEAT4, EIGHTH}},		//
+		{{0, BEAT1, EIGHTH}, {2, BEAT1 + 8, EIGHTH}, {4, BEAT2, QUARTER}, {6, BEAT4, EIGHTH}},		//
 	};
 
 
 public:
+
+	MIDIViewT curr_midiview;
+
+	uint8_t new_pattern = 4;
+
 	uint8_t arp_play_state = 0;
 	uint8_t arp_frame = 0;			// internal beat, which is 1/16th of the actual beat (see arp_bpm)
 	
 	uint8_t arp_bpm = LOWEST_ARP_TEMPO;
-	uint32_t arp_beat_duration = 0;
-	uint32_t arp_frame_time = 0;
+	unsigned long arp_beat_duration = 0;
+	unsigned long last_arp_frame_time = 0;
 
 
 	void arpUIupdate()
@@ -195,6 +156,8 @@ public:
 	{
 
 		uint8_t event_idx = 0;
+
+// msSystem.slogln("MIDI: arpFrame!");
 
 		// end of arp measure, go to the beginning
 		if (arp_frame == 64) {
@@ -246,6 +209,7 @@ public:
 
 		// go through all arp_events and play when event beat matches arp_frame
 		while (event_idx < 8) {
+// msSystem.slogln("arp event:" + String(event_idx));			
 			if (arp_events[event_idx].beat == arp_frame) {
 				arpPlayNote(arp_events[event_idx].note,
 							arp_events[event_idx].on_off);
@@ -267,6 +231,10 @@ public:
 					curr_midiview.midi_channel);
 		arpPushMIDI(noteNumber);
 		arpPushMIDI(current_velocity);
+
+msSystem.slogln("ARP: Note: " + String(noteNumber) + 
+				" vel: " + String(current_velocity) + 
+				" ON/OFF: " + String((on_off ? MIDI_NOTE_ON : MIDI_NOTE_OFF) + curr_midiview.midi_channel) );
 
 		arpSendMIDI();
 	}
@@ -301,9 +269,11 @@ public:
 	// those messages
 	void arpSendMIDI()
 	{
+#ifdef CONFIG_ENABLE_MIDI_SERIAL
 		while (arp_fifo_in_index != arp_fifo_out_index) {	// send whatever is in the buffer
-			MIDI_Put(&arp_fifo[++arp_fifo_out_index & BUFFER_MASK], 1);
+			SERIAL_MIDI_Put(&arp_fifo[++arp_fifo_out_index & BUFFER_MASK], 1);
 		}
+#endif
 	}
 
 	// reeive a Program change to change Arp Pattern
@@ -345,16 +315,13 @@ class MIDIArpeggiatorMode : public MagicShifterBaseMode {
 
 private:
 	// miby parser is used
-	miby_t miby;
+
 
 	// MIDI housekeeping
 	uint8_t midi_mode = 0;			// Mode of this module (future-use)
 	uint8_t sync_count;				// sync counter
 	uint16_t midi_frame = 0;		// current MIDI Processing frame
 
-
-	// Envelopes - used for the LED's
-	adsr_envelope anEnvelope;
 
 	// !J! TODO : There should be a MagicShifter API for this
 	// TODO: private state
@@ -390,82 +357,6 @@ public:
 
 	MIDIArpeggiatorMode() {
 		modeName = "Arpi";
-	}
-
-	void envDump()
-	{
-		int c;
-
-		msSystem.slog("Current Dump:");
-
-		msSystem.slog(" T: ");
-		msSystem.slog(anEnvelope.timer, DEC);
-
-		msSystem.slog(" L: ");
-		msSystem.slog(anEnvelope.level, DEC);
-
-		msSystem.slog(" C: ");
-		msSystem.slog((unsigned int) anEnvelope.current, HEX);
-
-		msSystem.slog(" IDLE: ");
-		msSystem.slogln(anEnvelope.is_idle, DEC);
-
-		msSystem.slogln("Envelope Dump:");
-
-		for (c = 0; c <= ENV_RELEASE; c++) {
-			msSystem.slog("Stage:");
-			msSystem.slog((unsigned int) &anEnvelope.stages[c], HEX);
-			msSystem.slog(" ");
-			msSystem.slog(c, DEC);
-			msSystem.slog(" L:");
-			msSystem.slog(anEnvelope.stages[c].level, DEC);
-			msSystem.slog(" / D:");
-			msSystem.slog(anEnvelope.stages[c].duration, DEC);
-			msSystem.slog(" @ C:");
-			msSystem.slogln(anEnvelope.stages[c].coeff, DEC);
-
-		}
-	}
-
-	// Initialize the envelopes
-	void envInit()
-	{
-		adsr_envelope_init(&anEnvelope);
-		anEnvelope.stages[ENV_START].level = 1;
-		anEnvelope.stages[ENV_START].duration = 1;
-		anEnvelope.stages[ENV_START].coeff = 1;
-
-		anEnvelope.stages[ENV_ATTACK].level = 10;
-		anEnvelope.stages[ENV_ATTACK].duration = 2;
-		anEnvelope.stages[ENV_ATTACK].coeff = -1;
-
-		anEnvelope.stages[ENV_DECAY].level = 20;
-		anEnvelope.stages[ENV_DECAY].duration = 3;
-		anEnvelope.stages[ENV_DECAY].coeff = -1;
-
-		anEnvelope.stages[ENV_SUSTAIN].level = 30;
-		anEnvelope.stages[ENV_SUSTAIN].duration = 4;
-		anEnvelope.stages[ENV_SUSTAIN].coeff = -1;
-
-		anEnvelope.stages[ENV_RELEASE].level = 40;
-		anEnvelope.stages[ENV_RELEASE].duration = 5;
-		anEnvelope.stages[ENV_RELEASE].coeff = -1;
-
-		anEnvelope.current = &anEnvelope.stages[ENV_START];	// active
-
-	}
-
-	// calculate the envelopes
-	void envFrame()
-	{
-		static int8_t dbg;
-
-		// adsr_envelope_tick(&anEnvelope);
-		// envDump();
-
-		dbg++;
-		if (dbg >= 10)
-			exit;
 	}
 
 	void handleButtons()
@@ -550,68 +441,83 @@ public:
 	void start()
 	{
 
-		// Initial view
-		curr_midiview.midi_channel = 0;
+		msSystem.slog("MIDIArpeggiator STARTED!");
 
-		// The MIDI byte parser, provided by the miby module ..
-		miby_init(&miby, NULL);
+		// Initial view
+		_arp.curr_midiview.midi_channel = 0;
+
 
 		// prime the Arp
 		_arp.arp_beat_duration = ARP_DURATION_FOR_BPM(_arp.arp_bpm);
-		_arp.arp_frame_time = micros();
-		_arp.arpFrame();
+		_arp.last_arp_frame_time = micros();
 
-		// prime the envelopes
-		envInit();
+		msSystem.slogln("MIDIArpeggiator START last_arp_frame_time:" + 
+			String(_arp.last_arp_frame_time));
+
+		_arp.arpFrame();
 
 		_arp.arpSoundOff();
 
+		_arp.arpStop();
+
 
 	}
+
+	void incPattern() {
+		msSystem.msLEDs.setLED(_arp.new_pattern, 0, 0, 0, msGlobals.ggBrightness); 
+
+		_arp.new_pattern ++;
+		if (_arp.new_pattern > NUM_ARP_PATTERNS)
+			_arp.new_pattern = NUM_ARP_PATTERNS;
+
+		msSystem.msLEDs.setLED(_arp.new_pattern, 0, 100, 100, msGlobals.ggBrightness); 
+
+		_arp.arpProgramChange(_arp.curr_midiview.midi_channel, _arp.new_pattern);
+	}
+
+	void decPattern() {
+		msSystem.msLEDs.setLED(_arp.new_pattern, 0, 0, 0, msGlobals.ggBrightness); 
+
+		_arp.new_pattern --;
+		if (_arp.new_pattern < 0)
+			_arp.new_pattern = 0;
+
+		msSystem.msLEDs.setLED(_arp.new_pattern, 0, 100, 100, msGlobals.ggBrightness); 
+
+		_arp.arpProgramChange(_arp.curr_midiview.midi_channel, _arp.new_pattern);
+
+	}
+
 
 	// main MIDI frame processor
 	// 
 	bool step()
 	{
-		// this is the per-fram midi byte, currently in process ..
-		uint8_t midi_inb;
 
-		// 
 		handleButtons();
 
 		// consume button events if necessary ..
 		if (msSystem.msButtons.msBtnPwrHit) {
 		}
+
 		if (msSystem.msButtons.msBtnAHit) {
-			msSystem.msLEDs.setLED(LED_BUTTON_EVENT, 0, 100, 0, msGlobals.ggBrightness); 
+			decPattern();
 		}
 		if (msSystem.msButtons.msBtnBHit) {
-			// Debug - set an LED so we know we made it ..
-			msSystem.msLEDs.setLED(LED_BUTTON_EVENT, 100, 0, 0, msGlobals.ggBrightness);
-		}
-
-		// pull midi_inbox, parse it with miby
-		if (Serial1.available()) {
-			// we Get exactly 1 byte of MIDI data at a time, and feed it to miby
-			MIDI_Get(&midi_inb, 1);
-
-			miby_parse(&miby, midi_inb);
-		} else {
-			// !J! TODO: Soft-thru, etc. 
-			// MIDI_Put(&midi_buf[0], 4);
+			incPattern();
 		}
 
 		midi_frame++;
 
 		// minimize latency introduced by the Arp frame
-		if (!((micros() - _arp.arp_frame_time) < _arp.arp_beat_duration))
+		unsigned long nowT = micros();
+
+		if (!((nowT - _arp.last_arp_frame_time) < _arp.arp_beat_duration)) {
 			_arp.arpFrame();
-
-		// prepare for our next frame
-		_arp.arp_frame_time = micros();
-
-		// handle envelopes
-		envFrame();
+			_arp.last_arp_frame_time = nowT;
+		} else {
+			// msSystem.slogln("MIDI: nowT - last_arp_frame_time:" + String((nowT - _arp.last_arp_frame_time)));
+		}
 
 		msSystem.msLEDs.updateLEDs();
 
@@ -629,5 +535,76 @@ public:
 		}
 	}
 
+	void MIDI_Start()
+	{
+		msSystem.slogln(modeName + " MIDI Start");
+		_arp.arpStart();
+	}
+
+	void MIDI_Stop()
+	{
+		msSystem.slogln(modeName + " MIDI Stop");
+		_arp.arpStop();
+	}
+
+	void MIDI_Program_Change(byte channel, byte program)
+	{
+		msSystem.slogln(modeName + " MIDI PC - channel: " + 
+									String(channel) + 
+									" program: " + 
+									String(program));
+
+		_arp.arpProgramChange(channel, program);
+	}
+
+	void MIDI_Control_Change(byte channel, byte cc1, byte cc2)
+	{
+		msSystem.slogln(modeName + " MIDI CC - channel: " + 
+									String(channel) + 
+									" cc1: " + 
+									String(cc1) +
+									" cc2: " + 
+									String(cc2));
+
+		msSystem.msLEDs.setLED(LED_CONTROL_CHANGE, 0, 100, 100);
+		if (channel == 1) {
+			_arp.arp_bpm = LOWEST_ARP_TEMPO + (cc1);
+			_arp.arp_beat_duration = ARP_DURATION_FOR_BPM(_arp.arp_bpm);
+		}
+	}
+
+	void MIDI_Note_On(byte channel, byte note, byte velocity)
+	{
+		msSystem.slogln(modeName + " MIDI Note On - channel: " + 
+									String(channel) + 
+									" note: " + 
+									String(note) +
+									" vel: " + 
+									String(velocity));
+
+		_arp.arpNoteOn(channel, note, velocity);
+		msSystem.msLEDs.setLED(LED_NOTE_EVENT, 0, 0, 100);
+	}
+
+	void MIDI_Note_Off(byte status, byte note, byte velocity)
+	{
+		msSystem.slogln(modeName + " MIDI Note Off - status: " + 
+									String(status) + 
+									" note: " + 
+									String(note) +
+									" vel: " + 
+									String(velocity));
+
+		uint8_t note_msg[3];
+		note_msg[0] = status;
+		note_msg[1] = note;
+		note_msg[2] = velocity;
+
+#ifdef CONFIG_ENABLE_MIDI_SERIAL
+		SERIAL_MIDI_Put(&note_msg[0], (uint16_t)3);
+#endif
+
+		msSystem.msLEDs.setLED(LED_NOTE_EVENT, 0, 0, 0);
+	}
 
 };

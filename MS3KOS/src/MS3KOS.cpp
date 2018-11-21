@@ -42,7 +42,20 @@ extern "C" {
 #include "msGlobals.h"
 MagicShifterGlobals msGlobals;
 
-MS3KG ms3kGlobalPBuf = MS3KG_init_zero;
+#ifdef CONFIG_ENABLE_MIDI
+#include "Modes/MIDI/midi_defs.h"
+
+#ifdef CONFIG_ENABLE_MIDI_SERIAL
+#define MIBY_USER_CONFIG "serial_miby_config.h"
+#include "miby.h"
+#include "serialMIDI.h"
+#endif
+
+#ifdef CONFIG_ENABLE_MIDI_RTP
+#include "rtpMIDI.h"
+#endif
+
+#endif
 
 // the system UI module
 #include "msSystem.h"
@@ -108,23 +121,37 @@ void setup()
 	msGlobals.ggModeList.push_back(&msMagicBeat);
 	msGlobals.ggModeList.push_back(&msMagicCountdown);
 
+	WiFi.hostname(msSystem.Settings.getAPNameOrUnique().c_str());
+	ArduinoOTA.setHostname(msSystem.Settings.getAPNameOrUnique().c_str());
+
+	msSystem.slogln("wifi: hostname is:" + WiFi.hostname());
+	msSystem.slogln("wifi: OTA hostname is:" + ArduinoOTA.getHostname());
+
 	// if MIDI has been configured, enable the additional MIDI mode(s)
 #ifdef CONFIG_ENABLE_MIDI
-	// msGlobals.ggCurrentMode = 6;
+	
 	msGlobals.ggModeList.push_back(&msMIDIArpeggiator);
+	msGlobals.ggModeList.push_back(&msMIDISequencer);
 
-#ifdef CONFIG_MIDI_RTP_MIDI
-	 AppleMIDI.OnConnected(OnRTPMIDI_Connect);
-	 AppleMIDI.OnDisconnected(OnRTPMIDI_Disconnect);
-	 AppleMIDI.OnReceiveNoteOn(OnRTPMIDI_NoteOn);
-	 AppleMIDI.OnReceiveNoteOff(OnRTPMIDI_NoteOff);
+#ifdef CONFIG_ENABLE_MIDI_SERIAL
+	// The MIDI byte parser, provided by the miby module ..
 
-	Serial.print("UNIQUE NAME:");
-	Serial.println(msSystem.Settings.getUniqueSystemName().c_str());
-	AppleMIDI.begin(msSystem.Settings.getUniqueSystemName().c_str());
-#endif
+	SERIAL_MIDI_init();
+	
+	msGlobals.ggCurrentMode = 7;
 
 #endif
+
+#ifdef CONFIG_ENABLE_MIDI_RTP
+	setupRTPDebugHandlers();
+	AppleMIDI.begin(msSystem.Settings.getAPNameOrUnique().c_str());
+	msSystem.slog("MIDI(rtp) session started, identity: " + String(AppleMIDI.getSessionName()) );
+#endif
+
+#endif // CONFIG_ENABLE_MIDI
+
+	// OTA updater
+	msGlobals.ggModeList.push_back(&msMagicUpdate);
 
 	// Show the battery power level on startup
 	msSystem.showBatteryStatus(true);
@@ -154,8 +181,12 @@ void loop()
 	msSystem.step();
 
 	// if rtpMIDI is configured, run it..
-#ifdef CONFIG_MIDI_RTP_MIDI
+#ifdef CONFIG_ENABLE_MIDI_RTP
 		AppleMIDI.run();
+#endif
+
+#ifdef CONFIG_ENABLE_MIDI_SERIAL
+		SERIAL_MIDI_loop();
 #endif
 
 	// if SystemUI events trigger it (UI), display the mode-selector menu:

@@ -192,7 +192,7 @@ class MagicShifterAccelerometer {
 			delay(1);			// Wait for reset
 			// Set threshold. 1000 counts = 100.0uT
 			int magThreshold = 1000;
-			writeRegister(0x6A, 0x80 | magThreshold & 0xFF);
+			writeRegister(0x6A, ((0x80 | magThreshold) & 0xFF));
 			writeRegister(0x6B, magThreshold >> 8);
 
 			// M_VECM_CNT = 1 * 20ms  = 20ms

@@ -3,6 +3,7 @@
 //
 
 #include "WebServerAPI.h"
+#include "ModesInterface.h"
 #include "WebServerAutoConnect.h"
 #include "WebServerFiles.h"
 
@@ -24,11 +25,29 @@ class MagicShifterWebServer {
 			msSystem.slogln("webserver: wifi connection failed, retrying...");
 			delay(100);
 		}
+
 #ifdef USE_MDNS
-		if (msSystem.msDNS.begin("magicshifter", WiFi.localIP())) {
-			msSystem.slogln("MDNS responder started");
+		// if (msSystem.msDNS.begin("magicshifter", WiFi.localIP())) {
+		APAuth apInfo;
+		bool gotAPConfig = msSystem.Settings.getAPConfig(&apInfo);
+		bool gotmDNSConfig = false;
+
+
+		if (gotAPConfig) {
+			msSystem.slogln("mDNS - using apInfo.ssid");
+			gotmDNSConfig = msSystem.msDNS.begin(apInfo.ssid, WiFi.localIP());		
 		}
+		else {
+			msSystem.slogln("mDNS - using uniqueSystemName");
+			gotmDNSConfig = msSystem.msDNS.begin(msSystem.Settings.getUniqueSystemName().c_str(), WiFi.localIP());
+		}
+
+		if (! gotmDNSConfig) {
+			msSystem.slogln("mDNS failed to configure - name not set.");
+		}
+
 #endif
+
 		msSystem.msESPServer.on("/restart",[]() {
 								msSystem.msESPServer.send(200,
 														  "text/plain",
@@ -55,10 +74,21 @@ class MagicShifterWebServer {
 		msSystem.msESPServer.on("/settings/ap", HTTP_POST,
 								handlePOSTAPSettings);
 
-		msSystem.msESPServer.on("/protobuf", HTTP_POST,
-								handlePOSTProtocolBufferBase64);
-		msSystem.msESPServer.on("/protobuf", HTTP_GET,
-								handleGETprotoBuffer);
+
+
+
+		msSystem.msESPServer.on("/protobuf", HTTP_POST, handlePOSTpbufBase64);
+		msSystem.msESPServer.on("/protobuf", HTTP_GET, handleGETProtoBufferBase64);
+
+        msSystem.msESPServer.on("/json/files", HTTP_GET, handleFileListJson);
+
+
+		msSystem.msESPServer.on("/interfaces/modes", HTTP_GET, handleGETInterfacesModes);
+
+
+
+
+
 
 		msSystem.msESPServer.on("/settings/syslog", HTTP_GET,
 								handleGETSysLogHostSettings);

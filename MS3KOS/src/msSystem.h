@@ -18,6 +18,8 @@
 // #include <WiFi.h>
 // #include <WiFiUdp.h>
 
+#include <ArduinoOTA.h>
+
 #include "Hardware/EEPROMString.h"
 #include "Hardware/LEDHardware.h"
 #include "Hardware/Sensor.h"
@@ -34,9 +36,14 @@
 // of the main runloop
 #include "msButtonTimers.h"
 
-// Settings are managed with different storage/longevity/rendering 
-// schemes
-#include "msSettingsManager.h"
+// Current View per MIDI input
+typedef struct {
+	uint8_t midi_channel;		// MIDI channel of View
+	uint16_t time_base;			// Base Time for sequencer-Put
+	void *v_arg;				// user data
+} MIDIViewT;
+
+MIDIViewT curr_midiview;
 
 // forward-declared here because it is a client of msSystem ..
 void CommandInterfacePoll();
@@ -44,404 +51,376 @@ void CommandInterfacePoll();
 class MagicShifterSystem;
 extern MagicShifterSystem msSystem;
 
-// MIDI features can be configured in or out of
-// the project according to Serial needs, and can be
-// enabled for WiFi.
-// e.g. debugging
-//
-#ifdef CONFIG_ENABLE_MIDI
-#include "AppleMidi.h"
-// RTPMIDI is usable over WiFi
-#endif
-
-#ifdef CONFIG_MIDI_RTP_MIDI
-APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_Defs.h
-bool isRTPConnected = false;
-
-// RTP MIDI event handlers:
-// -----------------------------------------------------------------------------
-void OnRTPMIDI_Connect(uint32_t ssrc, char* name) {
-  isRTPConnected = true;
-  Serial.print("rtpMIDI Connected to session ");
-  Serial.println(name);
-}
-
-void OnRTPMIDI_Disconnect(uint32_t ssrc) {
-  isRTPConnected = false;
-  Serial.println("rtpMIDI Disconnected");
-}
-
-void OnRTPMIDI_NoteOn(byte channel, byte note, byte velocity) {
-  Serial.print("rtpMIDI Incoming NoteOn from channel:");
-  Serial.print(String(channel));
-  Serial.print(" note:");
-  Serial.print(String(note));
-  Serial.print(" velocity:");
-  Serial.println(String(velocity));
-}
-
-void OnRTPMIDI_NoteOff(byte channel, byte note, byte velocity) {
-  Serial.print("rtpMIDI Incoming NoteOff from channel:");
-  Serial.print(String(channel));
-  Serial.print(" note:");
-  Serial.print(String(note));
-  Serial.print(" velocity:");
-  Serial.println(String(velocity));
-}
-#endif // CONFIG_MIDI_RTP_MIDI
-
-
 // TODO: all init and all sensors and leds in here :)
 // (accelerometer wuld also be a class but the MAgicShifter object has one ;)
 class MagicShifterSystem {
 
 	class SettingsManager {
 
-		private:
+	private:
 			// used in resetAPList & getNextAP
-			int apListIndex = -1;
-			File smAPListFile;
+		int apListIndex = -1;
+		File smAPListFile;
+		APAuth apInfo;
 
-		private:
+		bool loadData(String path, void *config, int len) {
+			if (SPIFFS.exists((char *) path.c_str())) {
+				File file = SPIFFS.open((char *) path.c_str(), "r");
+				file.read((uint8_t *) config, len);
+				file.close();
 
-			bool loadData(String path, void *config, int len) {
-				if (SPIFFS.exists((char *) path.c_str())) {
-					File file = SPIFFS.open((char *) path.c_str(), "r");
-					file.read((uint8_t *) config, len);
-					file.close();
+				return true;
+			} else {
+				msSystem.slog("webserver: loadData: can not open config file ");
+				msSystem.slogln((char *) path.c_str());
+			}
 
-					return true;
-				} else {
-					msSystem.slog("webserver: loadData: can not open config file ");
-					msSystem.slogln((char *) path.c_str());
-				}
+			return false;
+		}
+
+		bool saveData(String path, void *config, int len) {
+			File file = SPIFFS.open((char *) path.c_str(), "w");
+			if (file) {
+				file.write((uint8_t *) config, len);
+				file.close();
+
+				return true;
+			} else {
+				msSystem.slog("webserver: can not open config file ");
+				msSystem.slogln((char *) path.c_str());
 
 				return false;
 			}
-
-			bool saveData(String path, void *config, int len) {
-				File file = SPIFFS.open((char *) path.c_str(), "w");
-				if (file) {
-					file.write((uint8_t *) config, len);
-					file.close();
-
-					return true;
-				} else {
-					msSystem.slog("webserver: can not open config file ");
-					msSystem.slogln((char *) path.c_str());
-
-					return false;
-				}
-			}
+		}
 
 
 
-		public:
+	public:
 
-			const String apConfigPath = "settings/ap.bin";
-			const String apServerConfigPath = "settings/server1.bin";
-			const String apListConfigPath = "settings/aplist1.bin";
-			const String apSysLogConfigPath = "settings/syslog.bin";
-			const String preferredAPConfigPath = "settings/preferredap.bin";
-			const String uiSettingsConfigPath = "settings/ui.bin";
+		const String apConfigPath = "settings/ap.bin";
+		const String apServerConfigPath = "settings/server1.bin";
+		const String apListConfigPath = "settings/aplist1.bin";
+		const String apSysLogConfigPath = "settings/syslog.bin";
+		const String preferredAPConfigPath = "settings/preferredap.bin";
+		const String uiSettingsConfigPath = "settings/ui.bin";
 
-			String getUniqueSystemName() 
-			{
-				uint8_t mac[WL_MAC_ADDR_LENGTH];
-				WiFi.softAPmacAddress(mac);
-				String macID = String(mac[WL_MAC_ADDR_LENGTH - 2], HEX) + String(mac[WL_MAC_ADDR_LENGTH - 1], HEX);
+		String getUniqueSystemName() 
+		{
+			uint8_t mac[WL_MAC_ADDR_LENGTH];
+			WiFi.softAPmacAddress(mac);
+			String macID = String(mac[WL_MAC_ADDR_LENGTH - 2], HEX) + String(mac[WL_MAC_ADDR_LENGTH - 1], HEX);
 
-				macID.toUpperCase();
-				String UniqueSystemName = String(AP_NAME_OVERRIDE) + String("-") + macID;
+			macID.toUpperCase();
+			String UniqueSystemName = String(AP_NAME_OVERRIDE) + String("-") + macID;
 
-				return UniqueSystemName;
-			}
+			return UniqueSystemName;
+		}
 
-			bool getUIConfig(struct UIConfig *config) {
+		bool getUIConfig(struct UIConfig *config) {
 				//msSystem.slog("config: sizeof ");
 				//msSystem.slogln(String(sizeof(*config)));
-				bool result = loadData(uiSettingsConfigPath, config, sizeof(*config));
-				if (!result) {
-					config->timeoutHighPower = 0;
+			bool result = loadData(uiSettingsConfigPath, config, sizeof(*config));
+			if (!result) {
+				config->timeoutHighPower = 0;
 					config->timeoutLowPower =  10 * 60 * 1000; // 10 minutes
 					config->defaultBrightness = 2;
 				}
-				return result;
+			return result;
+		}
+
+		bool setUIConfig(struct UIConfig *config) {
+			return saveData(uiSettingsConfigPath, config, sizeof(*config));
+		}
+
+		String getAPNameOrUnique() {
+			String retName;
+			bool gotAPConfig = msSystem.Settings.getAPConfig(&apInfo);
+
+			if (gotAPConfig) {
+				retName = String(apInfo.ssid);
+			}
+			else {
+				retName = msSystem.Settings.getUniqueSystemName();
 			}
 
-			bool setUIConfig(struct UIConfig *config) {
-				return saveData(uiSettingsConfigPath, config, sizeof(*config));
+			return retName;
+
+		}
+
+		bool getServerConfig(struct ServerConfig *config) {
+
+			String path = apServerConfigPath;
+			if (SPIFFS.exists((char *) path.c_str())) {
+				File file = SPIFFS.open((char *) path.c_str(), "r");
+				file.read((uint8_t *) config, sizeof(*config));
+				file.close();
+				return true;
+			} else {
+				msSystem.slog("webserver: no server config file? ");
+				msSystem.slogln((char *) path.c_str());
 			}
 
-			bool getServerConfig(struct ServerConfig *config) {
+			return false;
+		}
 
-				String path = apServerConfigPath;
-				if (SPIFFS.exists((char *) path.c_str())) {
-					File file = SPIFFS.open((char *) path.c_str(), "r");
-					file.read((uint8_t *) config, sizeof(*config));
-					file.close();
-					return true;
-				} else {
-					msSystem.slog("webserver: no server config file? ");
-					msSystem.slogln((char *) path.c_str());
-				}
+		void setServerConfig(struct ServerConfig *config) {
 
-				return false;
+			String path = apServerConfigPath;
+			File file = SPIFFS.open((char *) path.c_str(), "w");
+			file.write((uint8_t *) config, sizeof(*config));
+
+			file.close();
+
+		}
+
+		bool getSyslogConfig(struct ServerConfig *config) {
+
+			String path = apSysLogConfigPath;
+			if (SPIFFS.exists((char *) path.c_str())) {
+				File file = SPIFFS.open((char *) path.c_str(), "r");
+				file.read((uint8_t *) config, sizeof(*config));
+				file.close();
+				return true;
+			} else {
+				msSystem.slog("webserver: no syslog config file? ");
+				msSystem.slogln((char *) path.c_str());
 			}
 
-			void setServerConfig(struct ServerConfig *config) {
+			return false;
+		}
 
-				String path = apServerConfigPath;
-				File file = SPIFFS.open((char *) path.c_str(), "w");
-				file.write((uint8_t *) config, sizeof(*config));
+		void setSyslogConfig(struct ServerConfig *config) {
 
+			String path = apSysLogConfigPath;
+			File file = SPIFFS.open((char *) path.c_str(), "w");
+			file.write((uint8_t *) config, sizeof(*config));
+
+			file.close();
+
+		}
+
+		bool getAPConfig(struct APAuth *config) {
+
+			String path = apConfigPath;
+
+			if (SPIFFS.exists((char *) path.c_str())) {
+				File file = SPIFFS.open((char *) path.c_str(), "r");
+				file.read((uint8_t *) config, sizeof(*config));
 				file.close();
 
+				msSystem.slogln("webserver: AP name is: " + String(config->ssid));
+
+				return true;
+
+			} else {
+				msSystem.slogln("webserver: AP config missing: " + path);
 			}
 
-			bool getSyslogConfig(struct ServerConfig *config) {
+			// don't have a config file, so we return a default
+			l_safeStrncpy(config->ssid, getUniqueSystemName().c_str(),
+				sizeof(config->ssid));
+			l_safeStrncpy(config->password, "", sizeof(config->password));
 
-				String path = apSysLogConfigPath;
-				if (SPIFFS.exists((char *) path.c_str())) {
-					File file = SPIFFS.open((char *) path.c_str(), "r");
-					file.read((uint8_t *) config, sizeof(*config));
-					file.close();
-					return true;
-				} else {
-					msSystem.slog("webserver: no syslog config file? ");
-					msSystem.slogln((char *) path.c_str());
-				}
+msSystem.slogln("webserver: not configured, using unique name: " + String(config->ssid));
 
-				return false;
-			}
+			return false;
+		}
 
-			void setSyslogConfig(struct ServerConfig *config) {
+		void setAPConfig(struct APAuth *config) {
 
-				String path = apSysLogConfigPath;
-				File file = SPIFFS.open((char *) path.c_str(), "w");
-				file.write((uint8_t *) config, sizeof(*config));
+			String path = apConfigPath;
+			File file = SPIFFS.open((char *) path.c_str(), "w");
+			file.write((uint8_t *) config, sizeof(*config));
+			file.close();
 
+			msSystem.slogln("webserver: saved:");
+			msSystem.slogln(config->ssid);
+
+		}
+
+		bool getPreferredAP(struct APAuth *config) {
+
+			String path = preferredAPConfigPath;
+			if (SPIFFS.exists((char *) path.c_str())) {
+				File file = SPIFFS.open((char *) path.c_str(), "r");
+				file.read((uint8_t *) config, sizeof(*config));
 				file.close();
-
+				return true;
 			}
+			l_safeStrncpy(config->ssid, "", sizeof(config->ssid));
+			l_safeStrncpy(config->password, "", sizeof(config->password));
+			return false;
 
-			bool getAPConfig(struct APAuth *config) {
+		}
 
-				String path = apConfigPath;
-				if (SPIFFS.exists((char *) path.c_str())) {
-					File file = SPIFFS.open((char *) path.c_str(), "r");
-					file.read((uint8_t *) config, sizeof(*config));
-					file.close();
+		void setPreferredAP(struct APAuth *config) {
 
-					return true;
+			String path = preferredAPConfigPath;
+			File file = SPIFFS.open((char *) path.c_str(), "w");
+			file.write((uint8_t *) config, sizeof(*config));
+			file.close();
 
-				} else {
-					msSystem.slogln("webserver: AP config missing:");
-					msSystem.slogln((char *) path.c_str());
-				}
+		}
 
-				// don't have a config file, so we return a default
-				l_safeStrncpy(config->ssid, getUniqueSystemName().c_str(),
-					sizeof(config->ssid));
-				l_safeStrncpy(config->password, "", sizeof(config->password));
+		//
+		// delete an AP Auth structure from the list
+		// if its not our ssid, add it to the list,
+		// otherwise ignore it 
+		// and save the list again
+		//
+		void deleteAP(char *ssid) {
+			String path = apListConfigPath;
 
-				return false;
+			typedef std::map<String, String> AuthItems;
+			typedef std::map<String, String>::iterator AuthItems_it;
+			AuthItems authItems;
+
+			File inFile;
+			APAuth inAPAuth;
+
+			// open the existing AP settings file if we can, and construct the map
+			if (SPIFFS.exists((char *)path.c_str()))  {
+				inFile = SPIFFS.open((char *) path.c_str(), "r");
 			}
+			if (inFile) {
+				msSystem.slog("webserver: opened AP config file:");
+				msSystem.slogln(path);
 
-			void setAPConfig(struct APAuth *config) {
-
-				String path = apConfigPath;
-				File file = SPIFFS.open((char *) path.c_str(), "w");
-				file.write((uint8_t *) config, sizeof(*config));
-				file.close();
-
-				msSystem.slogln("webserver: saved:");
-				msSystem.slogln(config->ssid);
-
-			}
-
-			bool getPreferredAP(struct APAuth *config) {
-
-				String path = preferredAPConfigPath;
-				if (SPIFFS.exists((char *) path.c_str())) {
-					File file = SPIFFS.open((char *) path.c_str(), "r");
-					file.read((uint8_t *) config, sizeof(*config));
-					file.close();
-					return true;
-				}
-				l_safeStrncpy(config->ssid, "", sizeof(config->ssid));
-				l_safeStrncpy(config->password, "", sizeof(config->password));
-				return false;
-
-			}
-
-			void setPreferredAP(struct APAuth *config) {
-
-				String path = preferredAPConfigPath;
-				File file = SPIFFS.open((char *) path.c_str(), "w");
-				file.write((uint8_t *) config, sizeof(*config));
-				file.close();
-
-			}
-
-			//
-			// delete an AP Auth structure from the list
-			// if its not our ssid, add it to the list,
-			// otherwise ignore it 
-			// and save the list again
-			//
-			void deleteAP(char *ssid) {
-				String path = apListConfigPath;
-
-				typedef std::map<String, String> AuthItems;
-				typedef std::map<String, String>::iterator AuthItems_it;
-				AuthItems authItems;
-
-				File inFile;
-				APAuth inAPAuth;
-
-				// open the existing AP settings file if we can, and construct the map
-				if (SPIFFS.exists((char *)path.c_str()))  {
-					inFile = SPIFFS.open((char *) path.c_str(), "r");
-				}
-				if (inFile) {
-					msSystem.slog("webserver: opened AP config file:");
-					msSystem.slogln(path);
-
-					// create a list of AP entries already in the file
-					while (inFile.read((uint8_t *) &inAPAuth, sizeof (APAuth)) == sizeof(APAuth)) {
-						// exclude the one we want to delete
-						if (strncmp(inAPAuth.ssid, ssid, MAX_AP_LEN) == 0)
-							continue;
-						else
-							authItems[inAPAuth.ssid] = inAPAuth.password;
-					}
-
-					inFile.close();
-
-				} else {
-					msSystem.slog("webserver: couldn't open AP inFile:");
-					msSystem.slogln(path);
-				}
-
-				// dump the map back to the file
-				File outFile = SPIFFS.open((char *) path.c_str(), "w+");
-				if (outFile) {
-					AuthItems_it it;
-					for(it = authItems.begin(); it != authItems.end(); it++)
-					{
-						APAuth t_Auth;
-						l_safeStrncpy(t_Auth.ssid, it->first.c_str(), MAX_AP_LEN);
-						l_safeStrncpy(t_Auth.password, it->second.c_str(), MAX_AP_LEN);
-						outFile.write((uint8_t *)&t_Auth, sizeof(APAuth));
-					}
-
-					outFile.close();
-					msSystem.slog("webserver: saved AP configuration");
-					msSystem.slogln(path);
-				} else {
-					msSystem.slog("webserver: couldn't save AP outFile:");
-					msSystem.slogln(path);
-				}
-
-			}
-
-			//
-			// add an AP Auth structure to the list
-			// if its there already, update the password
-			// if its not there, add it to the list
-			//
-			void addAP(struct APAuth *apInfo) {
-				String path = apListConfigPath;
-
-				typedef std::map<String, String> AuthItems;
-				typedef std::map<String, String>::iterator AuthItems_it;
-				AuthItems authItems;
-
-				File inFile;
-				APAuth inAPAuth;
-
-				// open the existing AP settings file if we can, and construct the map
-				if (SPIFFS.exists((char *)path.c_str()))  {
-					inFile = SPIFFS.open((char *) path.c_str(), "r");
-				}
-				if (inFile) {
-					msSystem.slog("webserver: opened AP config file:");
-					msSystem.slogln(path);
-
-					// create a list of AP entries already in the file
-					while (inFile.read((uint8_t *) &inAPAuth, sizeof (APAuth)) == sizeof(APAuth)) {
+				// create a list of AP entries already in the file
+				while (inFile.read((uint8_t *) &inAPAuth, sizeof (APAuth)) == sizeof(APAuth)) {
+					// exclude the one we want to delete
+					if (strncmp(inAPAuth.ssid, ssid, MAX_AP_LEN) == 0)
+						continue;
+					else
 						authItems[inAPAuth.ssid] = inAPAuth.password;
-					}
-
-					inFile.close();
-
-				} else {
-					msSystem.slog("webserver: couldn't open AP inFile:");
-					msSystem.slogln(path);
 				}
 
-				// check if there is an entry in the map for the incoming apInfo
-				// (map could also be empty)
-				auto existingAP = authItems.find(apInfo->ssid);
+				inFile.close();
 
-				if (existingAP != authItems.end()) {
-			    	// we found it, so set the new password
-					existingAP->second = apInfo->password;
-			    } else { 	// .. otherwise, add one and set the password
-			    	authItems[apInfo->ssid] = apInfo->password;
-			    }
-
-				// dump the map back to the file
-			    File outFile = SPIFFS.open((char *) path.c_str(), "w+");
-			    if (outFile) {
-			    	AuthItems_it it;
-			    	for(it = authItems.begin(); it != authItems.end(); it++)
-			    	{
-			    		APAuth t_Auth;
-			    		l_safeStrncpy(t_Auth.ssid, it->first.c_str(), MAX_AP_LEN);
-			    		l_safeStrncpy(t_Auth.password, it->second.c_str(), MAX_AP_LEN);
-			    		outFile.write((uint8_t *)&t_Auth, sizeof(APAuth));
-			    	}
-
-			    	outFile.close();
-			    	msSystem.slog("webserver: saved AP configuration");
-			    	msSystem.slogln(path);
-			    } else {
-			    	msSystem.slog("webserver: couldn't save AP outFile:");
-			    	msSystem.slogln(path);
-			    }
-
+			} else {
+				msSystem.slog("webserver: couldn't open AP inFile:");
+				msSystem.slogln(path);
 			}
 
-			void resetAPList() {
-				apListIndex = -1;
-				smAPListFile.close();
-
-			}
-
-			bool getNextAP(struct APAuth *apInfo) {
-				if (apListIndex < 0) {
-					String path = apListConfigPath;
-					if (SPIFFS.exists((char *) path.c_str())) {
-						smAPListFile = SPIFFS.open((char *) path.c_str(), "r");
-						apListIndex = 0;
-					}
+			// dump the map back to the file
+			File outFile = SPIFFS.open((char *) path.c_str(), "w+");
+			if (outFile) {
+				AuthItems_it it;
+				for(it = authItems.begin(); it != authItems.end(); it++)
+				{
+					APAuth t_Auth;
+					l_safeStrncpy(t_Auth.ssid, it->first.c_str(), MAX_AP_LEN);
+					l_safeStrncpy(t_Auth.password, it->second.c_str(), MAX_AP_LEN);
+					outFile.write((uint8_t *)&t_Auth, sizeof(APAuth));
 				}
 
-				if (apListIndex >= 0) {
-					const int requiredBytes = sizeof(*apInfo);
-					do {
-						if (smAPListFile.read((uint8_t *) apInfo, requiredBytes) ==
-							requiredBytes) {
-							apListIndex++;
-						if (!msSystem.msEEPROMs.
-							memcmpByte((byte *) apInfo, 0, requiredBytes))
-							return true;
+				outFile.close();
+				msSystem.slog("webserver: saved AP configuration");
+				msSystem.slogln(path);
+			} else {
+				msSystem.slog("webserver: couldn't save AP outFile:");
+				msSystem.slogln(path);
+			}
+
+		}
+
+		//
+		// add an AP Auth structure to the list
+		// if its there already, update the password
+		// if its not there, add it to the list
+		//
+		void addAP(struct APAuth *apInfo) {
+			String path = apListConfigPath;
+
+			typedef std::map<String, String> AuthItems;
+			typedef std::map<String, String>::iterator AuthItems_it;
+			AuthItems authItems;
+
+			File inFile;
+			APAuth inAPAuth;
+
+			// open the existing AP settings file if we can, and construct the map
+			if (SPIFFS.exists((char *)path.c_str()))  {
+				inFile = SPIFFS.open((char *) path.c_str(), "r");
+			}
+			if (inFile) {
+				msSystem.slog("webserver: opened AP config file:");
+				msSystem.slogln(path);
+
+				// create a list of AP entries already in the file
+				while (inFile.read((uint8_t *) &inAPAuth, sizeof (APAuth)) == sizeof(APAuth)) {
+					authItems[inAPAuth.ssid] = inAPAuth.password;
+				}
+
+				inFile.close();
+
+			} else {
+				msSystem.slog("webserver: couldn't open AP inFile:");
+				msSystem.slogln(path);
+			}
+
+			// check if there is an entry in the map for the incoming apInfo
+			// (map could also be empty)
+			auto existingAP = authItems.find(apInfo->ssid);
+
+			if (existingAP != authItems.end()) {
+		    	// we found it, so set the new password
+				existingAP->second = apInfo->password;
+		    } else { 	// .. otherwise, add one and set the password
+		    	authItems[apInfo->ssid] = apInfo->password;
+		    }
+
+			// dump the map back to the file
+		    File outFile = SPIFFS.open((char *) path.c_str(), "w+");
+		    if (outFile) {
+		    	AuthItems_it it;
+		    	for(it = authItems.begin(); it != authItems.end(); it++)
+		    	{
+		    		APAuth t_Auth;
+		    		l_safeStrncpy(t_Auth.ssid, it->first.c_str(), MAX_AP_LEN);
+		    		l_safeStrncpy(t_Auth.password, it->second.c_str(), MAX_AP_LEN);
+		    		outFile.write((uint8_t *)&t_Auth, sizeof(APAuth));
+		    	}
+
+		    	outFile.close();
+		    	msSystem.slog("webserver: saved AP configuration");
+		    	msSystem.slogln(path);
+		    } else {
+		    	msSystem.slog("webserver: couldn't save AP outFile:");
+		    	msSystem.slogln(path);
+		    }
+
+		}
+
+		void resetAPList() {
+			apListIndex = -1;
+			smAPListFile.close();
+
+		}
+
+		bool getNextAP(struct APAuth *apInfo) {
+			if (apListIndex < 0) {
+				String path = apListConfigPath;
+				if (SPIFFS.exists((char *) path.c_str())) {
+					smAPListFile = SPIFFS.open((char *) path.c_str(), "r");
+					apListIndex = 0;
+				}
+			}
+
+			if (apListIndex >= 0) {
+				const int requiredBytes = sizeof(*apInfo);
+				do {
+					if (smAPListFile.read((uint8_t *) apInfo, requiredBytes) ==
+						requiredBytes) {
+						apListIndex++;
+					if (!msSystem.msEEPROMs.
+						memcmpByte((byte *) apInfo, 0, requiredBytes))
+						return true;
 					} else {
 						return false;
 					}
 				} while (true);
+
 			} else {
 				return false;
 			}
@@ -453,10 +432,8 @@ class MagicShifterSystem {
 
 #define WL_MAC_ADDR_LENGTH 6
 
-  private:
-
-  public:
-  	SettingsManager Settings;
+public:
+	SettingsManager Settings;
 	MagicShifterSysLog msSysLog;
 	// todo: protect
 	MagicShifterAccelerometer msSensor;
@@ -474,11 +451,8 @@ class MagicShifterSystem {
 
 	int modeMenuActivated = false;
 
-	int lowBatteryMillis;
+	uint32_t lowBatteryMillis;
 	float  batteryVoltage = 0.0;
-
-  public:
-	// todo:switch slog from OFF, to BANNED (MIDI), to UDP .. etc.
 
 	void slog(String msg) {
 		msSysLog.sendSysLogMsg(msg);
@@ -511,91 +485,57 @@ class MagicShifterSystem {
 
 	void dumpActiveHeader(const MSBitmapHeader & header) {
 		slogln("Header dump:");
-		slog("fileSize:");
-		slogln(String(header.fileSize));
-		slog("pixelFormat:");
-		slogln(String(header.pixelFormat));
-		slog("maxFrame:");
-		slogln(String(header.maxFrame));
-		slog("frameWidth:");
-		slogln(String(header.frameWidth));
-		slog("frameHeight:");
-		slogln(String(header.frameHeight));
-		slog("subType:");
-		slogln(String(header.subType));
-		slog("firstChar:");
-		slogln(String(header.firstChar));
-		slog("animationDelay:");
-		slogln(String(header.animationDelay));
+		slogln("fileSize:" + String(header.fileSize));
+		slogln("pixelFormat:" + String(header.pixelFormat));
+		slogln("maxFrame:" + String(header.maxFrame));
+		slogln("frameWidth:" + String(header.frameWidth));
+		slogln("frameHeight:" + String(header.frameHeight));
+		slogln("subType:" + String(header.subType));
+		slogln("firstChar:" + String(header.firstChar));
+		slogln("animationDelay:" + String(header.animationDelay));
 	}
 
 	void slogSysInfo() {
 		slogln("System config:");
-		slog("Vcc: ");
-		slogln(String(ESP.getVcc()));
-		slog("Free heap: ");
-		slogln(String(ESP.getFreeHeap()));
-		slog("Chip ID: ");
-		slogln(String(ESP.getChipId()));
-		slog("SDK version: ");
-		slogln(String(ESP.getSdkVersion()));
-		slog("Boot version: ");
-		slogln(String(ESP.getBootVersion()));
-		slog("Boot mode: ");
-		slogln(String(ESP.getBootMode()));
-		slog("CPU freq.: ");
-		slogln(String(ESP.getCpuFreqMHz()));
-		slog("Flash chip ID: ");
-		slogln(String(ESP.getFlashChipId(), HEX));
+		slogln("Vcc: " + String(ESP.getVcc()));
+		slogln("Free heap: " + String(ESP.getFreeHeap()));
+		slogln("Chip ID: " + String(ESP.getChipId()));
+		slogln("SDK version: " + String(ESP.getSdkVersion()));
+		slogln("Boot version: " + String(ESP.getBootVersion()));
+		slogln("Boot mode: " + String(ESP.getBootMode()));
+		slogln("CPU freq.: " + String(ESP.getCpuFreqMHz()));
+		slogln("Flash chip ID: " + String(ESP.getFlashChipId(), HEX));
 		// // gets the actual chip size based on the flash id
-		slog("Flash real size: ");
-		slogln(String(ESP.getFlashChipRealSize()));
-		slog("Flash real size (method b): ");
-		slogln(String(ESP.getFlashChipSizeByChipId()));
+		slogln("Flash real size: " + String(ESP.getFlashChipRealSize()));
+		slogln("Flash real size (method b): " + String(ESP.getFlashChipSizeByChipId()));
 		// // gets the size of the flash as set by the compiler
-		slog("flash configured size: ");
-		slogln(String(ESP.getFlashChipSize()));
+		slogln("flash configured size: " + String(ESP.getFlashChipSize()));
 		if (ESP.getFlashChipSize() != ESP.getFlashChipRealSize())
 		{
-		  slogln(String("WARNING: configured flash size does not match real flash size!"));
+			slogln(String("WARNING: configured flash size does not match real flash size!"));
 		}
-		slog("flash speed: ");
-		slogln(String(ESP.getFlashChipSpeed()));
-		slog("flash mode: ");
-		slogln(String(ESP.getFlashChipMode()));
-		slog("Sketch size: ");
-		slogln(String(ESP.getSketchSize()));
-		slog("Free sketch space: ");
-		slogln(String(ESP.getFreeSketchSpace()));
+		slogln("flash speed: " + String(ESP.getFlashChipSpeed()));
+		slogln("flash mode: " + String(ESP.getFlashChipMode()));
+		slogln("Sketch size: " + String(ESP.getSketchSize()));
+		slogln("Free sketch space: " + String(ESP.getFreeSketchSpace()));
 
-		slog("uploadfile: ");
-		slogln(msGlobals.ggUploadFileName);
+		slogln("uploadfile: " + String(msGlobals.ggUploadFileName));
 
 		FSInfo linfo;
 		SPIFFS.info(linfo);
 
-		slog("linfo.blockSize =");
-		slogln(String(linfo.blockSize));
-		slog("linfo.pageSize =");
-		slogln(String(linfo.pageSize));
-		slog("linfo.maxOpenFiles =");
-		slogln(String(linfo.maxOpenFiles));
-		slog("linfo.maxPathLength =");
-		slogln(String(linfo.maxPathLength));
-		slog("linfo.totalBytes =");
-		slogln(String(linfo.totalBytes));
-		slog("linfo.usedBytes = ");
-		slogln(String(linfo.usedBytes));
+		slogln("linfo.blockSize =" + String(linfo.blockSize));
+		slogln("linfo.pageSize =" + String(linfo.pageSize));
+		slogln("linfo.maxOpenFiles =" + String(linfo.maxOpenFiles));
+		slogln("linfo.maxPathLength =" + String(linfo.maxPathLength));
+		slogln("linfo.totalBytes =" + String(linfo.totalBytes));
+		slogln("linfo.usedBytes = " + String(linfo.usedBytes));
 
-		slog("Reset info: ");
-		slogln(String(ESP.getResetInfo()));
+		slogln("Reset info: " + String(ESP.getResetInfo()));
 
-		slog("timeoutHighPower: ");
-		slogln(String(msGlobals.ggUIConfig.timeoutHighPower));
-		slog("timeoutLowPower: ");
-		slogln(String(msGlobals.ggUIConfig.timeoutLowPower));
-		slog("defaultBrightness: ");
-		slogln(String(msGlobals.ggUIConfig.defaultBrightness));
+		slogln("timeoutHighPower: " + String(msGlobals.ggUIConfig.timeoutHighPower));
+		slogln("timeoutLowPower: " + String(msGlobals.ggUIConfig.timeoutLowPower));
+		slogln("defaultBrightness: " + String(msGlobals.ggUIConfig.defaultBrightness));
 	};
 
 
@@ -617,7 +557,7 @@ class MagicShifterSystem {
 	void saveCalibration(int calib_value)
 	{
 		File calibFile;
-	
+
 		calibFile = SPIFFS.open(CALIBRATION_FILENAME, "w");
 
 		if (calibFile) {
@@ -657,14 +597,13 @@ class MagicShifterSystem {
 	}
 
 	// sets the current shifter Mode .. 
-	void setMode(int newMode)
+	void setMode(uint32_t newMode)
 	{
-		if (newMode < msGlobals.ggModeList.size()) {
-			
+		if (newMode < msGlobals.ggModeList.size() && 
+			(newMode != msGlobals.ggCurrentMode)) {
 			msGlobals.ggModeList[msGlobals.ggCurrentMode]->stop();
 			msGlobals.ggCurrentMode = newMode;
 			msGlobals.ggModeList[newMode]->start();
-
 		}
 	}
 
@@ -699,14 +638,14 @@ class MagicShifterSystem {
 
 	}
 
-	// for fail-modes ..
+		// for fail-modes ..
 	void infinite_swipe() {
 		while (1) {
-			// swipe colors
+				// swipe colors
 			for (byte idx = 0; idx < MAX_LEDS; idx++) {
 				msLEDs.setLED(idx, (idx & 1) ? 255 : 0,
-							  (idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0,
-							  msGlobals.ggBrightness);
+					(idx & 2) ? 255 : 0, (idx & 4) ? 255 : 0,
+					msGlobals.ggBrightness);
 				msLEDs.updateLEDs();
 				delay(30);
 			}
@@ -724,162 +663,162 @@ class MagicShifterSystem {
 #define BUTTON_DISPLAY_PERIOD 1
 
 
-	void displayButtons() {
-		if (msButtons.msBtnPwrDoubleHit) {
-			msLEDs.fillLEDs(0, 200, 0, msGlobals.ggBrightness);
-			msLEDs.updateLEDs();
-			delay(BUTTON_DISPLAY_PERIOD);
-		}
-
-		if (msButtons.msBtnPwrLongHit) {
-			msLEDs.setLED(BUTTON_LED_PWR, 0, 0, 20, 20);
-			msLEDs.setLED(BUTTON_LED_PWR + 1, 0, 0, 20, 20);
-			msLEDs.updateLEDs();
-			delay(BUTTON_DISPLAY_PERIOD);
-		}
-		if (msButtons.msBtnPwrHit) {
-			msLEDs.setLED(BUTTON_LED_PWR, 20, 20, 0, 15);
-			msLEDs.setLED(BUTTON_LED_PWR - 1, 20, 20, 0, 15);
-			msLEDs.updateLEDs();
-			delay(BUTTON_DISPLAY_PERIOD);
-		}
-		if (msButtons.msBtnALongHit) {
-			msLEDs.setLED(BUTTON_LED_A, 20, 0, 20, 20);
-			msLEDs.updateLEDs();
-			delay(BUTTON_DISPLAY_PERIOD);
-		}
-		if (msButtons.msBtnAHit) {
-			msLEDs.setLED(BUTTON_LED_A, 20, 20, 0, 20);
-			msLEDs.updateLEDs();
-			delay(BUTTON_DISPLAY_PERIOD);
-		}
-		if (msButtons.msBtnBLongHit) {
-			msLEDs.setLED(BUTTON_LED_B, 20, 0, 20, 20);
-			msLEDs.updateLEDs();
-			delay(BUTTON_DISPLAY_PERIOD);
-		}
-		if (msButtons.msBtnBHit) {
-			msLEDs.setLED(BUTTON_LED_B, 20, 20, 0, 20);
-			msLEDs.updateLEDs();
-			delay(BUTTON_DISPLAY_PERIOD);
-		}
+void displayButtons() {
+	if (msButtons.msBtnPwrDoubleHit) {
+		msLEDs.fillLEDs(0, 200, 0, msGlobals.ggBrightness);
+		msLEDs.updateLEDs();
+		delay(BUTTON_DISPLAY_PERIOD);
 	}
+
+	if (msButtons.msBtnPwrLongHit) {
+		msLEDs.setLED(BUTTON_LED_PWR, 0, 0, 20, 20);
+		msLEDs.setLED(BUTTON_LED_PWR + 1, 0, 0, 20, 20);
+		msLEDs.updateLEDs();
+		delay(BUTTON_DISPLAY_PERIOD);
+	}
+	if (msButtons.msBtnPwrHit) {
+		msLEDs.setLED(BUTTON_LED_PWR, 20, 20, 0, 15);
+		msLEDs.setLED(BUTTON_LED_PWR - 1, 20, 20, 0, 15);
+		msLEDs.updateLEDs();
+		delay(BUTTON_DISPLAY_PERIOD);
+	}
+	if (msButtons.msBtnALongHit) {
+		msLEDs.setLED(BUTTON_LED_A, 20, 0, 20, 20);
+		msLEDs.updateLEDs();
+		delay(BUTTON_DISPLAY_PERIOD);
+	}
+	if (msButtons.msBtnAHit) {
+		msLEDs.setLED(BUTTON_LED_A, 20, 20, 0, 20);
+		msLEDs.updateLEDs();
+		delay(BUTTON_DISPLAY_PERIOD);
+	}
+	if (msButtons.msBtnBLongHit) {
+		msLEDs.setLED(BUTTON_LED_B, 20, 0, 20, 20);
+		msLEDs.updateLEDs();
+		delay(BUTTON_DISPLAY_PERIOD);
+	}
+	if (msButtons.msBtnBHit) {
+		msLEDs.setLED(BUTTON_LED_B, 20, 20, 0, 20);
+		msLEDs.updateLEDs();
+		delay(BUTTON_DISPLAY_PERIOD);
+	}
+}
 
 #define BRIGHTNESS_CONTROL_TIME (850 * 1000)
 
-	uint8_t BrightnessLevels[16] = { 1, 2, 3, 4,
-		5, 6, 7, 8,
-		10, 12, 14, 16,
-		18, 22, 26, 31
-	};
+uint8_t BrightnessLevels[16] = { 1, 2, 3, 4,
+	5, 6, 7, 8,
+	10, 12, 14, 16,
+	18, 22, 26, 31
+};
 
 #define BRIGHTNESS_UI_LEVEL 0xFF
 
 // -- brightness handling:
-	void brightnessControlStep() {
-		int newIdx = msGlobals.ggBrightness;
-		float avgV = 0;
-		int newV = 0, lastV = -1;
-		uint16_t blink = 0;
-		int skip = 100;
+void brightnessControlStep() {
+	int newIdx = msGlobals.ggBrightness;
+	float avgV = 0;
+	int newV = 0, lastV = -1;
+	uint16_t blink = 0;
+	int skip = 100;
 
 		// state: on
-		if ((msButtons.powerButtonPressed()) &&
-			(msButtons.msBtnPwrPressTime > BRIGHTNESS_CONTROL_TIME)) {
+	if ((msButtons.powerButtonPressed()) &&
+		(msButtons.msBtnPwrPressTime > BRIGHTNESS_CONTROL_TIME)) {
 
-			slogln("brightnessControlStep EVENT");
+		slogln("brightnessControlStep EVENT");
 
-			while (skip) {
-				delay(1);
+	while (skip) {
+		delay(1);
 
-				getADValue();
-				msButtons.step();
-				msSensor.step();
+		getADValue();
+		msButtons.step();
+		msSensor.step();
 
-				if (msButtons.powerButtonPressed())
-					skip = 100;
-				else {
-					if (skip > 0)
-						skip--;
-				}
+		if (msButtons.powerButtonPressed())
+			skip = 100;
+		else {
+			if (skip > 0)
+				skip--;
+		}
 
 				// AccelPoll();
 
 				// calculate average curve
-				float fFactor = 0.96;
-				avgV =
-					(fFactor * avgV) + msGlobals.ggAccel[XAXIS] * (1 -
-																   fFactor);
-				float lLEDRange = ((MAX_LEDS - 1.0) / 2.0);
+		float fFactor = 0.96;
+		avgV =
+		(fFactor * avgV) + msGlobals.ggAccel[XAXIS] * (1 -
+			fFactor);
+		float lLEDRange = ((MAX_LEDS - 1.0) / 2.0);
 				// calculate LED index
-				newIdx =
-					(int) ((lLEDRange * 1.4) + (lLEDRange * avgV) * 1.8);
+		newIdx =
+		(int) ((lLEDRange * 1.4) + (lLEDRange * avgV) * 1.8);
 
-				if (msGlobals.ggFault > 0)
-					newIdx = -2;
+		if (msGlobals.ggFault > 0)
+			newIdx = -2;
 
-				if (newIdx < -1) {
-					newV = 0;
-				} else {
-					blink = 0;
-					if (newIdx < 0)
-						newIdx = 0;
-					if (newIdx >= 15)
-						newIdx = 15;
-					newV = BrightnessLevels[newIdx];
-				}
+		if (newIdx < -1) {
+			newV = 0;
+		} else {
+			blink = 0;
+			if (newIdx < 0)
+				newIdx = 0;
+			if (newIdx >= 15)
+				newIdx = 15;
+			newV = BrightnessLevels[newIdx];
+		}
 
-				if (newV == 0) {
-					msLEDs.fillLEDs(0, 0, 0, 0);
-					blink++;
-					uint16_t bb = blink & 0x1FF;
-					if (bb > 255)
-						bb = 511 - bb;
+		if (newV == 0) {
+			msLEDs.fillLEDs(0, 0, 0, 0);
+			blink++;
+			uint16_t bb = blink & 0x1FF;
+			if (bb > 255)
+				bb = 511 - bb;
 					//bb = (v*bb)/255;
 
-					msLEDs.setLED(4, bb / 8, bb / 8, bb / 8, msGlobals.ggBrightness);
-					msLEDs.setLED(5, bb / 4, bb / 4, bb / 4, msGlobals.ggBrightness);
-					msLEDs.setLED(6, bb / 2, bb / 2, bb / 2, msGlobals.ggBrightness);
-					msLEDs.setLED(7, bb, bb, bb, msGlobals.ggBrightness);
-					msLEDs.setLED(8, bb, bb, bb, msGlobals.ggBrightness);
-					msLEDs.setLED(9, bb / 2, bb / 2, bb / 2, msGlobals.ggBrightness);
-					msLEDs.setLED(10, bb / 4, bb / 4, bb / 4, msGlobals.ggBrightness);
-					msLEDs.setLED(11, bb / 8, bb / 8, bb / 8, msGlobals.ggBrightness);
+			msLEDs.setLED(4, bb / 8, bb / 8, bb / 8, msGlobals.ggBrightness);
+			msLEDs.setLED(5, bb / 4, bb / 4, bb / 4, msGlobals.ggBrightness);
+			msLEDs.setLED(6, bb / 2, bb / 2, bb / 2, msGlobals.ggBrightness);
+			msLEDs.setLED(7, bb, bb, bb, msGlobals.ggBrightness);
+			msLEDs.setLED(8, bb, bb, bb, msGlobals.ggBrightness);
+			msLEDs.setLED(9, bb / 2, bb / 2, bb / 2, msGlobals.ggBrightness);
+			msLEDs.setLED(10, bb / 4, bb / 4, bb / 4, msGlobals.ggBrightness);
+			msLEDs.setLED(11, bb / 8, bb / 8, bb / 8, msGlobals.ggBrightness);
 
-					msLEDs.updateLEDs();
-					delayMicroseconds(200);
-				} else if (lastV != newV) {
-					for (uint8_t i = 0; i <= 15; i++) {
+			msLEDs.updateLEDs();
+			delayMicroseconds(200);
+		} else if (lastV != newV) {
+			for (uint8_t i = 0; i <= 15; i++) {
 
-						uint8_t lBr = BrightnessLevels[i];
+				uint8_t lBr = BrightnessLevels[i];
 
-						uint8_t dB = lBr;
+				uint8_t dB = lBr;
 
 						//if (dB <= 16) dB = 16;
-						if (newV >= lBr)
-							msLEDs.setLED(15 - i, BRIGHTNESS_UI_LEVEL,
-										  BRIGHTNESS_UI_LEVEL,
-										  BRIGHTNESS_UI_LEVEL, dB);
-						else
-							msLEDs.setLED(15 - i, 0, 0, 0);
-					}
-					msLEDs.updateLEDs();
-					delayMicroseconds(200);
-				}
-				lastV = newV;
+				if (newV >= lBr)
+					msLEDs.setLED(15 - i, BRIGHTNESS_UI_LEVEL,
+						BRIGHTNESS_UI_LEVEL,
+						BRIGHTNESS_UI_LEVEL, dB);
+				else
+					msLEDs.setLED(15 - i, 0, 0, 0);
 			}
-
-			if (newV == 0)
-				powerDown();
-
-			msGlobals.ggBrightness = newV;
-
-			WaitClearButtons();
-
-			msLEDs.fillLEDs(0, 0, 0, 0);
 			msLEDs.updateLEDs();
+			delayMicroseconds(200);
 		}
+		lastV = newV;
 	}
+
+	if (newV == 0)
+		powerDown();
+
+	msGlobals.ggBrightness = newV;
+
+	WaitClearButtons();
+
+	msLEDs.fillLEDs(0, 0, 0, 0);
+	msLEDs.updateLEDs();
+}
+}
 
 
 // -- battery status methods:
@@ -888,52 +827,52 @@ class MagicShifterSystem {
 #define LIPO_DISPLAY_ORANGE_LIMIT_V        3.9
 #define LIPO_DISPLAY_UPPER_LIMIT_V         4.5
 
-	void WaitClearButtons() {
-		while (msButtons.powerButtonPressed()) {
-			delay(1);
-		}
+void WaitClearButtons() {
+	while (msButtons.powerButtonPressed()) {
+		delay(1);
 	}
+}
 
-	void showBatteryStatus(bool shouldFadeIn) {
+void showBatteryStatus(bool shouldFadeIn) {
 		//v = MAXMV;
 
-		int d = 500;
-		int gs = 10;
-		float batLevel = 0.0f;
+	int d = 500;
+	int gs = 10;
+	float batLevel = 0.0f;
 
-		if (!shouldFadeIn)
-			d = d * -1;
+	if (!shouldFadeIn)
+		d = d * -1;
 
-		WaitClearButtons();
-		delay(50);
-		batLevel = getBatteryVoltage();
+	WaitClearButtons();
+	delay(50);
+	batLevel = getBatteryVoltage();
 
-		msLEDs.fillLEDs(0, 0, 0, 0);
+	msLEDs.fillLEDs(0, 0, 0, 0);
 
-		for (int i = 0; i >= 0 && i <= 15; i++) {
-			float iV =
-				LIPO_DISPLAY_LOWER_LIMIT_V + (LIPO_DISPLAY_UPPER_LIMIT_V -
-											  LIPO_DISPLAY_LOWER_LIMIT_V) *
-				(i / 16.0);
+	for (int i = 0; i >= 0 && i <= 15; i++) {
+		float iV =
+		LIPO_DISPLAY_LOWER_LIMIT_V + (LIPO_DISPLAY_UPPER_LIMIT_V -
+			LIPO_DISPLAY_LOWER_LIMIT_V) *
+		(i / 16.0);
 
-			if (batLevel > iV) {
-				int red, green;
-				if (iV > LIPO_DISPLAY_RED_LIMIT_V) {
-					green =
-						255 * (iV -
-							   LIPO_DISPLAY_RED_LIMIT_V) /
-						(LIPO_DISPLAY_UPPER_LIMIT_V -
-						 LIPO_DISPLAY_RED_LIMIT_V);
+		if (batLevel > iV) {
+			int red, green;
+			if (iV > LIPO_DISPLAY_RED_LIMIT_V) {
+				green =
+				255 * (iV -
+					LIPO_DISPLAY_RED_LIMIT_V) /
+				(LIPO_DISPLAY_UPPER_LIMIT_V -
+					LIPO_DISPLAY_RED_LIMIT_V);
+			} else
+			green = 0;
+
+			if (iV < LIPO_DISPLAY_ORANGE_LIMIT_V) {
+				red =
+				255 * (LIPO_DISPLAY_ORANGE_LIMIT_V -
+					iV) / (LIPO_DISPLAY_ORANGE_LIMIT_V -
+					LIPO_DISPLAY_LOWER_LIMIT_V);
 				} else
-					green = 0;
-
-				if (iV < LIPO_DISPLAY_ORANGE_LIMIT_V) {
-					red =
-						255 * (LIPO_DISPLAY_ORANGE_LIMIT_V -
-							   iV) / (LIPO_DISPLAY_ORANGE_LIMIT_V -
-									  LIPO_DISPLAY_LOWER_LIMIT_V);
-				} else
-					red = 0;
+				red = 0;
 				msLEDs.setLED(15 - i, red, green, 0, gs);
 
 				//msLEDs.setLED(i, 0, iV > LIPO_DISPLAY_RED_LIMIT_V  ? 150 : 0, iV < LIPO_DISPLAY_ORANGE_LIMIT_V ? 150 : 0, gs);
@@ -971,44 +910,44 @@ class MagicShifterSystem {
 	}
 
 // NOTE: this is being left in for future testing of SPIFFS .. 
-  void TEST_SPIFFS_bug()
-  {
+	void TEST_SPIFFS_bug()
+	{
 
-    const char* debugPath = "XXXXX";
-    uint8_t testVals[] = {1,23, 3, 7};
-    uint8_t readBuffer[] = {0,0,0,0};
+		const char* debugPath = "XXXXX";
+		uint8_t testVals[] = {1,23, 3, 7};
+		uint8_t readBuffer[] = {0,0,0,0};
     //File file = SPIFFS.open((char *)debugPath.c_str(), "w");
-    
-    slogln("openin for w: ");
-    slogln(String(debugPath));
-    
-    File file = SPIFFS.open(debugPath, "w");
 
-    slogln("opended for w: ");
-    slogln(String((bool)file));
+		slogln("openin for w: ");
+		slogln(String(debugPath));
 
-    slogln("writin: ");
-    slogln(String(testVals[1]));
+		File file = SPIFFS.open(debugPath, "w");
 
-    file.write((uint8_t *)testVals, sizeof testVals);
-    file.close();
+		slogln("opended for w: ");
+		slogln(String((bool)file));
 
-    slogln("openin for r: ");
-    slogln(String(debugPath));
-    
-    File fileR = SPIFFS.open(debugPath, "r");
+		slogln("writin: ");
+		slogln(String(testVals[1]));
 
-    slogln("opended for r: ");
-    slogln(String((bool)fileR));
+		file.write((uint8_t *)testVals, sizeof testVals);
+		file.close();
 
-    slogln("readin: ");
+		slogln("openin for r: ");
+		slogln(String(debugPath));
 
-    fileR.read((uint8_t *)readBuffer, sizeof readBuffer);
-    fileR.close();
+		File fileR = SPIFFS.open(debugPath, "r");
 
-    slogln("readback: ");
-    slogln(String(readBuffer[1]));
-  };
+		slogln("opended for r: ");
+		slogln(String((bool)fileR));
+
+		slogln("readin: ");
+
+		fileR.read((uint8_t *)readBuffer, sizeof readBuffer);
+		fileR.close();
+
+		slogln("readback: ");
+		slogln(String(readBuffer[1]));
+	};
 
 
 	// gets the basic stuff set up
@@ -1020,12 +959,13 @@ class MagicShifterSystem {
 
 		EEPROM.begin(512);
 
-// #ifdef CONFIG_ENABLE_MIDI
-// #warning "MIDI has been enabled - Serial I/O at 31250 - serial logging disabled (use wlan)"
-		// Serial.begin(31250);
-// #else
+#ifdef CONFIG_ENABLE_MIDI_SERIAL
+#warning "SERIAL MIDI has been enabled - Serial I/O at 31250 - serial logging disabled (use wlan)"
+		Serial.begin(31250);
+#else
+#warning "SERIAL MIDI is disabled - syslog will use serial logging"
 		Serial.begin(921600);
-// #endif
+#endif
 
 		slogln(String("\r\nMagicShifter 3000 OS V" + String(MS3KOS_VERSION)));
 
@@ -1073,13 +1013,13 @@ class MagicShifterSystem {
 
 		// global font objects
 		MagicShifterImage::LoadBitmapBuffer("font4x5.magicFont",
-											&msGlobals.ggtBitmap4x5);
+			&msGlobals.ggtBitmap4x5);
 		MagicShifterImage::LoadBitmapBuffer("font6x8.magicFont",
-											&msGlobals.ggtBitmap6x8);
+			&msGlobals.ggtBitmap6x8);
 		MagicShifterImage::LoadBitmapBuffer("font7x12.magicFont",
-											&msGlobals.ggtBitmap7x12);
+			&msGlobals.ggtBitmap7x12);
 		MagicShifterImage::LoadBitmapBuffer("font10x16.magicFont",
-											&msGlobals.ggtBitmap10x16);
+			&msGlobals.ggtBitmap10x16);
 
 
 
@@ -1181,7 +1121,7 @@ class MagicShifterSystem {
 			}
 		}
 
-#ifndef CONFIG_ENABLE_MIDI
+#ifndef CONFIG_ENABLE_MIDI_SERIAL
 		// poll the serial interface for test/flash commands, etc.
 		CommandInterfacePoll();
 #endif
@@ -1221,10 +1161,10 @@ class MagicShifterSystem {
 		slog("/");
 
 		for (int x = 0; x < len; x++) {
-			if (x % 4 == 0)
+			if (x % 8 == 0)
 				slogln("");
 			// slog(":");
-			Serial.print(buf[x], HEX);;
+			Serial.print(buf[x], HEX); Serial.print (" ");
 		}
 		slogln("<<EOF");
 	}

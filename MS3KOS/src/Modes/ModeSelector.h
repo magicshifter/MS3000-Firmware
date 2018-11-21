@@ -11,20 +11,20 @@ class ModeSelectorMode:public MagicShifterBaseMode {
 	MagicPOVMode lPOVMode;
 	MagicShifterImageText msMagicShakeText;
 	
-	int _currentMode = 0;
+	uint32_t _currentMode = 0;
 
   public:
 
 	void setText(const char *label) {
-		MSColor aRED = { 0xff, 0x00, 0x00 };
-		MSColor aWhile = { 0xFF, 0xFF, 0xFF };
+		// MSColor aRED = { 0xff, 0x00, 0x00 };
+		MSColor aWhite = { 0xFF, 0xFF, 0xFF };
 		Coordinate_s tPos;
 
 		msMagicShakeText.resetTexts();
 
 		tPos.x = 0;
 		tPos.y = 0;
-		msGlobals.ggtBitmap6x8.color = aWhile;
+		msGlobals.ggtBitmap6x8.color = aWhite;
 		msMagicShakeText.plotTextString((char *) label,
 										msGlobals.ggtBitmap6x8, tPos);
 		lPOVMode.setImage(&msMagicShakeText);
@@ -35,12 +35,15 @@ class ModeSelectorMode:public MagicShifterBaseMode {
 
 	}
 
-// stop the mode
+	// stop the mode
 	virtual void stop(void) {
 		lPOVMode.setImage(NULL);
 	}
 
-	void setIndex(int idx) {
+	void setIndex(uint32_t idx) {
+
+		msSystem.slogln(" idx: " + String(idx));
+
 		if (idx < 0) {
 			idx = msGlobals.ggModeList.size() - 1;
 		}
