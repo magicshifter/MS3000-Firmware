@@ -46,9 +46,9 @@ viaserial:
 monitor:
 	pio serialports monitor -b 921600 --dtr 0 --rts 0 -p ${MS3000_PORT}
 
-ota: ./firmware_j.bin
+ota: .pioenvs/ms3000/firmware.bin
 	@echo "ota:"
-	python ${ESPOTA} -i proto-jv.local -p 8266 -f ./firmware_j.bin -d -r
+	python ${ESPOTA} -i proto-jv.local -p 8266 -f .pioenvs/ms3000/firmware.bin -d -r
 
 reset-device:
 	-@echo "^T^R" | pio serialports monitor --quiet -b 921600 --dtr 0 --rts 1 -p ${MS3000_PORT} 
