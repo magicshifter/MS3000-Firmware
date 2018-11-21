@@ -1,0 +1,4 @@
+python espota.py -i <ESP IP address> -p <OTA port default 8266> -f "<.bin file path>" -d -r
+
+
+python espota.py -i 10.19.30.40 -p 8266 -f "C:\User\DK~1\AppData\Local\Temp\buildf884882b149ea.tmp\mywebserver.ino.ino.bin" -d -r

@@ -55,7 +55,7 @@
 
 // v1 == breadboard pcb
 // 2 == 0.9 pcb :)
-#define MS3KOS_VERSION "1.3.0"
+#define MS3KOS_VERSION "1.3.1"
 
 #define MIN_TIME_CLICK 10000
 #define MIN_TIME_LONG_CLICK 1000 * 750
@@ -119,6 +119,7 @@
 #define MAX_LEDS 64
 #endif
 
+#define MAX_LEDS 60
 // #define MMA8452_ADDRESS 0x1C
 // #define MMA8452_ID 0x2A
 

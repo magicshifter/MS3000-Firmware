@@ -18,7 +18,7 @@ class MagicLightMode : public MagicShifterBaseMode {
 	uint8_t lookup[6][3] = { {0, 1, 2}, {1, 0, 2}, {2, 0, 1}, {0, 2, 1}, {1, 2, 0}, {2, 1, 0} };
 	uint8_t lookupindex = 0;
 	bool firstRun = false;
-	int centerAction = 0;
+	int centerMode = 0;
 
 	MS3KG_App_Light &_light = msGlobals.pbuf.apps.light;
 
@@ -26,25 +26,29 @@ public:
 
 	MagicLightMode() { 
 		_light.colorIndex = 6;
+		_light.triggerSpeed = 0; // milliseconds
 
 	 	modeName = "Light";
 	}
 
 	// depending on button-presses, let the user select
 	// sub-mode options
-    bool magicsubModeSelector() {
+    bool lightSubModeSelector() {
 
 		int old_light_mode = _light.mode;
 		int new_light_mode = old_light_mode;
+		int trigger_time = _light.triggerSpeed;
 
 		if (firstRun)
 			firstRun = false;
 		else
 			msSystem.step();
 
-		if (msSystem.msButtons.msBtnPwrHit) {
-			centerAction++;
+		if ((msSystem.msButtons.msBtnPwrHit)  ) {
+			centerMode++;
 			msSystem.msButtons.msBtnPwrHit = false;
+		} else {
+			trigger_time++;
 		}
 
 		if (msSystem.msButtons.msBtnAHit) {
@@ -74,6 +78,13 @@ public:
 
 			msSystem.slog("_light.mode: ");
 			msSystem.slogln(String(_light.mode));
+
+			msSystem.slog("_light.triggerSpeed: ");
+			msSystem.slogln(String(_light.triggerSpeed));
+
+			msSystem.slog("_light.trigger_time: ");
+			msSystem.slogln(String(trigger_time));
+
 			msSystem.msLEDs.fillLEDs(255, 255, 255, msGlobals.ggBrightness);
 			msSystem.msLEDs.updateLEDs();
 			delay(10);
@@ -95,7 +106,7 @@ public:
 		frame++;
 		firstRun = true;
 
-		magicsubModeSelector();
+		lightSubModeSelector();
 
 		// rainbow
 		if (_light.mode == MS3KG_App_Light_Mode_RAINBOW) {
@@ -113,8 +124,8 @@ public:
 				msSystem.msLEDs.updateLEDs();
 			}
 
-			if (centerAction > 0) {
-				centerAction--;
+			if (centerMode > 0) {
+				centerMode--;
 				pDelay += 1 + pDelay / 2;
 				/*if (pDelay > 250 && pDelay < 500) {
 					pDelay = 1000;
@@ -138,14 +149,27 @@ public:
 			msSystem.msLEDs.fillLEDs(r, g, b, msGlobals.ggBrightness);
 			msSystem.msLEDs.updateLEDs();
 
-			if (centerAction > 0) {
-				centerAction--;
+			if (centerMode > 0) {
+				centerMode--;
 				_light.colorIndex = (_light.colorIndex + 1) % 7;
 			}
 		}
 
+		if (_light.mode == MS3KG_App_Light_Mode_SCANNER_BW) {
+
+			if (centerMode) {
+				centerMode = 0;
+			} else {
+				centerMode = 1;
+			}
+
+			msSystem.slog("centerMode: ");
+			msSystem.slogln(String(centerMode));
+
+		}
+
 		// scanner 
-		if (_light.mode >= MS3KG_App_Light_Mode_SCANNER_RGB) {
+		if (_light.mode == MS3KG_App_Light_Mode_SCANNER_RGB) {
 			int start, end;
 			if (dir)
 			{
@@ -158,16 +182,16 @@ public:
 				end = 0;
 			}
 
-			if (centerAction > 0) {
-				centerAction--;
+			if (centerMode > 0) {
+				centerMode--;
 	
-				if (_light.mode == 2)
+				if (_light.mode == MS3KG_App_Light_Mode_SCANNER_RGB)
 				{
 					for (int index = 0; index < 3; index++) {
 						startToEndChannel(start, end, d, lookup[lookupindex][index], 255);
 					}
 				}
-				else if (_light.mode == 3)
+				else if (_light.mode == MS3KG_App_Light_Mode_SCANNER_BW)
 				{
 					startToEndZigZag(start, end, 1, 255, 255, 255);
 				}
@@ -180,6 +204,13 @@ public:
 				msSystem.msLEDs.setLED(start, 255, 255, 255, msGlobals.ggBrightness);
 				msSystem.msLEDs.updateLEDs();
 			}
+
+			if (centerMode) {
+				centerMode = 0;
+			} else {
+				centerMode = 1;
+			}
+
 		}
 
 		return true;
@@ -196,7 +227,7 @@ public:
 
 		i = start;
 		do {
-			if (magicsubModeSelector()) {
+			if (lightSubModeSelector()) {
 				return;
 			}
 
@@ -231,7 +262,7 @@ public:
 		{
 			i = currentStart;
 			do {
-				if (magicsubModeSelector()) {
+				if (lightSubModeSelector()) {
 					return;
 				}
 

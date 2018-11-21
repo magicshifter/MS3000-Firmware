@@ -62,7 +62,7 @@ class POVShakeSync {
 	} ShakePoint;
 
 	const float hysteresis = 0.4;
-	const float sensitivity = 2.5;
+	const float sensitivity = 5.0;
 
 	// last time it took to go from acceleration minimum to maximum/ from max to min
 	int min2maxDelta, max2minDelta;

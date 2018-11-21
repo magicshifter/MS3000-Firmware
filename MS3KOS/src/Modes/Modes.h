@@ -30,6 +30,7 @@ MIDISequence8Mode msMIDISequencer;
 #include "MagicRemote.h"
 #include "MagicBeat.h"
 #include "MagicCountdown.h"
+#include "MagicUpdate.h"
 
 #include "PowerEmergency.h"
 
@@ -43,6 +44,7 @@ MagicMagnetMode msMagicMagnet;
 MagicLightMode msMagicLight;
 MagicRemoteMode msMagicRemote;
 MagicBeatMode msMagicBeat;
+MagicUpdateMode msMagicUpdate;
 
 MagicCountdownMode msMagicCountdown;
 int MagicCountdownMode::countdownTicks = 0;

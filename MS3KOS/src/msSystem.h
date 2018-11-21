@@ -18,6 +18,8 @@
 // #include <WiFi.h>
 // #include <WiFiUdp.h>
 
+#include <ArduinoOTA.h>
+
 #include "Hardware/EEPROMString.h"
 #include "Hardware/LEDHardware.h"
 #include "Hardware/Sensor.h"

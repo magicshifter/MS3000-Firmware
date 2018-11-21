@@ -122,14 +122,14 @@ void setup()
 	msGlobals.ggModeList.push_back(&msMagicCountdown);
 
 	WiFi.hostname(msSystem.Settings.getAPNameOrUnique().c_str());
+	ArduinoOTA.setHostname(msSystem.Settings.getAPNameOrUnique().c_str());
+
 	msSystem.slogln("wifi: hostname is:" + WiFi.hostname());
+	msSystem.slogln("wifi: OTA hostname is:" + ArduinoOTA.getHostname());
 
 	// if MIDI has been configured, enable the additional MIDI mode(s)
 #ifdef CONFIG_ENABLE_MIDI
 	
-	// !J! for debugging, MIDI goes first
-	msGlobals.ggCurrentMode = 8; // 7 = arpi, 8 = sequi
-
 	msGlobals.ggModeList.push_back(&msMIDIArpeggiator);
 	msGlobals.ggModeList.push_back(&msMIDISequencer);
 
@@ -138,7 +138,7 @@ void setup()
 
 	SERIAL_MIDI_init();
 	
-	msGlobals.ggCurrentMode = 8;
+	msGlobals.ggCurrentMode = 7;
 
 #endif
 
@@ -148,7 +148,10 @@ void setup()
 	msSystem.slog("MIDI(rtp) session started, identity: " + String(AppleMIDI.getSessionName()) );
 #endif
 
-#endif
+#endif // CONFIG_ENABLE_MIDI
+
+	// OTA updater
+	msGlobals.ggModeList.push_back(&msMagicUpdate);
 
 	// Show the battery power level on startup
 	msSystem.showBatteryStatus(true);

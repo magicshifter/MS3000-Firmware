@@ -35,7 +35,7 @@ class ModeSelectorMode:public MagicShifterBaseMode {
 
 	}
 
-// stop the mode
+	// stop the mode
 	virtual void stop(void) {
 		lPOVMode.setImage(NULL);
 	}
