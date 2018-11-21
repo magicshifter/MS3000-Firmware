@@ -31,7 +31,7 @@ proto:  ../../MS3000.proto
 	#$(PROTOC) $(PROTOC_OPTS) --nanopb_out=src/ --proto_path ../../ ../../MS3000.proto  -o../../MS3000.pb 
 	cp ../../MS3000.pb.? src/
 
-setup:
+build:
 	platformio run
 
 run:
@@ -45,6 +45,10 @@ viaserial:
 
 monitor:
 	pio serialports monitor -b 921600 --dtr 0 --rts 0 -p ${MS3000_PORT}
+
+ota.mode:
+	@echo "set ota mode"
+	curl http://proto-jv.local/mode?m=7
 
 ota: .pioenvs/ms3000/firmware.bin
 	@echo "ota:"

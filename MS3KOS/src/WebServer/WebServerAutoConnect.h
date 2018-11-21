@@ -116,7 +116,6 @@ bool TryConnect(struct APAuth &apInfo, uint32_t timeoutMs)
 	bool connected = false;
 	String failReason;
 
-
 	while (WiFi.status() != WL_CONNECTED) {
 		for (int i = 0; i < MAX_LEDS; i++) {
 			if (i < frame % MAX_LEDS)

@@ -34,10 +34,10 @@ public:
 		});
 
 		ArduinoOTA.onProgress([](int total, int size) {
-			msSystem.slog(" update: .. ");
-			// !J! TODO: render progress
-			msSystem.msLEDs.fillLEDs(64, 0, 64, msGlobals.ggBrightness);
-			msSystem.msLEDs.setLED(( total / size ) & 0xf, 64, 64, 0, msGlobals.ggBrightness);
+
+			int percent = total / size;
+
+			msSystem.msLEDs.fillLEDs(0, 64, 0, msGlobals.ggBrightness);
 			msSystem.msLEDs.updateLEDs();
 		});
 
