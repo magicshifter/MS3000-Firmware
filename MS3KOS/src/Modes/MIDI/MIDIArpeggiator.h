@@ -32,14 +32,6 @@
 
 #define MIDI_ARP_FEEDBACK 1
 
-// Current View per MIDI input
-typedef struct {
-	uint8_t midi_channel;		// MIDI channel of View
-	uint16_t time_base;			// Base Time for sequencer-Put
-	void *v_arg;				// user data
-} MIDIViewT;
-
-
 // A Basic Arpeggiator class for use by the MIDI Module:
 // inspired by RobG @ 43oh
 class MIDIArpeggiator {
