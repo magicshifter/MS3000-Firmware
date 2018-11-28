@@ -13,6 +13,8 @@ APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_De
 
 #warning "RTP MIDI Enabled."
 
+extern MagicShifterSystem msSystem;
+
 // Debug RTP MIDI event handlers:
 // -----------------------------------------------------------------------------
 void _RTP_MIDI_Connected(uint32_t ssrc, char* name) {
