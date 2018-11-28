@@ -61,8 +61,10 @@ class POVShakeSync {
 		int micros;				// absolute
 	} ShakePoint;
 
-	const float hysteresis = 0.4;
-	const float sensitivity = 5.0;
+	const float hysteresis = 0;//0.4;
+
+	// sensitivity is the min distance between min and max to start poving
+	const float sensitivity = 5.;
 
 	// last time it took to go from acceleration minimum to maximum/ from max to min
 	int min2maxDelta, max2minDelta;
@@ -94,7 +96,7 @@ class POVShakeSync {
 	bool isFrameIndexActive = false;
 
   public:
-	// sensitivity is the min distance between min and max to start poving
+
 	 POVShakeSync(void) {
 	} void setFrames(int w) {
 		frames = w;
