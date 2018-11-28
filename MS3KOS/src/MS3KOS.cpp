@@ -42,21 +42,6 @@ extern "C" {
 #include "msGlobals.h"
 MagicShifterGlobals msGlobals;
 
-#ifdef CONFIG_ENABLE_MIDI
-#include "Modes/MIDI/midi_defs.h"
-
-#ifdef CONFIG_ENABLE_MIDI_SERIAL
-#define MIBY_USER_CONFIG "serial_miby_config.h"
-#include "miby.h"
-#include "serialMIDI.h"
-#endif
-
-#ifdef CONFIG_ENABLE_MIDI_RTP
-#include "rtpMIDI.h"
-#endif
-
-#endif
-
 // the system UI module
 #include "msSystem.h"
 MagicShifterSystem msSystem;

@@ -1,3 +1,18 @@
+/*
+ * MagicShifter3000 OS, ShakeSync Core Class	
+ * Copyright (c) by Wizards at Work GmbH 2016-2018
+ *
+ * Authors: wizard23(pt), seclorum(jv), jaeh(je)
+ * TODOs: 
+ *          All code is conflated by headers (.h):w
+ *          Code prefix- is ms*, as in msConfig, msSystem, etc.
+ *
+ * The purpose of this code is to provide the MS3000 user with 
+ * a unique and engaging user interface, with the available LED's 
+ * and button configurations, as well as additional Web-based UI
+ * for configuration and interaction.
+ */
+
 //
 // provide a general-purpose framework for modules to submit a "shake image"
 // .. POV/Magic Images, etc. through a common interface and share-able 
@@ -9,40 +24,26 @@
 
 #define PREDICT_SAME_DIRECTION true
 
+// TODO: fix header mess
 // #include "msGlobals.h"
 
+/* 
+POVShakeSyncDummyMode provides a dummy implementation if u have to satisfy the ShakeSyncInterface
+For example if you want to refactor something
+
+It allways returns -1 (meaning of -1: out of range frame slice)
+and shaking active (maybe we should make this optionable...;)
+*/ 
 class POVShakeSyncDummyMode {
-	int frames = 16;
-	int frameIndex = 0;
-	int dir = 1;
-	bool isActive = false;		// is shaking happening at all?
-	// are we in a shaking position that has a frame to display? Is frameIndex valid?
-	bool isFrameIndexActive = false;
-
-	int cooldown = 0;
-
   public:
-	// sensitivity is the min distance between min and max to start poving
-	 POVShakeSyncDummyMode(void) {
-	} void setFrames(int w) {
-		frames = w;
+	POVShakeSyncDummyMode(void) {
+	} 
+
+	void setFrames(int w) {
 	}
 
-	const int COOLTIME = 10;
-
 	int getFrameIndex() {
-		if (cooldown == 0) {
-			frameIndex = frameIndex + dir;
-			if (frameIndex < 0 || frameIndex >= frames) {
-				dir = -dir;
-				cooldown = COOLTIME;
-				return -1;
-			}
-			return frameIndex;
-		} else {
-			cooldown--;
-			return -1;
-		}
+		return -1;
 	}
 
 	// returns true if POV shake is actve
@@ -52,10 +53,7 @@ class POVShakeSyncDummyMode {
 };
 
 
-
-
 class POVShakeSync {
-
 	typedef struct struct_ShakePoint {
 		float g;
 		int micros;				// absolute
