@@ -36,7 +36,7 @@ class MagicConwayMode : public MagicShifterBaseMode {
 
 private:
 	// MagicPOVMode lPOVMode;
-	MagicConwayImage msImage;
+	MagicConwayImage * msImage = NULL;
 	POVShakeSync shakeSync;
 
 	int frameMultiplier = DEFAULT_FRAME_MULTIPLIER;
@@ -44,6 +44,19 @@ private:
 	int universe[MagicConwayImage::width][MagicConwayImage::height];
 
 	bool correctBrightness = false;
+
+	void setImage(MagicConwayImage * lImage) {
+		// if (msImage != NULL) 
+		//   msImage->close();
+
+		msImage = lImage;
+
+		if (lImage != NULL) {
+			shakeSync.setFrames(msImage->getWidth() * frameMultiplier);
+		} else
+			 shakeSync.setFrames(0);
+	}
+
 
 	void setFrameMultiplier(int newMult)
 	{
@@ -59,8 +72,8 @@ private:
 		// todo: fill in lPovMode buffer
 		// todo: lPOVMode.loadBuffer();
 
-		for (int x = 0; x < msImage.width; x++) {
-			for (int y = 0; y < msImage.height; y++) 
+		for (int x = 0; x < msImage->width; x++) {
+			for (int y = 0; y < msImage->height; y++) 
 				printf(universe[y][x] ? "1" : "0");
 			printf("\n");
 		}
@@ -70,14 +83,14 @@ private:
 
 	void evolve_universe()
 	{
-		unsigned new_universe[msImage.height][msImage.width];
+		unsigned new_universe[msImage->height][msImage->width];
 
-		for (int x = 0; x < msImage.width; x++) 
-			for (int y = 0; y < msImage.width; y++) {
+		for (int x = 0; x < msImage->width; x++) 
+			for (int y = 0; y < msImage->width; y++) {
 				int n = 0;
 				for (int y1 = y - 1; y1 <= y + 1; y1++)
 					for (int x1 = x - 1; x1 <= x + 1; x1++)
-						if (universe[(y1 + msImage.height) % msImage.width][(x1 + msImage.width) % msImage.width])
+						if (universe[(y1 + msImage->height) % msImage->width][(x1 + msImage->width) % msImage->width])
 							n++;
 
 						if (universe[y][x]) n--;
@@ -86,8 +99,8 @@ private:
 			}
 
 	
-		for (int x = 0; x < msImage.width; x++) 
-			for (int y = 0; y < msImage.height; y++) 
+		for (int x = 0; x < msImage->width; x++) 
+			for (int y = 0; y < msImage->height; y++) 
 				universe[y][x] = new_universe[y][x];
 	}
 
@@ -95,8 +108,8 @@ private:
 
 	void init_universe()
 	{
-		for (int x = 0; x < msImage.width; x++)
-		for (int y = 0; y < msImage.height; y++)
+		for (int x = 0; x < msImage->width; x++)
+		for (int y = 0; y < msImage->height; y++)
 			universe[y][x] = rand() < RAND_MAX / 10 ? 1 : 0;
 	}
 
