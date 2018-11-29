@@ -6,7 +6,6 @@
 
 // !J! 
 #define APPLEMIDI_DEBUG 1
-#include "msSystem.h"
 #include "AppleMidi.h"
 
 APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_Defs.h
