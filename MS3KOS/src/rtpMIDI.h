@@ -6,14 +6,13 @@
 
 // !J! 
 #define APPLEMIDI_DEBUG 1
+
 #include "msSystem.h"
 #include "AppleMidi.h"
 
 APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_Defs.h
 
 #warning "RTP MIDI Enabled."
-
-extern MagicShifterSystem msSystem;
 
 // Debug RTP MIDI event handlers:
 // -----------------------------------------------------------------------------
