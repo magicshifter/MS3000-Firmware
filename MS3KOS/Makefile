@@ -26,6 +26,7 @@ proto:  ../../MS3000.proto
 	@echo "NANOPB_DIR = $(NANOPB_DIR)"
 	@echo "CFLAGS = $(CFLAGS)"
 # protoc --proto_path=src --js_out=library=whizz/ponycopter,binary:build/gen src/foo.proto src/bar/baz.proto
+	@mkdir -p ./ms3000.proto.out
 	$(PROTOC) $(PROTOC_OPTS) --proto_path ../../ ../../MS3000.proto  -o ../../MS3000.pb --js_out=./ms3000.proto.out --nanopb_out=-v:.
 	python ../Tools/nanopb/generator/nanopb_generator.py ../../MS3000.pb
 	#$(PROTOC) $(PROTOC_OPTS) --nanopb_out=src/ --proto_path ../../ ../../MS3000.proto  -o../../MS3000.pb 
