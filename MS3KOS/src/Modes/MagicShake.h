@@ -200,7 +200,7 @@ public:
 			// float fY = msGlobals.ggAccel[YAXIS];
 			msModeBouncingBall.
 			applyForce((msGlobals.ggCurrentMicros -
-				msGlobals.ggLastMicros) / 1000.0, fX * 3);
+				msGlobals.ggLastMicros) / 1000.0, fX * 3, _shake.bounce);
 
 			msModeBouncingBall.simpleBouncingBall(_shake.colorIndex);
 

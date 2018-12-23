@@ -11,7 +11,7 @@
 // #define CONFIG_ENABLE_OSC
 
 #undef CONFIG_ENABLE_MIDI
-//#define CONFIG_ENABLE_MIDI
+// #define CONFIG_ENABLE_MIDI
 // serial i/o is unavailable if hardware MIDI is enabled
 
 #ifdef CONFIG_ENABLE_MIDI
@@ -120,7 +120,10 @@
 #define MAX_LEDS 64
 #endif
 
-#define MAX_LEDS 60
+#ifndef MAX_LEDS
+#warning "no MAX_LEDS?"
+#endif
+
 // #define MMA8452_ADDRESS 0x1C
 // #define MMA8452_ID 0x2A
 

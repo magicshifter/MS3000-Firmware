@@ -9,6 +9,8 @@
 #include "msSystem.h"
 #include "AppleMidi.h"
 
+extern MagicShifterSystem msSystem;
+
 APPLEMIDI_CREATE_INSTANCE(WiFiUDP, AppleMIDI); // see definition in AppleMidi_Defs.h
 
 #warning "RTP MIDI Enabled."
