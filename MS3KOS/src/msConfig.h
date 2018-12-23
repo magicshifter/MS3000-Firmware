@@ -114,10 +114,10 @@
 #endif
 
 // !J! this enables quick spool hacks
-//#define CONFIG_CUSTOM_MAX_LEDS
+// #define CONFIG_CUSTOM_MAX_LEDS
 #ifdef CONFIG_CUSTOM_MAX_LEDS
 #undef MAX_LEDS
-#define MAX_LEDS 64
+#define MAX_LEDS 60
 #endif
 
 #ifndef MAX_LEDS
