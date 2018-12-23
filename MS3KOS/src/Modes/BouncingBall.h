@@ -196,7 +196,7 @@ class BouncingBallMode {
 		msSystem.msLEDs.updateLEDs();
 	}
 
-	void applyForce(float sec, float g, int bounce) {
+	void applyForce(float sec, float g) {
 
 		// msSystem.slogln("bounce: " + String(bounce));
 		g = -g;
