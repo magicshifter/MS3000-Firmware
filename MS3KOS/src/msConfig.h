@@ -10,7 +10,8 @@
 // MIDI and OSC enabled?
 // #define CONFIG_ENABLE_OSC
 
-//#define CONFIG_ENABLE_MIDI
+#undef CONFIG_ENABLE_MIDI
+// #define CONFIG_ENABLE_MIDI
 // serial i/o is unavailable if hardware MIDI is enabled
 
 #ifdef CONFIG_ENABLE_MIDI
@@ -113,13 +114,16 @@
 #endif
 
 // !J! this enables quick spool hacks
-//#define CONFIG_CUSTOM_MAX_LEDS
+// #define CONFIG_CUSTOM_MAX_LEDS
 #ifdef CONFIG_CUSTOM_MAX_LEDS
 #undef MAX_LEDS
-#define MAX_LEDS 64
+#define MAX_LEDS 60
 #endif
 
-#define MAX_LEDS 60
+#ifndef MAX_LEDS
+#warning "no MAX_LEDS?"
+#endif
+
 // #define MMA8452_ADDRESS 0x1C
 // #define MMA8452_ID 0x2A
 
@@ -148,7 +152,6 @@
 // Global definitions and the master global struct for the system
 //
 
-#define COLUMNMULTIPLY 2
 
 #define FAULT_NO_ACCELEROMETER 0xf1
 #define FAULT_VERY_LOW_POWER 0xf2

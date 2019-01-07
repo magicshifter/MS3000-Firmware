@@ -42,21 +42,6 @@ extern "C" {
 #include "msGlobals.h"
 MagicShifterGlobals msGlobals;
 
-#ifdef CONFIG_ENABLE_MIDI
-#include "Modes/MIDI/midi_defs.h"
-
-#ifdef CONFIG_ENABLE_MIDI_SERIAL
-#define MIBY_USER_CONFIG "serial_miby_config.h"
-#include "miby.h"
-#include "serialMIDI.h"
-#endif
-
-#ifdef CONFIG_ENABLE_MIDI_RTP
-#include "rtpMIDI.h"
-#endif
-
-#endif
-
 // the system UI module
 #include "msSystem.h"
 MagicShifterSystem msSystem;
@@ -120,6 +105,7 @@ void setup()
 	msGlobals.ggModeList.push_back(&msMagicRemote);
 	msGlobals.ggModeList.push_back(&msMagicBeat);
 	msGlobals.ggModeList.push_back(&msMagicCountdown);
+	msGlobals.ggModeList.push_back(&msMagicConway);	
 
 	WiFi.hostname(msSystem.Settings.getAPNameOrUnique().c_str());
 	ArduinoOTA.setHostname(msSystem.Settings.getAPNameOrUnique().c_str());

@@ -105,6 +105,7 @@ public:
 	bool step() {
 		frame++;
 		firstRun = true;
+		int start, end;
 
 		lightSubModeSelector();
 
@@ -112,13 +113,13 @@ public:
 		if (_light.mode == MS3KG_App_Light_Mode_RAINBOW) {
 			if (frame % pDelay == 0) {
 				msSystem.msLEDs.fillLEDs(0, 0, 0, msGlobals.ggBrightness);
-				msSystem.msLEDs.setLED((xx + 0 * 3) & 0xF, 255, 0, 0, msGlobals.ggBrightness);
+				msSystem.msLEDs.setLED((xx + 0 * 3) & 0xf, 255, 0, 0, msGlobals.ggBrightness);
 
-				msSystem.msLEDs.setLED((xx + 1 * 3) & 0xF, 255, 255, 0, msGlobals.ggBrightness);
-				msSystem.msLEDs.setLED((xx + 2 * 3) & 0xF, 0, 255, 0, msGlobals.ggBrightness);
+				msSystem.msLEDs.setLED((xx + 1 * 3) & 0xf, 255, 255, 0, msGlobals.ggBrightness);
+				msSystem.msLEDs.setLED((xx + 2 * 3) & 0xf, 0, 255, 0, msGlobals.ggBrightness);
 
-				msSystem.msLEDs.setLED((xx + 3 * 3) & 0xF, 0, 255, 255, msGlobals.ggBrightness);
-				msSystem.msLEDs.setLED((xx + 4 * 3) & 0xF, 0, 0, 255, msGlobals.ggBrightness);
+				msSystem.msLEDs.setLED((xx + 3 * 3) & 0xf, 0, 255, 255, msGlobals.ggBrightness);
+				msSystem.msLEDs.setLED((xx + 4 * 3) & 0xf, 0, 0, 255, msGlobals.ggBrightness);
 
 				xx++;
 				msSystem.msLEDs.updateLEDs();
@@ -166,19 +167,31 @@ public:
 			msSystem.slog("centerMode: ");
 			msSystem.slogln(String(centerMode));
 
+			if (dir)
+			{
+				start = 0;
+				end = MAX_LEDS - 1;
+			}
+			else
+			{
+				start = MAX_LEDS - 1;
+				end = 0;
+			}
+			startToEndZigZag(start, end, 1, 255, 255, 255);
+			dir = (dir + 1) % 2;
+
 		}
 
 		// scanner 
 		if (_light.mode == MS3KG_App_Light_Mode_SCANNER_RGB) {
-			int start, end;
 			if (dir)
 			{
 				start = 0;
-				end = 15;
+				end = MAX_LEDS - 1;
 			}
 			else
 			{
-				start = 15;
+				start = MAX_LEDS - 1;
 				end = 0;
 			}
 

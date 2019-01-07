@@ -152,6 +152,7 @@ class BouncingBallMode {
 
 	// do a simple bouncing ball .. 
 	void simpleBouncingBall(int colorIndex) {
+
 		for (byte idx = 0; idx < MAX_LEDS; idx++) {
 			float scale = getLedBright(idx, MAX_LEDS);
 			scale *= 0.5;
@@ -175,16 +176,16 @@ class BouncingBallMode {
 
 			if (allowFlash) {
 				if (smoothLanding) {
-					msSystem.msLEDs.setLED(idx, 0, 0, 255 * scale,
+					msSystem.msLEDs.setLED(idx, 0, 255 * scale, 0,
 										   msGlobals.ggBrightness);
 				} else {
 
 					msSystem.msLEDs.setLED(idx, 
+// safety orange
+255 * scale, 121 * scale, 0,
 											// default bright white
 											// 255 * scale, 255 * scale, 255 * scale,
-											colors[0][0], colors[0][1], colors[0][2],
-
-
+											// colors[0][0], colors[0][1], colors[0][2],
 											msGlobals.ggBrightness);
 				}
 			} else {
@@ -196,6 +197,8 @@ class BouncingBallMode {
 	}
 
 	void applyForce(float sec, float g) {
+
+		// msSystem.slogln("bounce: " + String(bounce));
 		g = -g;
 
 		vel *= 0.9996;

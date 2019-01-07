@@ -9,7 +9,6 @@
 
 #include "serialMIDI.h"
 
-
 miby_t miby_serial;
 uint8_t midi_in_byte;
 
