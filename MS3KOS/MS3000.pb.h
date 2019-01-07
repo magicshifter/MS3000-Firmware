@@ -151,6 +151,8 @@ typedef struct _MS3KG_App_Shake {
     char image[32];
     bool has_colorIndex;
     int32_t colorIndex;
+    bool has_bounce;
+    int32_t bounce;
 /* @@protoc_insertion_point(struct:MS3KG_App_Shake) */
 } MS3KG_App_Shake;
 
@@ -270,7 +272,7 @@ extern const MS3KG_App_Arpi_Mode MS3KG_App_Arpi_mode_default;
 #define MS3KG_SysPref_init_default               {0}
 #define MS3KG_SysPref_AP_INFO_init_default       {{{NULL}, NULL}, {{NULL}, NULL}}
 #define MS3KG_App_init_default                   {false, _MS3KG_App_T_MIN, false, MS3KG_App_Shake_init_default, false, MS3KG_App_Light_init_default, false, MS3KG_App_Magnet_init_default, false, MS3KG_App_System_init_default, false, MS3KG_App_Remote_init_default, false, MS3KG_App_Beat_init_default, false, MS3KG_App_Countdown_init_default, false, MS3KG_App_Arpi_init_default, false, MS3KG_App_Sequi_init_default, false, MS3KG_App_Updater_init_default}
-#define MS3KG_App_Shake_init_default             {false, "", false, 0}
+#define MS3KG_App_Shake_init_default             {false, "", false, 0, false, 0}
 #define MS3KG_App_Light_init_default             {false, MS3KG_App_Light_Mode_RAINBOW, false, RGB_init_default, false, 0, false, 0}
 #define MS3KG_App_Magnet_init_default            {false, MS3KG_App_Magnet_Mode_BARS}
 #define MS3KG_App_System_init_default            {false, MS3KG_App_System_Mode_VERSION}
@@ -289,7 +291,7 @@ extern const MS3KG_App_Arpi_Mode MS3KG_App_Arpi_mode_default;
 #define MS3KG_SysPref_init_zero                  {0}
 #define MS3KG_SysPref_AP_INFO_init_zero          {{{NULL}, NULL}, {{NULL}, NULL}}
 #define MS3KG_App_init_zero                      {false, _MS3KG_App_T_MIN, false, MS3KG_App_Shake_init_zero, false, MS3KG_App_Light_init_zero, false, MS3KG_App_Magnet_init_zero, false, MS3KG_App_System_init_zero, false, MS3KG_App_Remote_init_zero, false, MS3KG_App_Beat_init_zero, false, MS3KG_App_Countdown_init_zero, false, MS3KG_App_Arpi_init_zero, false, MS3KG_App_Sequi_init_zero, false, MS3KG_App_Updater_init_zero}
-#define MS3KG_App_Shake_init_zero                {false, "", false, 0}
+#define MS3KG_App_Shake_init_zero                {false, "", false, 0, false, 0}
 #define MS3KG_App_Light_init_zero                {false, _MS3KG_App_Light_Mode_MIN, false, RGB_init_zero, false, 0, false, 0}
 #define MS3KG_App_Magnet_init_zero               {false, _MS3KG_App_Magnet_Mode_MIN}
 #define MS3KG_App_System_init_zero               {false, _MS3KG_App_System_Mode_MIN}
@@ -310,6 +312,7 @@ extern const MS3KG_App_Arpi_Mode MS3KG_App_Arpi_mode_default;
 #define MS3KG_App_Magnet_mode_tag                1
 #define MS3KG_App_Shake_image_tag                1
 #define MS3KG_App_Shake_colorIndex_tag           2
+#define MS3KG_App_Shake_bounce_tag               3
 #define MS3KG_App_System_mode_tag                1
 #define MS3KG_App_Updater_shouldReset_tag        1
 #define RGB_R_tag                                1
@@ -350,7 +353,7 @@ extern const pb_field_t MS3KG_fields[2];
 extern const pb_field_t MS3KG_SysPref_fields[1];
 extern const pb_field_t MS3KG_SysPref_AP_INFO_fields[3];
 extern const pb_field_t MS3KG_App_fields[12];
-extern const pb_field_t MS3KG_App_Shake_fields[3];
+extern const pb_field_t MS3KG_App_Shake_fields[4];
 extern const pb_field_t MS3KG_App_Light_fields[5];
 extern const pb_field_t MS3KG_App_Magnet_fields[2];
 extern const pb_field_t MS3KG_App_System_fields[2];
@@ -367,11 +370,11 @@ extern const pb_field_t MS3KG_App_Updater_fields[2];
 #define MIDI_INTERVALS_size                      11
 #define MIDI_STEP_size                           37
 #define MIDI_SEQUENCE_size                       312
-#define MS3KG_size                               511
+#define MS3KG_size                               522
 #define MS3KG_SysPref_size                       0
 /* MS3KG_SysPref_AP_INFO_size depends on runtime parameters */
-#define MS3KG_App_size                           508
-#define MS3KG_App_Shake_size                     44
+#define MS3KG_App_size                           519
+#define MS3KG_App_Shake_size                     55
 #define MS3KG_App_Light_size                     59
 #define MS3KG_App_Magnet_size                    2
 #define MS3KG_App_System_size                    2

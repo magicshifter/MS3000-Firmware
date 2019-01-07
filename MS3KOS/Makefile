@@ -6,7 +6,7 @@ MS3000_PORT?=`pio serialports list --json-output | python -c 'exec("""\nimport j
 MS3000_PORT?=/dev/ttyUSB0
 MS3000_PORT=/dev/tty.SLAB_USBtoUART
 
-all:	clean proto 
+all:	clean proto build burn monitor
 
 CFLAGS += -I$(NANOPB_DIR) -DPB_FIELD_16BIT
 
@@ -26,22 +26,18 @@ proto:  ../../MS3000.proto
 	@echo "NANOPB_DIR = $(NANOPB_DIR)"
 	@echo "CFLAGS = $(CFLAGS)"
 # protoc --proto_path=src --js_out=library=whizz/ponycopter,binary:build/gen src/foo.proto src/bar/baz.proto
+	@mkdir -p ./ms3000.proto.out
 	$(PROTOC) $(PROTOC_OPTS) --proto_path ../../ ../../MS3000.proto  -o ../../MS3000.pb --js_out=./ms3000.proto.out --nanopb_out=-v:.
 	python ../Tools/nanopb/generator/nanopb_generator.py ../../MS3000.pb
 	#$(PROTOC) $(PROTOC_OPTS) --nanopb_out=src/ --proto_path ../../ ../../MS3000.proto  -o../../MS3000.pb 
 	cp ../../MS3000.pb.? src/
+	cp src/MS3000.pb.? .
 
 build:
-	platformio run
-
-run:
 	platformio run --upload-port ${MS3000_PORT}
 
-test:
+burn:
 	platformio run --target upload --upload-port ${MS3000_PORT}
-
-viaserial:
-	platformio run --target upload --upload-port ${MS3000_PORT} 
 
 monitor:
 	pio serialports monitor -b 921600 --dtr 0 --rts 0 -p ${MS3000_PORT}
@@ -60,6 +56,9 @@ reset-device:
 
 pio-deps-clean:
 	rm -rf .piolibdeps/
+
+test:    proto build burn monitor
+    
 
 clean:
 	# !J! Todo: BUILD_PRODUCT_DIR

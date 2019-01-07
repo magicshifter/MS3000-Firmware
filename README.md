@@ -1,6 +1,6 @@
 
 # MagicShifter3000 Base Firmware Project
-##Introduction
+## Introduction
 The MagicShifter3000 is a versatile development platform for your application ideas. 
 
 We provide the system with a basic firmware, from us to the user - but you are welcome to run your own firmware as well, and we support this effort.  It is possible to return the MagicShifter3000 to the original firmware, or run your own app forever - the choice is yours.
@@ -8,17 +8,17 @@ We provide the system with a basic firmware, from us to the user - but you are w
 The purpose of this document is to describe the basic requirements for developing
 your own firmware for the MagicShifter3000, and we hope you will find what you need.
 
-##Architecture
+## Architecture
 
 The MagicShifter3000 uses the ESP8266 CPU to drive the LED hardware, and provide Wifi and other services.  The ESP8266 is a very versatile processor.  
 
-##Toolchain
+## Toolchain
 
 It is possible to use the ESP8266 compiler, but we suggest [platformio.org](http://platformio.org/#!/get-started) for new and experienced developers alike.
 
 (You will also need Git for your computer, and a decent text editor of course.)
 
-##Current Versions
+## Current Versions
 
 As of the date of this document we use these operating systems to develop MagicShifter3000 Firmware packages:
 
@@ -34,9 +34,9 @@ As of the date of this document we use these operating systems to develop MagicS
 
 	React: 5.x
 
-##Getting Started Checklist
+## Getting Started Checklist
 
-##User Manual
+## User Manual
 
 [Don't forget to RTFM! Here is the User Manual: https://github.com/magicshifter/MS3000/wiki/UserManual](https://github.com/magicshifter/MS3000/wiki/UserManual)
 
@@ -54,7 +54,7 @@ As of the date of this document we use these operating systems to develop MagicS
 
 The Firmware consists of a base OS, (submodule: MagicShifter 3000-Firmware), which boots then uses and serves files from the MagicShifter 3000-Assets and MagicShifter 3000-WebInterface submodules.  The WebInterface as bundled is then served by an active MagicShifter 3000, and made available over the Wifi connection. This WebInterface then interacts dynamically with modules running on the MagicShifter 3000 as 'sub-applications' - the WebInterface module servces as the front-end to the onboard MagicShifter sub-module, according to the needs of the application.  For example, when the WebInterface for Pixel Editing is run by the user, it sends the results to the Shifter for use in the MagicShake/POV mode.  Other applications can use a similar model - for example a WebInterface for Arpeggiator editing can send .midi files to the MagicShifter 3000 for MIDI processing, etc.
 
-##Project Master and Sub-module Repositories
+## Project Master and Sub-module Repositories
 We have organized the project as a single, master Git repository, which references the other sub-modules to compile a completed firmware image.  This means that you can drive the process of building a complete firmware image from the 'top-most' repository: 
 
 	https://github.com/magicshifter/MS3000 - the preferred developer front door.
@@ -67,7 +67,7 @@ However, it is possible to focus only on the specific module you are interested 
 	MagicShifter 3000-WebInterface:	React-based project sources for the PixelEditor Web application, which is served on all new MagicShifter 3000's we ship.
 	MagicShifter 3000-Assets:			Static files used by the other sub-modules for functionality - i.e. fonts, admin.html etc.
 
-##General Developer Info:
+## General Developer Info:
 	USB		:	VID:PID of the MagicShifter3000 is:  10C4:EA60
 	Tools   :   Tools/MS3000_init.sh	- use this to automatically initialize an MagicShifter 3000 in stages: OS, filesystem, etc.
 	Tools   :   Tools/MS3000Tool.py		- use this to administer an MagicShifter 3000 - i.e. format, etc.   
@@ -84,7 +84,7 @@ However, it is possible to focus only on the specific module you are interested 
 
 We encourage you to use the MagicShifter 3000 for your needs - of course, please feel free to submit a Pull Request if you come up with something that you think should be in the official releases.
 
-##Flashing a Firmware release
+## Flashing a Firmware release
 	To flash the released .bin's from the MagicShifter team, you can use the esptool (see above) ..
 
 	Linux (Example): 
@@ -93,7 +93,7 @@ We encourage you to use the MagicShifter 3000 for your needs - of course, please
 	OSX (Example):
 	$ ./esptool.py --baud 921600 --port /dev/tty.SLAB_USBtoUART write_flash --flash_size 4m 0x0 MagicShifter 3000_Firmware_v0.9.0.bin
 
-##The MagicShifter3000 Filesystem
+## The MagicShifter3000 Filesystem
 
 We have some file types onboard the MagicShifter3000 which are useful to us:
 
@@ -107,7 +107,7 @@ Also, we store AP settings and user configuration information in these files:
 	settings/aplist1.bin
 	settings/preferredap.bin
 
-##magicshifter.local
+## magicshifter.local
 
 When you enable WiFi on the MagicShifter 3000, it advertises itself on the local network as the name "magicshifter.local".  You can often use this name to address your MagicShifter.  When you connect to the MagicShifter 3000 as a client on its hosted AP, your device will have an address in the 192.168.4.x range, and the MagicShifter 3000 will have the address 192.168.4.1.
 

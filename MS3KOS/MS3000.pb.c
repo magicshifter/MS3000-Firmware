@@ -81,9 +81,10 @@ const pb_field_t MS3KG_App_fields[12] = {
     PB_LAST_FIELD
 };
 
-const pb_field_t MS3KG_App_Shake_fields[3] = {
+const pb_field_t MS3KG_App_Shake_fields[4] = {
     PB_FIELD(  1, STRING  , OPTIONAL, STATIC  , FIRST, MS3KG_App_Shake, image, image, 0),
     PB_FIELD(  2, INT32   , OPTIONAL, STATIC  , OTHER, MS3KG_App_Shake, colorIndex, image, 0),
+    PB_FIELD(  3, INT32   , OPTIONAL, STATIC  , OTHER, MS3KG_App_Shake, bounce, colorIndex, 0),
     PB_LAST_FIELD
 };
 

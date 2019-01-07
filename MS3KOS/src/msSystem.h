@@ -36,6 +36,20 @@
 // of the main runloop
 #include "msButtonTimers.h"
 
+// MIDI
+#ifdef CONFIG_ENABLE_MIDI
+#include "Modes/MIDI/midi_defs.h"
+
+#ifdef CONFIG_ENABLE_MIDI_SERIAL
+#define MIBY_USER_CONFIG "serial_miby_config.h"
+#include "miby.h"
+#include "serialMIDI.h"
+#endif
+
+#ifdef CONFIG_ENABLE_MIDI_RTP
+#include "rtpMIDI.h"
+#endif
+
 // Current View per MIDI input
 typedef struct {
 	uint8_t midi_channel;		// MIDI channel of View
@@ -44,6 +58,7 @@ typedef struct {
 } MIDIViewT;
 
 MIDIViewT curr_midiview;
+#endif  // CONFIG_ENABLE_MIDI
 
 // forward-declared here because it is a client of msSystem ..
 void CommandInterfacePoll();
@@ -1173,7 +1188,5 @@ void showBatteryStatus(bool shouldFadeIn) {
 
 #include "CommandInterface.h"
 
-
-#else
-extern MagicShifterSystem msSystem;
 #endif
+
