@@ -77,7 +77,7 @@ struct APAuthHelper {
 };
 
 struct ServerConfig {
-	char hostname[48];
+	char hostname[MAX_AP_LEN];
 	int port;
 
   public:
@@ -99,7 +99,7 @@ struct APConfig {
 };
 
 struct UIConfig {
-	int initialMode;
+	uint currentMode;
 	unsigned long timeoutHighPower;
 	unsigned long timeoutLowPower;
 	int defaultBrightness;

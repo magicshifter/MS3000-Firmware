@@ -32,6 +32,8 @@ class MagicShifterBaseMode {
 
 	// MIDI virtual methods
 
+
+#ifdef CONFIG_MIDI
 	virtual void MIDI_Reset() {};
 	virtual void MIDI_Start() {};
 	virtual void MIDI_Stop() {};
@@ -50,7 +52,8 @@ class MagicShifterBaseMode {
 	virtual void MIDI_SongSelect(byte songnumber) {};
 	virtual void MIDI_TuneRequest() {};
 	virtual void MIDI_Clock() {};
-
+#endif
+	
 	// !J! TODO: Other MIDI fn''s..
 
 };

@@ -100,9 +100,9 @@ class SystemTextMode:public MagicShifterBaseMode {
 		setText((char *) "SYSTEM", (char *) "VALUES", aBLUE);
 
 		for (int i=0;i<NUM_POWER_MODES;i++){
-			if (predefinedPowerModes[i].powertime <= msGlobals.ggUIConfig.timeoutLowPower)
+			if (predefinedPowerModes[i].powertime <= msGlobals.ui.timeoutLowPower)
 				ptLoMode = i;
-			if (predefinedPowerModes[i].powertime <= msGlobals.ggUIConfig.timeoutHighPower)
+			if (predefinedPowerModes[i].powertime <= msGlobals.ui.timeoutHighPower)
 				ptHiMode = i;
 		}
 
@@ -182,8 +182,8 @@ class SystemTextMode:public MagicShifterBaseMode {
 				if(ptLoMode >= NUM_POWER_MODES)
 					ptLoMode=0;
 
-				msGlobals.ggUIConfig.timeoutLowPower = predefinedPowerModes[ptLoMode].powertime;
-				msSystem.Settings.setUIConfig(&msGlobals.ggUIConfig);
+				msGlobals.ui.timeoutLowPower = predefinedPowerModes[ptLoMode].powertime;
+				msSystem.Settings.setUIConfig(&msGlobals.ui);
 			}
 			if (new_mode == MS3KG_App_System_Mode_POWER_HI) {
 				// power-timeout modes
@@ -191,8 +191,8 @@ class SystemTextMode:public MagicShifterBaseMode {
 				if(ptHiMode >= NUM_POWER_MODES)
 					ptHiMode=0;
 
-				msGlobals.ggUIConfig.timeoutHighPower = predefinedPowerModes[ptHiMode].powertime;
-				msSystem.Settings.setUIConfig(&msGlobals.ggUIConfig);
+				msGlobals.ui.timeoutHighPower = predefinedPowerModes[ptHiMode].powertime;
+				msSystem.Settings.setUIConfig(&msGlobals.ui);
 			}
 
 

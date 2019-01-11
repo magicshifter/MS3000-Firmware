@@ -31,7 +31,10 @@ class ModeSelectorMode:public MagicShifterBaseMode {
 	}
 
 	virtual void start() {
-		setIndex(msGlobals.ggCurrentMode);
+
+		_currentMode = msGlobals.ui.currentMode;
+
+		setCurrentMode(_currentMode);
 
 	}
 
@@ -40,16 +43,19 @@ class ModeSelectorMode:public MagicShifterBaseMode {
 		lPOVMode.setImage(NULL);
 	}
 
-	void setIndex(uint32_t idx) {
+	void setCurrentMode(uint32_t idx) {
 
-		msSystem.slogln(" idx: " + String(idx));
+		if (idx > msGlobals.ggModeList.size()) 
+				idx = msGlobals.ggModeList.size() - 1;
 
 		if (idx < 0) {
 			idx = msGlobals.ggModeList.size() - 1;
 		}
+
 		if (idx >= msGlobals.ggModeList.size()) {
 			idx = 0;
 		}
+		
 		_currentMode = idx;
 
 		setText(msGlobals.ggModeList[_currentMode]->modeName.c_str());
@@ -57,8 +63,8 @@ class ModeSelectorMode:public MagicShifterBaseMode {
 
 // step through a frame of the mode 
 	int select() {
-		int _index = _currentMode;
-		int _posIdx = _index;
+		uint _index = _currentMode;
+		uint _posIdx = _index;
 
 		// button handling
 		if (msSystem.msButtons.msBtnPwrHit) {
@@ -77,12 +83,14 @@ class ModeSelectorMode:public MagicShifterBaseMode {
 		// cycle through the texts ..
 		if (msSystem.msButtons.msBtnAHit) {
 			msSystem.msButtons.msBtnAHit = false;	// !J! todo: button callbacks
-			setIndex(_currentMode - 1);
+			_currentMode--;
+			setCurrentMode(_currentMode);
 		}
 		// cycle through the texts ..
 		if (msSystem.msButtons.msBtnBHit) {
 			msSystem.msButtons.msBtnBHit = false;	// !J! todo: button callbacks
-			setIndex(_currentMode + 1);
+			_currentMode++;
+			setCurrentMode(_currentMode);
 		}
 
 		if (lPOVMode.step()) {

@@ -548,9 +548,10 @@ public:
 
 		slogln("Reset info: " + String(ESP.getResetInfo()));
 
-		slogln("timeoutHighPower: " + String(msGlobals.ggUIConfig.timeoutHighPower));
-		slogln("timeoutLowPower: " + String(msGlobals.ggUIConfig.timeoutLowPower));
-		slogln("defaultBrightness: " + String(msGlobals.ggUIConfig.defaultBrightness));
+		slogln("currentMode: " + String(msGlobals.ui.currentMode));
+		slogln("timeoutHighPower: " + String(msGlobals.ui.timeoutHighPower));
+		slogln("timeoutLowPower: " + String(msGlobals.ui.timeoutLowPower));
+		slogln("defaultBrightness: " + String(msGlobals.ui.defaultBrightness));
 	};
 
 
@@ -605,20 +606,23 @@ public:
 		showBatteryStatus(false);
 		// works even with pulldown but output seems to make more sense
 		//pinMode(PIN_PWR_MGT, INPUT_PULLDOWN);
+
+		//save current mode
 		pinMode(PIN_PWR_MGT, OUTPUT);
 		digitalWrite(PIN_PWR_MGT, LOW);
 		// now sleep forever...
 		delay(1000);
 	}
-
-	// sets the current shifter Mode .. 
+						// sets the current shifter Mode .. 
 	void setMode(uint32_t newMode)
 	{
 		if (newMode < msGlobals.ggModeList.size() && 
-			(newMode != msGlobals.ggCurrentMode)) {
-			msGlobals.ggModeList[msGlobals.ggCurrentMode]->stop();
-			msGlobals.ggCurrentMode = newMode;
+			(newMode != msGlobals.ui.currentMode)) {
+			msGlobals.ggModeList[msGlobals.ui.currentMode]->stop();
+			msGlobals.ui.currentMode = newMode;
+			Settings.setUIConfig(&msGlobals.ui);
 			msGlobals.ggModeList[newMode]->start();
+
 		}
 	}
 
@@ -647,7 +651,7 @@ public:
 			delay(35);
 		}
 
-		msLEDs.setLED(msGlobals.ggCurrentMode, 128, 128, 128, msGlobals.ggBrightness);
+		msLEDs.setLED(msGlobals.ui.currentMode, 128, 128, 128, msGlobals.ggBrightness);
 		delay(35);
 		msLEDs.fastClear();
 
@@ -994,9 +998,9 @@ void showBatteryStatus(bool shouldFadeIn) {
 
 		// TEST_SPIFFS_bug();
 
-		Settings.getUIConfig(&msGlobals.ggUIConfig);
+		Settings.getUIConfig(&msGlobals.ui);
 
-		msGlobals.ggBrightness = msGlobals.ggUIConfig.defaultBrightness;
+		msGlobals.ggBrightness = msGlobals.ui.defaultBrightness;
 
 		msGlobals.batVoltCalibration = msSystem.loadCalibration();
 
@@ -1079,19 +1083,19 @@ void showBatteryStatus(bool shouldFadeIn) {
 			msPowerCountDown = msGlobals.ggCurrentMillis;
 		}
 
-		if (msGlobals.ggUIConfig.timeoutHighPower != 0) {
+		if (msGlobals.ui.timeoutHighPower != 0) {
 			// note! unsigned values!
-			if (msPowerCountDown + msGlobals.ggUIConfig.timeoutHighPower < msGlobals.ggCurrentMillis) {
+			if (msPowerCountDown + msGlobals.ui.timeoutHighPower < msGlobals.ggCurrentMillis) {
 				powerDown();
 			}
 		}
 
 		// 
 		if ((lowBatteryMillis != 0) && 
-			(msGlobals.ggUIConfig.timeoutLowPower != 0) && 
+			(msGlobals.ui.timeoutLowPower != 0) && 
 			(lowBatteryMillis + (10 * 1000) < msGlobals.ggCurrentMillis)) { // 10 seconds 
 			// note! unsigned values!
-			if (msPowerCountDown + msGlobals.ggUIConfig.timeoutLowPower < msGlobals.ggCurrentMillis) {
+			if (msPowerCountDown + msGlobals.ui.timeoutLowPower < msGlobals.ggCurrentMillis) {
 				powerDown();
 			}
 		}

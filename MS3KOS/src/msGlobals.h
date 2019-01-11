@@ -49,7 +49,7 @@ class MagicShifterGlobals {
 	struct APConfig ggAPConfig;
 	struct APAuthHelper  ggSoftAP;
 
-	UIConfig ggUIConfig;			// web-influenced config for GUI values
+	UIConfig ui;			// web-influenced config for GUI values
 
 	// set of modes
 	std::vector <MagicShifterBaseMode *> ggModeList;

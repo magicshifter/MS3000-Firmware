@@ -113,6 +113,9 @@ void setup()
 	msSystem.slogln("wifi: hostname is:" + WiFi.hostname());
 	msSystem.slogln("wifi: OTA hostname is:" + ArduinoOTA.getHostname());
 
+	// msGlobals.ui.currentMode = 3;
+
+
 	// if MIDI has been configured, enable the additional MIDI mode(s)
 #ifdef CONFIG_ENABLE_MIDI
 	
@@ -124,7 +127,7 @@ void setup()
 
 	SERIAL_MIDI_init();
 	
-	msGlobals.ggCurrentMode = 7;
+	msGlobals.ui.currentMode = 7;
 
 #endif
 
@@ -146,7 +149,7 @@ void setup()
 	msModeSelector.start();
 
 	// now prepare the first module for starting
-	msGlobals.ggModeList[msGlobals.ggCurrentMode]->start();
+	msGlobals.ggModeList[msGlobals.ui.currentMode]->start();
 }
 
 
@@ -184,7 +187,7 @@ void loop()
 		}
 	} else {
 		// despatch to current mode
-		msGlobals.ggModeList[msGlobals.ggCurrentMode]->step();
+		msGlobals.ggModeList[msGlobals.ui.currentMode]->step();
 	}
 
 	// fault-checks

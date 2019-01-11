@@ -63,26 +63,26 @@ void SERIAL_MIDI_loop()
 void SERIAL_MIDI_Start(miby_this_t a_miby)
 {
 	msSystem.slogln("serialMIDI: Start");
-	msGlobals.ggModeList[msGlobals.ggCurrentMode]->MIDI_Start();
+	msGlobals.ggModeList[msGlobals.ui.currentMode]->MIDI_Start();
 }
 
 void SERIAL_MIDI_Stop(miby_this_t a_miby)
 {
 	msSystem.slogln("serialMIDI: Stop");
-	msGlobals.ggModeList[msGlobals.ggCurrentMode]->MIDI_Stop();
+	msGlobals.ggModeList[msGlobals.ui.currentMode]->MIDI_Stop();
 }
 
 void SERIAL_MIDI_Program_Change(miby_this_t a_miby)
 {
 	msSystem.slogln("serialMIDI: ProgramChange");
-	msGlobals.ggModeList[msGlobals.ggCurrentMode]->MIDI_Program_Change(
+	msGlobals.ggModeList[msGlobals.ui.currentMode]->MIDI_Program_Change(
 							MIBY_CHAN(a_miby), MIBY_ARG0(a_miby));
 }
 
 void SERIAL_MIDI_Control_Change(miby_this_t a_miby)
 {
 	msSystem.slogln("serialMIDI: ControlChange");
-	msGlobals.ggModeList[msGlobals.ggCurrentMode]->MIDI_Control_Change(
+	msGlobals.ggModeList[msGlobals.ui.currentMode]->MIDI_Control_Change(
 		MIBY_CHAN(a_miby), 
 		MIBY_ARG0(a_miby),
 		MIBY_ARG1(a_miby));
@@ -91,7 +91,7 @@ void SERIAL_MIDI_Control_Change(miby_this_t a_miby)
 void SERIAL_MIDI_Note_On(miby_this_t a_miby)
 {
 	msSystem.slogln("serialMIDI: NoteOn");
-	msGlobals.ggModeList[msGlobals.ggCurrentMode]->MIDI_Note_On(
+	msGlobals.ggModeList[msGlobals.ui.currentMode]->MIDI_Note_On(
 		MIBY_CHAN(a_miby),
 		MIBY_ARG0(a_miby),
 		MIBY_ARG1(a_miby));
@@ -100,7 +100,7 @@ void SERIAL_MIDI_Note_On(miby_this_t a_miby)
 void SERIAL_MIDI_Note_Off(miby_this_t a_miby)
 {
 	msSystem.slogln("serialMIDI: NoteOff");
-	msGlobals.ggModeList[msGlobals.ggCurrentMode]->MIDI_Note_Off(
+	msGlobals.ggModeList[msGlobals.ui.currentMode]->MIDI_Note_Off(
 		MIBY_STATUSBYTE(a_miby),
 		MIBY_ARG0(a_miby),
 		MIBY_ARG1(a_miby));

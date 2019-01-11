@@ -138,6 +138,8 @@ public:
 		lPOVMode.setFrameMultiplier(6);
 		lPOVMode.start();
 		loadImageByIndex(0);
+		if (_shake.bounce == 0)
+			_shake.bounce = 14;
 	}
 
 	// stop the MagicShake mode
