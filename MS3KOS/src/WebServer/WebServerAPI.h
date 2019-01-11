@@ -459,7 +459,7 @@ void handleGETProtoBufferBase64(void)
 
 	msSystem.slogln("handleGETProtoBufferBase64");
 
-	msGlobals.pbuf.apps.current = (MS3KG_App_T)msGlobals.ggCurrentMode;
+	msGlobals.pbuf.apps.current = (MS3KG_App_T)msGlobals.ui.currentMode;
 
 
 	pb_ostream_t stream = pb_ostream_from_buffer(pbufOutput, sizeof(pbufOutput));
@@ -540,7 +540,7 @@ void handlePOSTpbufBase64(void)
 			printf("Decoding failed: %s\n", PB_GET_ERROR(&stream));
 		}
 
-		//msGlobals.ggCurrentMode = msGlobals.pbuf.apps.current;
+		//msGlobals.ui.currentMode = msGlobals.pbuf.apps.current;
 		msSystem.setMode(msGlobals.pbuf.apps.current);
 
         /* Print the data contained in the message. */
@@ -818,7 +818,7 @@ void handleSetMode(void)
 			String response = "{";
 			response += "\"mode\":";
 			response += "\"";
-			response += msGlobals.ggCurrentMode;
+			response += msGlobals.ui.currentMode;
 			response += "\"";
 			response += "}";
 			msSystem.msESPServer.send(200, "text/plain", response);
@@ -980,6 +980,10 @@ void handleSetUISettings(void)
       else if (strcmp(msSystem.msESPServer.argName(i).c_str(), "defaultBrightness") == 0)
       {
         config.defaultBrightness = atoi(msSystem.msESPServer.arg(i).c_str());
+      }
+      else if (strcmp(msSystem.msESPServer.argName(i).c_str(), "currentMode") == 0)
+      {
+        config.currentMode = atoi(msSystem.msESPServer.arg(i).c_str());
       }
       else
       {
