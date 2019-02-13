@@ -38,17 +38,17 @@ MIDISequence8Mode msMIDISequencer;
 #include "ModeSelector.h"
 
 PowerEmergencyMode msPowerEmergencyMode;
-ModeSelectorMode msModeSelector;
-MagicShakeMode msMagicShake;
 SystemTextMode msSysText;
+
+ModeSelectorMode msModeSelector;
+
+MagicShakeMode msMagicShake;
 MagicMagnetMode msMagicMagnet;
 MagicLightMode msMagicLight;
 MagicRemoteMode msMagicRemote;
 MagicBeatMode msMagicBeat;
 MagicUpdateMode msMagicUpdate;
-MagicConwayMode msMagicConway;
-
-MagicCountdownMode msMagicCountdown;
-int MagicCountdownMode::countdownTicks = 0;
+//MagicConwayMode msMagicConway;
+//MagicCountdownMode msMagicCountdown;
 
 #endif

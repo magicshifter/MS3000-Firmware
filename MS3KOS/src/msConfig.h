@@ -56,7 +56,7 @@
 
 // v1 == breadboard pcb
 // 2 == 0.9 pcb :)
-#define MS3KOS_VERSION "1.3.1"
+#define MS3KOS_VERSION "1.9.0"
 
 #define MIN_TIME_CLICK 10000
 #define MIN_TIME_LONG_CLICK 1000 * 750
@@ -116,8 +116,8 @@
 // !J! this enables quick spool hacks
 // #define CONFIG_CUSTOM_MAX_LEDS
 #ifdef CONFIG_CUSTOM_MAX_LEDS
-#undef MAX_LEDS
-#define MAX_LEDS 60
+#undef MAX_LED0
+#define MAX_LEDS 64
 #endif
 
 #ifndef MAX_LEDS

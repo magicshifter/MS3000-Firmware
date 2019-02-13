@@ -104,8 +104,8 @@ void setup()
 	msGlobals.ggModeList.push_back(&msSysText);
 	msGlobals.ggModeList.push_back(&msMagicRemote);
 	msGlobals.ggModeList.push_back(&msMagicBeat);
-	msGlobals.ggModeList.push_back(&msMagicCountdown);
-	msGlobals.ggModeList.push_back(&msMagicConway);	
+	// msGlobals.ggModeList.push_back(&msMagicCountdown);
+	// msGlobals.ggModeList.push_back(&msMagicConway);	
 
 	WiFi.hostname(msSystem.Settings.getAPNameOrUnique().c_str());
 	ArduinoOTA.setHostname(msSystem.Settings.getAPNameOrUnique().c_str());
@@ -127,7 +127,7 @@ void setup()
 
 	SERIAL_MIDI_init();
 	
-	msGlobals.ui.currentMode = 7;
+	msGlobals.ui.currentMode = 0;
 
 #endif
 
