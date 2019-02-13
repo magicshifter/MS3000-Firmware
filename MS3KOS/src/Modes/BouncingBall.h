@@ -181,8 +181,12 @@ class BouncingBallMode {
 				} else {
 
 					msSystem.msLEDs.setLED(idx, 
-// safety orange
-255 * scale, 121 * scale, 0,
+
+// safety orange (jv)
+// 255 * scale, 121 * scale, 0,
+
+// pink (1.9.0)
+127 * scale, 0, 255 * scale, 
 											// default bright white
 											// 255 * scale, 255 * scale, 255 * scale,
 											// colors[0][0], colors[0][1], colors[0][2],
