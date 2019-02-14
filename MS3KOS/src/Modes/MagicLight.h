@@ -113,13 +113,13 @@ public:
 		if (_light.mode == MS3KG_App_Light_Mode_RAINBOW) {
 			if (frame % pDelay == 0) {
 				msSystem.msLEDs.fillLEDs(0, 0, 0, msGlobals.ggBrightness);
-				msSystem.msLEDs.setLED((xx + 0 * 3) & 0xf, 255, 0, 0, msGlobals.ggBrightness);
+				msSystem.msLEDs.setLED((xx + 0 * 3) & MAX_LEDS, 255, 0, 0, msGlobals.ggBrightness);
 
-				msSystem.msLEDs.setLED((xx + 1 * 3) & 0xf, 255, 255, 0, msGlobals.ggBrightness);
-				msSystem.msLEDs.setLED((xx + 2 * 3) & 0xf, 0, 255, 0, msGlobals.ggBrightness);
+				msSystem.msLEDs.setLED((xx + 1 * 3) & MAX_LEDS, 255, 255, 0, msGlobals.ggBrightness);
+				msSystem.msLEDs.setLED((xx + 2 * 3) & MAX_LEDS, 0, 255, 0, msGlobals.ggBrightness);
 
-				msSystem.msLEDs.setLED((xx + 3 * 3) & 0xf, 0, 255, 255, msGlobals.ggBrightness);
-				msSystem.msLEDs.setLED((xx + 4 * 3) & 0xf, 0, 0, 255, msGlobals.ggBrightness);
+				msSystem.msLEDs.setLED((xx + 3 * 3) & MAX_LEDS, 0, 255, 255, msGlobals.ggBrightness);
+				msSystem.msLEDs.setLED((xx + 4 * 3) & MAX_LEDS, 0, 0, 255, msGlobals.ggBrightness);
 
 				xx++;
 				msSystem.msLEDs.updateLEDs();
