@@ -82,7 +82,8 @@
 // 192.168.4.1 is the IP it always has in softAP mode
 #define SCAN_FIRST_MODE 1
 
-#define CONNECTION_TIMEOUT 30000
+// milliseconds
+#define CONNECTION_TIMEOUT 1000 * 1000 * 8
 
 #define POV_TIME_MICROSECONDS 100
 

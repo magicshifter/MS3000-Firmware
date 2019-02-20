@@ -113,10 +113,14 @@ bool TryConnect(struct APAuth &apInfo, uint32_t timeoutMs)
 	// Wait for connection
 	int frame = 0;
 	uint32_t startTime = millis();
+	uint32_t endTime = startTime + timeoutMs;
 	bool connected = false;
 	String failReason;
 
-	while (WiFi.status() != WL_CONNECTED) {
+	while ((WiFi.status() != WL_CONNECTED) && (millis() < endTime)) {
+
+		delay(15);
+
 		for (int i = 0; i < MAX_LEDS; i++) {
 			if (i < frame % MAX_LEDS)
 				msSystem.msLEDs.setLED(i, 5, 5, 5, 0x10);
@@ -138,11 +142,6 @@ bool TryConnect(struct APAuth &apInfo, uint32_t timeoutMs)
 			connected = false;
 			failReason = "Connection Failed";
 		}
-		else
-		if (millis() > startTime + timeoutMs) {
-			connected = false;			
-			failReason = "Connection Timed-out";
-		}
 		else 
 			connected = true;
 
@@ -153,10 +152,12 @@ bool TryConnect(struct APAuth &apInfo, uint32_t timeoutMs)
 			return false;		// :(
 		}
 
-		delay(100);
 	}
 
-	msSystem.slogln("wifi: connected to: " + String(apInfo.ssid));
+	if (WiFi.status() != WL_CONNECTED)
+		failReason = "Connection Timed-out";
+	else
+		msSystem.slogln("wifi: connected to: " + String(apInfo.ssid));
 
 	printIPInfo();
 
