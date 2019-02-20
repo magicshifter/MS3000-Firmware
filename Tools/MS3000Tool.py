@@ -389,12 +389,24 @@ def StartFromBootloader():
                 return False
                 
 #=======================================================================================
+def config():
+        device = findMagicShifterSimple()
+        if (device == None):
+                pFail("No serial found! No CONFIG possible")
+                return False
+        response = issueDump(device, 'MAGIC_CONFIG'.encode(), 3)
+        if(response == None):
+                pFail("Error! Device not responding to CONFIG.")
+                return False
+        pOK("CONFIG: " + str(response))
+        return True
+
 def dump():
         device = findMagicShifterSimple()
         if (device == None):
                 pFail("No serial found! No DUMP possible")
                 return False
-        response = issueDump(device, "MAGIC_DUMP", 3)
+        response = issueDump(device, 'MAGIC_DUMP'.encode(), 3)
         if(response == None):
                 pFail("Error! Device not responding to DUMP.")
                 return False
@@ -406,7 +418,7 @@ def ping():
         if (device == None):
                 pFail("No serial found! No PING possible")
                 return False
-        response = issueDump(device, "MAGIC_PING", 1)
+        response = issueDump(device, "MAGIC_PING".encode(), 1)
         if(response == None):
                 pFail("Error! Device not responding to PING.")
                 return False
@@ -430,7 +442,7 @@ def issueUpload(device, data, filename):
                 print("openimng port")
                 #ser = serial.Serial(device, baudrate, timeout=5)#timeout=None
                 ser = openPort(5)
-                ser.write("MAGIC_UPLOAD")
+                ser.write("MAGIC_UPLOAD".encode())
 
                 print("writeUpload")
 
@@ -482,7 +494,7 @@ def issueShow(device, sector):
         ser = None
         try:    
                 ser = serial.Serial(device, baudrate, timeout=0.5)#timeout=None
-                ser.write("MAGIC_DISPLAY")
+                ser.write("MAGIC_DISPLAY".encode())
                 sleep(0.5)
                 headerString = array.array('B', [sector]).tostring()
                 ser.write(headerString)
@@ -579,7 +591,7 @@ def main():
         sleep(1)
         
 #2.Check Shifter
-        response = issueCommand(device, "MAGIC_AUTO", 15)
+        response = issueCommand(device, "MAGIC_AUTO".encode(), 15)
         if(response == None):
                 pFail("Error! Device not responding to AUTO TESTING.")
                 return False
@@ -592,7 +604,7 @@ def main():
                 pFail("UNKNOWN RESPONSE WHILE AUTO TESTING: " + str(response))
                 return False
 
-        response = issueCommand(device, "MAGIC_PING", 2)
+        response = issueCommand(device, "MAGIC_PING".encode(), 2)
         if(response == None):
                 pFail("Error! Device not responding to PING. TCHRG not working?")
                 return False
@@ -603,7 +615,7 @@ def main():
                 return False
 
         print("--> Please Press Button 1 and then Button 2")
-        response = issueCommand(device, "MAGIC_MANUAL", 15)
+        response = issueCommand(device, "MAGIC_MANUAL".encode(), 15)
         if(response == None):
                 pFail("Error! Device not responding to MANUAL TESTING.")
                 return False
@@ -635,8 +647,13 @@ def main():
                 pFail("UNKNOWN RESPONSE WHILE MANUAL TESTING: " + str(response))
                 return False
 
+def initAPConfig():
+        start = time.time()
+        delay = 1;
 
-
+        ser = openPort(5)
+        issueUploadMS3000(ser, "settings_ap.bin", "settings/ap.bin")
+        sleep(delay)
 
 def initMS3000():
         start = time.time()
@@ -753,7 +770,7 @@ def issueUploadMS3000(ser, sourceFilename, targetFilename):
                 data = f.read()
 
         try:    
-                ser.write("MAGIC_UPLOAD")
+                ser.write("MAGIC_UPLOAD".encode())
 
                 print("uploading ", sourceFilename, " -> ", targetFilename) 
 
@@ -846,6 +863,9 @@ if __name__ == '__main__':
                         StartFromBootloader()
                 elif (sys.argv[1] == "test"):
                         main()
+                elif (sys.argv[1] == "writeap"):
+                        initAPConfig()
+
         else:
                 print("available commands:")
                 print("up <filename> <sector> [serialdevice ex. /dev/ttyACM0]")
@@ -855,5 +875,6 @@ if __name__ == '__main__':
                 print("debug [serialdevice]")
                 print("test [serialdevice]")
                 print("reset [serialdevice]")
+                print("writeap [write settings_ap.bin]")
                 print("start")
 
