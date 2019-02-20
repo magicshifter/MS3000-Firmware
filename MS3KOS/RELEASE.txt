@@ -1,0 +1,13 @@
+1.9.0 OTA update
+    * Saves last-mode-in-use
+    * New OTA (wifi) firmware UPDATE method
+    * numerous bug fixes
+    *  .. refactor for 2.0.
+1.2.0
+    * BUGFIX: Battery voltage calculation, power button becoming unusable at low battery levels.
+v1.0.0
+    * Fixes/feature: Web Interface, Onboard Firmware. 
+0.9.1
+    * New Mode: Beat Detection, Power Management, Menu System Fixes, new UI, System Values: Battery Voltage, Power-Hi/-Lo timeouts, Set Modes remotely: magic shifter.local/admin.html, +Multiple Bugfixes
+0.9.0
+    * detection..
