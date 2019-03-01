@@ -8,8 +8,6 @@
 #ifndef _SERIALMIDI_H_
 #define  _SERIALMIDI_H_
 
-#include "msSystem.h"
-
 // mode
 void SERIAL_MIDI_init();
 void SERIAL_MIDI_loop();

@@ -46,10 +46,6 @@
 #include "serialMIDI.h"
 #endif
 
-#ifdef CONFIG_ENABLE_MIDI_RTP
-#include "rtpMIDI.h"
-#endif
-
 // Current View per MIDI input
 typedef struct {
 	uint8_t midi_channel;		// MIDI channel of View

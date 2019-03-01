@@ -46,6 +46,10 @@ MagicShifterGlobals msGlobals;
 #include "msSystem.h"
 MagicShifterSystem msSystem;
 
+#ifdef CONFIG_ENABLE_MIDI_RTP
+#include "rtpMIDI.h"
+#endif
+
 // the system Web Server module
 #include "WebServer/WebServer.h"
 MagicShifterWebServer msWebServer;
