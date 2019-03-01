@@ -12,7 +12,9 @@
  *
  */
 
+#ifdef CONFIG_ENABLE_MIDI_SERIAL
 #include "serialMIDI.h"
+#endif
 
 // Status Indicator LED's - for the Arpeggiator, etc.
 #define LED_BUTTON_EVENT 0
