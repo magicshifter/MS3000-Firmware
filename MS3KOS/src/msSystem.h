@@ -1181,8 +1181,30 @@ void showBatteryStatus(bool shouldFadeIn) {
 			// slog(":");
 			Serial.print(buf[x], HEX); Serial.print (" ");
 		}
-		slogln("<<EOF");
 	}
+
+	void fileDump() {
+		String path = "/";
+		String output = "path:" + path + "\n";
+		Dir dir = SPIFFS.openDir((char *) path.c_str());
+
+		slogln("system: fileDump:");
+
+		while (true) {
+			if (!dir.next()) {
+				output += "\nend\n";
+				break;
+			}
+
+			String name = dir.fileName();
+
+			output += name  + ", ";
+		}
+
+		slogln(output);
+
+	}
+
 
 };
 

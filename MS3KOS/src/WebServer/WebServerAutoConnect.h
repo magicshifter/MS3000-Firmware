@@ -105,7 +105,7 @@ void setDebugCallbacks()
 
 bool TryConnect(struct APAuth &apInfo, uint32_t timeoutMs)
 {
-	msSystem.slog("wifi: trying to connect to AP: " + String(apInfo.ssid));
+	msSystem.slog("wifi: trying to connect to: " + String(apInfo.ssid));
 
 	WiFi.begin(apInfo.ssid, apInfo.password, 9);
 	msSystem.slog("wifi: using password: " + String(apInfo.password));
@@ -119,7 +119,7 @@ bool TryConnect(struct APAuth &apInfo, uint32_t timeoutMs)
 
 	while ((WiFi.status() != WL_CONNECTED) && (millis() < endTime)) {
 
-		delay(15);
+		delay(200);
 
 		for (int i = 0; i < MAX_LEDS; i++) {
 			if (i < frame % MAX_LEDS)

@@ -83,7 +83,7 @@
 #define SCAN_FIRST_MODE 1
 
 // milliseconds
-#define CONNECTION_TIMEOUT 1000 * 1000 * 8
+#define CONNECTION_TIMEOUT 3 * 10 * 1000
 
 #define POV_TIME_MICROSECONDS 100
 

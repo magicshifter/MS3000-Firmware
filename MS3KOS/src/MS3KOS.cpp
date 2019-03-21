@@ -149,6 +149,8 @@ void setup()
 	// Show the battery power level on startup
 	msSystem.showBatteryStatus(true);
 
+	msSystem.fileDump();
+
 	// mode selector is a special submode, so we start it now also
 	msModeSelector.start();
 
