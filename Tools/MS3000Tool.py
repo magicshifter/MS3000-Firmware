@@ -660,26 +660,27 @@ def initMS3000():
         delay = 1;
 
         ser = openPort(5)
-        #issueUploadMS3000(ser, "settings_ap.bin", "settings/ap.bin")
+
+        issueUploadMS3000(ser, "settings_ap.bin", "settings/ap.bin")
+        sleep(delay)
+
+        #issueUploadMS3000(ser, "../../MS3000-WebInterface/dist/bundled/favicon.ico", "favicon.ico")
         #sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-WebInterface/dist/bundled/favicon.ico", "favicon.ico")
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-WebInterface/dist/bundled/index.html", "index.html")
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-WebInterface/dist/bundled/index.js.gz", "index.js.gz")
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-WebInterface/dist/bundled/magicshifter.appcache", "magicshifter.appcache")
-        sleep(delay)
+        #issueUploadMS3000(ser, "../../MS3000-WebInterface/dist/bundled/index.html", "index.html")
+        #sleep(delay)
+        #issueUploadMS3000(ser, "../../MS3000-WebInterface/dist/bundled/index.js.gz", "index.js.gz")
+        #sleep(delay)
+        #issueUploadMS3000(ser, "../../MS3000-WebInterface/dist/bundled/magicshifter.appcache", "magicshifter.appcache")
+        #sleep(delay)
+
         issueUploadMS3000(ser, "../../MS3000-Assets/MS3000_defaultconfig/MagicShifter.html", "MagicShifter.html")
         sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-Assets/MS3000_defaultconfig/admin.html", "admin.html")
 
         # MS3KOS2.0 !J! 
-        sleep(delay)
         issueUploadMS3000(ser, "../../MS3000-Assets/MS3000_defaultconfig/admin.html", "admin.html")
+        sleep(delay)
 
         # new-school web interfaces .. 
-        sleep(delay)
         issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/index.html", "index.html")
         sleep(delay)
         issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/pixeleditor/index.html", "pixeleditor/index.html")
