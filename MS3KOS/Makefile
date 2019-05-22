@@ -6,7 +6,7 @@ MS3000_PORT?=`pio serialports list --json-output | python -c 'exec("""\nimport j
 MS3000_PORT?=/dev/ttyUSB0
 MS3000_PORT=/dev/tty.SLAB_USBtoUART
 
-all:	clean proto build burn monitor
+all:	clean proto build 
 
 CFLAGS += -I$(NANOPB_DIR) -DPB_FIELD_16BIT
 

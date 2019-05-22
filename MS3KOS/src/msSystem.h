@@ -75,6 +75,10 @@ class MagicShifterSystem {
 		APAuth apInfo;
 
 		bool loadData(String path, void *config, int len) {
+
+			msSystem.slog("webserver: config file: ");
+			msSystem.slogln((char *) path.c_str());
+
 			if (SPIFFS.exists((char *) path.c_str())) {
 				File file = SPIFFS.open((char *) path.c_str(), "r");
 				file.read((uint8_t *) config, len);
@@ -495,59 +499,63 @@ public:
 //  void slogln(bool b) { if (b) slogln(String("true")); else slogln(String("false")); }
 
 	void dumpActiveHeader(const MSBitmapHeader & header) {
-		slogln("Header dump:");
-		slogln("fileSize:" + String(header.fileSize));
-		slogln("pixelFormat:" + String(header.pixelFormat));
-		slogln("maxFrame:" + String(header.maxFrame));
-		slogln("frameWidth:" + String(header.frameWidth));
-		slogln("frameHeight:" + String(header.frameHeight));
-		slogln("subType:" + String(header.subType));
-		slogln("firstChar:" + String(header.firstChar));
-		slogln("animationDelay:" + String(header.animationDelay));
+		slogln("--");
+		slogln("-- Active Header:");
+		slogln("fileSize = " + String(header.fileSize));
+		slogln("pixelFormat = " + String(header.pixelFormat));
+		slogln("maxFrame = " + String(header.maxFrame));
+		slogln("frameWidth = " + String(header.frameWidth));
+		slogln("frameHeight = " + String(header.frameHeight));
+		slogln("subType = " + String(header.subType));
+		slogln("firstChar = " + String(header.firstChar));
+		slogln("animationDelay = " + String(header.animationDelay));
+		slogln("--");
 	}
 
 	void slogSysInfo() {
-		slogln("System config:");
-		slogln("Vcc: " + String(ESP.getVcc()));
-		slogln("Free heap: " + String(ESP.getFreeHeap()));
-		slogln("Chip ID: " + String(ESP.getChipId()));
-		slogln("SDK version: " + String(ESP.getSdkVersion()));
-		slogln("Boot version: " + String(ESP.getBootVersion()));
-		slogln("Boot mode: " + String(ESP.getBootMode()));
-		slogln("CPU freq.: " + String(ESP.getCpuFreqMHz()));
-		slogln("Flash chip ID: " + String(ESP.getFlashChipId(), HEX));
+		slogln("--");
+		slogln("-- System config:");
+		slogln("systemVcc = " + String(ESP.getVcc()));
+		slogln("systemFreeHeap = " + String(ESP.getFreeHeap()));
+		slogln("systemChipID = " + String(ESP.getChipId()));
+		slogln("sdkVersion = " + String(ESP.getSdkVersion()));
+		slogln("bootVersion = " + String(ESP.getBootVersion()));
+		slogln("bootMode = " + String(ESP.getBootMode()));
+		slogln("systemCPUFreq = " + String(ESP.getCpuFreqMHz()));
+		slogln("systemFlashChipID = " + String(ESP.getFlashChipId(), HEX));
 		// // gets the actual chip size based on the flash id
-		slogln("Flash real size: " + String(ESP.getFlashChipRealSize()));
-		slogln("Flash real size (method b): " + String(ESP.getFlashChipSizeByChipId()));
+		slogln("systemFlashRealSize = " + String(ESP.getFlashChipRealSize()));
+		slogln("systemFlashRealSizeMethodB = " + String(ESP.getFlashChipSizeByChipId()));
 		// // gets the size of the flash as set by the compiler
-		slogln("flash configured size: " + String(ESP.getFlashChipSize()));
+		slogln("systemConfiguredFlashSize  = " + String(ESP.getFlashChipSize()));
 		if (ESP.getFlashChipSize() != ESP.getFlashChipRealSize())
 		{
 			slogln(String("WARNING: configured flash size does not match real flash size!"));
 		}
-		slogln("flash speed: " + String(ESP.getFlashChipSpeed()));
-		slogln("flash mode: " + String(ESP.getFlashChipMode()));
-		slogln("Sketch size: " + String(ESP.getSketchSize()));
-		slogln("Free sketch space: " + String(ESP.getFreeSketchSpace()));
+		slogln("systemFlashSpeed = " + String(ESP.getFlashChipSpeed()));
+		slogln("systemFlashMode = " + String(ESP.getFlashChipMode()));
+		slogln("sketchSize = " + String(ESP.getSketchSize()));
+		slogln("freeSketchSpace = " + String(ESP.getFreeSketchSpace()));
 
-		slogln("uploadfile: " + String(msGlobals.ggUploadFileName));
+		slogln("uploadfile = " + String(msGlobals.ggUploadFileName));
 
 		FSInfo linfo;
 		SPIFFS.info(linfo);
 
-		slogln("linfo.blockSize =" + String(linfo.blockSize));
-		slogln("linfo.pageSize =" + String(linfo.pageSize));
-		slogln("linfo.maxOpenFiles =" + String(linfo.maxOpenFiles));
-		slogln("linfo.maxPathLength =" + String(linfo.maxPathLength));
-		slogln("linfo.totalBytes =" + String(linfo.totalBytes));
-		slogln("linfo.usedBytes = " + String(linfo.usedBytes));
+		slogln("fsInfoBlockSize = " + String(linfo.blockSize));
+		slogln("fsInfoPageSize = " + String(linfo.pageSize));
+		slogln("fsInfoMaxOpenFiles = " + String(linfo.maxOpenFiles));
+		slogln("fsInfoMaxPathLength = " + String(linfo.maxPathLength));
+		slogln("fsInfoTotalBytes = " + String(linfo.totalBytes));
+		slogln("fsInfoUsedBytes = " + String(linfo.usedBytes));
+		slogln("resetInfo = \"" + String(ESP.getResetInfo()) + "\"");
+		slogln("currentMode = " + String(msGlobals.ui.currentMode));
+		slogln("timeoutHighPower = " + String(msGlobals.ui.timeoutHighPower));
+		slogln("timeoutLowPower = " + String(msGlobals.ui.timeoutLowPower));
+		slogln("defaultBrightness = " + String(msGlobals.ui.defaultBrightness));
 
-		slogln("Reset info: " + String(ESP.getResetInfo()));
-
-		slogln("currentMode: " + String(msGlobals.ui.currentMode));
-		slogln("timeoutHighPower: " + String(msGlobals.ui.timeoutHighPower));
-		slogln("timeoutLowPower: " + String(msGlobals.ui.timeoutLowPower));
-		slogln("defaultBrightness: " + String(msGlobals.ui.defaultBrightness));
+		slogln("-- System config");
+		slogln("--");
 	};
 
 
@@ -964,6 +972,18 @@ void showBatteryStatus(bool shouldFadeIn) {
 		slogln(String(readBuffer[1]));
 	};
 
+	void setup_serial() {
+#ifdef CONFIG_ENABLE_MIDI_SERIAL
+#warning "SERIAL MIDI:31250 baud in use - serial logging disabled (use wlan)"
+		Serial.begin(31250);
+#else
+#warning "SERIAL MIDI is disabled - syslog will use serial logging"
+		Serial.begin(921600);
+		slogln("");
+		slogln("SERIAL MIDI is disabled - logging to serial at 921600 baud");
+#endif
+	}
+
 
 	// gets the basic stuff set up
 	void setup() {
@@ -974,26 +994,33 @@ void showBatteryStatus(bool shouldFadeIn) {
 
 		EEPROM.begin(512);
 
-#ifdef CONFIG_ENABLE_MIDI_SERIAL
-#warning "SERIAL MIDI has been enabled - Serial I/O at 31250 - serial logging disabled (use wlan)"
-		Serial.begin(31250);
-#else
-#warning "SERIAL MIDI is disabled - syslog will use serial logging"
-		Serial.begin(921600);
-#endif
+		setup_serial();
+
 
 		slogln(String("\r\nMagicShifter 3000 OS V" + String(MS3KOS_VERSION)));
 
 		// wake up filesystem
-		slog("SPIFFS:");
+		slog("SPIFFS = ");
 
 		if (SPIFFS.begin())
-			slog("done:");
+			slog("done = ");
 		else
-			slog("noSPIFFS:");
+			slog("noSPIFFS = ");
 
 		// TEST_SPIFFS_bug();
 
+/*
+		u32_t total, used, res;
+
+		res = SPIFFS_info(&fs, &total, &used);
+  		
+  		slog("SPIFFS total:");
+  		slogln(String(total));
+  		slog("SPIFFS used:");
+  		slogln(String(used));
+*/
+
+		
 		Settings.getUIConfig(&msGlobals.ui);
 
 		msGlobals.ggBrightness = msGlobals.ui.defaultBrightness;
@@ -1035,8 +1062,6 @@ void showBatteryStatus(bool shouldFadeIn) {
 			&msGlobals.ggtBitmap7x12);
 		MagicShifterImage::LoadBitmapBuffer("font10x16.magicFont",
 			&msGlobals.ggtBitmap10x16);
-
-
 
 		slogSysInfo();
 		
