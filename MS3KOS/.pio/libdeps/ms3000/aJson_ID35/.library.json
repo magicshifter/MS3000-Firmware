@@ -1,0 +1,30 @@
+{
+    "name": "aJson", 
+    "keywords": [
+        "json", 
+        "rest", 
+        "http", 
+        "web"
+    ], 
+    "description": "An Arduino library to enable JSON processing with Arduino", 
+    "repository": {
+        "type": "git", 
+        "url": "https://github.com/interactive-matter/aJson.git"
+    }, 
+    "frameworks": [
+        "arduino"
+    ], 
+    "platforms": [
+        "atmelavr"
+    ], 
+    "version": "ec56354313", 
+    "authors": [
+        {
+            "email": "info@interactive-matter.org", 
+            "url": "https://github.com/interactive-matter", 
+            "maintainer": false, 
+            "name": "Interactive Matter"
+        }
+    ], 
+    "id": 35
+}

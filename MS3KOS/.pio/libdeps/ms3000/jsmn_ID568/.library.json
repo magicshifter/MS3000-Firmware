@@ -1,0 +1,74 @@
+{
+    "name": "jsmn", 
+    "keywords": [
+        "json"
+    ], 
+    "description": "Minimalistic JSON parser/tokenizer in C. It can be easily integrated into resource-limited or embedded projects", 
+    "repository": {
+        "type": "git", 
+        "url": "https://github.com/zserge/jsmn.git"
+    }, 
+    "frameworks": [
+        "arduino", 
+        "artik-sdk", 
+        "cmsis", 
+        "energia", 
+        "esp8266-nonos-sdk", 
+        "esp8266-rtos-sdk", 
+        "espidf", 
+        "freedom-e-sdk", 
+        "kendryte-freertos-sdk", 
+        "kendryte-standalone-sdk", 
+        "libopencm3", 
+        "mbed", 
+        "pulp-os", 
+        "pumbaa", 
+        "simba", 
+        "spl", 
+        "stm32cube", 
+        "tizenrt", 
+        "wiringpi"
+    ], 
+    "platforms": [
+        "atmelavr", 
+        "atmelsam", 
+        "espressif32", 
+        "espressif8266", 
+        "freescalekinetis", 
+        "infineonxmc", 
+        "intel_arc32", 
+        "kendryte210", 
+        "linux_arm", 
+        "maxim32", 
+        "microchippic32", 
+        "nordicnrf51", 
+        "nordicnrf52", 
+        "nxplpc", 
+        "riscv_gap", 
+        "samsung_artik", 
+        "sifive", 
+        "siliconlabsefm32", 
+        "ststm32", 
+        "ststm8", 
+        "teensy", 
+        "timsp430", 
+        "titiva", 
+        "wiznet7500"
+    ], 
+    "examples": [
+        "example/*.c"
+    ], 
+    "export": {
+        "exclude": "test"
+    }, 
+    "version": "85695f3d59", 
+    "authors": [
+        {
+            "email": "zaitsev.serge@gmail.com", 
+            "url": "https://github.com/zserge", 
+            "maintainer": false, 
+            "name": "Serge Zaitsev"
+        }
+    ], 
+    "id": 568
+}

@@ -9,3 +9,7 @@
 ## Dependencies
  * remember to read the Makefile
  * `make pio-deps` can get you started...
+
+TODO:
+
+	Use https://github.com/FLWFTW/snippets.git

@@ -1,0 +1,37 @@
+{
+    "name": "OSC", 
+    "keywords": [
+        "sound", 
+        "encoding", 
+        "osc"
+    ], 
+    "description": "Open Sound Control (OSC) is an open, transport-independent, message-based encidubg developed for communication among computers, sound synthesizers, and other multimedia devices.", 
+    "authors": [
+        {
+            "email": "adrian@adrianfreed.com", 
+            "url": "http://www.adrianfreed.com", 
+            "maintainer": false, 
+            "name": "Adrian Freed"
+        }, 
+        {
+            "email": null, 
+            "url": "http://yotammann.info", 
+            "maintainer": false, 
+            "name": "Yotam Mann"
+        }
+    ], 
+    "repository": {
+        "type": "git", 
+        "url": "https://github.com/CNMAT/OSC.git"
+    }, 
+    "frameworks": [
+        "arduino"
+    ], 
+    "platforms": [
+        "atmelavr", 
+        "atmelsam", 
+        "teensy"
+    ], 
+    "version": "956962455a", 
+    "id": 423
+}
