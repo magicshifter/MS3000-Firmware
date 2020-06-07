@@ -22,7 +22,7 @@ void handleFileListJson()
     }
     String path = msSystem.msESPServer.arg("dir");
 
-    Dir dir = SPIFFS.openDir((char *) path.c_str());
+    Dir dir = LittleFS.openDir((char *) path.c_str());
     path = String();
 
     String output = "{\"path\":\"" + path + "\", \"files\":[";
