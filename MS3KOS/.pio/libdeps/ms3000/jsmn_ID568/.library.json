@@ -1,40 +1,17 @@
 {
     "name": "jsmn", 
-    "keywords": [
-        "json"
-    ], 
-    "description": "Minimalistic JSON parser/tokenizer in C. It can be easily integrated into resource-limited or embedded projects", 
     "repository": {
-        "type": "git", 
-        "url": "https://github.com/zserge/jsmn.git"
+        "url": "https://github.com/zserge/jsmn.git", 
+        "type": "git"
     }, 
-    "frameworks": [
-        "arduino", 
-        "artik-sdk", 
-        "cmsis", 
-        "energia", 
-        "esp8266-nonos-sdk", 
-        "esp8266-rtos-sdk", 
-        "espidf", 
-        "freedom-e-sdk", 
-        "kendryte-freertos-sdk", 
-        "kendryte-standalone-sdk", 
-        "libopencm3", 
-        "mbed", 
-        "pulp-os", 
-        "pumbaa", 
-        "simba", 
-        "spl", 
-        "stm32cube", 
-        "tizenrt", 
-        "wiringpi"
-    ], 
     "platforms": [
         "atmelavr", 
+        "atmelmegaavr", 
         "atmelsam", 
         "espressif32", 
         "espressif8266", 
         "freescalekinetis", 
+        "gd32v", 
         "infineonxmc", 
         "intel_arc32", 
         "kendryte210", 
@@ -43,9 +20,10 @@
         "microchippic32", 
         "nordicnrf51", 
         "nordicnrf52", 
+        "nuclei", 
         "nxplpc", 
         "riscv_gap", 
-        "samsung_artik", 
+        "shakti", 
         "sifive", 
         "siliconlabsefm32", 
         "ststm32", 
@@ -55,20 +33,48 @@
         "titiva", 
         "wiznet7500"
     ], 
-    "examples": [
-        "example/*.c"
+    "frameworks": [
+        "arduino", 
+        "cmsis", 
+        "DELETED", 
+        "esp8266-nonos-sdk", 
+        "esp8266-rtos-sdk", 
+        "espidf", 
+        "freedom-e-sdk", 
+        "gd32vf103-sdk", 
+        "kendryte-freertos-sdk", 
+        "kendryte-standalone-sdk", 
+        "libopencm3", 
+        "mbed", 
+        "nuclei-sdk", 
+        "pulp-os", 
+        "pumbaa", 
+        "shakti-sdk", 
+        "simba", 
+        "spl", 
+        "stm32cube", 
+        "tizenrt", 
+        "wiringpi", 
+        "zephyr"
     ], 
+    "version": "053d3cd292", 
     "export": {
         "exclude": "test"
     }, 
-    "version": "85695f3d59", 
+    "examples": [
+        "example/*.c"
+    ], 
     "authors": [
         {
-            "email": "zaitsev.serge@gmail.com", 
-            "url": "https://github.com/zserge", 
             "maintainer": false, 
-            "name": "Serge Zaitsev"
+            "name": "Serge Zaitsev", 
+            "url": "https://github.com/zserge", 
+            "email": "zaitsev.serge@gmail.com"
         }
     ], 
-    "id": 568
+    "keywords": [
+        "json"
+    ], 
+    "id": 568, 
+    "description": "Minimalistic JSON parser/tokenizer in C. It can be easily integrated into resource-limited or embedded projects"
 }

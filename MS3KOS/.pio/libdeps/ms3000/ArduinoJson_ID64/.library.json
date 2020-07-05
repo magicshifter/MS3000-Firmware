@@ -1,34 +1,16 @@
 {
     "name": "ArduinoJson", 
-    "keywords": [
-        "json", 
-        "rest", 
-        "http", 
-        "web"
-    ], 
-    "description": "An elegant and efficient JSON library for embedded systems", 
-    "homepage": "https://arduinojson.org/?utm_source=meta&utm_medium=library.json", 
     "repository": {
-        "type": "git", 
-        "url": "https://github.com/bblanchon/ArduinoJson.git"
+        "url": "https://github.com/bblanchon/ArduinoJson.git", 
+        "type": "git"
     }, 
-    "version": "6.12.0", 
-    "authors": [
-        {
-            "email": null, 
-            "url": "https://blog.benoitblanchon.fr", 
-            "maintainer": false, 
-            "name": "Benoit Blanchon"
-        }
-    ], 
-    "frameworks": [
-        "arduino"
-    ], 
     "platforms": [
         "atmelavr", 
+        "atmelmegaavr", 
         "atmelsam", 
         "espressif32", 
         "espressif8266", 
+        "gd32v", 
         "infineonxmc", 
         "intel_arc32", 
         "kendryte210", 
@@ -40,13 +22,31 @@
         "teensy", 
         "timsp430"
     ], 
+    "frameworks": [
+        "arduino"
+    ], 
+    "version": "6.15.2", 
     "export": {
         "exclude": [
-            "fuzzing", 
-            "scripts", 
-            "test", 
-            "third-party"
+            ".github", 
+            "extras"
         ]
     }, 
-    "id": 64
+    "authors": [
+        {
+            "url": "https://blog.benoitblanchon.fr", 
+            "maintainer": false, 
+            "email": null, 
+            "name": "Benoit Blanchon"
+        }
+    ], 
+    "keywords": [
+        "web", 
+        "json", 
+        "http", 
+        "rest"
+    ], 
+    "homepage": "https://arduinojson.org/?utm_source=meta&utm_medium=library.json", 
+    "id": 64, 
+    "description": "A simple and efficient JSON library for embedded C++. ArduinoJson supports \u2714 serialization, \u2714 deserialization, \u2714 MessagePack, \u2714 fixed allocation, \u2714 zero-copy, \u2714 streams, \u2714 filtering, and more. It is the most popular Arduino library on GitHub \u2764\u2764\u2764\u2764\u2764. Check out arduinojson.org for a comprehensive documentation."
 }

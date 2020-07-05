@@ -1,18 +1,16 @@
 {
-    "name": "AppleMIDI", 
-    "version": "1.6.1", 
-    "keywords": [
-        "communication"
-    ], 
     "description": "AppleMIDI (rtpMIDI) protocol for Arduino", 
-    "frameworks": [
-        "arduino"
-    ], 
+    "repository": {
+        "url": "https://github.com/lathoub/Arduino-AppleMidi-Library", 
+        "type": "git"
+    }, 
     "platforms": [
         "atmelavr", 
+        "atmelmegaavr", 
         "atmelsam", 
         "espressif32", 
         "espressif8266", 
+        "gd32v", 
         "infineonxmc", 
         "intel_arc32", 
         "kendryte210", 
@@ -24,21 +22,7 @@
         "teensy", 
         "timsp430"
     ], 
-    "authors": [
-        {
-            "email": "lathoub@gmail.com", 
-            "url": null, 
-            "maintainer": true, 
-            "name": "lathoub"
-        }
-    ], 
-    "repository": {
-        "type": "git", 
-        "url": "https://github.com/lathoub/Arduino-AppleMidi-Library"
-    }, 
-    "homepage": null, 
     "export": {
-        "include": null, 
         "exclude": [
             "extras", 
             "docs", 
@@ -46,7 +30,25 @@
             "test", 
             "*.doxyfile", 
             "*.pdf"
-        ]
+        ], 
+        "include": null
     }, 
-    "id": 222
+    "authors": [
+        {
+            "maintainer": true, 
+            "name": "lathoub", 
+            "url": null, 
+            "email": "lathoub@gmail.com"
+        }
+    ], 
+    "keywords": [
+        "communication"
+    ], 
+    "id": 222, 
+    "name": "AppleMIDI", 
+    "frameworks": [
+        "arduino"
+    ], 
+    "version": "2.1.0", 
+    "homepage": null
 }

@@ -1,12 +1,19 @@
 // ArduinoJson - arduinojson.org
-// Copyright Benoit Blanchon 2014-2019
+// Copyright Benoit Blanchon 2014-2020
 // MIT License
 
 #pragma once
 
-#include <ArduinoJson/Variant/VariantRef.hpp>
+#include <ArduinoJson/Configuration.hpp>
+#include <ArduinoJson/Misc/Visitable.hpp>
+#include <ArduinoJson/Numbers/Float.hpp>
+#include <ArduinoJson/Numbers/Integer.hpp>
+#include <ArduinoJson/Polyfills/type_traits.hpp>
+#include <ArduinoJson/Strings/IsString.hpp>
 
 namespace ARDUINOJSON_NAMESPACE {
+
+class CollectionData;
 
 template <typename T, typename Enable = void>
 struct Comparer;

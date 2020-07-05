@@ -1,0 +1,37 @@
+{
+    "name": "MIDI Library", 
+    "license": "MIT", 
+    "platforms": [
+        "atmelavr", 
+        "atmelsam", 
+        "teensy"
+    ], 
+    "repository": {
+        "url": "https://github.com/FortySevenEffects/arduino_midi_library.git", 
+        "type": "git", 
+        "branch": "master"
+    }, 
+    "frameworks": [
+        "arduino"
+    ], 
+    "version": "5.0.2", 
+    "export": {
+        "include": [
+            "src", 
+            "examples"
+        ]
+    }, 
+    "authors": [
+        {
+            "maintainer": true, 
+            "name": "Francois Best", 
+            "url": "https://github.com/Franky47", 
+            "email": "contact@francoisbest.com"
+        }
+    ], 
+    "keywords": [
+        "midi"
+    ], 
+    "id": 62, 
+    "description": "Enables MIDI I/O communications on the Arduino serial ports"
+}
