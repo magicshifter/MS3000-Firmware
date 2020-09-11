@@ -9,3 +9,9 @@
 [submodule "Tools/nanopb"]
 	path = Tools/nanopb
 	url = https://github.com/nanopb/nanopb
+[submodule "MS3KOS/lib/esp_littlefs"]
+	path = MS3KOS/lib/esp_littlefs
+	url = https://github.com/joltwallet/esp_littlefs.git
+[submodule "MS3KOS/lib/littlefs"]
+	path = MS3KOS/lib/littlefs
+	url = https://github.com/ARMmbed/littlefs.git

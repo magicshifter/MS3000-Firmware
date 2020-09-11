@@ -1,0 +1,16 @@
+sudo: false
+
+language: python
+
+# Cache PlatformIO packages using Travis CI container-based infrastructure
+cache:
+    directories:
+        - "~/.platformio"
+
+install:
+    - pip install -U platformio
+    - platformio update
+    - platformio lib -g install 62@5.0.0 870 872
+
+script:
+- platformio ci --board=uno    --lib=. examples/EthernetShield_NoteOnOffEverySec/EthernetShield_NoteOnOffEverySec.ino;
