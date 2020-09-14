@@ -2,9 +2,12 @@ SHELL := /bin/bash
 
 include ../Tools/nanopb/extra/nanopb.mk
 
-MS3000_PORT?=`pio device list --json-output | python -c 'exec("""\nimport json,sys\n\nobj=json.load(sys.stdin)\nfor y in obj:\n if "10C4:EA60" in y["hwid"].upper():\n  print (y["port"])\n""")'`
-MS3000_PORT?=/dev/ttyUSB0
+#linux
+MS3000_PORT=/dev/ttyUSB0
+#macos
 MS3000_PORT=/dev/tty.SLAB_USBtoUART
+#'autodetect'
++MS3000_PORT=`pio device list --json-output | python -c 'exec("""\nimport json,sys\n\nobj=json.load(sys.stdin)\nfor y in obj:\n if "10C4:EA60" in y["hwid"].upper():\n  print (y["port"])\n""")'`
 
 all:	clean proto build burn monitor
 
