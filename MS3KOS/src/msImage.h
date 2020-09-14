@@ -293,7 +293,7 @@ class MagicShifterImage:public MagicShifterImageAbstr {
 
 	static bool LoadBitmapFile(const char *filename, MSBitmap * bitmap) {
 
-		bitmap->bmFile = SPIFFS.open(filename, "r");
+		bitmap->bmFile = LittleFS.open(filename, "r");
 
 		if (!bitmap->bmFile)
 			return false;

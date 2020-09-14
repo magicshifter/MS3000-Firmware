@@ -25,6 +25,8 @@
 #include "Hardware/Sensor.h"
 #include "Hardware/Buttons.h"
 
+#include "LittleFS.h"
+
 // Custom image handler for MS3000 POV images
 #include "msImage.h"
 #include "msSysLog.h"
@@ -75,8 +77,8 @@ class MagicShifterSystem {
 		APAuth apInfo;
 
 		bool loadData(String path, void *config, int len) {
-			if (SPIFFS.exists((char *) path.c_str())) {
-				File file = SPIFFS.open((char *) path.c_str(), "r");
+			if (LittleFS.exists((char *) path.c_str())) {
+				File file = LittleFS.open((char *) path.c_str(), "r");
 				file.read((uint8_t *) config, len);
 				file.close();
 
@@ -90,7 +92,7 @@ class MagicShifterSystem {
 		}
 
 		bool saveData(String path, void *config, int len) {
-			File file = SPIFFS.open((char *) path.c_str(), "w");
+			File file = LittleFS.open((char *) path.c_str(), "w");
 			if (file) {
 				file.write((uint8_t *) config, len);
 				file.close();
@@ -161,8 +163,8 @@ class MagicShifterSystem {
 		bool getServerConfig(struct ServerConfig *config) {
 
 			String path = apServerConfigPath;
-			if (SPIFFS.exists((char *) path.c_str())) {
-				File file = SPIFFS.open((char *) path.c_str(), "r");
+			if (LittleFS.exists((char *) path.c_str())) {
+				File file = LittleFS.open((char *) path.c_str(), "r");
 				file.read((uint8_t *) config, sizeof(*config));
 				file.close();
 				return true;
@@ -177,7 +179,7 @@ class MagicShifterSystem {
 		void setServerConfig(struct ServerConfig *config) {
 
 			String path = apServerConfigPath;
-			File file = SPIFFS.open((char *) path.c_str(), "w");
+			File file = LittleFS.open((char *) path.c_str(), "w");
 			file.write((uint8_t *) config, sizeof(*config));
 
 			file.close();
@@ -187,8 +189,8 @@ class MagicShifterSystem {
 		bool getSyslogConfig(struct ServerConfig *config) {
 
 			String path = apSysLogConfigPath;
-			if (SPIFFS.exists((char *) path.c_str())) {
-				File file = SPIFFS.open((char *) path.c_str(), "r");
+			if (LittleFS.exists((char *) path.c_str())) {
+				File file = LittleFS.open((char *) path.c_str(), "r");
 				file.read((uint8_t *) config, sizeof(*config));
 				file.close();
 				return true;
@@ -203,7 +205,7 @@ class MagicShifterSystem {
 		void setSyslogConfig(struct ServerConfig *config) {
 
 			String path = apSysLogConfigPath;
-			File file = SPIFFS.open((char *) path.c_str(), "w");
+			File file = LittleFS.open((char *) path.c_str(), "w");
 			file.write((uint8_t *) config, sizeof(*config));
 
 			file.close();
@@ -214,8 +216,8 @@ class MagicShifterSystem {
 
 			String path = apConfigPath;
 
-			if (SPIFFS.exists((char *) path.c_str())) {
-				File file = SPIFFS.open((char *) path.c_str(), "r");
+			if (LittleFS.exists((char *) path.c_str())) {
+				File file = LittleFS.open((char *) path.c_str(), "r");
 				file.read((uint8_t *) config, sizeof(*config));
 				file.close();
 
@@ -240,7 +242,7 @@ msSystem.slogln("webserver: not configured, using unique name: " + String(config
 		void setAPConfig(struct APAuth *config) {
 
 			String path = apConfigPath;
-			File file = SPIFFS.open((char *) path.c_str(), "w");
+			File file = LittleFS.open((char *) path.c_str(), "w");
 			file.write((uint8_t *) config, sizeof(*config));
 			file.close();
 
@@ -252,8 +254,8 @@ msSystem.slogln("webserver: not configured, using unique name: " + String(config
 		bool getPreferredAP(struct APAuth *config) {
 
 			String path = preferredAPConfigPath;
-			if (SPIFFS.exists((char *) path.c_str())) {
-				File file = SPIFFS.open((char *) path.c_str(), "r");
+			if (LittleFS.exists((char *) path.c_str())) {
+				File file = LittleFS.open((char *) path.c_str(), "r");
 				file.read((uint8_t *) config, sizeof(*config));
 				file.close();
 				return true;
@@ -267,7 +269,7 @@ msSystem.slogln("webserver: not configured, using unique name: " + String(config
 		void setPreferredAP(struct APAuth *config) {
 
 			String path = preferredAPConfigPath;
-			File file = SPIFFS.open((char *) path.c_str(), "w");
+			File file = LittleFS.open((char *) path.c_str(), "w");
 			file.write((uint8_t *) config, sizeof(*config));
 			file.close();
 
@@ -290,8 +292,8 @@ msSystem.slogln("webserver: not configured, using unique name: " + String(config
 			APAuth inAPAuth;
 
 			// open the existing AP settings file if we can, and construct the map
-			if (SPIFFS.exists((char *)path.c_str()))  {
-				inFile = SPIFFS.open((char *) path.c_str(), "r");
+			if (LittleFS.exists((char *)path.c_str()))  {
+				inFile = LittleFS.open((char *) path.c_str(), "r");
 			}
 			if (inFile) {
 				msSystem.slog("webserver: opened AP config file:");
@@ -314,7 +316,7 @@ msSystem.slogln("webserver: not configured, using unique name: " + String(config
 			}
 
 			// dump the map back to the file
-			File outFile = SPIFFS.open((char *) path.c_str(), "w+");
+			File outFile = LittleFS.open((char *) path.c_str(), "w+");
 			if (outFile) {
 				AuthItems_it it;
 				for(it = authItems.begin(); it != authItems.end(); it++)
@@ -351,8 +353,8 @@ msSystem.slogln("webserver: not configured, using unique name: " + String(config
 			APAuth inAPAuth;
 
 			// open the existing AP settings file if we can, and construct the map
-			if (SPIFFS.exists((char *)path.c_str()))  {
-				inFile = SPIFFS.open((char *) path.c_str(), "r");
+			if (LittleFS.exists((char *)path.c_str()))  {
+				inFile = LittleFS.open((char *) path.c_str(), "r");
 			}
 			if (inFile) {
 				msSystem.slog("webserver: opened AP config file:");
@@ -382,7 +384,7 @@ msSystem.slogln("webserver: not configured, using unique name: " + String(config
 		    }
 
 			// dump the map back to the file
-		    File outFile = SPIFFS.open((char *) path.c_str(), "w+");
+		    File outFile = LittleFS.open((char *) path.c_str(), "w+");
 		    if (outFile) {
 		    	AuthItems_it it;
 		    	for(it = authItems.begin(); it != authItems.end(); it++)
@@ -412,8 +414,8 @@ msSystem.slogln("webserver: not configured, using unique name: " + String(config
 		bool getNextAP(struct APAuth *apInfo) {
 			if (apListIndex < 0) {
 				String path = apListConfigPath;
-				if (SPIFFS.exists((char *) path.c_str())) {
-					smAPListFile = SPIFFS.open((char *) path.c_str(), "r");
+				if (LittleFS.exists((char *) path.c_str())) {
+					smAPListFile = LittleFS.open((char *) path.c_str(), "r");
 					apListIndex = 0;
 				}
 			}
@@ -533,7 +535,7 @@ public:
 		slogln("uploadfile: " + String(msGlobals.ggUploadFileName));
 
 		FSInfo linfo;
-		SPIFFS.info(linfo);
+		LittleFS.info(linfo);
 
 		slogln("linfo.blockSize =" + String(linfo.blockSize));
 		slogln("linfo.pageSize =" + String(linfo.pageSize));
@@ -556,7 +558,7 @@ public:
 		File calibFile;
 		uint16_t calib = 0;
 
-		calibFile = SPIFFS.open(CALIBRATION_FILENAME, "r");
+		calibFile = LittleFS.open(CALIBRATION_FILENAME, "r");
 
 		if (calibFile) {
 			calibFile.read((unsigned byte *)&calib, sizeof (int));
@@ -570,7 +572,7 @@ public:
 	{
 		File calibFile;
 
-		calibFile = SPIFFS.open(CALIBRATION_FILENAME, "w");
+		calibFile = LittleFS.open(CALIBRATION_FILENAME, "w");
 
 		if (calibFile) {
 			calibFile.write((unsigned byte *)&calib_value, sizeof (int));
@@ -924,19 +926,19 @@ void showBatteryStatus(bool shouldFadeIn) {
 
 	}
 
-// NOTE: this is being left in for future testing of SPIFFS .. 
-	void TEST_SPIFFS_bug()
+// NOTE: this is being left in for future testing of LittleFS .. 
+	void TEST_LittleFS_bug()
 	{
 
 		const char* debugPath = "XXXXX";
 		uint8_t testVals[] = {1,23, 3, 7};
 		uint8_t readBuffer[] = {0,0,0,0};
-    //File file = SPIFFS.open((char *)debugPath.c_str(), "w");
+    //File file = LittleFS.open((char *)debugPath.c_str(), "w");
 
 		slogln("openin for w: ");
 		slogln(String(debugPath));
 
-		File file = SPIFFS.open(debugPath, "w");
+		File file = LittleFS.open(debugPath, "w");
 
 		slogln("opended for w: ");
 		slogln(String((bool)file));
@@ -950,7 +952,7 @@ void showBatteryStatus(bool shouldFadeIn) {
 		slogln("openin for r: ");
 		slogln(String(debugPath));
 
-		File fileR = SPIFFS.open(debugPath, "r");
+		File fileR = LittleFS.open(debugPath, "r");
 
 		slogln("opended for r: ");
 		slogln(String((bool)fileR));
@@ -985,14 +987,14 @@ void showBatteryStatus(bool shouldFadeIn) {
 		slogln(String("\r\nMagicShifter 3000 OS V" + String(MS3KOS_VERSION)));
 
 		// wake up filesystem
-		slog("SPIFFS:");
+		slog("LittleFS:");
 
-		if (SPIFFS.begin())
+		if (LittleFS.begin())
 			slog("done:");
 		else
-			slog("noSPIFFS:");
+			slog("noLittleFS:");
 
-		// TEST_SPIFFS_bug();
+		// TEST_LittleFS_bug();
 
 		Settings.getUIConfig(&msGlobals.ui);
 

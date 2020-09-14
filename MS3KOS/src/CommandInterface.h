@@ -49,7 +49,7 @@ void CommandInterfacePoll()
 		usbBuffer[cmdBufferIdx++] = '\0';
 
 		if (!strcmp((const char *) usbBuffer, "MAGIC_FORMAT")) {
-			SPIFFS.format();
+			LittleFS.format();
 			Serial.println("Formated FS!!!");
 		}
 
@@ -104,15 +104,15 @@ void CommandInterfacePoll()
 
 			msSystem.slog("upload open.. ");
 
-			if (SPIFFS.exists(filename)) {
+			if (LittleFS.exists(filename)) {
 				msSystem.msLEDs.fillLEDs(10, 10, 0, 0x0f);
 				msSystem.msLEDs.updateLEDs();
 				msSystem.slogln("Removing previous copy..");
-				SPIFFS.remove(filename);
+				LittleFS.remove(filename);
 				
 			}
 
-			File spiffsFile = SPIFFS.open(filename, "w");
+			File spiffsFile = LittleFS.open(filename, "w");
 			msSystem.slog("ggUploadFile opened:");
 			msSystem.slogln(filename);
 

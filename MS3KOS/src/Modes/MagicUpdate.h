@@ -12,7 +12,7 @@ public:
 	}
 
 	virtual void start() {
-		static int xx = 0;
+//		static int xx = 0;
 
 		// set a basic background to start with ..
 		for(int i=0;i<RGB_BUFFER_SIZE;i+=4) {
@@ -35,7 +35,7 @@ public:
 
 		ArduinoOTA.onProgress([](int total, int size) {
 
-			int percent = total / size;
+			//int percent = total / size;
 
 			msSystem.msLEDs.fillLEDs(0, 64, 0, msGlobals.ggBrightness);
 			msSystem.msLEDs.updateLEDs();

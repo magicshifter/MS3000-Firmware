@@ -45,7 +45,7 @@ public:
 
 	String getFileNameAtIndex(int fileIndex, int &maxFiles) {
 		Dir POVDir;
-		POVDir = SPIFFS.openDir("");
+		POVDir = LittleFS.openDir("");
 
 		int cnt = 0;
 
@@ -75,7 +75,7 @@ public:
 
 	int getIndexOf(String fileName) {
 		Dir POVDir;
-		POVDir = SPIFFS.openDir("");
+		POVDir = LittleFS.openDir("");
 
 		int cnt = 0;
 

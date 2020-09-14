@@ -207,7 +207,7 @@ bool AutoConnect()
 
 		msSystem.slogln("wifi: no preferred configuration found.");
 
-		if (SPIFFS.exists(msSystem.Settings.apListConfigPath)) {
+		if (LittleFS.exists(msSystem.Settings.apListConfigPath)) {
 
 			msSystem.slogln("wifi: start scan -");
 			// WiFi.scanNetworks will return the number of networks found

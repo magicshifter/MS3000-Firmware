@@ -42,12 +42,12 @@ static bool streamFile(String path)
 		path += "index.htm";
 	}
 	String contentType = getContentType(path);
-	if (SPIFFS.exists((char *) (path + ".gz").c_str())
-		|| SPIFFS.exists((char *) path.c_str())) {
-		if (SPIFFS.exists((char *) (path + ".gz").c_str())) {
+	if (LittleFS.exists((char *) (path + ".gz").c_str())
+		|| LittleFS.exists((char *) path.c_str())) {
+		if (LittleFS.exists((char *) (path + ".gz").c_str())) {
 			path += ".gz";
 		}
-		File file = SPIFFS.open((char *) path.c_str(), "r");
+		File file = LittleFS.open((char *) path.c_str(), "r");
 		msSystem.msESPServer.streamFile(file, contentType);
 		file.close();
 		return true;
@@ -73,7 +73,7 @@ void handleNotFound()
 	String gzFName = String(fName + 1) + ".gz";
 
 	// if we don't have a route for the request, but do have a file, serve the file
-	if (SPIFFS.exists(fName + 1) || SPIFFS.exists(gzFName.c_str())) {
+	if (LittleFS.exists(fName + 1) || LittleFS.exists(gzFName.c_str())) {
 		streamFile(String(fName + 1));
 	} else if (msSystem.msESPServer.uri() != "/upload") {
 		String message = "MS Command Not Found\n\n";
@@ -134,7 +134,7 @@ void handleReadFile()
 
 
 		byte buffer[105];
-		File file = SPIFFS.open(msGlobals.ggUploadFileName, "r");
+		File file = LittleFS.open(msGlobals.ggUploadFileName, "r");
 
 		if (file) {
 			int fileLen = file.available();
@@ -177,8 +177,8 @@ void handleDeleteFile()
 		String args = msSystem.msESPServer.arg(0);
 		message += "Trying to delete file: \"" + args + "\"\n";
 
-		if (SPIFFS.exists(args)) {
-			SPIFFS.remove(args);
+		if (LittleFS.exists(args)) {
+			LittleFS.remove(args);
 			msSystem.slogln("file deleted");
 			message += "file deleted!";
 		} else {
@@ -209,7 +209,7 @@ void handleFileList()
 // msSystem.slog("dir path::::"); msSystem.slogln((char *)path.c_str());
 
 	//File entry;
-	Dir dir = SPIFFS.openDir((char *) path.c_str());
+	Dir dir = LittleFS.openDir((char *) path.c_str());
 	path = String();
 
 /*
@@ -323,10 +323,10 @@ void handleFileUpload()
 
 		msSystem.slog("upload open.. ");
 
-		if (SPIFFS.exists(msGlobals.ggUploadFileName)) {
+		if (LittleFS.exists(msGlobals.ggUploadFileName)) {
 			msSystem.slog("Removing previous copy:");
 			msSystem.
-				slogln(String(SPIFFS.remove(msGlobals.ggUploadFileName)));
+				slogln(String(LittleFS.remove(msGlobals.ggUploadFileName)));
 		}
 		// !J! re-use file..
 		if (msGlobals.ggUploadFile)
@@ -341,7 +341,7 @@ void handleFileUpload()
 			msSystem.slog("try:" + String(cnt));
 
 			msGlobals.ggUploadFile =
-				SPIFFS.open(msGlobals.ggUploadFileName, "w");
+				LittleFS.open(msGlobals.ggUploadFileName, "w");
 			if (msGlobals.ggUploadFile)
 				break;
 		}
