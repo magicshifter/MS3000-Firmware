@@ -27,8 +27,7 @@
 		`cd MS3000-Firmware/Tools/nanopb/generator/proto && make && cd -`
 
 	* build the MS3KOS:
-		`cd MS3000-Firmware/MS3KOS/`
-		`make`
+		`cd MS3000-Firmware/MS3KOS/ && make`
 
 	
 
