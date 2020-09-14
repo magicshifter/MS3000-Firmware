@@ -7,7 +7,7 @@
 // !J! 
 #define APPLEMIDI_DEBUG 1
 #include "msSystem.h"
-#include "AppleMidi.h"
+#include "AppleMIDI.h"
 
 extern MagicShifterSystem msSystem;
 
