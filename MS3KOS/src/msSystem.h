@@ -1188,7 +1188,7 @@ void showBatteryStatus(bool shouldFadeIn) {
 	void fileDump() {
 		String path = "/";
 		String output = "path:" + path + "\n";
-		Dir dir = SPIFFS.openDir((char *) path.c_str());
+		Dir dir = LittleFS.openDir((char *) path.c_str());
 
 		slogln("system: fileDump:");
 

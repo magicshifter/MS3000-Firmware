@@ -129,6 +129,7 @@ void _RTP_MIDI_ReceiveReset() {
 
 
 void setupRTPDebugHandlers() {
+/*
 	AppleMIDI.OnConnected(_RTP_MIDI_Connected);
 	AppleMIDI.OnDisconnected(_RTP_MIDI_Disconnected);
 	AppleMIDI.OnReceiveNoteOff(_RTP_MIDI_Note_Off);
@@ -149,6 +150,7 @@ void setupRTPDebugHandlers() {
 	AppleMIDI.OnReceiveStop(_RTP_MIDI_ReceiveStop);
 	AppleMIDI.OnReceiveActiveSensing(_RTP_MIDI_ReceiveActiveSensing);
 	AppleMIDI.OnReceiveReset(_RTP_MIDI_ReceiveReset);
+*/ // !J! disabled .. for now
 }
 
 
