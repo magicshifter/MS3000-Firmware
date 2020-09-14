@@ -1,0 +1,16 @@
+
+
+2020 - 9 - 14
+
+We are going to get the MS3000 project in order, buildable, and
+excellent .. again.
+
+As of right now, we need to meet with WIZARD23 and get ourselves
+some issues solved: FLASH'ing is borked, but we are using old
+devices - maybe its better on new MS3000's?  And yes, there ARE
+new MagicShifter3000's .. and that is why we are pushing to fix
+this project, and get 'er ripped ..
+
+					-seclorum 2020-09-14
+
+
