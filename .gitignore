@@ -44,3 +44,4 @@ trsh/*
 MS3KOS/.pioenvs/*
 MS3KOS/.piolibdeps*
 *.pioenvs*
+*.sconsign38.dblite*
