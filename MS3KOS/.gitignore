@@ -10,3 +10,5 @@ MS3000.pb.c
 MS3000.pb.h
 
 ms3000.proto.out/*
+
+.pio/*

@@ -40,7 +40,7 @@ build:
 	platformio run --upload-port ${MS3000_PORT}
 
 flash:	.pio/build/ms3000/firmware.bin
-	../Tools/esptool-ck/esptool -vv -cd ck -cb 921600 -cp /dev/tty.SLAB_USBtoUART -cf .pio/build/ms3000/firmware.bin
+	pio run && ../Tools/esptool-ck/esptool -vv -cd ck -cb 921600 -cp /dev/tty.SLAB_USBtoUART -cf .pio/build/ms3000/firmware.bin
 
 burn:
 	platformio run --target upload --upload-port ${MS3000_PORT}
