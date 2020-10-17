@@ -2,6 +2,8 @@ SHELL := /bin/bash
 
 include ../Tools/nanopb/extra/nanopb.mk
 
+MS3000_FLASH_BAUD=115200
+
 #linux
 MS3000_PORT=/dev/ttyUSB0
 #macos
@@ -40,7 +42,7 @@ build:
 	platformio run --upload-port ${MS3000_PORT}
 
 flash:	.pio/build/ms3000/firmware.bin
-	pio run && ../Tools/esptool-ck/esptool -vv -cd ck -cb 921600 -cp /dev/tty.SLAB_USBtoUART -cf .pio/build/ms3000/firmware.bin
+	pio run && ../Tools/esptool-ck/esptool -vv -cd ck -cb ${MS3000_FLASH_BAUD} -cp ${MS3000_PORT} -cf .pio/build/ms3000/firmware.bin
 
 burn:
 	platformio run --target upload --upload-port ${MS3000_PORT}
