@@ -465,14 +465,14 @@ def issueUpload(device, data, filename):
 
                 print(headerString)
                          
-                headerString = array.array('B', headerString).tostring()
+                headerString = array.array('B', headerString).tobytes()
                 print(dataLen)
                 #print Str2Hex(headerString)    
                 sleep(0.5)      
                 ser.write(headerString)
                 sleep(0.5)
                 #sleep(0.5)                     
-                dataString = array.array('B', data).tostring()
+                dataString = array.array('B', data).tobytes()
                 #print Str2Hex(dataString)      
                 SendInChunks(ser, dataString, 32, 0.003) #0.003 
 
@@ -496,7 +496,7 @@ def issueShow(device, sector):
                 ser = serial.Serial(device, baudrate, timeout=0.5)#timeout=None
                 ser.write("MAGIC_DISPLAY".encode())
                 sleep(0.5)
-                headerString = array.array('B', [sector]).tostring()
+                headerString = array.array('B', [sector]).tobytes()
                 ser.write(headerString)
                 response = ser.readline()
                 return response
@@ -543,226 +543,222 @@ def main():
         # das kommt ins shellscript :)
         #print "Presss enter to continue."
         #raw_input()
+    
+    print("--> Insert device, mount it with bracket, connect battery and connect USB cable. Then press ENTER to continue")
+    key = read_single_keypress()
 
-        
-        print("--> Insert device, mount it with bracket, connect battery and connect USB cable. Then press ENTER to continue")
-        key = read_single_keypress()
+    dmesgClear()
 
-        dmesgClear()
+    print("--> Press the RESET button")
+    cnt = 0
+    while (not dmesgPing()):
+                    sleep(0.1)
+                    cnt = cnt + 1
+                    if (cnt > 100):
+                            pFail("Reset Button was not pressed within 10 seconds. Is it broken?")
+                            return False
+    pOK("Reset Button OK!")
 
-        print("--> Press the RESET button")
-        cnt = 0
-        while (not dmesgPing()):
-                        sleep(0.1)
-                        cnt = cnt + 1
-                        if (cnt > 100):
-                                pFail("Reset Button was not pressed within 10 seconds. Is it broken?")
-                                return False
-        pOK("Reset Button OK!")
+    print("--> If the BLUE 'CHRG' LED is blinking and the GREEN 'FULL' LED is on press 'Y' else press 'N'")
+    key = read_single_keypress()
+    if (key != 'Y' and key != 'y'):
+            pFail("Is the charger IC working? Or are the LEDs broken?")
+            return False
+    pOK("LEDs 'CHRG' and 'FULL' verified by user as OK")
 
-        print("--> If the BLUE 'CHRG' LED is blinking and the GREEN 'FULL' LED is on press 'Y' else press 'N'")
-        key = read_single_keypress()
-        if (key != 'Y' and key != 'y'):
-                pFail("Is the charger IC working? Or are the LEDs broken?")
-                return False
-        pOK("LEDs 'CHRG' and 'FULL' verified by user as OK")
+    pOK("programming device...")
+    if(callProgrammer()):
+            pOK("bootloader OK! :)")
+    else:
+            pFail("USB connection does not work or Bootloader is not responding. :(")
+            return False
 
-        pOK("programming device...")
-        if(callProgrammer()):
-                pOK("bootloader OK! :)")
-        else:
-                pFail("USB connection does not work or Bootloader is not responding. :(")
-                return False
+    sleep(1)
 
-        sleep(1)
+    device = None
+    for step in range(0, 80):
+            sleep(0.1)
+            device = findMagicShifterSimple()
+            if (device != None):
+                    break
 
-        device = None
-        for step in range(0, 80):
-                sleep(0.1)
-                device = findMagicShifterSimple()
-                if (device != None):
-                        break
-
-        if (device == None):
-                pFail("Error! Device is not showing up as USB-Serial port")
-                return False
-        
-        pOK("device found at " + device)
-        sleep(1)
-        
+    if (device == None):
+            pFail("Error! Device is not showing up as USB-Serial port")
+            return False
+    
+    pOK("device found at " + device)
+    sleep(1)
+    
 #2.Check Shifter
-        response = issueCommand(device, "MAGIC_AUTO".encode(), 15)
-        if(response == None):
-                pFail("Error! Device not responding to AUTO TESTING.")
-                return False
-        elif(response[0] == "MAGIC_OK"):                
-                pOK("Automated Test OK");
-        elif(response[0] == "MAGIC_ERROR"):
-                pFail("ERROR WHILE AUTO TESTING: " + str(response))
-                return False
-        else:
-                pFail("UNKNOWN RESPONSE WHILE AUTO TESTING: " + str(response))
-                return False
+    response = issueCommand(device, "MAGIC_AUTO".encode(), 15)
+    if(response == None):
+            pFail("Error! Device not responding to AUTO TESTING.")
+            return False
+    elif(response[0] == "MAGIC_OK"):                
+            pOK("Automated Test OK");
+    elif(response[0] == "MAGIC_ERROR"):
+            pFail("ERROR WHILE AUTO TESTING: " + str(response))
+            return False
+    else:
+            pFail("UNKNOWN RESPONSE WHILE AUTO TESTING: " + str(response))
+            return False
 
-        response = issueCommand(device, "MAGIC_PING".encode(), 2)
-        if(response == None):
-                pFail("Error! Device not responding to PING. TCHRG not working?")
-                return False
-        elif(response[0] == "MAGIC_PONG"):              
-                pOK("PING (TCHRG) OK :)");
-        else:
-                pFail("UNKNOWN RESPONSE WHILE PING: " + str(response))
-                return False
+    response = issueCommand(device, "MAGIC_PING".encode(), 2)
+    if(response == None):
+            pFail("Error! Device not responding to PING. TCHRG not working?")
+            return False
+    elif(response[0] == "MAGIC_PONG"):              
+            pOK("PING (TCHRG) OK :)");
+    else:
+            pFail("UNKNOWN RESPONSE WHILE PING: " + str(response))
+            return False
 
-        print("--> Please Press Button 1 and then Button 2")
-        response = issueCommand(device, "MAGIC_MANUAL".encode(), 15)
-        if(response == None):
-                pFail("Error! Device not responding to MANUAL TESTING.")
-                return False
-        elif(response[0] == "MAGIC_OK"):                
-                pOK("Buttons OK")
+    print("--> Please Press Button 1 and then Button 2")
+    response = issueCommand(device, "MAGIC_MANUAL".encode(), 15)
+    if(response == None):
+            pFail("Error! Device not responding to MANUAL TESTING.")
+            return False
+    elif(response[0] == "MAGIC_OK"):                
+            pOK("Buttons OK")
 
-                print("--> Please check if the BLUE 'LEDDEBUG', YELLOW 'LEDRX'  and the RED 'LEDTX' are blinking! Press 'Y' if the 3 LEDs are blinking else press 'N'");
-                key = read_single_keypress()
-                if (key != 'Y' and key != 'y'):
-                        pFail("LEDs not working please check 'LEDDEBUG','LEDRX', 'LEDTX'")
-                        return False
-                pOK("LEDs 'LEDDEBUG', 'LEDRX' and 'LEDTX' verified by user as OK")
-                dmesgClear()
-                print("--> Press the POWER button");
-                cnt = 0
-                while (not dmesgDisconnected()):
-                        sleep(0.1)
-                        cnt = cnt + 1
-                        if (cnt > 100):
-                                pFail("Power Button was not pressed within 10 second. Is the power button broken?")
-                                return False
-                pOK("Power Buttons Work!")
-                pOK("--> TEST SUCCESSFULL! :)") 
-                return True
-        elif(response[0] == "MAGIC_ERROR"):
-                pFail("ERROR WHILE MANUAL TESTING: " + str(response))
-                return False
-        else:
-                pFail("UNKNOWN RESPONSE WHILE MANUAL TESTING: " + str(response))
-                return False
+            print("--> Please check if the BLUE 'LEDDEBUG', YELLOW 'LEDRX'  and the RED 'LEDTX' are blinking! Press 'Y' if the 3 LEDs are blinking else press 'N'");
+            key = read_single_keypress()
+            if (key != 'Y' and key != 'y'):
+                    pFail("LEDs not working please check 'LEDDEBUG','LEDRX', 'LEDTX'")
+                    return False
+            pOK("LEDs 'LEDDEBUG', 'LEDRX' and 'LEDTX' verified by user as OK")
+            dmesgClear()
+            print("--> Press the POWER button");
+            cnt = 0
+            while (not dmesgDisconnected()):
+                    sleep(0.1)
+                    cnt = cnt + 1
+                    if (cnt > 100):
+                            pFail("Power Button was not pressed within 10 second. Is the power button broken?")
+                            return False
+            pOK("Power Buttons Work!")
+            pOK("--> TEST SUCCESSFULL! :)") 
+            return True
+    elif(response[0] == "MAGIC_ERROR"):
+            pFail("ERROR WHILE MANUAL TESTING: " + str(response))
+            return False
+    else:
+            pFail("UNKNOWN RESPONSE WHILE MANUAL TESTING: " + str(response))
+            return False
 
 def initAPConfig():
-        start = time.time()
-        delay = 1;
+    start = time.time()
+    delay = 1;
 
-        ser = openPort(5)
-        issueUploadMS3000(ser, "settings_ap.bin", "settings/ap.bin")
-        sleep(delay)
+    ser = openPort(5)
+    issueUploadMS3000(ser, "settings_ap.bin", "settings/ap.bin")
+    sleep(delay)
 
-def initMS3000():
-        start = time.time()
-        delay = 1;
+def initMS3000bits():
+    start = time.time()
+    delay = 1;
+    ser = openPort(5)
+    # new-school web interfaces .. 
+    sleep(delay)
 
-        ser = openPort(5)
-        #issueUploadMS3000(ser, "settings_ap.bin", "settings/ap.bin")
-        #sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-WebInterface/dist/bundled/favicon.ico", "favicon.ico")
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-WebInterface/dist/bundled/index.html", "index.html")
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-WebInterface/dist/bundled/index.js.gz", "index.js.gz")
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-WebInterface/dist/bundled/magicshifter.appcache", "magicshifter.appcache")
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-Assets/MS3000_defaultconfig/MagicShifter.html", "MagicShifter.html")
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-Assets/MS3000_defaultconfig/admin.html", "admin.html")
+    imgs = ["heart.magicBitmap", "smilie.magicBitmap", "star.magicBitmap", "oneup.magicBitmap", "mario.magicBitmap", "mario.magicBitmap", "blueGhost.magicBitmap", "redGhost.magicBitmap", "BubbleBobble.magicBitmap", "invader.magicBitmap", "giraffe.magicBitmap", "cursor.magicBitmap", "nyancat.magicBitmap"]
 
-        # MS3KOS2.0 !J! 
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-Assets/MS3000_defaultconfig/admin.html", "admin.html")
+    for img in imgs:
+            sleep(delay)
+            issueUploadMS3000(ser, "../../MS3000-Assets/magicBitmaps/" + img, img)
 
-        # new-school web interfaces .. 
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/index.html", "index.html")
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/pixeleditor/index.html", "pixeleditor/index.html")
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/script/pixeleditor.js", "system/script/pixeleditor.js")
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/script/app.js", "system/script/app.js")
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/1px.png", "system/img/1px.png")
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/palette.svg", "system/img/palette.svg")
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/pen.svg", "system/img/pen.svg")
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/tool.svg", "system/img/tool.svg")
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/transparent.jpg", "system/img/transparent.jpg")
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/tool.cur", "system/img/tool.cur")
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/pen.png", "system/img/pen.png")
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/css/main.css", "system/css/main.css")
+    fonts = ["font10x16.magicFont", "font4x5.magicFont", "font6x8.magicFont", "font7x12.magicFont"]
+    for font in fonts:
+            sleep(delay)
+            issueUploadMS3000(ser, "../../MS3000-Assets/fonts/" + font, font)
 
-        imgs = ["heart.magicBitmap", "smilie.magicBitmap", "star.magicBitmap", "oneup.magicBitmap", "mario.magicBitmap", "mario.magicBitmap", "blueGhost.magicBitmap", "redGhost.magicBitmap", "BubbleBobble.magicBitmap", "invader.magicBitmap", "giraffe.magicBitmap", "cursor.magicBitmap", "nyancat.magicBitmap"]
+    end = time.time()
+    print("time elapsed: ", end - start)
 
-        for img in imgs:
-                sleep(delay)
-                issueUploadMS3000(ser, "../../MS3000-Assets/magicBitmaps/" + img, img)
+def initMS3000web():
+    start = time.time()
+    delay = 1;
 
-        fonts = ["font10x16.magicFont", "font4x5.magicFont", "font6x8.magicFont", "font7x12.magicFont"]
-        for font in fonts:
-                sleep(delay)
-                issueUploadMS3000(ser, "../../MS3000-Assets/fonts/" + font, font)
+    ser = openPort(5)
+    #issueUploadMS3000(ser, "settings_ap.bin", "settings/ap.bin")
+    #sleep(delay)
+    issueUploadMS3000(ser, "../../MS3000-WebInterface/dist/bundled/favicon.ico", "favicon.ico")
+    sleep(delay)
+    issueUploadMS3000(ser, "../../MS3000-WebInterface/dist/bundled/index.html", "index.html")
+    sleep(delay)
+    issueUploadMS3000(ser, "../../MS3000-WebInterface/dist/bundled/index.js.gz", "index.js.gz")
+    sleep(delay)
+    issueUploadMS3000(ser, "../../MS3000-WebInterface/dist/bundled/magicshifter.appcache", "magicshifter.appcache")
+    sleep(delay)
+    issueUploadMS3000(ser, "../../MS3000-Assets/MS3000_defaultconfig/MagicShifter.html", "MagicShifter.html")
+    sleep(delay)
+    issueUploadMS3000(ser, "../../MS3000-Assets/MS3000_defaultconfig/admin.html", "admin.html")
 
-        end = time.time()
-        print("time elapsed: ", end - start)
+    # MS3KOS2.0 !J! 
+    sleep(delay)
+    issueUploadMS3000(ser, "../../MS3000-Assets/MS3000_defaultconfig/admin.html", "admin.html")
 
-
+    # new-school web interfaces .. 
+    sleep(delay)
+    issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/index.html", "index.html")
+    sleep(delay)
+    issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/pixeleditor/index.html", "pixeleditor/index.html")
+    sleep(delay)
+    issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/script/pixeleditor.js", "system/script/pixeleditor.js")
+    sleep(delay)
+    issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/script/app.js", "system/script/app.js")
+    sleep(delay)
+    issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/1px.png", "system/img/1px.png")
+    sleep(delay)
+    issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/palette.svg", "system/img/palette.svg")
+    sleep(delay)
+    issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/pen.svg", "system/img/pen.svg")
+    sleep(delay)
+    issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/tool.svg", "system/img/tool.svg")
+    sleep(delay)
+    issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/transparent.jpg", "system/img/transparent.jpg")
+    sleep(delay)
+    issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/tool.cur", "system/img/tool.cur")
+    sleep(delay)
+    issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/pen.png", "system/img/pen.png")
+    sleep(delay)
+    issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/css/main.css", "system/css/main.css")
+    end = time.time()
+    print("time elapsed: ", end - start)
+    
 def initMS3000newweb():
-        start = time.time()
-        delay = 1;
+    start = time.time()
+    delay = 1;
 
-        ser = openPort(5)
-        # new-school web interfaces .. 
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/index.html", "index.html")
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/pixeleditor/index.html", "pixeleditor/index.html")
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/script/pixeleditor.js", "system/script/pixeleditor.js")
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/script/app.js", "system/script/app.js")
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/1px.png", "system/img/1px.png")
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/palette.svg", "system/img/palette.svg")
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/pen.svg", "system/img/pen.svg")
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/tool.svg", "system/img/tool.svg")
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/transparent.jpg", "system/img/transparent.jpg")
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/tool.cur", "system/img/tool.cur")
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/pen.png", "system/img/pen.png")
-        sleep(delay)
-        issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/css/main.css", "system/css/main.css")
+    ser = openPort(5)
+    # new-school web interfaces .. 
+    sleep(delay)
+    issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/index.html", "index.html")
+    sleep(delay)
+    issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/pixeleditor/index.html", "pixeleditor/index.html")
+    sleep(delay)
+    issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/script/pixeleditor.js", "system/script/pixeleditor.js")
+    sleep(delay)
+    issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/script/app.js", "system/script/app.js")
+    sleep(delay)
+    issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/1px.png", "system/img/1px.png")
+    sleep(delay)
+    issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/palette.svg", "system/img/palette.svg")
+    sleep(delay)
+    issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/pen.svg", "system/img/pen.svg")
+    sleep(delay)
+    issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/tool.svg", "system/img/tool.svg")
+    sleep(delay)
+    issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/transparent.jpg", "system/img/transparent.jpg")
+    sleep(delay)
+    issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/tool.cur", "system/img/tool.cur")
+    sleep(delay)
+    issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/img/pen.png", "system/img/pen.png")
+    sleep(delay)
+    issueUploadMS3000(ser, "../../MS3000-Interface-lite/src/system/css/main.css", "system/css/main.css")
 
-        imgs = ["heart.magicBitmap", "smilie.magicBitmap", "star.magicBitmap", "oneup.magicBitmap", "mario.magicBitmap", "mario.magicBitmap", "blueGhost.magicBitmap", "redGhost.magicBitmap", "BubbleBobble.magicBitmap", "invader.magicBitmap", "giraffe.magicBitmap", "cursor.magicBitmap", "nyancat.magicBitmap"]
-
-        for img in imgs:
-                sleep(delay)
-                issueUploadMS3000(ser, "../../MS3000-Assets/magicBitmaps/" + img, img)
-
-        fonts = ["font10x16.magicFont", "font4x5.magicFont", "font6x8.magicFont", "font7x12.magicFont"]
-        for font in fonts:
-                sleep(delay)
-                issueUploadMS3000(ser, "../../MS3000-Assets/fonts/" + font, font)
-
-        end = time.time()
-        print("time elapsed: ", end - start)
+    end = time.time()
+    print("time elapsed: ", end - start)
 
 def issueUploadMS3000(ser, sourceFilename, targetFilename):     
 
@@ -793,14 +789,14 @@ def issueUploadMS3000(ser, sourceFilename, targetFilename):
 
                 print(headerString)
                          
-                headerString = array.array('B', headerString).tostring()
+                headerString = array.array('B', headerString).tobytes()
                 print(dataLen)
                 #print Str2Hex(headerString)    
                 sleep(1.0)      
                 ser.write(headerString)
                 sleep(4.0)
                 #sleep(0.5)                     
-                dataString = array.array('B', data).tostring()
+                dataString = array.array('B', data).tobytes()
                 #print Str2Hex(dataString)      
                 SendInChunks(ser, dataString, 32, 0.010) #0.003 
 
@@ -834,11 +830,15 @@ if __name__ == '__main__':
 
         if (len(sys.argv) >= 2 and sys.argv[1] == "init"):
                 device = sys.argv[2]
-                initMS3000()
+                initMS3000bits()
 
-        if (len(sys.argv) >= 2 and sys.argv[1] == "initnewweb"):
+        if (len(sys.argv) >= 2 and sys.argv[1] == "newweb"):
                 device = sys.argv[2]
                 initMS3000newweb()
+ 
+        if (len(sys.argv) >= 2 and sys.argv[1] == "web"):
+                device = sys.argv[2]
+                initMS3000web()
                 
         if (len(sys.argv) >= 4 and sys.argv[1] == "up"):
                 if (len(sys.argv) == 5):
