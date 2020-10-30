@@ -65,7 +65,7 @@ reset-device:
 pio-deps-clean:
 	rm -rf .piolibdeps/
 
-test:    proto build burn monitor
+test:    proto build flash monitor
     
 
 clean:
