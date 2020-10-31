@@ -15,3 +15,6 @@
 [submodule "MS3KOS/lib/littlefs"]
 	path = MS3KOS/lib/littlefs
 	url = https://github.com/ARMmbed/littlefs.git
+[submodule "Tools/mklittlefs"]
+	path = Tools/mklittlefs
+	url = https://github.com/earlephilhower/mklittlefs.git

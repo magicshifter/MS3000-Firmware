@@ -534,15 +534,19 @@ public:
 
 		slogln("uploadfile: " + String(msGlobals.ggUploadFileName));
 
-		FSInfo linfo;
-		LittleFS.info(linfo);
+		FSInfo lfsInfo;
+		LittleFS.info(lfsInfo);
 
-		slogln("linfo.blockSize =" + String(linfo.blockSize));
-		slogln("linfo.pageSize =" + String(linfo.pageSize));
-		slogln("linfo.maxOpenFiles =" + String(linfo.maxOpenFiles));
-		slogln("linfo.maxPathLength =" + String(linfo.maxPathLength));
-		slogln("linfo.totalBytes =" + String(linfo.totalBytes));
-		slogln("linfo.usedBytes = " + String(linfo.usedBytes));
+		//int fmtRet;
+		//fmtRet = LittleFS.format();
+		//slogln("lfs format result = " + String(fmtRet));
+
+		slogln("lfsInfo.blockSize =" + String(lfsInfo.blockSize));
+		slogln("lfsInfo.pageSize =" + String(lfsInfo.pageSize));
+		slogln("lfsInfo.maxOpenFiles =" + String(lfsInfo.maxOpenFiles));
+		slogln("lfsInfo.maxPathLength =" + String(lfsInfo.maxPathLength));
+		slogln("lfsInfo.totalBytes =" + String(lfsInfo.totalBytes));
+		slogln("lfsInfo.usedBytes = " + String(lfsInfo.usedBytes));
 
 		slogln("Reset info: " + String(ESP.getResetInfo()));
 
@@ -1188,6 +1192,11 @@ void showBatteryStatus(bool shouldFadeIn) {
 	void fileDump() {
 		String path = "/";
 		String output = "path:" + path + "\n";
+
+				
+		//String formatResult = " format: " + LittleFS.format();
+		//slogln(formatResult);
+
 		Dir dir = LittleFS.openDir((char *) path.c_str());
 
 		slogln("system: fileDump:");
