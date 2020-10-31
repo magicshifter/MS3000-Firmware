@@ -44,6 +44,8 @@ build:
 flash:	.pio/build/ms3000/firmware.bin
 	pio run && ../Tools/esptool-ck/esptool -vv -cd ck -cb ${MS3000_FLASH_BAUD} -cp ${MS3000_PORT} -cf .pio/build/ms3000/firmware.bin
 
+uploadfs:
+	(pio run -t uploadfs -v || ../Tools/esptool-ck/esptool -vv -cd ck -cb 921600 -cp /dev/ttyUSB0 -ca 200000 -cf .pio/build/ms3000/littlefs.bin)
 burn:
 	platformio run --target upload --upload-port ${MS3000_PORT}
 
