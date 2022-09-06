@@ -34,6 +34,7 @@ extern "C" {
 #include <map> 
 
 #include <FS.h>
+#include <LittleFS.h>
 
 // note: local configuration, globals, and system objects get created now.
 #include "msConfig.h"
