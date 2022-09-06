@@ -121,6 +121,23 @@ void CommandInterfacePoll()
 
 			if (!spiffsFile) {
 				msSystem.slogln("ERROR: COULD NOT open file!!!");
+				
+ 				msSystem.msLEDs.fillLEDs(40, 0, 0, 0x0f);
+   		 		msSystem.msLEDs.updateLEDs();
+				delay(150);
+
+ 				msSystem.msLEDs.fillLEDs(0, 0, 40, 0x0f);
+   		 		msSystem.msLEDs.updateLEDs();
+				delay(150);
+
+ 				msSystem.msLEDs.fillLEDs(40, 0, 0, 0x0f);
+   		 		msSystem.msLEDs.updateLEDs();
+				delay(150);
+
+ 				msSystem.msLEDs.fillLEDs(0, 0, 40, 0x0f);
+   		 		msSystem.msLEDs.updateLEDs();
+				delay(150);
+ 
 			} else {
 				int ledIdx = -1;
 

@@ -998,7 +998,7 @@ void showBatteryStatus(bool shouldFadeIn) {
 		else
 			slog("noLittleFS:");
 
-		// TEST_LittleFS_bug();
+		TEST_LittleFS_bug();
 
 		Settings.getUIConfig(&msGlobals.ui);
 
