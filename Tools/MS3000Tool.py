@@ -811,7 +811,7 @@ def issueUploadMS3000(ser, sourceFilename, targetFilename):
 def formatMS3000(ser):  
         try:    
                 start = time.time()
-                ser.write("MAGIC_FORMAT")
+                ser.write(b"MAGIC_FORMAT")
                 response = ser.readline()
                 return response
         except Exception as e:
@@ -876,5 +876,9 @@ if __name__ == '__main__':
                 print("test [serialdevice]")
                 print("reset [serialdevice]")
                 print("writeap [write settings_ap.bin]")
+                print("init [serialdevice]")
+                print("web [serialdevice]")
+                print("newweb [serialdevice]")
+                print("format serialdevice]")
                 print("start")
 
