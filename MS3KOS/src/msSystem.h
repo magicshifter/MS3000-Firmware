@@ -25,7 +25,8 @@
 #include "Hardware/Sensor.h"
 #include "Hardware/Buttons.h"
 
-#include "LittleFS.h"
+#include <FS.h>
+#include <LittleFS.h>
 
 // Custom image handler for MS3000 POV images
 #include "msImage.h"
@@ -993,10 +994,19 @@ void showBatteryStatus(bool shouldFadeIn) {
 		// wake up filesystem
 		slog("LittleFS:");
 
-		if (LittleFS.begin())
-			slog("done:");
-		else
-			slog("noLittleFS:");
+		if (!LittleFS.begin()) {    
+		    slog("LittleFS mount failed");
+		    slog("Formatting LittleFS filesystem");
+		    if (LittleFS.format()) {
+				slog("LittleFS format worked.");
+			} else {
+				slog("LittleFS format did not work.");
+			}
+			if (!LittleFS.begin()){
+				slog ("Failed after format");
+			}
+		    slog("Restart to try again");
+		  }
 
 		TEST_LittleFS_bug();
 
