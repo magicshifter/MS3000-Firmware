@@ -653,6 +653,8 @@ def initAPConfig():
     ser = openPort(5)
     issueUploadMS3000(ser, "settings_ap.bin", "settings/ap.bin")
     sleep(delay)
+    issueUploadMS3000(ser, "preferredap.bin", "settings/preferredap.bin")
+    sleep(delay)
 
 def initMS3000bits():
     start = time.time()
