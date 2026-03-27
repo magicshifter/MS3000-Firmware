@@ -12,6 +12,6 @@ else
 fi	
 
 
-./esptool/esptool.py --port $1 --baud 921600 read_flash 0x00000 0x400000 $firmwareName 
+./esptool/esptool.py --port $1 --baud 115200 read_flash 0x00000 0x400000 $firmwareName 
 
 #./esptool.py --baud 460800 read_flash 0x00000 0x3FFFFF $dumpname // 460800

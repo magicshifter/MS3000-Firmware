@@ -68,7 +68,7 @@ def read_single_keypress():
         # restore old state
         termios.tcsetattr(fd, termios.TCSAFLUSH, attrs_save)
         fcntl.fcntl(fd, fcntl.F_SETFL, flags_save)
-    print ret
+    print (ret)
     return ret
 
 
